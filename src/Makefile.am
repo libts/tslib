@@ -6,10 +6,10 @@
 # This file is placed under the LGPL.  Please see the file
 # COPYING for more details.
 #
-# $Id: Makefile.am,v 1.2 2002/01/15 14:11:38 rmk Exp $
+# $Id: Makefile.am,v 1.3 2002/06/17 17:21:43 dlowder Exp $
 #
 
-CFLAGS		:= $(CFLAGS) -DPLUGIN_DIR=\"@PLUGIN_DIR@\" -DTS_CONF=\"@TS_CONF@\"
+CFLAGS		:= $(CFLAGS) -DPLUGIN_DIR=\"@PLUGIN_DIR@\" -DTS_CONF=\"@TS_CONF@\" $(DEBUGFLAGS) $(INPUTAPIFLAG)
 
 noinst_HEADERS   = tslib-private.h tslib-filter.h
 include_HEADERS  = tslib.h

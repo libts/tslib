@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: variance.c,v 1.1.1.1 2001/12/22 21:12:06 rmk Exp $
+ * $Id: variance.c,v 1.2 2002/06/17 17:21:43 dlowder Exp $
  *
  * Variance filter for touchscreen values
  */
@@ -123,8 +123,8 @@ static int variance_read(struct tslib_module_info *info, struct ts_sample *samp,
 				 * Pen was released.  Reset our state and
 				 * pass up the release information.
 				 */
-				samp[nr].x = 0;
-				samp[nr].y = 0;
+//				samp[nr].x = 0;
+//				samp[nr].y = 0;
 				samp[nr].pressure = s->pressure;
 				samp[nr].tv.tv_sec = s->tv.tv_sec;
 				samp[nr].tv.tv_usec = s->tv.tv_usec;

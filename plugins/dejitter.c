@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: dejitter.c,v 1.1.1.1 2001/12/22 21:12:06 rmk Exp $
+ * $Id: dejitter.c,v 1.2 2002/06/17 17:21:42 dlowder Exp $
  *
  * Threshold filter for touchscreen values
  */
@@ -42,7 +42,9 @@ static int threshold_read(struct tslib_module_info *info, struct ts_sample *samp
 
 		for (s = samp; s < samp + ret; s++) {
 			int dx, dy;
-
+#ifdef DEBUG
+			printf("BEFORE DEJITTER---------------> %d %d %d\n",s->x,s->y,s->pressure);
+#endif /*DEBUG*/
 			if (thr->down) {
 				dx = thr->x - s->x;
 				if (dx < 0)

@@ -6,9 +6,10 @@
 # This file is placed under the LGPL.  Please see the file
 # COPYING for more details.
 #
-# $Id: Makefile.am,v 1.1.1.1 2001/12/22 21:12:06 rmk Exp $
+# $Id: Makefile.am,v 1.2 2002/06/17 17:21:42 dlowder Exp $
 #
 
+CFLAGS                  := $(CFLAGS) $(DEBUGFLAGS) $(INPUTAPIFLAG)
 INCLUDES		 = -I$(top_srcdir)/src
 LDFLAGS			:= $(LDFLAGS) -rpath $(PLUGIN_DIR)
 #LTVSN			:= -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \

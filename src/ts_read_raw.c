@@ -10,7 +10,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_read_raw.c,v 1.2 2002/05/20 22:10:00 nico Exp $
+ * $Id: ts_read_raw.c,v 1.3 2002/06/17 17:21:43 dlowder Exp $
  *
  * Read raw pressure, x, y, and timestamp from a touchscreen device.
  */
@@ -23,16 +23,31 @@
 #include <sys/time.h>
 #include <sys/types.h>
 
+#ifdef USE_INPUT_API
 #include <linux/input.h>
+#else
+struct ts_event  {
+	unsigned short pressure;
+	unsigned short x;
+	unsigned short y;
+	unsigned short pad;
+	struct timeval stamp;
+};
+#endif /* USE_INPUT_API */
 
 #include "tslib-private.h"
 
 int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 {
+#ifdef USE_INPUT_API
 	struct input_event ev;
+#else
+	struct ts_event *evt;
+#endif /* USE_INPUT_API */
 	int ret;
 	int total = 0;
 
+#ifdef USE_INPUT_API
 	/* warning: maybe those static vars should be part of the tsdev struct? */
 	static int curr_x = 0, curr_y = 0, curr_p = 0;
 	static int got_curr_x = 0, got_curr_y = 0;
@@ -109,9 +124,12 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 		samp->x = curr_x;
 		samp->y = curr_y;
 		samp->pressure = curr_p;
+#ifdef DEBUG
+        printf("RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
+#endif /*DEBUG*/
 		samp++;
 		total++;
-
+        
 		/* get ready for next event */
 		if (got_next_x) curr_x = next_x; else got_curr_x = 0;
 		if (got_next_y) curr_y = next_y; else got_curr_y = 0;
@@ -120,6 +138,28 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 
 	if (ret) ret = -1;
 	if (total) ret = total;
+#else
+	evt = alloca(sizeof(*evt) * nr);
+	ret = read(ts->fd, evt, sizeof(*evt) * nr);
+	if(ret >= 0) {
+		int nr = ret / sizeof(*evt);
+		while(ret >= sizeof(*evt)) {
+			samp->x = evt->x;
+			samp->y = evt->y;
+			samp->pressure = evt->pressure;
+#ifdef DEBUG
+        printf("RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
+#endif /*DEBUG*/
+			samp->tv.tv_usec = evt->stamp.tv_usec;
+			samp->tv.tv_sec = evt->stamp.tv_sec;
+			samp++;
+			evt++;
+			ret -= sizeof(*evt);
+		}
+	}
+	ret = nr;
+#endif /* USE_INPUT_API */
+
 	return ret;
 }
 

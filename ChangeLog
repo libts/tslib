@@ -1,0 +1,31 @@
+2002-06-17  Douglas Lowder <dlowder@earthlink.net>
+
+- I added a simple script, autogen-clean.sh, to make it easier to change configure.in
+  and regenerate configure scripts and Makefiles.
+
+- I made modifications so that npitre's new input API code is now wrapped in
+  #ifdef USE_INPUT_API.  Added a new configure flag, --enable-inputapi, which
+  is turned on by default, and which adds -DUSE_INPUT_API to CFLAGS in all the
+  Makefiles.  --disable-inputapi will return the code to its original behavior
+  of opening /dev/touchscreen/ucb1x00 and reading events directly.
+
+- I modified plugins/linear.c so that it determines the full linear transformation
+  between touchscreen and framebuffer coordinate systems.  This method not only
+  rescales and offsets the coordinates correctly, but also automatically takes care
+  of rotation or tilt between the coordinate systems, and automatically takes care
+  of cases where X and Y are interchanged.  Therefore, the xyswap parameter is
+  no longer required or used.
+
+- I found the framebuffer code in tests/ts_calibrate.c and tests/ts_test.c to be
+  broken, and fixed it so it works correctly (used ADS GraphicsClient+ and an Intel
+  DBPXA250 (Lubbock) Xscale target for testing). 
+  Since there was a lot of duplication, I extracted all the framebuffer specific stuff
+  to new files fbutils.c and fbutils.h, so it will be easier to add more framebuffer
+  tests in future if desired.  I also extract a couple of fonts and wrote simple text
+  printing code so text messages can be displayed in ts_test and ts_calibrate.
+
+- I added a new configure flag, --enable-debug, which is turned off by default.  When
+  enabled, it adds -g -ggdb -DDEBUG to CFLAGS in all the Makefiles.  I have debug
+  print statements in ts_read_raw and in the plugins that are wrapped with #ifdef DEBUG --
+  this way I can see how many events are being filtered away and get a better idea
+  of what the filters are doing.

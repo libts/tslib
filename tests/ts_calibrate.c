@@ -6,7 +6,7 @@
  * This file is placed under the GPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_calibrate.c,v 1.2 2002/05/20 22:10:00 nico Exp $
+ * $Id: ts_calibrate.c,v 1.3 2002/06/17 17:21:43 dlowder Exp $
  *
  * Basic test program for touchscreen library.
  */
@@ -25,117 +25,13 @@
 
 #include "tslib.h"
 
-static int con_fd, fb_fd, last_vt = -1;
-static struct fb_fix_screeninfo fix;
-static struct fb_var_screeninfo var;
-static struct fb_cmap cmap;
-static char *fbuffer;
+#include "fbutils.h"
 
-static int open_framebuffer(void)
-{
-	struct vt_stat vts;
-	char vtname[16];
-	int fd, nr;
-	unsigned short col[2];
-
-	fd = open("/dev/tty1", O_WRONLY);
-	if (fd < 0) {
-		perror("open /dev/tty1");
-		return -1;
-	}
-
-	if (ioctl(fd, VT_OPENQRY, &nr) < 0) {
-		perror("ioctl VT_OPENQRY");
-		return -1;
-	}
-	close(fd);
-
-	sprintf(vtname, "/dev/tty%d", nr);
-
-	con_fd = open(vtname, O_RDWR | O_NDELAY);
-	if (con_fd < 0) {
-		perror("open tty");
-		return -1;
-	}
-
-	if (ioctl(con_fd, VT_GETSTATE, &vts) == 0)
-		last_vt = vts.v_active;
-
-	if (ioctl(con_fd, VT_ACTIVATE, nr) < 0) {
-		perror("VT_ACTIVATE");
-		close(con_fd);
-		return -1;
-	}
-
-	if (ioctl(con_fd, VT_WAITACTIVE, nr) < 0) {
-		perror("VT_WAITACTIVE");
-		close(con_fd);
-		return -1;
-	}
-
-	if (ioctl(con_fd, KDSETMODE, KD_GRAPHICS) < 0) {
-		perror("KDSETMODE");
-		close(con_fd);
-		return -1;
-	}
-
-	fb_fd = open("/dev/fb0", O_RDWR);
-	if (fb_fd == -1) {
-		perror("open /dev/fb");
-		return -1;
-	}
-
-	if (ioctl(fb_fd, FBIOGET_FSCREENINFO, &fix) < 0) {
-		perror("ioctl FBIOGET_FSCREENINFO");
-		close(fb_fd);
-		return -1;
-	}
-
-	if (ioctl(fb_fd, FBIOGET_VSCREENINFO, &var) < 0) {
-		perror("ioctl FBIOGET_VSCREENINFO");
-		close(fb_fd);
-		return -1;
-	}
-
-	cmap.start = 0;
-	cmap.len = 2;
-	cmap.red = col;
-	cmap.green = col;
-	cmap.blue = col;
-	cmap.transp = NULL;
-
-	col[0] = 0;
-	col[1] = 0xffff;
-
-	if (ioctl(fb_fd, FBIOGETCMAP, &cmap) < 0) {
-		perror("ioctl FBIOGETCMAP");
-		close(fb_fd);
-		return -1;
-	}
-
-	fbuffer = mmap(NULL, fix.smem_len, PROT_READ | PROT_WRITE, MAP_FILE | MAP_SHARED, fb_fd, 0);
-	if (fbuffer == (char *)-1) {
-		perror("mmap framebuffer");
-		close(fb_fd);
-		return -1;
-	}
-	return 0;
-}
-
-static void close_framebuffer(void)
-{
-	munmap(fbuffer, fix.smem_len);
-	close(fb_fd);
-
-	if (ioctl(con_fd, KDSETMODE, KD_TEXT) < 0)
-		perror("KDSETMODE");
-
-	if (last_vt >= 0)
-		if (ioctl(con_fd, VT_ACTIVATE, last_vt))
-			perror("VT_ACTIVATE");
-
-	close(con_fd);
-}
+typedef struct {
+	int x[5], xfb[5];
+	int y[5], yfb[5];
+	int a[7];
+} calibration;
 
 static void sig(int sig)
 {
@@ -144,20 +40,6 @@ static void sig(int sig)
 	printf("signal %d caught\n", sig);
 	fflush(stdout);
 	exit(1);
-}
-
-static void put_cross(int x, int y, int c)
-{
-	int off = y * fix.line_length + x * var.bits_per_pixel / 8;
-	int i;
-
-	for (i = 0; i < 50; i++) {
-		fbuffer[off + i * fix.line_length + 50] = c;
-		fbuffer[off + i * fix.line_length + 51] = c;
-	}
-
-	for (i = 0; i < 100; i++)
-		fbuffer[off + 25 * fix.line_length + i] = c;
 }
 
 static int getxy(struct tsdev *ts, int *x, int *y)
@@ -179,16 +61,106 @@ static int getxy(struct tsdev *ts, int *x, int *y)
 	}
 }
 
+int perform_calibration(calibration *cal) {
+	int j;
+	float n, x, y, x2, y2, xy, z, zx, zy;
+	float det, a, b, c, e, f, i;
+	float scaling = 65536.0;
+
+// Get sums for matrix
+	n = x = y = x2 = y2 = xy = 0;
+	for(j=0;j<5;j++) {
+		n += 1.0;
+		x += (float)cal->x[j];
+		y += (float)cal->y[j];
+		x2 += (float)(cal->x[j]*cal->x[j]);
+		y2 += (float)(cal->y[j]*cal->y[j]);
+		xy += (float)(cal->x[j]*cal->y[j]);
+	}
+
+// Get determinant of matrix -- check if determinant is too small
+	det = n*(x2*y2 - xy*xy) + x*(xy*y - x*y2) + y*(x*xy - y*x2);
+	if(det < 0.1 && det > -0.1) {
+		printf("ts_calibrate: determinant is too small -- %f\n",det);
+		return 0;
+	}
+
+// Get elements of inverse matrix
+	a = (x2*y2 - xy*xy)/det;
+	b = (xy*y - x*y2)/det;
+	c = (x*xy - y*x2)/det;
+	e = (n*y2 - y*y)/det;
+	f = (x*y - n*xy)/det;
+	i = (n*x2 - x*x)/det;
+
+// Get sums for x calibration
+	z = zx = zy = 0;
+	for(j=0;j<5;j++) {
+		z += (float)cal->xfb[j];
+		zx += (float)(cal->xfb[j]*cal->x[j]);
+		zy += (float)(cal->xfb[j]*cal->y[j]);
+	}
+
+// Now multiply out to get the calibration for framebuffer x coord
+	cal->a[0] = (int)((a*z + b*zx + c*zy)*(scaling));
+	cal->a[1] = (int)((b*z + e*zx + f*zy)*(scaling));
+	cal->a[2] = (int)((c*z + f*zx + i*zy)*(scaling));
+
+	printf("%f %f %f\n",(a*z + b*zx + c*zy),
+				(b*z + e*zx + f*zy),
+				(c*z + f*zx + i*zy));
+
+// Get sums for y calibration
+	z = zx = zy = 0;
+	for(j=0;j<5;j++) {
+		z += (float)cal->yfb[j];
+		zx += (float)(cal->yfb[j]*cal->x[j]);
+		zy += (float)(cal->yfb[j]*cal->y[j]);
+	}
+
+// Now multiply out to get the calibration for framebuffer y coord
+	cal->a[3] = (int)((a*z + b*zx + c*zy)*(scaling));
+	cal->a[4] = (int)((b*z + e*zx + f*zy)*(scaling));
+	cal->a[5] = (int)((c*z + f*zx + i*zy)*(scaling));
+
+	printf("%f %f %f\n",(a*z + b*zx + c*zy),
+				(b*z + e*zx + f*zy),
+				(c*z + f*zx + i*zy));
+
+// If we got here, we're OK, so assign scaling to a[6] and return
+	cal->a[6] = (int)scaling;
+	return 1;
+/*	
+// This code was here originally to just insert default values
+	for(j=0;j<7;j++) {
+		c->a[j]=0;
+	}
+	c->a[1] = c->a[5] = c->a[6] = 1;
+	return 1;
+*/
+
+}
+
 int main()
 {
 	struct tsdev *ts;
-	int fd, x[4], y[4];
+	int fd;
+	calibration cal;
+	int cal_fd;
+	char cal_buffer[256];
+
+	int i;
 
 	signal(SIGSEGV, sig);
 	signal(SIGINT, sig);
 	signal(SIGTERM, sig);
 
+#ifdef USE_INPUT_API
 	ts = ts_open("/dev/input/event0", 0);
+#else
+	ts = ts_open("/dev/touchscreen/ucb1x00", 0);
+#endif /* USE_INPUT_API */
+
 	if (!ts) {
 		perror("ts_open");
 		exit(1);
@@ -198,49 +170,90 @@ int main()
 		close_framebuffer();
 		exit(1);
 	}
-
-	memset(fbuffer, 0, fix.smem_len);
-
-	getxy(ts, 0, 0);
-	put_cross(0,0,0xff);
-	getxy(ts, &x[0], &y[0]);
-	put_cross(0,0,0);
-
-	printf("Top left : X = %4d Y = %4d\n", x[0], y[0]);
-
-	put_cross(var.xres - 50, 0, 0xff);
-	getxy(ts, &x[1], &y[1]);
-	put_cross(var.xres - 50, 0, 0);
-
-	printf("Top right: X = %4d Y = %4d\n", x[1], y[1]);
-
-	put_cross(var.xres - 50, var.yres - 50, 0xff);
-	getxy(ts, &x[2], &y[2]);
-	put_cross(var.xres - 50, var.yres - 50, 0);
-
-	printf("Bot right: X = %4d Y = %4d\n", x[2], y[2]);
-
-	put_cross(0, var.yres - 50, 0xff);
-	getxy(ts, &x[3], &y[3]);
-	put_cross(0, var.yres - 50, 0);
-
-	printf("Bot left : X = %4d Y = %4d\n", x[3], y[3]);
-
-	printf("X mult = %d div = %d\n",
-		var.xres - 50, (x[2] + x[1] - x[0] - x[3]) / 2);
-
-	printf("Y mult = %d div = %d\n",
-		var.yres - 50, (y[2] + y[3] - y[0] - y[1]) / 2);
-
-	while (1) {
-		struct ts_sample samp;
-
-		if (ts_read_raw(ts, &samp, 1) < 0) {
-			perror("ts_read");
-			exit(1);
-		}
-
-		printf("%ld.%06ld: %6d %6d %6d\n", samp.tv.tv_sec, samp.tv.tv_usec,
-			samp.x, samp.y, samp.pressure);
+	close_framebuffer();
+	if (open_framebuffer()) {
+		close_framebuffer();
+		exit(1);
 	}
+
+	setcolors(0x48ff48,0x880000);
+
+	put_string(xres/2,yres/4,"TSLIB calibration utility",1);
+	put_string(xres/2,yres/4 + 20,"Touch crosshair to calibrate",1);
+
+// Read a touchscreen event to clear the buffer
+	getxy(ts, 0, 0);
+
+// Now paint a crosshair on the upper left and start taking calibration
+// data
+	put_cross(50,50,1);
+	getxy(ts, &cal.x[0], &cal.y[0]);
+	put_cross(50,50,0);
+
+	cal.xfb[0] = 50;
+	cal.yfb[0] = 50;
+
+	printf("Top left : X = %4d Y = %4d\n", cal.x[0], cal.y[0]);
+
+	put_cross(xres - 50, 50, 1);
+	getxy(ts, &cal.x[1], &cal.y[1]);
+	put_cross(xres - 50, 50, 0);
+
+	cal.xfb[1] = xres-50;
+	cal.yfb[1] = 50;
+
+	printf("Top right: X = %4d Y = %4d\n", cal.x[1], cal.y[1]);
+
+	put_cross(xres - 50, yres - 50, 1);
+	getxy(ts, &cal.x[2], &cal.y[2]);
+	put_cross(xres - 50, yres - 50, 0);
+
+	cal.xfb[2] = xres-50;
+	cal.yfb[2] = yres-50;
+
+	printf("Bot right: X = %4d Y = %4d\n", cal.x[2], cal.y[2]);
+
+	put_cross(50, yres - 50, 1);
+	getxy(ts, &cal.x[3], &cal.y[3]);
+	put_cross(50, yres - 50, 0);
+
+	cal.xfb[3] = 50;
+	cal.yfb[3] = yres-50;
+
+	printf("Bot left : X = %4d Y = %4d\n", cal.x[3], cal.y[3]);
+
+	put_cross(xres/2, yres/2, 1);
+	getxy(ts, &cal.x[4], &cal.y[4]);
+	put_cross(xres/2, yres/2, 0);
+
+	cal.xfb[4] = xres/2;
+	cal.yfb[4] = yres/2;
+
+	printf("Middle: X = %4d Y = %4d\n", cal.x[4], cal.y[4]);
+
+	if(perform_calibration(&cal)) {
+		printf("Calibration constants: ");
+		for(i=0;i<7;i++) printf("%d ",cal.a[i]);
+		printf("\n");
+		cal_fd = open("/etc/pointercal",O_CREAT|O_RDWR);
+		sprintf(cal_buffer,"%d %d %d %d %d %d %d",cal.a[1],cal.a[2],cal.a[0],cal.a[4],cal.a[5],cal.a[3],cal.a[6]);
+		write(cal_fd,cal_buffer,strlen(cal_buffer)+1);
+		close(cal_fd);	
+	} else {
+		printf("Calibration failed.\n");
+	}
+
+//	while (1) {
+//		struct ts_sample samp;
+//
+//		if (ts_read_raw(ts, &samp, 1) < 0) {
+//			perror("ts_read");
+//			exit(1);
+//		}
+//
+//		printf("%ld.%06ld: %6d %6d %6d\n", samp.tv.tv_sec, samp.tv.tv_usec,
+//			samp.x, samp.y, samp.pressure);
+//	}
+	close_framebuffer();
+
 }

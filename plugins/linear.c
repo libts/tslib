@@ -6,12 +6,16 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: linear.c,v 1.2 2002/01/15 13:56:48 rmk Exp $
+ * $Id: linear.c,v 1.3 2002/06/17 17:21:42 dlowder Exp $
  *
  * Linearly scale touchscreen values
  */
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #include "tslib.h"
 #include "tslib-filter.h"
@@ -19,15 +23,14 @@
 struct tslib_linear {
 	struct tslib_module_info module;
 	int	swap_xy;
-	int	x_offset;
-	int	x_mult;
-	int	x_div;
-	int	y_offset;
-	int	y_mult;
-	int	y_div;
+
+// Linear scaling and offset parameters for pressure
 	int	p_offset;
 	int	p_mult;
 	int	p_div;
+
+// Linear scaling and offset parameters for x,y (can include rotation)
+	int	a[7];
 };
 
 static int
@@ -35,16 +38,24 @@ linear_read(struct tslib_module_info *info, struct ts_sample *samp, int nr)
 {
 	struct tslib_linear *lin = (struct tslib_linear *)info;
 	int ret;
+	int xtemp,ytemp;
 
 	ret = info->next->ops->read(info->next, samp, nr);
 	if (ret >= 0) {
 		int nr;
 
 		for (nr = 0; nr < ret; nr++, samp++) {
-			samp->x = ((samp->x + lin->x_offset) * lin->x_mult)
-					/ lin->x_div;
-			samp->y = ((samp->y + lin->y_offset) * lin->y_mult)
-					/ lin->y_div;
+#ifdef DEBUG
+			printf("BEFORE CALIB--------------------> %d %d %d\n",samp->x, samp->y, samp->pressure);
+#endif /*DEBUG*/
+			xtemp = samp->x; ytemp = samp->y;
+			samp->x = 	( lin->a[2] +
+					lin->a[0]*xtemp + 
+					lin->a[1]*ytemp ) / lin->a[6];
+			samp->y =	( lin->a[5] +
+					lin->a[3]*xtemp +
+					lin->a[4]*ytemp ) / lin->a[6];
+
 			samp->pressure = ((samp->pressure + lin->p_offset)
 						 * lin->p_mult) / lin->p_div;
 			if (lin->swap_xy) {
@@ -87,7 +98,14 @@ static const struct tslib_vars linear_vars[] =
 
 struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 {
+
 	struct tslib_linear *lin;
+	struct stat sbuf;
+	int pcal_fd;
+	int a[7];
+	char pcalbuf[200];
+	int index;
+	char *tokptr;
 
 	lin = malloc(sizeof(struct tslib_linear));
 	if (lin == NULL)
@@ -95,18 +113,42 @@ struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 
 	lin->module.ops = &linear_ops;
 
-	lin->x_offset = -908;
-	lin->x_mult   = 270;
-	lin->x_div    = -684;
-
-	lin->y_offset = -918;
-	lin->y_mult   = 190;
-	lin->y_div    = -664;
-
+// Use default values that leave ts numbers unchanged after transform
+	lin->a[0] = 0;
+	lin->a[1] = 1;
+	lin->a[2] = 0;
+	lin->a[3] = 0;
+	lin->a[4] = 0;
+	lin->a[5] = 1;
+	lin->a[6] = 1;
 	lin->p_offset = 0;
-	lin->p_mult   = 0x10000;
-	lin->p_div    = 0x10000;
+	lin->p_mult   = 1;
+	lin->p_div    = 1;
 
+	/*
+	 * Check /etc/pointercal
+	 */
+	if(stat("/etc/pointercal",&sbuf)==0) {
+		pcal_fd = open("/etc/pointercal",O_RDONLY);
+		read(pcal_fd,pcalbuf,200);
+		lin->a[0] = atoi(strtok(pcalbuf," "));
+		index=1;
+		while(index<7) {
+			tokptr = strtok(NULL," ");
+			if(*tokptr!='\0') {
+				lin->a[index] = atoi(tokptr);
+				index++;
+			}
+		}
+#ifdef DEBUG
+		printf("Linear calibration constants: ");
+		for(index=0;index<7;index++) printf("%d ",lin->a[index]);
+		printf("\n");
+#endif /*DEBUG*/
+		close(pcal_fd);
+	}
+		
+		
 	/*
 	 * Parse the parameters.
 	 */

@@ -1,3 +1,5 @@
+#ifndef _TSLIB_FILTER_H_
+#define _TSLIB_FILTER_H_
 /*
  *  tslib/src/tslib-filter.h
  *
@@ -5,10 +7,14 @@
  *
  * This file is placed under the LGPL.
  *
- * $Id: tslib-filter.h,v 1.1.1.1 2001/12/22 21:12:06 rmk Exp $
+ * $Id: tslib-filter.h,v 1.2 2002/06/17 17:21:43 dlowder Exp $
  *
  * Internal touch screen library definitions.
  */
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 struct tslib_module_info;
 struct tsdev;
 
@@ -33,3 +39,8 @@ struct tslib_module_info {
 extern int tslib_parse_vars(struct tslib_module_info *,
 			    const struct tslib_vars *, int,
 			    const char *);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+#endif /* _TSLIB_FILTER_H_ */

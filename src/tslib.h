@@ -1,3 +1,5 @@
+#ifndef _TSLIB_H_
+#define _TSLIB_H_
 /*
  *  tslib/src/tslib.h
  *
@@ -5,10 +7,13 @@
  *
  * This file is placed under the LGPL.
  *
- * $Id: tslib.h,v 1.1.1.1 2001/12/22 21:12:06 rmk Exp $
+ * $Id: tslib.h,v 1.2 2002/06/17 17:21:43 dlowder Exp $
  *
  * Touch screen library interface definitions.
  */
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 #include <stdarg.h>
 #include <sys/time.h>
 
@@ -61,3 +66,8 @@ int ts_read(struct tsdev *, struct ts_sample *, int);
  * Returns a raw, unscaled sample from the touchscreen.
  */
 int ts_read_raw(struct tsdev *, struct ts_sample *, int);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+#endif /* _TSLIB_H_ */
