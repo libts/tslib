@@ -1,3 +1,6 @@
+2003-03-03 Douglas Lowder <dlowder@earthlink.net>
+- Fixed segfault bug in src/ts_parse_args.c
+
 2002-11-08  Douglas Lowder <dlowder@earthlink.net>
 - Added patch from Scott Anderson to improve tests/ts_calibrate.c by taking
   median of multiple samples for each point.

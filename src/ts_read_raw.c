@@ -10,7 +10,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_read_raw.c,v 1.7 2002/11/08 23:28:55 dlowder Exp $
+ * $Id: ts_read_raw.c,v 1.8 2003/03/04 17:09:47 dlowder Exp $
  *
  * Read raw pressure, x, y, and timestamp from a touchscreen device.
  */
@@ -47,6 +47,13 @@ struct mk712_ts_event { /* Used in the Hitachi Webpad */
 	unsigned int y;
 	unsigned int reserved;
 };
+struct arctic2_ts_event { /* Used in the IBM Arctic II */
+	signed short pressure;
+	signed int x;
+	signed int y;
+	int millisecs;
+	int flags;
+};
 #endif /* USE_INPUT_API */
 
 #include "tslib-private.h"
@@ -59,6 +66,7 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 	struct ts_event *evt;
 	struct h3600_ts_event *hevt;
 	struct mk712_ts_event *mevt;
+	struct arctic2_ts_event *aevt;
 #endif /* USE_INPUT_API */
 	int ret;
 	int total = 0;
@@ -164,7 +172,7 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 	if( strcmp(tseventtype,"H3600") == 0) { /* iPAQ style h3600 touchscreen events */
 		hevt = alloca(sizeof(*hevt) * nr);
 		ret = read(ts->fd, hevt, sizeof(*hevt) * nr);
-		if(ret >= 0) {
+		if(ret > 0) {
 			int nr = ret / sizeof(*hevt);
 			while(ret >= sizeof(*hevt)) {
 				samp->x = hevt->x;
@@ -178,11 +186,13 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 				hevt++;
 				ret -= sizeof(*hevt);
 			}
+		} else {
+			return -1;
 		}
 	} else if( strcmp(tseventtype,"MK712") == 0) { /* Hitachi Webpad events */
 		mevt = alloca(sizeof(*mevt) * nr);
 		ret = read(ts->fd, mevt, sizeof(*mevt) * nr);
-		if(ret >= 0) {
+		if(ret > 0) {
 			int nr = ret / sizeof(*mevt);
 			while(ret >= sizeof(*mevt)) {
 				samp->x = (short)mevt->x;
@@ -199,11 +209,35 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 				mevt++;
 				ret -= sizeof(*mevt);
 			}
+		} else {
+			return -1;
 		}
+
+	} else if( strcmp(tseventtype,"ARCTIC2") == 0) { /* IBM Arctic II events */
+		aevt = alloca(sizeof(*aevt) * nr);
+		ret = read(ts->fd, aevt, sizeof(*aevt) * nr);
+		if(ret > 0) {
+			int nr = ret / sizeof(*aevt);
+			while(ret >= sizeof(*aevt)) {
+				samp->x = (short)aevt->x;
+				samp->y = (short)aevt->y;
+				samp->pressure = aevt->pressure;
+#ifdef DEBUG
+        fprintf(stderr,"RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
+#endif /*DEBUG*/
+				gettimeofday(&samp->tv,NULL);
+				samp++;
+				aevt++;
+				ret -= sizeof(*aevt);
+			}
+		} else {
+			return -1;
+		}
+
 	} else { /* Use normal UCB1x00 type events */
 		evt = alloca(sizeof(*evt) * nr);
 		ret = read(ts->fd, evt, sizeof(*evt) * nr);
-		if(ret >= 0) {
+		if(ret > 0) {
 			int nr = ret / sizeof(*evt);
 			while(ret >= sizeof(*evt)) {
 				samp->x = evt->x;
@@ -218,6 +252,8 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 				evt++;
 				ret -= sizeof(*evt);
 			}
+		} else {
+			return -1;
 		}
 	}
 	ret = nr;

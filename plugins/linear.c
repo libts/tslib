@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: linear.c,v 1.6 2002/11/08 23:28:55 dlowder Exp $
+ * $Id: linear.c,v 1.7 2003/03/04 17:09:47 dlowder Exp $
  *
  * Linearly scale touchscreen values
  */
@@ -60,11 +60,11 @@ linear_read(struct tslib_module_info *info, struct ts_sample *samp, int nr)
 
 			samp->pressure = ((samp->pressure + lin->p_offset)
 						 * lin->p_mult) / lin->p_div;
-			if (lin->swap_xy) {
-				int tmp = samp->x;
-				samp->x = samp->y;
-				samp->y = tmp;
-			}
+	//		if (lin->swap_xy) {
+	//			int tmp = samp->x;
+	//			samp->x = samp->y;
+	//			samp->y = tmp;
+	//		}
 		}
 	}
 

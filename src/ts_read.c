@@ -6,13 +6,19 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_read.c,v 1.2 2002/11/08 23:28:55 dlowder Exp $
+ * $Id: ts_read.c,v 1.3 2003/03/04 17:09:47 dlowder Exp $
  *
  * Read raw pressure, x, y, and timestamp from a touchscreen device.
  */
 #include "config.h"
 
 #include "tslib-private.h"
+
+#ifdef DEBUG
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#endif
 
 /* This array is used to prevent segfaults and memory overwrites
  * that can occur if multiple events are returned from ts_read_raw
@@ -33,6 +39,9 @@ int ts_read(struct tsdev *ts, struct ts_sample *samp, int nr)
 //	for(i=0;i<nr;i++) {
 //		samp[i] = ts_read_private_samples[i];
 //	}
+#ifdef DEBUG
+	fprintf(stderr,"TS_READ----> x = %d, y = %d, pressure = %d\n", samp->x, samp->y, samp->pressure);
+#endif
 	return result;
 
 }
