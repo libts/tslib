@@ -22,7 +22,7 @@ static int corgi_read(struct tslib_module_info *inf, struct ts_sample *samp, int
 	ret = read(ts->fd, corgi_evt, sizeof(*corgi_evt) * nr);
 	if(ret > 0) {
 		int nr = ret / sizeof(*corgi_evt);
-		while(ret >= sizeof(*corgi_evt)) {
+		while(ret >= (int)sizeof(*corgi_evt)) {
 			samp->x = corgi_evt->x;
 			samp->y = corgi_evt->y;
 			samp->pressure = corgi_evt->pressure;

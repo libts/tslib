@@ -1,3 +1,8 @@
+2004-10-19 Chris Larson <kergoth@handhelds.org>
+
+	* Files all over the tree: Fixed up a bunch of compile warnings,
+	  at least some of which actually did cause breakage for the user.
+
 2004-07-08 Chris Larson <kergoth@handhelds.org>
 
 	* plugins/input-raw.c: As EV_SYN can be checked for at runtime rather

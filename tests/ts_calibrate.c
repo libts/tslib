@@ -6,7 +6,7 @@
  * This file is placed under the GPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_calibrate.c,v 1.7 2004/07/21 19:12:59 dlowder Exp $
+ * $Id: ts_calibrate.c,v 1.8 2004/10/19 22:01:27 dlowder Exp $
  *
  * Basic test program for touchscreen library.
  */
@@ -170,7 +170,7 @@ int main()
 	char cal_buffer[256];
 	char *tsdevice = NULL;
 	char *calfile = NULL;
-	int i;
+	unsigned int i;
 
 	signal(SIGSEGV, sig);
 	signal(SIGINT, sig);

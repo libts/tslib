@@ -10,7 +10,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: input-raw.c,v 1.3 2004/10/18 22:10:30 dlowder Exp $
+ * $Id: input-raw.c,v 1.4 2004/10/19 22:01:27 dlowder Exp $
  *
  * Read raw pressure, x, y, and timestamp from a touchscreen device.
  */
@@ -86,7 +86,7 @@ static int ts_input_read(struct tslib_module_info *inf,
 	if (i->using_syn) {
 		while (total < nr) {
 			ret = read(ts->fd, &ev, sizeof(struct input_event));
-			if (ret < sizeof(struct input_event)) {
+			if (ret < (int)sizeof(struct input_event)) {
 				total = -1;
 				break;
 			}
@@ -150,7 +150,7 @@ static int ts_input_read(struct tslib_module_info *inf,
 				break;
 			}
 	
-			if (ret < sizeof(struct input_event)) {
+			if (ret < (int)sizeof(struct input_event)) {
 				/* short read
 				 * restart read to get the rest of the event
 				 */

@@ -23,7 +23,7 @@ static int arctic2_read(struct tslib_module_info *inf, struct ts_sample *samp, i
 	ret = read(ts->fd, arctic2_evt, sizeof(*arctic2_evt) * nr);
 	if(ret > 0) {
 		int nr = ret / sizeof(*arctic2_evt);
-		while(ret >= sizeof(*arctic2_evt)) {
+		while(ret >= (int)sizeof(*arctic2_evt)) {
 			samp->x = (short)arctic2_evt->x;
 			samp->y = (short)arctic2_evt->y;
 			samp->pressure = arctic2_evt->pressure;

@@ -25,8 +25,8 @@
 
 struct tslib_pthres {
 	struct tslib_module_info module;
-	int	pmin;
-	int	pmax;
+	unsigned int	pmin;
+	unsigned int	pmax;
 };
 
 static int

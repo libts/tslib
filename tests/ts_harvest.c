@@ -21,6 +21,7 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/time.h>
+#include <unistd.h>
 
 #include "tslib.h"
 #include "fbutils.h"
@@ -63,7 +64,8 @@ static void ts_harvest_put_cross (int x, int y, unsigned colidx)
 int main()
 {
 	struct tsdev *ts;
-	int i, x, y, x_incr, y_incr, x_ts, y_ts, xres_half, yres_half, x_new, y_new;
+	int x, y, x_incr, y_incr, x_ts, y_ts, xres_half, yres_half, x_new, y_new;
+	unsigned int i;
 	char *tsdevice=NULL;
 	struct ts_sample samp;
 	FILE *output_fid;
@@ -200,4 +202,5 @@ int main()
 	getxy (ts, &x_ts, &y_ts); 
 	refresh_screen ();
 	close_framebuffer();
+	return 0;
 }

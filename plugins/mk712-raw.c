@@ -22,7 +22,7 @@ static int mk712_read(struct tslib_module_info *inf, struct ts_sample *samp, int
 	ret = read(ts->fd, mk712_evt, sizeof(*mk712_evt) * nr);
 	if(ret > 0) {
 		int nr = ret / sizeof(*mk712_evt);
-		while(ret >= sizeof(*mk712_evt)) {
+		while(ret >= (int)sizeof(*mk712_evt)) {
 			samp->x = (short)mk712_evt->x;
 			samp->y = (short)mk712_evt->y;
 			if(mk712_evt->header==0)

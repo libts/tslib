@@ -22,7 +22,7 @@ static int h3600_read(struct tslib_module_info *inf, struct ts_sample *samp, int
 	ret = read(ts->fd, h3600_evt, sizeof(*h3600_evt) * nr);
 	if(ret > 0) {
 		int nr = ret / sizeof(*h3600_evt);
-		while(ret >= sizeof(*h3600_evt)) {
+		while(ret >= (int)sizeof(*h3600_evt)) {
 			samp->x = h3600_evt->x;
 			samp->y = h3600_evt->y;
 			samp->pressure = h3600_evt->pressure;

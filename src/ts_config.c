@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_config.c,v 1.4 2004/07/21 19:12:59 dlowder Exp $
+ * $Id: ts_config.c,v 1.5 2004/10/19 22:01:27 dlowder Exp $
  *
  * Read the configuration and load the appropriate drivers.
  */
@@ -28,7 +28,7 @@ int ts_config(struct tsdev *ts)
 	char buf[BUF_SIZE], *p;
 	FILE *f;
 	int line = 0;
-	int ret;
+	int ret = 0;
 
 	char *conffile;
 
@@ -91,7 +91,7 @@ int ts_config(struct tsdev *ts)
 
 	if (ts->list_raw == NULL) {
 		ts_error("No raw modules loaded.\n");
-		return -1;
+		ret = -1;
 	}
 
 	fclose(f);

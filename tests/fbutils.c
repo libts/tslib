@@ -42,7 +42,7 @@ static unsigned char **line_addr;
 static int fb_fd=0;
 static int bytes_per_pixel;
 static unsigned colormap [256];
-int xres, yres;
+__u32 xres, yres;
 
 static char *defaultfbdevice = "/dev/fb0";
 static char *defaultconsoledevice = "/dev/tty";
@@ -136,7 +136,7 @@ int open_framebuffer(void)
 	memset(fbuffer,0,fix.smem_len);
 
 	bytes_per_pixel = (var.bits_per_pixel + 7) / 8;
-	line_addr = malloc (sizeof (unsigned) * var.yres_virtual);
+	line_addr = malloc (sizeof (__u32) * var.yres_virtual);
 	addr = 0;
 	for (y = 0; y < var.yres_virtual; y++, addr += fix.line_length)
 		line_addr [y] = fbuffer + addr;
@@ -288,8 +288,8 @@ void pixel (int x, int y, unsigned colidx)
 	unsigned xormode;
 	union multiptr loc;
 
-	if ((x < 0) || (x >= var.xres_virtual) ||
-	    (y < 0) || (y >= var.yres_virtual))
+	if ((x < 0) || ((__u32)x >= var.xres_virtual) ||
+	    (y < 0) || ((__u32)y >= var.yres_virtual))
 		return;
 
 	xormode = colidx & XORMODE;
@@ -360,10 +360,10 @@ void fillrect (int x1, int y1, int x2, int y2, unsigned colidx)
 	/* Clipping and sanity checking */
 	if (x1 > x2) { tmp = x1; x1 = x2; x2 = tmp; }
 	if (y1 > y2) { tmp = y1; y1 = y2; y2 = tmp; }
-	if (x1 < 0) x1 = 0; if (x1 >= xres) x1 = xres - 1;
-	if (x2 < 0) x2 = 0; if (x2 >= xres) x2 = xres - 1;
-	if (y1 < 0) y1 = 0; if (y1 >= yres) y1 = yres - 1;
-	if (y2 < 0) y2 = 0; if (y2 >= yres) y2 = yres - 1;
+	if (x1 < 0) x1 = 0; if ((__u32)x1 >= xres) x1 = xres - 1;
+	if (x2 < 0) x2 = 0; if ((__u32)x2 >= xres) x2 = xres - 1;
+	if (y1 < 0) y1 = 0; if ((__u32)y1 >= yres) y1 = yres - 1;
+	if (y2 < 0) y2 = 0; if ((__u32)y2 >= yres) y2 = yres - 1;
 
 	if ((x1 > x2) || (y1 > y2))
 		return;

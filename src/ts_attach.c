@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_attach.c,v 1.2 2004/07/21 19:12:59 dlowder Exp $
+ * $Id: ts_attach.c,v 1.3 2004/10/19 22:01:27 dlowder Exp $
  *
  * Attach a filter to a touchscreen device.
  */
@@ -42,12 +42,10 @@ int __ts_attach_raw(struct tsdev *ts, struct tslib_module_info *info)
 		return 0;
 	}
 
-	next = ts->list;
-	
-	while (next != NULL && next != prev_list)
-		prev = next, next = prev->next;
+	for(next = ts->list, prev=next;
+	    next != NULL && next != prev_list;
+	    next = prev->next, prev = next);
 
 	prev->next = info;
-
 	return 0;
 }

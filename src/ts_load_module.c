@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_load_module.c,v 1.3 2004/07/21 19:12:59 dlowder Exp $
+ * $Id: ts_load_module.c,v 1.4 2004/10/19 22:01:27 dlowder Exp $
  *
  * Close a touchscreen device.
  */
@@ -79,10 +79,10 @@ int __ts_load_module(struct tsdev *ts, const char *module, const char *params, i
 
 int ts_load_module(struct tsdev *ts, const char *module, const char *params)
 {
-	__ts_load_module(ts, module, params, 0);
+	return __ts_load_module(ts, module, params, 0);
 }
 
 int ts_load_module_raw(struct tsdev *ts, const char *module, const char *params)
 {
-	__ts_load_module(ts, module, params, 1);
+	return __ts_load_module(ts, module, params, 1);
 }

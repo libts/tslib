@@ -6,7 +6,7 @@
  * This file is placed under the GPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_test.c,v 1.5 2004/07/21 19:12:59 dlowder Exp $
+ * $Id: ts_test.c,v 1.6 2004/10/19 22:01:27 dlowder Exp $
  *
  * Basic test program for touchscreen library.
  */
@@ -109,8 +109,9 @@ static void refresh_screen ()
 int main()
 {
 	struct tsdev *ts;
-	int i, x, y;
-	int mode = 0;
+	int x, y;
+	unsigned int i;
+	unsigned int mode = 0;
 
 	char *tsdevice=NULL;
 

@@ -22,7 +22,7 @@ static int collie_read(struct tslib_module_info *inf, struct ts_sample *samp, in
 	ret = read(ts->fd, collie_evt, sizeof(*collie_evt) * nr);
 	if(ret > 0) {
 		int nr = ret / sizeof(*collie_evt);
-		while(ret >= sizeof(*collie_evt)) {
+		while(ret >= (int)sizeof(*collie_evt)) {
 			samp->x = collie_evt->x;
 			samp->y = collie_evt->y;
 			samp->pressure = collie_evt->pressure;

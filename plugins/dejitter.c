@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: dejitter.c,v 1.7 2004/07/21 19:12:58 dlowder Exp $
+ * $Id: dejitter.c,v 1.8 2004/10/19 22:01:27 dlowder Exp $
  *
  * Problem: some touchscreens read the X/Y values from ADC with a
  * great level of noise in their lowest bits. This produces "jitter"
@@ -58,17 +58,17 @@ static const unsigned char weight [NR_SAMPHISTLEN - 1][NR_SAMPHISTLEN + 1] =
 struct ts_hist {
 	int x;
 	int y;
-	int p;
+	unsigned int p;
 };
 
 struct tslib_dejitter {
 	struct tslib_module_info module;
-	unsigned int delta;
-	unsigned int x;
-	unsigned int y;
-	unsigned int down;
-	unsigned int nr;
-	unsigned int head;
+	int delta;
+	int x;
+	int y;
+	int down;
+	int nr;
+	int head;
 	struct ts_hist hist[NR_SAMPHISTLEN];
 };
 
@@ -81,7 +81,8 @@ static void average (struct tslib_dejitter *djt, struct ts_sample *samp)
 {
 	const unsigned char *w;
 	int sn = djt->head;
-	int i, x = 0, y = 0, p = 0;
+	int i, x = 0, y = 0;
+	unsigned int p = 0;
 
         w = weight [djt->nr - 2];
 

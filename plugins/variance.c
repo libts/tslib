@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: variance.c,v 1.4 2004/07/21 19:12:59 dlowder Exp $
+ * $Id: variance.c,v 1.5 2004/10/19 22:01:27 dlowder Exp $
  *
  * Variance filter for touchscreen values.
  *
@@ -33,7 +33,7 @@
 
 struct tslib_variance {
 	struct tslib_module_info module;
-	unsigned int delta;
+	int delta;
         struct ts_sample last;
         struct ts_sample noise;
 	unsigned int flags;
