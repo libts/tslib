@@ -1,3 +1,7 @@
+2003-03-04 Douglas Lowder <dlowder@earthlink.net>
+- Added support for COLLIE and CORGI event types (thanks to Chris Larson
+  of the OpenZaurus project)
+
 2003-03-03 Douglas Lowder <dlowder@earthlink.net>
 - Fixed segfault bug in src/ts_parse_args.c
 

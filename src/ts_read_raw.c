@@ -10,7 +10,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_read_raw.c,v 1.8 2003/03/04 17:09:47 dlowder Exp $
+ * $Id: ts_read_raw.c,v 1.9 2003/03/05 22:56:37 dlowder Exp $
  *
  * Read raw pressure, x, y, and timestamp from a touchscreen device.
  */
@@ -54,6 +54,18 @@ struct arctic2_ts_event { /* Used in the IBM Arctic II */
 	int millisecs;
 	int flags;
 };
+struct collie_ts_event { /* Used in the Sharp Zaurus SL-5000d and SL-5500 */
+	long y;
+	long x;
+	long pressure;
+	long long millisecs;
+};
+struct corgi_ts_event { /* Used in the Sharp Zaurus SL-C700 */
+	short pressure;
+	short x;
+	short y;
+	short millisecs;
+};
 #endif /* USE_INPUT_API */
 
 #include "tslib-private.h"
@@ -67,6 +79,8 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 	struct h3600_ts_event *hevt;
 	struct mk712_ts_event *mevt;
 	struct arctic2_ts_event *aevt;
+	struct collie_ts_event *collie_evt;
+	struct corgi_ts_event *corgi_evt;
 #endif /* USE_INPUT_API */
 	int ret;
 	int total = 0;
@@ -229,6 +243,50 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 				samp++;
 				aevt++;
 				ret -= sizeof(*aevt);
+			}
+		} else {
+			return -1;
+		}
+
+	} else if( strcmp(tseventtype,"COLLIE") == 0) { /* Sharp Zaurus SL-5000d/5500 events */
+		collie_evt = alloca(sizeof(*collie_evt) * nr);
+		ret = read(ts->fd, collie_evt, sizeof(*collie_evt) * nr);
+		if(ret > 0) {
+			int nr = ret / sizeof(*collie_evt);
+			while(ret >= sizeof(*collie_evt)) {
+				samp->x = collie_evt->x;
+				samp->y = collie_evt->y;
+				samp->pressure = collie_evt->pressure;
+#ifdef DEBUG
+        fprintf(stderr,"RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
+#endif /*DEBUG*/
+				samp->tv.tv_usec = collie_evt->millisecs % 1000;
+				samp->tv.tv_sec = collie_evt->millisecs / 1000;
+				samp++;
+				collie_evt++;
+				ret -= sizeof(*collie_evt);
+			}
+		} else {
+			return -1;
+		}
+
+	} else if( strcmp(tseventtype,"CORGI") == 0) { /* Sharp Zaurus SL-C700 events */
+		corgi_evt = alloca(sizeof(*corgi_evt) * nr);
+		ret = read(ts->fd, corgi_evt, sizeof(*corgi_evt) * nr);
+		if(ret > 0) {
+			int nr = ret / sizeof(*corgi_evt);
+			while(ret >= sizeof(*corgi_evt)) {
+				samp->x = corgi_evt->x;
+				samp->y = corgi_evt->y;
+				samp->pressure = corgi_evt->pressure;
+#ifdef DEBUG
+        fprintf(stderr,"RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
+#endif /*DEBUG*/
+				samp->tv.tv_usec = corgi_evt->millisecs % 1000;
+				samp->tv.tv_sec = corgi_evt->millisecs / 1000;
+				samp++;
+				corgi_evt++;
+				ret -= sizeof(*corgi_evt);
 			}
 		} else {
 			return -1;
