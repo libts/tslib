@@ -1,60 +1,125 @@
 /*
  *  tslib/src/ts_read_raw.c
  *
+ *  Original version:
  *  Copyright (C) 2001 Russell King.
+ *
+ *  Rewritten for the Linux input device API:
+ *  Copyright (C) 2002 Nicolas Pitre
  *
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_read_raw.c,v 1.1.1.1 2001/12/22 21:12:06 rmk Exp $
+ * $Id: ts_read_raw.c,v 1.2 2002/05/20 22:10:00 nico Exp $
  *
  * Read raw pressure, x, y, and timestamp from a touchscreen device.
  */
 #include "config.h"
 
-#ifdef HAVE_ALLOCA_H
-#include <alloca.h>
-#endif
 #include <stdlib.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <sys/time.h>
+#include <sys/types.h>
+
+#include <linux/input.h>
 
 #include "tslib-private.h"
 
-struct ts_event {
-	unsigned short	pressure;
-	unsigned short	x;
-	unsigned short	y;
-	unsigned short	pad;
-	struct timeval	stamp;
-};
-
 int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 {
-	struct ts_event *evt;
+	struct input_event ev;
 	int ret;
+	int total = 0;
 
-	evt = alloca(sizeof(*evt) * nr);
+	/* warning: maybe those static vars should be part of the tsdev struct? */
+	static int curr_x = 0, curr_y = 0, curr_p = 0;
+	static int got_curr_x = 0, got_curr_y = 0;
+	int got_curr_p = 0;
+	int next_x, next_y;
+	int got_next_x = 0, got_next_y = 0;
+	int got_tstamp = 0;
 
-	ret = read(ts->fd, evt, sizeof(*evt) * nr);
+	while (total < nr) {
+		ret = read(ts->fd, &ev, sizeof(struct input_event));
+		if (ret < sizeof(struct input_event)) break;
 
-	if (ret >= 0) {
-		int nr = ret / sizeof(*evt);
-		while (ret >= sizeof(*evt)) {
-			samp->x = evt->x;
-			samp->y = evt->y;
-			samp->pressure = evt->pressure;
-			samp->tv.tv_usec = evt->stamp.tv_usec;
-			samp->tv.tv_sec = evt->stamp.tv_sec;
-			samp++;
-			evt++;
-			ret -= sizeof(*evt);
+		/*
+		 * We must filter events here.  We need to look for
+		 * a set of input events that will correspond to a
+		 * complete ts event.  Also need to be aware that
+		 * repeated input events are filtered out by the kernel.
+		 * 
+		 * We assume the normal sequence is: 
+		 * ABS_X -> ABS_Y -> ABS_PRESSURE
+		 * If that sequence goes backward then we got a different
+		 * ts event.  If some are missing then they didn't change.
+		 */
+		if (ev.type == EV_ABS) switch (ev.code) {
+		case ABS_X:
+			if (!got_curr_x && !got_curr_y) {
+				got_curr_x = 1;
+				curr_x = ev.value;
+			} else {
+				got_next_x = 1;
+				next_x = ev.value;
+			}
+			break;
+		case ABS_Y:
+			if (!got_curr_y) {
+				got_curr_y = 1;
+				curr_y = ev.value;
+			} else {
+				got_next_y = 1;
+				next_y = ev.value;
+			}
+			break;
+		case ABS_PRESSURE:
+			got_curr_p = 1;
+			curr_p = ev.value;
+			break;
 		}
-		ret = nr;
+
+		/* go back if we just got irrelevant events so far */
+		if (!got_curr_x && !got_curr_y && !got_curr_p) continue;
+
+		/* time stamp with the first valid event only */
+		if (!got_tstamp) {
+			got_tstamp = 1;
+			samp->tv = ev.time;
+		}
+
+		if ( (!got_curr_x || !got_curr_y) && !got_curr_p &&
+		     !got_next_x && !got_next_y ) {
+			/*
+			 * The current event is not complete yet.
+			 * Give the kernel a chance to feed us more.
+			 */
+			struct timeval tv = {0, 0};
+			fd_set fdset;
+			FD_ZERO(&fdset);
+			FD_SET(ts->fd, &fdset);
+			ret = select(ts->fd+1, &fdset, NULL, NULL, &tv);
+		       	if (ret == 1) continue;
+			if (ret == -1) break;
+		}
+
+		/* We consider having a complete ts event */
+		samp->x = curr_x;
+		samp->y = curr_y;
+		samp->pressure = curr_p;
+		samp++;
+		total++;
+
+		/* get ready for next event */
+		if (got_next_x) curr_x = next_x; else got_curr_x = 0;
+		if (got_next_y) curr_y = next_y; else got_curr_y = 0;
+		got_next_x = got_next_y = got_tstamp = 0;
 	}
 
+	if (ret) ret = -1;
+	if (total) ret = total;
 	return ret;
 }
 

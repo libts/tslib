@@ -6,7 +6,7 @@
  * This file is placed under the GPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_test.c,v 1.1.1.1 2001/12/22 21:12:06 rmk Exp $
+ * $Id: ts_test.c,v 1.2 2002/05/20 22:10:00 nico Exp $
  *
  * Basic test program for touchscreen library.
  */
@@ -199,7 +199,7 @@ int main()
 	signal(SIGINT, sig);
 	signal(SIGTERM, sig);
 
-	ts = ts_open("/dev/touchscreen/ucb1x00", 0);
+	ts = ts_open("/dev/input/event0", 0);
 	if (!ts) {
 		perror("ts_open");
 		exit(1);
