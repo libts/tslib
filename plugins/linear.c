@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: linear.c,v 1.9 2004/07/21 19:12:59 dlowder Exp $
+ * $Id: linear.c,v 1.10 2005/02/26 01:47:23 kergoth Exp $
  *
  * Linearly scale touchscreen values
  */
@@ -98,7 +98,7 @@ static const struct tslib_vars linear_vars[] =
 
 #define NR_VARS (sizeof(linear_vars) / sizeof(linear_vars[0]))
 
-struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 {
 
 	struct tslib_linear *lin;

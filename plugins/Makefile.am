@@ -6,11 +6,11 @@
 # This file is placed under the LGPL.  Please see the file
 # COPYING for more details.
 #
-# $Id: Makefile.am,v 1.4 2004/07/21 19:12:58 dlowder Exp $
+# $Id: Makefile.am,v 1.5 2005/02/26 01:47:22 kergoth Exp $
 #
 
-AM_CFLAGS		= $(DEBUGFLAGS)
-AM_LDFLAGS		= -rpath $(PLUGIN_DIR)
+AM_CFLAGS		= $(DEBUGFLAGS) $(LIBFLAGS)
+LDADD		= -rpath $(PLUGIN_DIR)
 INCLUDES		= -I$(top_srcdir)/src
   
 #LTVSN			= -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \

@@ -1,5 +1,9 @@
 #!/bin/sh
-# $Id: autogen.sh,v 1.2 2002/08/29 20:40:09 dlowder Exp $
+# $Id: autogen.sh,v 1.3 2005/02/26 01:47:22 kergoth Exp $
+
+autoreconf -f -i -I `pwd`/m4
+exit $?
+
 echo -n "Libtoolize..."
 libtoolize --force --copy
 echo "Done."

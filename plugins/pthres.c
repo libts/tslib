@@ -131,7 +131,7 @@ static const struct tslib_vars pthres_vars[] =
 
 #define NR_VARS (sizeof(pthres_vars) / sizeof(pthres_vars[0]))
 
-struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 {
 
 	struct tslib_pthres *p;

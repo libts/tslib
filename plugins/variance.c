@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: variance.c,v 1.5 2004/10/19 22:01:27 dlowder Exp $
+ * $Id: variance.c,v 1.6 2005/02/26 01:47:23 kergoth Exp $
  *
  * Variance filter for touchscreen values.
  *
@@ -161,7 +161,7 @@ static const struct tslib_vars variance_vars[] =
 
 #define NR_VARS (sizeof(variance_vars) / sizeof(variance_vars[0]))
 
-struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 {
 	struct tslib_variance *var;
 

@@ -6,8 +6,11 @@
 # This file is placed under the LGPL.  Please see the file
 # COPYING for more details.
 #
-# $Id: Makefile.am,v 1.1.1.1 2001/12/22 21:12:06 rmk Exp $
+# $Id: Makefile.am,v 1.2 2005/02/26 01:47:22 kergoth Exp $
 #
 
 SUBDIRS		= etc src plugins tests
 EXTRA_DIST	= autogen.sh
+
+ACLOCAL_AMFLAGS = -I m4/internal -I m4/external
+AUTOMAKE_OPTIONS = 1.6

@@ -10,7 +10,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: input-raw.c,v 1.4 2004/10/19 22:01:27 dlowder Exp $
+ * $Id: input-raw.c,v 1.5 2005/02/26 01:47:23 kergoth Exp $
  *
  * Read raw pressure, x, y, and timestamp from a touchscreen device.
  */
@@ -231,7 +231,7 @@ static const struct tslib_ops __ts_input_ops = {
 	.fini	= ts_input_fini,
 };
 
-struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 {
 	struct tslib_input *i;
 

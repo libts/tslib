@@ -1,17 +1,21 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.59)
+AC_PREREQ(2.57)
 AC_INIT(libts, 0.0.1, dlowder@earthlink.net)
 # AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE(dist-bzip2)
 AC_CONFIG_SRCDIR([src/ts_close.c])
-AC_CONFIG_HEADER(config.h)
+AM_CONFIG_HEADER(config.h)
+
+# Set our default flags variables
+TS_DEFAULT_FLAGS
 
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_CPP
+TS_CC_HIDDEN_VISIBILITY
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
@@ -169,6 +173,9 @@ else
 	DEBUGFLAGS=""
 fi
 AC_SUBST(DEBUGFLAGS)
+
+LIBFLAGS="-DTSLIB_INTERNAL"
+AC_SUBST(LIBFLAGS)
 
 TS_CONF='${sysconfdir}/ts.conf'
 AC_SUBST(TS_CONF)

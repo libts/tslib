@@ -3,6 +3,14 @@
 	* AUTHORS: Add self to AUTHORS file.
 	* configure.in: Deleted.
 
+2004-12-14 Chris Larson <kergoth@handhelds.org>
+
+	* Files all over the tree: Apply patch to add support for using
+	  the new gcc symbol visibility features that are available
+	  in gcc 4.0 (and patched 3.4.x).  Also import a few m4 macros
+	  and general buildsystem updates to facilitate automatic use of
+	  gcc visibility if it's supported.
+
 2004-11-22 Holger Freyther <zecke@handhelds.org>
 
 	* plugins/dejitter.c: Sometimes after ts_open/ts_close/ts_open on
