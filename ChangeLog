@@ -1,3 +1,8 @@
+2005-02-25 Chris Larson <kergoth@handhelds.org>
+
+	* AUTHORS: Add self to AUTHORS file.
+	* configure.in: Deleted.
+
 2004-10-19 Chris Larson <kergoth@handhelds.org>
 
 	* Files all over the tree: Fixed up a bunch of compile warnings,
