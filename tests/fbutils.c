@@ -32,59 +32,72 @@ static char *fbuffer;
 static int fb_fd=0;
 int xres, yres;
 
+static char *defaultfbdevice = "/dev/fb0";
+static char *defaultconsoledevice = "/dev/tty";
+static char *fbdevice = NULL;
+static char *consoledevice = NULL;
+
 int open_framebuffer(void)
 {
         struct vt_stat vts;
-        char vtname[16];
+        char vtname[128];
         int fd, nr;
 	unsigned short col[2];
 
-/*
-        fd = open("/dev/tty1", O_WRONLY);
-        if (fd < 0) {
-                perror("open /dev/tty1");
-                return -1;
-        }
+	if( (fbdevice = getenv("TSLIB_FBDEVICE")) == NULL)
+		fbdevice = defaultfbdevice;
 
-        if (ioctl(fd, VT_OPENQRY, &nr) < 0) {
-                perror("ioctl VT_OPENQRY");
-                return -1;
-        }
-        close(fd);
+	if( (consoledevice = getenv("TSLIB_CONSOLEDEVICE")) == NULL)
+		consoledevice = defaultconsoledevice;
 
-        sprintf(vtname, "/dev/tty%d", nr);
+	if(strcmp(consoledevice,"none")!=0) {
+		sprintf(vtname,"%s%d", consoledevice, 1);
+        	fd = open(vtname, O_WRONLY);
+        	if (fd < 0) {
+        	        perror("open consoledevice");
+        	        return -1;
+        	}
 
-        con_fd = open(vtname, O_RDWR | O_NDELAY);
-        if (con_fd < 0) {
-                perror("open tty");
-                return -1;
-        }
+        	if (ioctl(fd, VT_OPENQRY, &nr) < 0) {
+        	        perror("ioctl VT_OPENQRY");
+        	        return -1;
+        	}
+        	close(fd);
 
-        if (ioctl(con_fd, VT_GETSTATE, &vts) == 0)
-                last_vt = vts.v_active;
+        	sprintf(vtname, "%s%d", consoledevice, nr);
 
-        if (ioctl(con_fd, VT_ACTIVATE, nr) < 0) {
-                perror("VT_ACTIVATE");
-                close(con_fd);
-                return -1;
-        }
+        	con_fd = open(vtname, O_RDWR | O_NDELAY);
+        	if (con_fd < 0) {
+        	        perror("open tty");
+        	        return -1;
+        	}
 
-        if (ioctl(con_fd, VT_WAITACTIVE, nr) < 0) {
-                perror("VT_WAITACTIVE");
-                close(con_fd);
-                return -1;
-        }
+        	if (ioctl(con_fd, VT_GETSTATE, &vts) == 0)
+        	        last_vt = vts.v_active;
 
-        if (ioctl(con_fd, KDSETMODE, KD_GRAPHICS) < 0) {
-                perror("KDSETMODE");
-                close(con_fd);
-                return -1;
-        }
+        	if (ioctl(con_fd, VT_ACTIVATE, nr) < 0) {
+        	        perror("VT_ACTIVATE");
+        	        close(con_fd);
+        	        return -1;
+        	}
 
-*/
-	fb_fd = open("/dev/fb0", O_RDWR);
+        	if (ioctl(con_fd, VT_WAITACTIVE, nr) < 0) {
+        	        perror("VT_WAITACTIVE");
+        	        close(con_fd);
+        	        return -1;
+        	}
+
+        	if (ioctl(con_fd, KDSETMODE, KD_GRAPHICS) < 0) {
+        	        perror("KDSETMODE");
+        	        close(con_fd);
+        	        return -1;
+        	}
+
+	}
+
+	fb_fd = open(fbdevice, O_RDWR);
 	if (fb_fd == -1) {
-		perror("open /dev/fb");
+		perror("open fbdevice");
 		return -1;
 	}
 
@@ -136,16 +149,18 @@ void close_framebuffer(void)
 	munmap(fbuffer, fix.smem_len);
 	close(fb_fd);
 
-/*
-        if (ioctl(con_fd, KDSETMODE, KD_TEXT) < 0)
-                perror("KDSETMODE");
 
-        if (last_vt >= 0)
-                if (ioctl(con_fd, VT_ACTIVATE, last_vt))
-                        perror("VT_ACTIVATE");
+	if(strcmp(consoledevice,"none")!=0) {
+	
+        	if (ioctl(con_fd, KDSETMODE, KD_TEXT) < 0)
+        	        perror("KDSETMODE");
 
-        close(con_fd);
-*/
+        	if (last_vt >= 0)
+        	        if (ioctl(con_fd, VT_ACTIVATE, last_vt))
+        	                perror("VT_ACTIVATE");
+
+        	close(con_fd);
+	}
 }
 
 void put_cross(int x, int y, int c)

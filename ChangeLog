@@ -1,3 +1,16 @@
+2002-07-03  Douglas Lowder <dlowder@earthlink.net>
+
+- Added back the code to open the virtual console (works if device file chosen
+  correctly).
+
+- Made the console device and framebuffer device configurable for ts_calibrate
+  and ts_test: new environment variables defined.
+  TSLIB_FBDEVICE (defaults to /dev/fb0)
+  TSLIB_CONSOLEDEVICE (defaults to /dev/tty)
+
+  On a system using devfs, the above should be set to /dev/fb/0 and /dev/vc/,
+  respectively.
+
 2002-07-01  Douglas Lowder <dlowder@earthlink.net>
 
 - Fixes to make this code work better on targets with framebuffers that have
