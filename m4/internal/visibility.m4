@@ -29,11 +29,11 @@ AC_DEFUN([TS_CXX_HIDDEN_VISIBILITY_INLINES],
   if test "x$bb_with_hidden_visibility_inlines" != "xno" && \
      test "x$bb_cv_cc_supports_hidden_visibility_inlines" != "xno"; then
      AC_MSG_RESULT([yes])
-     CXXFLAGS="-fvisibility-inlines-hidden $CXXFLAGS"
-     AC_MSG_NOTICE([prepending -fvisibility-inlines-hidden to CXXFLAGS])
+     VIS_CXXFLAGS="-fvisibility-inlines-hidden"
   else
      AC_MSG_RESULT([no])
   fi
+  AC_SUBST(VIS_CXXFLAGS)
 ]) # TS_CXX_HIDDEN_VISIBILITY_INLINES
 
 
@@ -49,6 +49,9 @@ AC_DEFUN([TS_CC_SUPPORTS_HIDDEN_VISIBILITY],
     AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])], [bb_cv_cc_supports_hidden_visibility=yes], [bb_cv_cc_supports_hidden_visibility=no])
   ])
   CFLAGS="$bb_save_CFLAGS"
+  if test "x$bb_cv_cc_supports_hidden_visibility" != "xno"; then
+     CFLAGS="-DGCC_HASCLASSVISIBILITY $CFLAGS"
+  fi
 ]) # TS_CC_SUPPORTS_HIDDEN_VISIBILITY
 
 
@@ -66,9 +69,9 @@ AC_DEFUN([TS_CC_HIDDEN_VISIBILITY],
   if test "x$bb_with_hidden_visibility" != "xno" && \
      test "x$bb_cv_cc_supports_hidden_visibility" != "xno"; then
      AC_MSG_RESULT([yes])
-     CFLAGS="-DGCC_HASCLASSVISIBILITY -fvisibility=hidden $CFLAGS"
-     AC_MSG_NOTICE([prepending -DGCC_HASCLASSVISIBILITY -fvisibility=hidden to CFLAGS])
+     VIS_CFLAGS="-fvisibility=hidden"
   else
      AC_MSG_RESULT([no])
   fi
+  AC_SUBST(VIS_CFLAGS)
 ]) # TS_CC_HIDDEN_VISIBILITY

@@ -7,6 +7,12 @@
 	  bit now, in preparation for the 1.0.0 release.
 	* .cvsignore: Add *.pc to CVS ignore.
 
+	* m4/internal/visibility.m4, src/Makefile.am, plugins/Makefile.am:
+	  Fixup the visibility macros to set VIS_CFLAGS and VIS_CXXFLAGS, so
+	  we can choose to use the visibility flags for the core lib and
+	  plugins, but not the test apps, as the gains would be nonexistant
+	  there.
+
 2005-02-25 Chris Larson <kergoth@handhelds.org>
 
 	* AUTHORS: Add self to AUTHORS file.

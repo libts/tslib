@@ -202,7 +202,6 @@ AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
 
-
 AC_CONFIG_FILES([Makefile
                  etc/Makefile
                  plugins/Makefile

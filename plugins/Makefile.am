@@ -6,10 +6,10 @@
 # This file is placed under the LGPL.  Please see the file
 # COPYING for more details.
 #
-# $Id: Makefile.am,v 1.6 2005/02/26 01:54:50 kergoth Exp $
+# $Id: Makefile.am,v 1.7 2005/02/28 23:44:12 kergoth Exp $
 #
 
-AM_CFLAGS		= $(DEBUGFLAGS) $(LIBFLAGS)
+AM_CFLAGS		= $(DEBUGFLAGS) $(LIBFLAGS) $(VIS_CFLAGS)
 LDADD		= -rpath $(PLUGIN_DIR)
 INCLUDES		= -I$(top_srcdir)/src
   
