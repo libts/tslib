@@ -3,7 +3,7 @@
 	* tslib.pc.in: Add pkg-config file for tslib.
 	* configure.ac, Makefile.am: Create tslib-$LT_RELEASE.pc, and install
 	  it into the correct place.  Also change the AC_INIT 'PACKAGE' from
-	  libts to tslib.  Bump the LT_RELEASE, since libts has changed a fair
+	  libts to tslib.  Bump the LT_REVISION, since libts has changed a fair
 	  bit now, in preparation for the 1.0.0 release.
 	* .cvsignore: Add *.pc to CVS ignore.
 
