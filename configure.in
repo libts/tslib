@@ -1,0 +1,55 @@
+dnl $Id: configure.in,v 1.1.1.1 2001/12/22 21:12:06 rmk Exp $
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(src/ts_close.c)
+AM_INIT_AUTOMAKE(libts,0.0.0)
+AM_CONFIG_HEADER(config.h)
+
+AC_ARG_ENABLE(linear,   [  --enable-linear         Enable building of linear scaling [default=yes]],
+  [ "x$enableval" = "xyes" ] && PLUGINS="$PLUGINS linear.la", PLUGINS="$PLUGINS linear.la")
+AC_ARG_ENABLE(dejitter, [  --enable-dejitter       Enable building of dejitter filter [default=yes]],
+  [ "x$enableval" = "xyes" ] && PLUGINS="$PLUGINS dejitter.la", PLUGINS="$PLUGINS dejitter.la")
+AC_ARG_ENABLE(variance, [  --enable-variance       Enable building of variance filter [default=yes]],
+  [ "x$enableval" = "xyes" ] && PLUGINS="$PLUGINS variance.la", PLUGINS="$PLUGINS variance.la")
+AC_SUBST(PLUGINS)
+
+AM_DISABLE_STATIC
+AM_ENABLE_SHARED
+
+PLUGIN_DIR='${datadir}/ts/plugins'
+AC_SUBST(PLUGIN_DIR)
+
+TS_CONF='${sysconfdir}/ts.conf'
+AC_SUBST(TS_CONF)
+
+dnl Library versioning
+LT_RELEASE=0.0
+LT_CURRENT=0
+LT_REVISION=0
+LT_AGE=0
+AC_SUBST(LT_RELEASE)
+AC_SUBST(LT_CURRENT)
+AC_SUBST(LT_REVISION)
+AC_SUBST(LT_AGE)
+
+dnl Checks for programs.
+AC_PROG_CC
+AC_LIBTOOL_DLOPEN
+AM_PROG_LIBTOOL
+
+dnl Checks for libraries.
+AC_CHECK_LIB(dl, dlopen)
+
+dnl Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS(limits.h sys/time.h unistd.h)
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_HEADER_TIME
+
+dnl Checks for library functions.
+AC_FUNC_ALLOCA
+AC_FUNC_VPRINTF
+AC_CHECK_FUNCS(strsep strdup strtoul)
+
+AC_OUTPUT(Makefile etc/Makefile src/Makefile plugins/Makefile tests/Makefile)

@@ -1,0 +1,49 @@
+$Id: README,v 1.1.1.1 2001/12/22 21:12:06 rmk Exp $
+
+module:	variance
+----------------
+
+Description:
+  Variance filter.  Calculates the variance on the last 4 X and Y axis values
+  independently, and averages the two samples with the smallest variance.
+
+Parameters:
+  xlimit
+	Sets the X axis variance limit on the last 4 touch screen samples,
+	in touch screen coordinates.  Variances outside this limit will
+	cause 4 extra samples to be collected.
+
+  ylimit
+	Sets the Y axis variance limit on the last 4 touch screen samples,
+	in touch screen coordinates.  Variances outside this limit will
+	cause 4 extra samples to be collected.
+
+  pthreshold
+	Sets the pressure threshold, above which we believe the pen
+	to be down.
+
+module: dejitter
+----------------
+
+Description:
+  Removes jitter on the X and Y co-ordinates.  Samples whos X and Y
+  differentials are within these limits will be treated as an identical
+  value, and gobbled up.
+
+Parameters:
+  xdelta
+  ydelta
+	Sets the minimum differential between the current and the previous
+	X or Y sample.
+
+  pthreshold
+
+module: linear
+--------------
+
+Description:
+  Linear scaling module, primerily used for conversion of touch screen
+  co-ordinates to screen co-ordinates.
+
+Parameters:
+  none
