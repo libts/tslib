@@ -6,7 +6,7 @@
  * This file is placed under the GPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_test.c,v 1.3 2002/06/17 17:21:43 dlowder Exp $
+ * $Id: ts_test.c,v 1.4 2002/07/01 23:02:58 dlowder Exp $
  *
  * Basic test program for touchscreen library.
  */
@@ -40,15 +40,21 @@ int main()
 	struct tsdev *ts;
 	int x, y;
 
+	char *tsdevice=NULL;
+
 	signal(SIGSEGV, sig);
 	signal(SIGINT, sig);
 	signal(SIGTERM, sig);
 
+        if( (tsdevice = getenv("TSLIB_TSDEVICE")) != NULL ) {
+                ts = ts_open(tsdevice,0);
+        } else {
 #ifdef USE_INPUT_API
-        ts = ts_open("/dev/input/event0", 0);
+                ts = ts_open("/dev/input/event0", 0);
 #else
-        ts = ts_open("/dev/touchscreen/ucb1x00", 0);
+                ts = ts_open("/dev/touchscreen/ucb1x00", 0);
 #endif /* USE_INPUT_API */
+        }
 
 	if (!ts) {
 		perror("ts_open");
@@ -98,7 +104,7 @@ int main()
 		printf("%ld.%06ld: %6d %6d %6d\n", samp.tv.tv_sec, samp.tv.tv_usec,
 			samp.x, samp.y, samp.pressure);
 
-		if (samp.pressure > 100) {
+		if (samp.pressure > 0) {
 			put_cross(x, y, 0);
 			x = samp.x;
 			y = samp.y;

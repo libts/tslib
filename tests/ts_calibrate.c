@@ -6,7 +6,7 @@
  * This file is placed under the GPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_calibrate.c,v 1.3 2002/06/17 17:21:43 dlowder Exp $
+ * $Id: ts_calibrate.c,v 1.4 2002/07/01 23:02:58 dlowder Exp $
  *
  * Basic test program for touchscreen library.
  */
@@ -53,7 +53,7 @@ static int getxy(struct tsdev *ts, int *x, int *y)
 			close_framebuffer();
 			exit(1);
 		}
-	} while (samp.pressure > 100);
+	} while (samp.pressure > 0);
 
 	if (x && y) {
 		*x = sa.x;
@@ -148,18 +148,23 @@ int main()
 	calibration cal;
 	int cal_fd;
 	char cal_buffer[256];
-
+	char *tsdevice = NULL;
+	char *calfile = NULL;
 	int i;
 
 	signal(SIGSEGV, sig);
 	signal(SIGINT, sig);
 	signal(SIGTERM, sig);
 
+	if( (tsdevice = getenv("TSLIB_TSDEVICE")) != NULL ) {
+		ts = ts_open(tsdevice,0);
+	} else {
 #ifdef USE_INPUT_API
-	ts = ts_open("/dev/input/event0", 0);
+		ts = ts_open("/dev/input/event0", 0);
 #else
-	ts = ts_open("/dev/touchscreen/ucb1x00", 0);
+		ts = ts_open("/dev/touchscreen/ucb1x00", 0);
 #endif /* USE_INPUT_API */
+	}
 
 	if (!ts) {
 		perror("ts_open");
@@ -180,6 +185,8 @@ int main()
 
 	put_string(xres/2,yres/4,"TSLIB calibration utility",1);
 	put_string(xres/2,yres/4 + 20,"Touch crosshair to calibrate",1);
+
+	printf("xres = %d, yres = %d\n",xres,yres);
 
 // Read a touchscreen event to clear the buffer
 	getxy(ts, 0, 0);
@@ -235,7 +242,11 @@ int main()
 		printf("Calibration constants: ");
 		for(i=0;i<7;i++) printf("%d ",cal.a[i]);
 		printf("\n");
-		cal_fd = open("/etc/pointercal",O_CREAT|O_RDWR);
+		if( (calfile = getenv("TSLIB_CALIBFILE")) != NULL) {
+			cal_fd = open(calfile,O_CREAT|O_RDWR);
+		} else {
+			cal_fd = open("/etc/pointercal",O_CREAT|O_RDWR);
+		}
 		sprintf(cal_buffer,"%d %d %d %d %d %d %d",cal.a[1],cal.a[2],cal.a[0],cal.a[4],cal.a[5],cal.a[3],cal.a[6]);
 		write(cal_fd,cal_buffer,strlen(cal_buffer)+1);
 		close(cal_fd);	

@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: linear.c,v 1.3 2002/06/17 17:21:42 dlowder Exp $
+ * $Id: linear.c,v 1.4 2002/07/01 23:02:57 dlowder Exp $
  *
  * Linearly scale touchscreen values
  */
@@ -106,6 +106,8 @@ struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 	char pcalbuf[200];
 	int index;
 	char *tokptr;
+	char *calfile=NULL;
+	char *defaultcalfile = "/etc/pointercal";
 
 	lin = malloc(sizeof(struct tslib_linear));
 	if (lin == NULL)
@@ -126,10 +128,11 @@ struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 	lin->p_div    = 1;
 
 	/*
-	 * Check /etc/pointercal
+	 * Check calibration file
 	 */
-	if(stat("/etc/pointercal",&sbuf)==0) {
-		pcal_fd = open("/etc/pointercal",O_RDONLY);
+	if( (calfile = getenv("TSLIB_CALIBFILE")) == NULL) calfile = defaultcalfile;
+	if(stat(calfile,&sbuf)==0) {
+		pcal_fd = open(calfile,O_RDONLY);
 		read(pcal_fd,pcalbuf,200);
 		lin->a[0] = atoi(strtok(pcalbuf," "));
 		index=1;

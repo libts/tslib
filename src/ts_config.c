@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_config.c,v 1.2 2002/06/17 17:21:43 dlowder Exp $
+ * $Id: ts_config.c,v 1.3 2002/07/01 23:02:57 dlowder Exp $
  *
  * Read the configuration and load the appropriate drivers.
  */
@@ -40,9 +40,13 @@ int ts_config(struct tsdev *ts)
 	FILE *f;
 	int line = 0, ret = 0;
 
-	char conffile[80];
+	char *conffile;
 
-	f = fopen(TS_CONF, "r");
+	if( (conffile = getenv("TSLIB_CONFFILE")) != NULL) {
+		f = fopen(conffile,"r");
+	} else {
+		f = fopen(TS_CONF, "r");
+	}
 	if (!f)
 		return -1;
 

@@ -6,7 +6,7 @@
 # This file is placed under the LGPL.  Please see the file
 # COPYING for more details.
 #
-# $Id: Makefile.am,v 1.3 2002/06/17 17:21:43 dlowder Exp $
+# $Id: Makefile.am,v 1.4 2002/07/01 23:02:57 dlowder Exp $
 #
 
 CFLAGS		:= $(CFLAGS) -DPLUGIN_DIR=\"@PLUGIN_DIR@\" -DTS_CONF=\"@TS_CONF@\" $(DEBUGFLAGS) $(INPUTAPIFLAG)
@@ -14,10 +14,16 @@ CFLAGS		:= $(CFLAGS) -DPLUGIN_DIR=\"@PLUGIN_DIR@\" -DTS_CONF=\"@TS_CONF@\" $(DEB
 noinst_HEADERS   = tslib-private.h tslib-filter.h
 include_HEADERS  = tslib.h
 
-lib_LTLIBRARIES  = libts.la
+lib_LTLIBRARIES  = libts.la libtsipaq.la
 libts_la_SOURCES = ts_attach.c ts_close.c ts_config.c ts_error.c \
 		   ts_fd.c ts_load_module.c ts_open.c ts_parse_vars.c \
 		   ts_read.c ts_read_raw.c
 libts_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
 		   -release $(LT_RELEASE) -export-dynamic
 libts_la_LIBADD  = -ldl
+libtsipaq_la_SOURCES = ts_attach.c ts_close.c ts_config.c ts_error.c \
+		   ts_fd.c ts_load_module.c ts_open.c ts_parse_vars.c \
+		   ts_read.c ts_read_raw_ipaq.c
+libtsipaq_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
+		   -release $(LT_RELEASE) -export-dynamic
+libtsipaq_la_LIBADD  = -ldl

@@ -18,7 +18,7 @@
 # This file is placed under the LGPL.  Please see the file
 # COPYING for more details.
 #
-# $Id: Makefile.in,v 1.1 2002/06/19 19:05:36 dlowder Exp $
+# $Id: Makefile.in,v 1.2 2002/07/01 23:02:57 dlowder Exp $
 #
 
 
@@ -99,7 +99,7 @@ CFLAGS := $(CFLAGS) -DPLUGIN_DIR=\"@PLUGIN_DIR@\" -DTS_CONF=\"@TS_CONF@\" $(DEBU
 noinst_HEADERS = tslib-private.h tslib-filter.h
 include_HEADERS = tslib.h
 
-lib_LTLIBRARIES = libts.la
+lib_LTLIBRARIES = libts.la libtsipaq.la
 libts_la_SOURCES = ts_attach.c ts_close.c ts_config.c ts_error.c \
 		   ts_fd.c ts_load_module.c ts_open.c ts_parse_vars.c \
 		   ts_read.c ts_read_raw.c
@@ -108,6 +108,14 @@ libts_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
 		   -release $(LT_RELEASE) -export-dynamic
 
 libts_la_LIBADD = -ldl
+libtsipaq_la_SOURCES = ts_attach.c ts_close.c ts_config.c ts_error.c \
+		   ts_fd.c ts_load_module.c ts_open.c ts_parse_vars.c \
+		   ts_read.c ts_read_raw_ipaq.c
+
+libtsipaq_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
+		   -release $(LT_RELEASE) -export-dynamic
+
+libtsipaq_la_LIBADD = -ldl
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -122,6 +130,10 @@ libts_la_DEPENDENCIES =
 libts_la_OBJECTS =  ts_attach.lo ts_close.lo ts_config.lo ts_error.lo \
 ts_fd.lo ts_load_module.lo ts_open.lo ts_parse_vars.lo ts_read.lo \
 ts_read_raw.lo
+libtsipaq_la_DEPENDENCIES = 
+libtsipaq_la_OBJECTS =  ts_attach.lo ts_close.lo ts_config.lo \
+ts_error.lo ts_fd.lo ts_load_module.lo ts_open.lo ts_parse_vars.lo \
+ts_read.lo ts_read_raw_ipaq.lo
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -137,9 +149,10 @@ TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/ts_attach.P .deps/ts_close.P .deps/ts_config.P \
 .deps/ts_error.P .deps/ts_fd.P .deps/ts_load_module.P .deps/ts_open.P \
-.deps/ts_parse_vars.P .deps/ts_read.P .deps/ts_read_raw.P
-SOURCES = $(libts_la_SOURCES)
-OBJECTS = $(libts_la_OBJECTS)
+.deps/ts_parse_vars.P .deps/ts_read.P .deps/ts_read_raw.P \
+.deps/ts_read_raw_ipaq.P
+SOURCES = $(libts_la_SOURCES) $(libtsipaq_la_SOURCES)
+OBJECTS = $(libts_la_OBJECTS) $(libtsipaq_la_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -217,6 +230,9 @@ maintainer-clean-libtool:
 
 libts.la: $(libts_la_OBJECTS) $(libts_la_DEPENDENCIES)
 	$(LINK) -rpath $(libdir) $(libts_la_LDFLAGS) $(libts_la_OBJECTS) $(libts_la_LIBADD) $(LIBS)
+
+libtsipaq.la: $(libtsipaq_la_OBJECTS) $(libtsipaq_la_DEPENDENCIES)
+	$(LINK) -rpath $(libdir) $(libtsipaq_la_LDFLAGS) $(libtsipaq_la_OBJECTS) $(libtsipaq_la_LIBADD) $(LIBS)
 
 install-includeHEADERS: $(include_HEADERS)
 	@$(NORMAL_INSTALL)

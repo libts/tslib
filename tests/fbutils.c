@@ -39,6 +39,7 @@ int open_framebuffer(void)
         int fd, nr;
 	unsigned short col[2];
 
+/*
         fd = open("/dev/tty1", O_WRONLY);
         if (fd < 0) {
                 perror("open /dev/tty1");
@@ -80,7 +81,7 @@ int open_framebuffer(void)
                 return -1;
         }
 
-
+*/
 	fb_fd = open("/dev/fb0", O_RDWR);
 	if (fb_fd == -1) {
 		perror("open /dev/fb");
@@ -108,13 +109,15 @@ int open_framebuffer(void)
 	cmap.blue = col;
 	cmap.transp = NULL;
 
-	col[0] = 0xffff;
-	col[1] = 0;
+	col[0] = 0;
+	col[1] = 0xffff;
 
-	if (ioctl(fb_fd, FBIOPUTCMAP, &cmap) < 0) {
-		perror("ioctl FBIOPUTCMAP");
-		close(fb_fd);
-		return -1;
+	if(var.bits_per_pixel==8) {
+		if (ioctl(fb_fd, FBIOPUTCMAP, &cmap) < 0) {
+			perror("ioctl FBIOPUTCMAP");
+			close(fb_fd);
+			return -1;
+		}
 	}
 
 	fbuffer = mmap(NULL, fix.smem_len, PROT_READ | PROT_WRITE, MAP_FILE | MAP_SHARED, fb_fd, 0);
@@ -133,6 +136,7 @@ void close_framebuffer(void)
 	munmap(fbuffer, fix.smem_len);
 	close(fb_fd);
 
+/*
         if (ioctl(con_fd, KDSETMODE, KD_TEXT) < 0)
                 perror("KDSETMODE");
 
@@ -141,7 +145,7 @@ void close_framebuffer(void)
                         perror("VT_ACTIVATE");
 
         close(con_fd);
-
+*/
 }
 
 void put_cross(int x, int y, int c)
@@ -163,14 +167,15 @@ void put_cross(int x, int y, int c)
 		switch(var.bits_per_pixel) {
 			case 8:
 			default:
-				fbuffer[loc] = c;
+				//fbuffer[loc] = c;
+				fbuffer[loc] = fbuffer[loc] ? 0 : 1;
 				break;
 			case 16:
-				*((unsigned short *)(fbuffer + loc)) = c;
+				*((unsigned short *)(fbuffer + loc)) = *((unsigned short *)(fbuffer + loc)) ? 0 : 0xffff;
 				break;
 			case 24:
 			case 32:
-				*((unsigned int *)(fbuffer + loc)) = c;
+				*((unsigned int *)(fbuffer + loc)) = *((unsigned int *)(fbuffer + loc)) ? 0 : 0xffffffff;
 				break;
 		}
 	}
@@ -184,14 +189,15 @@ void put_cross(int x, int y, int c)
 		switch(var.bits_per_pixel) {
 			case 8:
 			default:
-				fbuffer[loc] = c;
+				//fbuffer[loc] = c;
+				fbuffer[loc] = fbuffer[loc] ? 0 : 1;
 				break;
 			case 16:
-				*((unsigned short *)(fbuffer + loc)) = c;
+				*((unsigned short *)(fbuffer + loc)) = *((unsigned short *)(fbuffer + loc)) ? 0 : 0xffff;
 				break;
 			case 24:
 			case 32:
-				*((unsigned int *)(fbuffer + loc)) = c;
+				*((unsigned int *)(fbuffer + loc)) = *((unsigned int *)(fbuffer + loc)) ? 0 : 0xffffffff;
 				break;
 		}
 	}
@@ -202,8 +208,8 @@ void put_char(int x, int y, int c, int color)
 {
 	int i,j,bits,loc;
 
-	for(i=0;i<font_vga_8x16.height;i++) {
-		bits = font_vga_8x16.data[font_vga_8x16.height*c + i];
+	for(i=0;i<font_vga_8x8.height;i++) {
+		bits = font_vga_8x8.data[font_vga_8x8.height*c + i];
 		for(j=0;j<8;j++) {
 			loc = (x + j + var.xoffset)*(var.bits_per_pixel/8)
 				+ (y + i + var.yoffset)*fix.line_length;
@@ -211,14 +217,23 @@ void put_char(int x, int y, int c, int color)
 				switch(var.bits_per_pixel) {
 					case 8:
 					default:
-						fbuffer[loc] = color;
+						if(color==0)
+							fbuffer[loc] = 0;
+						else
+							fbuffer[loc] = 1;
 						break;
 					case 16:
-						*((unsigned short *)(fbuffer + loc)) = color;
+						if(color==0)
+							*((unsigned short *)(fbuffer + loc)) = 0;
+						else
+							*((unsigned short *)(fbuffer + loc)) = 0xffff;
 						break;
 					case 24:
 					case 32:
-						*((unsigned int *)(fbuffer + loc)) = color;
+						if(color==0)
+							*((unsigned int *)(fbuffer + loc)) = 0;
+						else
+							*((unsigned int *)(fbuffer + loc)) = 0xffffffff;
 						break;
 				}
 			}	
@@ -232,12 +247,12 @@ void put_string(int x, int y, char *s, int color)
 {
 	int i;
 	for(i=0;i<strlen(s);i++) {
-		put_char( (x + font_vga_8x16.width* (i - strlen(s)/2)), y, s[i], color);
+		put_char( (x + font_vga_8x8.width* (i - strlen(s)/2)), y, s[i], color);
 	}
 }
 
 void setcolors(int bgcolor, int fgcolor) {
-
+/* No longer implemented
 	unsigned short red[2], green[2], blue[2];
 
 	red[0] = ( (bgcolor >> 16) & 0xff ) << 8;
@@ -253,11 +268,13 @@ void setcolors(int bgcolor, int fgcolor) {
         cmap.blue = blue;
         cmap.transp = NULL;
 
-        if (ioctl(fb_fd, FBIOPUTCMAP, &cmap) < 0) {
-                perror("ioctl FBIOPUTCMAP");
-                close(fb_fd);
-                return -1;
+	if(var.bits_per_pixel==8) {
+        	if (ioctl(fb_fd, FBIOPUTCMAP, &cmap) < 0) {
+        	        perror("ioctl FBIOPUTCMAP");
+        	        close(fb_fd);
+		}
 	}
+*/
 }
 
 
