@@ -1,3 +1,7 @@
+2002-08-29  Douglas Lowder <dlowder@earthlink.net>
+- Added tests/ts_print_raw.c to print raw uncalibrated touchscreen events
+  (useful for debugging)
+
 2002-07-11  Douglas Lowder <dlowder@earthlink.net>
 - Added code in src/ts_read_raw.c to handle reading events from the mk712
   touchscreen driver on the Hitachi Webpad.
