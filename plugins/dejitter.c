@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: dejitter.c,v 1.3 2002/06/19 18:55:08 dlowder Exp $
+ * $Id: dejitter.c,v 1.4 2002/06/19 19:05:36 dlowder Exp $
  *
  * Threshold filter for touchscreen values
  */
@@ -47,11 +47,6 @@ static int threshold_read(struct tslib_module_info *info, struct ts_sample *samp
 			printf("BEFORE DEJITTER---------------> %d %d %d\n",s->x,s->y,s->pressure);
 #endif /*DEBUG*/
 			if (thr->down) {
-#ifdef DEBUG
-			printf("Thr values = %d %d\n",thr->x, thr->y);
-			printf("New values = %d %d\n",s->x, s->y);
-			printf("Delta2 = %d\n",thr->delta2);
-#endif /*DEBUG*/
 				dr2 = (thr->x - s->x)*(thr->x - s->x) 
 					+ (thr->y - s->y)*(thr->y - s->y);
 				if(dr2 < thr->delta2) {
@@ -100,7 +95,6 @@ static int threshold_limit(struct tslib_module_info *inf, char *str, void *data)
 	switch ((int)data) {
 	case 1:
 		thr->xdelta = v;
-		printf("in threshold_limit, xdelta=%d\n",thr->xdelta);
 		break;
 
 	case 2:
@@ -145,7 +139,6 @@ struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 		free(thr);
 		return NULL;
 	}
-	printf("xdelta, ydelta = %d,%d\n",thr->xdelta, thr->ydelta);
 	thr->delta2 = (thr->xdelta)*(thr->xdelta) + (thr->ydelta)*(thr->ydelta);
 
 	return &thr->module;
