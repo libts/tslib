@@ -10,7 +10,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_read_raw.c,v 1.3 2002/06/17 17:21:43 dlowder Exp $
+ * $Id: ts_read_raw.c,v 1.4 2002/07/08 17:44:28 dlowder Exp $
  *
  * Read raw pressure, x, y, and timestamp from a touchscreen device.
  */
@@ -33,6 +33,13 @@ struct ts_event  {
 	unsigned short pad;
 	struct timeval stamp;
 };
+struct h3600_ts_event {
+	unsigned short pressure;
+	unsigned short x;
+	unsigned short y;
+	unsigned short pad;
+};
+
 #endif /* USE_INPUT_API */
 
 #include "tslib-private.h"
@@ -43,6 +50,7 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 	struct input_event ev;
 #else
 	struct ts_event *evt;
+	struct h3600_ts_event *hevt;
 #endif /* USE_INPUT_API */
 	int ret;
 	int total = 0;
@@ -139,22 +147,42 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 	if (ret) ret = -1;
 	if (total) ret = total;
 #else
-	evt = alloca(sizeof(*evt) * nr);
-	ret = read(ts->fd, evt, sizeof(*evt) * nr);
-	if(ret >= 0) {
-		int nr = ret / sizeof(*evt);
-		while(ret >= sizeof(*evt)) {
-			samp->x = evt->x;
-			samp->y = evt->y;
-			samp->pressure = evt->pressure;
+	if( strcmp(getenv("TSLIB_TSEVENTTYPE"),"H3600") == 0) { /* iPAQ style h3600 touchscreen events */
+		hevt = alloca(sizeof(*hevt) * nr);
+		ret = read(ts->fd, hevt, sizeof(*hevt) * nr);
+		if(ret >= 0) {
+			int nr = ret / sizeof(*hevt);
+			while(ret >= sizeof(*hevt)) {
+				samp->x = hevt->x;
+				samp->y = hevt->y;
+				samp->pressure = hevt->pressure;
 #ifdef DEBUG
         printf("RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
 #endif /*DEBUG*/
-			samp->tv.tv_usec = evt->stamp.tv_usec;
-			samp->tv.tv_sec = evt->stamp.tv_sec;
-			samp++;
-			evt++;
-			ret -= sizeof(*evt);
+				gettimeofday(&samp->tv,NULL);
+				samp++;
+				hevt++;
+				ret -= sizeof(*hevt);
+			}
+		}
+	} else { /* Use normal UCB1x00 type events */
+		evt = alloca(sizeof(*evt) * nr);
+		ret = read(ts->fd, evt, sizeof(*evt) * nr);
+		if(ret >= 0) {
+			int nr = ret / sizeof(*evt);
+			while(ret >= sizeof(*evt)) {
+				samp->x = evt->x;
+				samp->y = evt->y;
+				samp->pressure = evt->pressure;
+#ifdef DEBUG
+        printf("RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
+#endif /*DEBUG*/
+				samp->tv.tv_usec = evt->stamp.tv_usec;
+				samp->tv.tv_sec = evt->stamp.tv_sec;
+				samp++;
+				evt++;
+				ret -= sizeof(*evt);
+			}
 		}
 	}
 	ret = nr;
