@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT(libts, 0.0.1, dlowder@earthlink.net)
+AC_INIT(libts, 0.0.2, kergoth@handhelds.org)
 # AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE(dist-bzip2)
 AC_CONFIG_SRCDIR([src/ts_close.c])

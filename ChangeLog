@@ -2,6 +2,8 @@
 
 	* AUTHORS: Add self to AUTHORS file.
 	* configure.in: Deleted.
+	* configure.ac: Bump version passed to AC_INIT, set my email address
+	  as the contact point for the time being.
 
 2005-02-16 Michael Opdenacker <michaelo@handhelds.org>
 
