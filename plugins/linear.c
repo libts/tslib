@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: linear.c,v 1.1.1.1 2001/12/22 21:12:06 rmk Exp $
+ * $Id: linear.c,v 1.2 2002/01/15 13:56:48 rmk Exp $
  *
  * Linearly scale touchscreen values
  */
@@ -18,6 +18,7 @@
 
 struct tslib_linear {
 	struct tslib_module_info module;
+	int	swap_xy;
 	int	x_offset;
 	int	x_mult;
 	int	x_div;
@@ -46,6 +47,11 @@ linear_read(struct tslib_module_info *info, struct ts_sample *samp, int nr)
 					/ lin->y_div;
 			samp->pressure = ((samp->pressure + lin->p_offset)
 						 * lin->p_mult) / lin->p_div;
+			if (lin->swap_xy) {
+				int tmp = samp->x;
+				samp->x = samp->y;
+				samp->y = tmp;
+			}
 		}
 	}
 
@@ -63,24 +69,29 @@ static const struct tslib_ops linear_ops =
 	fini:		linear_fini,
 };
 
+static int linear_xyswap(struct tslib_module_info *inf, char *str, void *data)
+{
+	struct tslib_linear *lin = (struct tslib_linear *)inf;
+
+	lin->swap_xy = (int)data;
+	return 0;
+}
+
+static const struct tslib_vars linear_vars[] =
+{
+	{ "noxyswap",	(void *)0, linear_xyswap },
+	{ "xyswap",	(void *)1, linear_xyswap }
+};
+
+#define NR_VARS (sizeof(linear_vars) / sizeof(linear_vars[0]))
+
 struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 {
 	struct tslib_linear *lin;
-	char *tok, *str, *p;
-
-	if (params) {
-		str = p = strdup(params);
-		if (!p)
-			return NULL;
-	} else
-		str = p = NULL;
 
 	lin = malloc(sizeof(struct tslib_linear));
-	if (lin == NULL) {
-		if (str)
-			free(str);
+	if (lin == NULL)
 		return NULL;
-	}
 
 	lin->module.ops = &linear_ops;
 
@@ -99,12 +110,10 @@ struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 	/*
 	 * Parse the parameters.
 	 */
-	while ((tok = strsep(&p, " \t")) != NULL) {
-
+	if (tslib_parse_vars(&lin->module, linear_vars, NR_VARS, params)) {
+		free(lin);
+		return NULL;
 	}
-
-	if (str)
-		free(str);
 
 	return &lin->module;
 }
