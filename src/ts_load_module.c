@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_load_module.c,v 1.2 2002/07/01 23:02:57 dlowder Exp $
+ * $Id: ts_load_module.c,v 1.3 2004/07/21 19:12:59 dlowder Exp $
  *
  * Close a touchscreen device.
  */
@@ -21,7 +21,7 @@
 
 #include "tslib-private.h"
 
-int ts_load_module(struct tsdev *ts, const char *module, const char *params)
+int __ts_load_module(struct tsdev *ts, const char *module, const char *params, int raw)
 {
 	struct tslib_module_info * (*init)(struct tsdev *, const char *);
 	struct tslib_module_info *info;
@@ -42,6 +42,9 @@ int ts_load_module(struct tsdev *ts, const char *module, const char *params)
 	strcat(fn, module);
 	strcat(fn, ".so");
 
+#ifdef DEBUG
+	printf ("Loading module %s\n", fn);
+#endif
 	handle = dlopen(fn, RTLD_NOW);
 	if (!handle)
 		return -1;
@@ -60,11 +63,26 @@ int ts_load_module(struct tsdev *ts, const char *module, const char *params)
 
 	info->handle = handle;
 
-	ret = __ts_attach(ts, info);
+	if (raw) {
+		ret = __ts_attach_raw(ts, info);
+	} else {
+		ret = __ts_attach(ts, info);
+	}
 	if (ret) {
 		info->ops->fini(info);
 		dlclose(handle);
 	}
 
 	return ret;
+}
+
+
+int ts_load_module(struct tsdev *ts, const char *module, const char *params)
+{
+	__ts_load_module(ts, module, params, 0);
+}
+
+int ts_load_module_raw(struct tsdev *ts, const char *module, const char *params)
+{
+	__ts_load_module(ts, module, params, 1);
 }

@@ -6,7 +6,7 @@
  * This file is placed under the GPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_calibrate.c,v 1.6 2002/11/08 23:28:55 dlowder Exp $
+ * $Id: ts_calibrate.c,v 1.7 2004/07/21 19:12:59 dlowder Exp $
  *
  * Basic test program for touchscreen library.
  */
@@ -15,17 +15,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <string.h>
+#include <unistd.h>
 #include <sys/fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/time.h>
-#include <linux/fb.h>
 #include <linux/kd.h>
 #include <linux/vt.h>
+#include <linux/fb.h>
 
 #include "tslib.h"
 
 #include "fbutils.h"
+#include "testutils.h"
+
+static int palette [] =
+{
+	0x000000, 0xffe080, 0xffffff, 0xe0c0a0
+};
+#define NR_COLORS (sizeof (palette) / sizeof (palette [0]))
 
 typedef struct {
 	int x[5], xfb[5];
@@ -35,82 +44,11 @@ typedef struct {
 
 static void sig(int sig)
 {
-	close_framebuffer();
-	fflush(stderr);
-	printf("signal %d caught\n", sig);
-	fflush(stdout);
-	exit(1);
-}
-
-static int sort_by_x(const void* a, const void *b)
-{
-	return (((struct ts_sample *)a)->x - ((struct ts_sample *)b)->x);
-}
-static int sort_by_y(const void* a, const void *b)
-{
-	return (((struct ts_sample *)a)->y - ((struct ts_sample *)b)->y);
-}
-static int getxy(struct tsdev *ts, int *x, int *y)
-{
-#define MAX_SAMPLES 128
-	struct ts_sample samp[MAX_SAMPLES];
-	int index, middle;
-
-	/* Read until we get a touch. */
-	do {
-		if (ts_read_raw(ts, &samp[0], 1) < 0) {
-			perror("ts_read");
-			close_framebuffer();
-			exit(1);
-		}
-	} while (samp[0].pressure == 0);
-
-	/* Now collect up to MAX_SAMPLES touches into the samp array. */
-	index = 0;
-	do {
-		if (index < MAX_SAMPLES-1)
-			index++;
-		if (ts_read_raw(ts, &samp[index], 1) < 0) {
-			perror("ts_read");
-			close_framebuffer();
-			exit(1);
-		}
-	} while (samp[index].pressure > 0);
-	printf("Took %d samples...\n",index);
-
-	/*
-	 * At this point, we have samples in indices zero to (index-1)
-	 * which means that we have (index) number of samples.  We want
-	 * to calculate the median of the samples so that wild outliers
-	 * don't skew the result.  First off, let's assume that arrays
-	 * are one-based instead of zero-based.  If this were the case
-	 * and index was odd, we would need sample number ((index+1)/2)
-	 * of a sorted array; if index was even, we would need the
-	 * average of sample number (index/2) and sample number
-	 * ((index/2)+1).  To turn this into something useful for the
-	 * real world, we just need to subtract one off of the sample
-	 * numbers.  So for when index is odd, we need sample number
-	 * (((index+1)/2)-1).  Due to integer division truncation, we
-	 * can simplify this to just (index/2).  When index is even, we
-	 * need the average of sample number ((index/2)-1) and sample
-	 * number (index/2).  Calculate (index/2) now and we'll handle
-	 * the even odd stuff after we sort.
-	 */
-	middle = index/2;
-	if (x) {
-		qsort(samp, index, sizeof(struct ts_sample), sort_by_x);
-		if (index & 1)
-			*x = samp[middle].x;
-		else
-			*x = (samp[middle-1].x + samp[middle].x) / 2;
-	}
-	if (x) {
-		qsort(samp, index, sizeof(struct ts_sample), sort_by_y);
-		if (index & 1)
-			*y = samp[middle].y;
-		else
-			*y = (samp[middle-1].y + samp[middle].y) / 2;
-	}
+	close_framebuffer ();
+	fflush (stderr);
+	printf ("signal %d caught\n", sig);
+	fflush (stdout);
+	exit (1);
 }
 
 int perform_calibration(calibration *cal) {
@@ -193,10 +131,40 @@ int perform_calibration(calibration *cal) {
 
 }
 
+static void get_sample (struct tsdev *ts, calibration *cal,
+			int index, int x, int y, char *name)
+{
+	static int last_x = -1, last_y;
+
+	if (last_x != -1) {
+#define NR_STEPS 10
+		int dx = ((x - last_x) << 16) / NR_STEPS;
+		int dy = ((y - last_y) << 16) / NR_STEPS;
+		int i;
+		last_x <<= 16;
+		last_y <<= 16;
+		for (i = 0; i < NR_STEPS; i++) {
+			put_cross (last_x >> 16, last_y >> 16, 2 | XORMODE);
+			usleep (1000);
+			put_cross (last_x >> 16, last_y >> 16, 2 | XORMODE);
+			last_x += dx;
+			last_y += dy;
+		}
+	}
+
+	put_cross(x, y, 2 | XORMODE);
+	getxy (ts, &cal->x [index], &cal->y [index]);
+	put_cross(x, y, 2 | XORMODE);
+
+	last_x = cal->xfb [index] = x;
+	last_y = cal->yfb [index] = y;
+
+	printf("%s : X = %4d Y = %4d\n", name, cal->x [index], cal->y [index]);
+}
+
 int main()
 {
 	struct tsdev *ts;
-	int fd;
 	calibration cal;
 	int cal_fd;
 	char cal_buffer[256];
@@ -231,96 +199,46 @@ int main()
 		close_framebuffer();
 		exit(1);
 	}
-	close_framebuffer();
-	if (open_framebuffer()) {
-		close_framebuffer();
-		exit(1);
-	}
 
-	setcolors(0x48ff48,0x880000);
+	for (i = 0; i < NR_COLORS; i++)
+		setcolor (i, palette [i]);
 
-	put_string(xres/2,yres/4,"TSLIB calibration utility",1);
-	put_string(xres/2,yres/4 + 20,"Touch crosshair to calibrate",1);
+	put_string_center (xres / 2, yres / 4,
+			   "TSLIB calibration utility", 1);
+	put_string_center (xres / 2, yres / 4 + 20,
+			   "Touch crosshair to calibrate", 2);
 
-	printf("xres = %d, yres = %d\n",xres,yres);
+	printf("xres = %d, yres = %d\n", xres, yres);
 
 // Read a touchscreen event to clear the buffer
 	//getxy(ts, 0, 0);
 
-// Now paint a crosshair on the upper left and start taking calibration
-// data
-	put_cross(50,50,1);
-	getxy(ts, &cal.x[0], &cal.y[0]);
-	put_cross(50,50,0);
+	get_sample (ts, &cal, 0, 50,        50,        "Top left");
+	get_sample (ts, &cal, 1, xres - 50, 50,        "Top right");
+	get_sample (ts, &cal, 2, xres - 50, yres - 50, "Bot right");
+	get_sample (ts, &cal, 3, 50,        yres - 50, "Bot left");
+	get_sample (ts, &cal, 4, xres / 2,  yres / 2,  "Center");
 
-	cal.xfb[0] = 50;
-	cal.yfb[0] = 50;
-
-	printf("Top left : X = %4d Y = %4d\n", cal.x[0], cal.y[0]);
-
-	put_cross(xres - 50, 50, 1);
-	getxy(ts, &cal.x[1], &cal.y[1]);
-	put_cross(xres - 50, 50, 0);
-
-	cal.xfb[1] = xres-50;
-	cal.yfb[1] = 50;
-
-	printf("Top right: X = %4d Y = %4d\n", cal.x[1], cal.y[1]);
-
-	put_cross(xres - 50, yres - 50, 1);
-	getxy(ts, &cal.x[2], &cal.y[2]);
-	put_cross(xres - 50, yres - 50, 0);
-
-	cal.xfb[2] = xres-50;
-	cal.yfb[2] = yres-50;
-
-	printf("Bot right: X = %4d Y = %4d\n", cal.x[2], cal.y[2]);
-
-	put_cross(50, yres - 50, 1);
-	getxy(ts, &cal.x[3], &cal.y[3]);
-	put_cross(50, yres - 50, 0);
-
-	cal.xfb[3] = 50;
-	cal.yfb[3] = yres-50;
-
-	printf("Bot left : X = %4d Y = %4d\n", cal.x[3], cal.y[3]);
-
-	put_cross(xres/2, yres/2, 1);
-	getxy(ts, &cal.x[4], &cal.y[4]);
-	put_cross(xres/2, yres/2, 0);
-
-	cal.xfb[4] = xres/2;
-	cal.yfb[4] = yres/2;
-
-	printf("Middle: X = %4d Y = %4d\n", cal.x[4], cal.y[4]);
-
-	if(perform_calibration(&cal)) {
-		printf("Calibration constants: ");
-		for(i=0;i<7;i++) printf("%d ",cal.a[i]);
+	if (perform_calibration (&cal)) {
+		printf ("Calibration constants: ");
+		for (i = 0; i < 7; i++) printf("%d ", cal.a [i]);
 		printf("\n");
-		if( (calfile = getenv("TSLIB_CALIBFILE")) != NULL) {
-			cal_fd = open(calfile,O_CREAT|O_RDWR);
+		if ((calfile = getenv("TSLIB_CALIBFILE")) != NULL) {
+			cal_fd = open (calfile, O_CREAT | O_RDWR);
 		} else {
-			cal_fd = open("/etc/pointercal",O_CREAT|O_RDWR);
+			cal_fd = open ("/etc/pointercal", O_CREAT | O_RDWR);
 		}
-		sprintf(cal_buffer,"%d %d %d %d %d %d %d",cal.a[1],cal.a[2],cal.a[0],cal.a[4],cal.a[5],cal.a[3],cal.a[6]);
-		write(cal_fd,cal_buffer,strlen(cal_buffer)+1);
-		close(cal_fd);	
+		sprintf (cal_buffer,"%d %d %d %d %d %d %d",
+			 cal.a[1], cal.a[2], cal.a[0],
+			 cal.a[4], cal.a[5], cal.a[3], cal.a[6]);
+		write (cal_fd, cal_buffer, strlen (cal_buffer) + 1);
+		close (cal_fd);
+                i = 0;
 	} else {
 		printf("Calibration failed.\n");
+		i = -1;
 	}
 
-//	while (1) {
-//		struct ts_sample samp;
-//
-//		if (ts_read_raw(ts, &samp, 1) < 0) {
-//			perror("ts_read");
-//			exit(1);
-//		}
-//
-//		printf("%ld.%06ld: %6d %6d %6d\n", samp.tv.tv_sec, samp.tv.tv_usec,
-//			samp.x, samp.y, samp.pressure);
-//	}
 	close_framebuffer();
-
+	return i;
 }

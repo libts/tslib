@@ -1,14 +1,26 @@
 /*
- *  tslib/plugins/threshold.c
+ *  tslib/plugins/dejitter.c
  *
  *  Copyright (C) 2001 Russell King.
  *
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: dejitter.c,v 1.6 2002/11/08 23:28:55 dlowder Exp $
+ * $Id: dejitter.c,v 1.7 2004/07/21 19:12:58 dlowder Exp $
  *
- * Threshold filter for touchscreen values
+ * Problem: some touchscreens read the X/Y values from ADC with a
+ * great level of noise in their lowest bits. This produces "jitter"
+ * in touchscreen output, e.g. even if we hold the stylus still,
+ * we get a great deal of X/Y coordinate pairs that are close enough
+ * but not equal. Also if we try to draw a straight line in a painter
+ * program, we'll get a line full of spikes.
+ *
+ * Solution: we apply a smoothing filter on the last several values
+ * thus excluding spikes from output. If we detect a substantial change
+ * in coordinates, we reset the backlog of pen positions, thus avoiding
+ * smoothing coordinates that are not supposed to be smoothed. This
+ * supposes all noise has been filtered by the lower-level filter,
+ * e.g. by the "variance" module.
  */
 #include <errno.h>
 #include <stdlib.h>
@@ -20,74 +32,143 @@
 #include "tslib.h"
 #include "tslib-filter.h"
 
-#define NR_LAST	4
+/**
+ * This filter works as follows: we keep track of latest N samples,
+ * and average them with certain weights. The oldest samples have the
+ * least weight and the most recent samples have the most weight.
+ * This helps remove the jitter and at the same time doesn't influence
+ * responsivity because for each input sample we generate one output
+ * sample; pen movement becomes just somehow more smooth.
+ */
 
-struct tslib_threshold {
-	struct tslib_module_info	module;
-	int			pthreshold;
-	int			xdelta;
-	int			ydelta;
-	int			delta2;
-	unsigned int			x;
-	unsigned int			y;
-	unsigned int			down;
+#define NR_SAMPHISTLEN	4
+
+/* To keep things simple (avoiding division) we ensure that
+ * SUM(weight) = power-of-two. Also we must know how to approximate
+ * measurements when we have less than NR_SAMPHISTLEN samples.
+ */
+static const unsigned char weight [NR_SAMPHISTLEN - 1][NR_SAMPHISTLEN + 1] =
+{
+	/* The last element is pow2(SUM(0..3)) */
+	{ 5, 3, 0, 0, 3 },	/* When we have 2 samples ... */
+	{ 8, 5, 3, 0, 4 },	/* When we have 3 samples ... */
+	{ 6, 4, 3, 3, 4 },	/* When we have 4 samples ... */
 };
 
-static int threshold_read(struct tslib_module_info *info, struct ts_sample *samp, int nr)
+struct ts_hist {
+	int x;
+	int y;
+	int p;
+};
+
+struct tslib_dejitter {
+	struct tslib_module_info module;
+	unsigned int delta;
+	unsigned int x;
+	unsigned int y;
+	unsigned int down;
+	unsigned int nr;
+	unsigned int head;
+	struct ts_hist hist[NR_SAMPHISTLEN];
+};
+
+static int sqr (int x)
 {
-	struct tslib_threshold *thr = (struct tslib_threshold *)info;
+	return x * x;
+}
+
+static void average (struct tslib_dejitter *djt, struct ts_sample *samp)
+{
+	const unsigned char *w;
+	int sn = djt->head;
+	int i, x = 0, y = 0, p = 0;
+
+        w = weight [djt->nr - 2];
+
+	for (i = 0; i < djt->nr; i++) {
+		x += djt->hist [sn].x * w [i];
+		y += djt->hist [sn].y * w [i];
+		p += djt->hist [sn].p * w [i];
+		sn = (sn - 1) & (NR_SAMPHISTLEN - 1);
+	}
+
+	samp->x = x >> w [NR_SAMPHISTLEN];
+	samp->y = y >> w [NR_SAMPHISTLEN];
+	samp->pressure = p >> w [NR_SAMPHISTLEN];
+#ifdef DEBUG
+	fprintf(stderr,"DEJITTER----------------> %d %d %d\n",
+		samp->x, samp->y, samp->pressure);
+#endif
+}
+
+static int dejitter_read(struct tslib_module_info *info, struct ts_sample *samp, int nr)
+{
+        struct tslib_dejitter *djt = (struct tslib_dejitter *)info;
 	struct ts_sample *s;
-	int ret;
+	int count = 0, ret;
 
 	ret = info->next->ops->read(info->next, samp, nr);
-	if (ret >= 0) {
-		int nr = 0;
-
-		for (s = samp; s < samp + ret; s++) {
-			int dr2;
-#ifdef DEBUG
-			fprintf(stderr,"BEFORE DEJITTER---------------> %d %d %d\n",s->x,s->y,s->pressure);
-#endif /*DEBUG*/
-			thr->down = (s->pressure >= thr->pthreshold);
-			if (thr->down) {
-				dr2 = (thr->x - s->x)*(thr->x - s->x) 
-					+ (thr->y - s->y)*(thr->y - s->y);
-				if(dr2 < thr->delta2) {
-					s->x = thr->x;
-					s->y = thr->y;
-				} else {
-					thr->x = s->x;
-					thr->y = s->y;
-				}
-
-			} else {
-				s->x = thr->x;
-				s->y = thr->y;
-			}
-
-
-			samp[nr++] = *s;
+	for (s = samp; ret > 0; s++, ret--) {
+		if (s->pressure == 0) {
+			/*
+			 * Pen was released. Reset the state and
+			 * forget all history events.
+			 */
+			djt->nr = 0;
+			samp [count++] = *s;
+                        continue;
 		}
 
-		ret = nr;
+                /* If the pen moves too fast, reset the backlog. */
+		if (djt->nr) {
+			int prev = (djt->head - 1) & (NR_SAMPHISTLEN - 1);
+			if (sqr (s->x - djt->hist [prev].x) +
+			    sqr (s->y - djt->hist [prev].y) > djt->delta) {
+#ifdef DEBUG
+				fprintf (stderr, "DEJITTER: pen movement exceeds threshold\n");
+#endif
+                                djt->nr = 0;
+			}
+		}
+
+		djt->hist[djt->head].x = s->x;
+		djt->hist[djt->head].y = s->y;
+		djt->hist[djt->head].p = s->pressure;
+		if (djt->nr < NR_SAMPHISTLEN)
+			djt->nr++;
+
+		/* We'll pass through the very first sample since
+		 * we can't average it (no history yet).
+		 */
+		if (djt->nr == 1)
+			samp [count] = *s;
+		else {
+			average (djt, samp + count);
+			samp [count].tv = s->tv;
+		}
+		count++;
+
+		djt->head = (djt->head + 1) & (NR_SAMPHISTLEN - 1);
 	}
-	return ret;
+
+	return count;
 }
 
-static int threshold_fini(struct tslib_module_info *info)
+static int dejitter_fini(struct tslib_module_info *info)
 {
 	free(info);
+	return 0;
 }
 
-static const struct tslib_ops threshold_ops =
+static const struct tslib_ops dejitter_ops =
 {
-	read:	threshold_read,
-	fini:	threshold_fini,
+	.read	= dejitter_read,
+	.fini	= dejitter_fini,
 };
 
-static int threshold_limit(struct tslib_module_info *inf, char *str, void *data)
+static int dejitter_limit(struct tslib_module_info *inf, char *str, void *data)
 {
-	struct tslib_threshold *thr = (struct tslib_threshold *)inf;
+	struct tslib_dejitter *djt = (struct tslib_dejitter *)inf;
 	unsigned long v;
 	int err = errno;
 
@@ -99,15 +180,7 @@ static int threshold_limit(struct tslib_module_info *inf, char *str, void *data)
 	errno = err;
 	switch ((int)data) {
 	case 1:
-		thr->xdelta = v;
-		break;
-
-	case 2:
-		thr->ydelta = v;
-		break;
-
-	case 3:
-		thr->pthreshold = v;
+		djt->delta = v;
 		break;
 
 	default:
@@ -116,35 +189,31 @@ static int threshold_limit(struct tslib_module_info *inf, char *str, void *data)
 	return 0;
 }
 
-static const struct tslib_vars threshold_vars[] =
+static const struct tslib_vars dejitter_vars[] =
 {
-	{ "xdelta",	(void *)1, threshold_limit },
-	{ "ydelta",	(void *)2, threshold_limit },
-	{ "pthreshold",	(void *)3, threshold_limit }
+	{ "delta",	(void *)1, dejitter_limit },
 };
 
-//#define NR_VARS (sizeof(threshold_vars) / sizeof(threshold_vars[0]))
-#define NR_VARS 3
+#define NR_VARS (sizeof(dejitter_vars) / sizeof(dejitter_vars[0]))
 
 struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 {
-	struct tslib_threshold *thr;
+	struct tslib_dejitter *djt;
 
-	thr = malloc(sizeof(struct tslib_threshold));
-	if (thr == NULL)
+	djt = malloc(sizeof(struct tslib_dejitter));
+	if (djt == NULL)
 		return NULL;
 
-	thr->module.ops = &threshold_ops;
+	djt->module.ops = &dejitter_ops;
 
-	thr->xdelta = 10;
-	thr->ydelta = 10;
-	thr->pthreshold = 100;
+	djt->delta = 100;
+        djt->head = 0;
 
-	if (tslib_parse_vars(&thr->module, threshold_vars, NR_VARS, params)) {
-		free(thr);
+	if (tslib_parse_vars(&djt->module, dejitter_vars, NR_VARS, params)) {
+		free(djt);
 		return NULL;
 	}
-	thr->delta2 = (thr->xdelta)*(thr->xdelta) + (thr->ydelta)*(thr->ydelta);
+	djt->delta = sqr (djt->delta);
 
-	return &thr->module;
+	return &djt->module;
 }

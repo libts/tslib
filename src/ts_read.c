@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_read.c,v 1.3 2003/03/04 17:09:47 dlowder Exp $
+ * $Id: ts_read.c,v 1.4 2004/07/21 19:12:59 dlowder Exp $
  *
  * Read raw pressure, x, y, and timestamp from a touchscreen device.
  */
@@ -40,7 +40,8 @@ int ts_read(struct tsdev *ts, struct ts_sample *samp, int nr)
 //		samp[i] = ts_read_private_samples[i];
 //	}
 #ifdef DEBUG
-	fprintf(stderr,"TS_READ----> x = %d, y = %d, pressure = %d\n", samp->x, samp->y, samp->pressure);
+	if (result)
+		fprintf(stderr,"TS_READ----> x = %d, y = %d, pressure = %d\n", samp->x, samp->y, samp->pressure);
 #endif
 	return result;
 

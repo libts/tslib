@@ -6,173 +6,129 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: variance.c,v 1.3 2002/11/08 23:28:55 dlowder Exp $
+ * $Id: variance.c,v 1.4 2004/07/21 19:12:59 dlowder Exp $
  *
- * Variance filter for touchscreen values
+ * Variance filter for touchscreen values.
+ *
+ * Problem: some touchscreens are sampled very roughly, thus even if
+ * you hold the pen still, the samples can differ, sometimes substantially.
+ * The worst happens when electric noise during sampling causes the result
+ * to be substantially different from the real pen position; this causes
+ * the mouse cursor to suddenly "jump" and then return back.
+ *
+ * Solution: delay sampled data by one timeslot. If we see that the last
+ * sample read differs too much, we mark it as "suspicious". If next sample
+ * read is close to the sample before the "suspicious", the suspicious sample
+ * is dropped, otherwise we consider that a quick pen movement is in progress
+ * and pass through both the "suspicious" sample and the sample after it.
  */
 #include <errno.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
 
-#include <stdio.h>
-
 #include "tslib.h"
 #include "tslib-filter.h"
 
-#define NR_LAST	4
-
 struct tslib_variance {
-	struct tslib_module_info	module;
-	int				nr;
-	unsigned int			pthreshold;
-	unsigned int			xlimit;
-	unsigned int			ylimit;
-	struct ts_sample		last[NR_LAST];
+	struct tslib_module_info module;
+	unsigned int delta;
+        struct ts_sample last;
+        struct ts_sample noise;
+	unsigned int flags;
+#define VAR_PENDOWN		0x00000001
+#define VAR_LASTVALID		0x00000002
+#define VAR_NOISEVALID		0x00000004
+#define VAR_SUBMITNOISE		0x00000008
 };
 
-/*
- * We have 4 complete samples.  Calculate the variance between each,
- * treating X and Y values separately.  Then pick the two with the
- * least variance, and average them.
- */
-static int
-variance_calculate(struct tslib_variance *var, struct ts_sample *samp,
-		   struct ts_sample *s)
+static int sqr (int x)
 {
-	int i, j;
-	int diff_x, min_x, i_x, j_x;
-	int diff_y, min_y, i_y, j_y;
-	int diff_p, min_p, i_p, j_p;
-
-	min_x = INT_MAX;
-	min_y = INT_MAX;
-	min_p = INT_MAX;
-
-	for (i = 0; i < var->nr - 1; i++) {
-		for (j = i + 1; j < var->nr; j++) {
-			/*
-			 * Calculate the variance between sample 'i'
-			 * and sample 'j'.  X and Y values are treated
-			 * separately.
-			 */
-			diff_x = var->last[i].x - var->last[j].x;
-			if (diff_x < 0)
-				diff_x = -diff_x;
-
-			diff_y = var->last[i].y - var->last[j].y;
-			if (diff_y < 0)
-				diff_y = -diff_y;
-
-			diff_p = var->last[i].pressure - var->last[j].pressure;
-			if (diff_p < 0)
-				diff_p = -diff_p;
-
-			/*
-			 * Is the variance between any two samples too large?
-			 */
-			if (diff_x > var->xlimit || diff_y > var->ylimit)
-				return 0;
-
-			/*
-			 * Find the minimum X variance.
-			 */
-			if (min_x > diff_x) {
-				min_x = diff_x;
-				i_x = i;
-				j_x = j;
-			}
-
-			/*
-			 * Find the minimum Y variance.
-			 */
-			if (min_y > diff_y) {
-				min_y = diff_y;
-				i_y = i;
-				j_y = j;
-			}
-
-			if (min_p > diff_p) {
-				min_p = diff_p;
-				i_p = i;
-				j_p = j;
-			}
-		}
-	}
-
-	samp->x		 = (var->last[i_x].x + var->last[j_x].x) / 2;
-	samp->y		 = (var->last[i_y].y + var->last[j_y].y) / 2;
-	samp->pressure   = (var->last[i_p].pressure + var->last[j_p].pressure) / 2;
-	samp->tv.tv_sec  = s->tv.tv_sec;
-	samp->tv.tv_usec = s->tv.tv_usec;
-
-	return 1;
+	return x * x;
 }
 
 static int variance_read(struct tslib_module_info *info, struct ts_sample *samp, int nr)
 {
 	struct tslib_variance *var = (struct tslib_variance *)info;
-	struct ts_sample *s;
-	int ret;
+	struct ts_sample cur;
+	int count = 0, dist;
 
-	ret = info->next->ops->read(info->next, samp, nr);
-	if (ret >= 0) {
-		int nr = 0;
-
-		for (s = samp; s < samp + ret; s++) {
-			if (s->pressure < var->pthreshold) {
-				/*
-				 * Pen was released.  Reset our state and
-				 * pass up the release information.
-				 */
-//				samp[nr].x = 0;
-//				samp[nr].y = 0;
-				samp[nr].pressure = s->pressure;
-				samp[nr].tv.tv_sec = s->tv.tv_sec;
-				samp[nr].tv.tv_usec = s->tv.tv_usec;
-
-				nr++;
-
-				var->nr = 0;
-				continue;
-			} else if (var->nr == -1) {
-				/*
-				 * Pen was pressed.  Inform upper layers
-				 * immediately.
-				 */
-				samp[nr] = *s;
-				nr++;
-			}
-
-			if (var->nr >= 0) {
-				var->last[var->nr].x = s->x;
-				var->last[var->nr].y = s->y;
-				var->last[var->nr].pressure = s->pressure;
-			}
-
-			var->nr++;
-
-			if (var->nr == NR_LAST) {
-				if (variance_calculate(var, samp + nr, s))
-					nr++;
-				var->nr = 0;
-			}
+	while (count < nr) {
+		if (var->flags & VAR_SUBMITNOISE) {
+			cur = var->noise;
+			var->flags &= ~VAR_SUBMITNOISE;
+		} else {
+			if (info->next->ops->read(info->next, &cur, 1) < 1)
+				return count;
 		}
 
-		ret = nr;
+		if (cur.pressure == 0) {
+			/* Flush the queue immediately when the pen is just
+			 * released, otherwise the previous layer will
+			 * get the pen up notification too late. This 
+			 * will happen if info->next->ops->read() blocks.
+			 */
+			if (var->flags & VAR_PENDOWN) {
+				var->flags |= VAR_SUBMITNOISE;
+				var->noise = cur;
+			}
+			/* Reset the state machine on pen up events. */
+			var->flags &= ~(VAR_PENDOWN | VAR_NOISEVALID | VAR_LASTVALID);
+			goto acceptsample;
+		} else
+			var->flags |= VAR_PENDOWN;
+
+		if (!(var->flags & VAR_LASTVALID)) {
+			var->last = cur;
+			var->flags |= VAR_LASTVALID;
+			continue;
+		}
+
+		if (var->flags & VAR_PENDOWN) {
+			/* Compute the distance between last sample and current */
+			dist = sqr (cur.x - var->last.x) +
+			       sqr (cur.y - var->last.y);
+
+			if (dist > var->delta) {
+				/* Do we suspect the previous sample was a noise? */
+				if (var->flags & VAR_NOISEVALID) {
+					/* Two "noises": it's just a quick pen movement */
+					samp [count++] = var->last = var->noise;
+					var->flags = (var->flags & ~VAR_NOISEVALID) |
+						VAR_SUBMITNOISE;
+				} else
+					var->flags |= VAR_NOISEVALID;
+
+				/* The pen jumped too far, maybe it's a noise ... */
+				var->noise = cur;
+				continue;
+			} else
+				var->flags &= ~VAR_NOISEVALID;
+		}
+
+acceptsample:
+#ifdef DEBUG
+		fprintf(stderr,"VARIANCE----------------> %d %d %d\n",
+			var->last.x, var->last.y, var->last.pressure);
+#endif
+		samp [count++] = var->last;
+		var->last = cur;
 	}
-	return ret;
+
+	return count;
 }
 
 static int variance_fini(struct tslib_module_info *info)
 {
 	free(info);
+        return 0;
 }
 
 static const struct tslib_ops variance_ops =
 {
-	read:	variance_read,
-	fini:	variance_fini,
+	.read	= variance_read,
+	.fini	= variance_fini,
 };
 
 static int variance_limit(struct tslib_module_info *inf, char *str, void *data)
@@ -189,15 +145,7 @@ static int variance_limit(struct tslib_module_info *inf, char *str, void *data)
 	errno = err;
 	switch ((int)data) {
 	case 1:
-		var->xlimit = v;
-		break;
-
-	case 2:
-		var->ylimit = v;
-		break;
-
-	case 3:
-		var->pthreshold = v;
+		var->delta = v;
 		break;
 
 	default:
@@ -208,9 +156,7 @@ static int variance_limit(struct tslib_module_info *inf, char *str, void *data)
 
 static const struct tslib_vars variance_vars[] =
 {
-	{ "xlimit",	(void *)1, variance_limit },
-	{ "ylimit",	(void *)2, variance_limit },
-	{ "pthreshold",	(void *)3, variance_limit }
+	{ "delta",	(void *)1, variance_limit },
 };
 
 #define NR_VARS (sizeof(variance_vars) / sizeof(variance_vars[0]))
@@ -225,15 +171,15 @@ struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 
 	var->module.ops = &variance_ops;
 
-	var->nr = -1;
-	var->xlimit = 160;
-	var->ylimit = 160;
-	var->pthreshold = 100;
+	var->delta = 30;
+	var->flags = 0;
 
 	if (tslib_parse_vars(&var->module, variance_vars, NR_VARS, params)) {
 		free(var);
 		return NULL;
 	}
+
+        var->delta = sqr (var->delta);
 
 	return &var->module;
 }

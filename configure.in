@@ -1,15 +1,34 @@
-dnl $Id: configure.in,v 1.3 2002/06/17 17:21:42 dlowder Exp $
+dnl $Id: configure.in,v 1.4 2004/07/21 19:12:58 dlowder Exp $
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/ts_close.c)
 AM_INIT_AUTOMAKE(libts,0.0.1)
 AM_CONFIG_HEADER(config.h)
 
+# filters
 AC_ARG_ENABLE(linear,   [  --enable-linear         Enable building of linear scaling [default=yes]],
   [ "x$enableval" = "xyes" ] && PLUGINS="$PLUGINS linear.la", PLUGINS="$PLUGINS linear.la")
 AC_ARG_ENABLE(dejitter, [  --enable-dejitter       Enable building of dejitter filter [default=yes]],
   [ "x$enableval" = "xyes" ] && PLUGINS="$PLUGINS dejitter.la", PLUGINS="$PLUGINS dejitter.la")
 AC_ARG_ENABLE(variance, [  --enable-variance       Enable building of variance filter [default=yes]],
   [ "x$enableval" = "xyes" ] && PLUGINS="$PLUGINS variance.la", PLUGINS="$PLUGINS variance.la")
+AC_ARG_ENABLE(pthres,   [  --enable-pthres         Enable building of pthres filter [default=yes]],
+  [ "x$enableval" = "xyes" ] && PLUGINS="$PLUGINS pthres.la", PLUGINS="$PLUGINS pthres.la")
+
+# hardware access modules
+AC_ARG_ENABLE(ucb1x00,  [  --enable-ucb1x00        Enable building of ucb1x00 raw module (UCB1x00 support) [default=yes]],
+  [ "x$enableval" = "xyes" ] && PLUGINS="$PLUGINS ucb1x00.la", PLUGINS="$PLUGINS ucb1x00.la")
+AC_ARG_ENABLE(corgi,    [  --enable-corgi          Enable building of corgi raw module (Sharp Zaurus sl-c7x0 support) [default=yes]],
+  [ "x$enableval" = "xyes" ] && PLUGINS="$PLUGINS corgi.la", PLUGINS="$PLUGINS corgi.la")
+AC_ARG_ENABLE(collie,   [  --enable-collie         Enable building of collie raw module (Sharp Zaurus sl-5500/5000d support) [default=yes]],
+  [ "x$enableval" = "xyes" ] && PLUGINS="$PLUGINS collie.la", PLUGINS="$PLUGINS collie.la")
+AC_ARG_ENABLE(h3600,    [  --enable-h3600          Enable building of h3600 raw module (HP iPaq H3600 support) [default=yes]],
+  [ "x$enableval" = "xyes" ] && PLUGINS="$PLUGINS h3600.la", PLUGINS="$PLUGINS h3600.la")
+AC_ARG_ENABLE(mk712,    [  --enable-mk712          Enable building of mk712 raw module (Hitachi Webpad support) [default=yes]],
+  [ "x$enableval" = "xyes" ] && PLUGINS="$PLUGINS mk712.la", PLUGINS="$PLUGINS mk712.la")
+AC_ARG_ENABLE(arctic2,  [  --enable-arctic2        Enable building of arctic2 raw module (IBM Arctic II support) [default=yes]],
+  [ "x$enableval" = "xyes" ] && PLUGINS="$PLUGINS arctic2.la", PLUGINS="$PLUGINS arctic2.la")
+AC_ARG_ENABLE(arctic2,  [  --enable-input          Enable building of input raw module (Linux /dev/input/eventN support) [default=yes]],
+  [ "x$enableval" = "xyes" ] && PLUGINS="$PLUGINS input.la", PLUGINS="$PLUGINS input.la")
 
 AC_MSG_CHECKING(--enable-debug argument)
 AC_ARG_ENABLE(debug,    [  --enable-debug          Enable debug messages from filters [default=no]], 
@@ -21,26 +40,14 @@ else
 	DEBUGFLAGS=""
 fi
 
-AC_MSG_CHECKING(--enable-inputapi argument)
-AC_ARG_ENABLE(inputapi, [  --enable-inputapi       Enable use of the input API [default=yes]],
-  , [enable_inputapi="yes"])
-AC_MSG_RESULT($enable_inputapi)
-if test "$enable_inputapi" = "yes"; then
-	INPUTAPIFLAG="-DUSE_INPUT_API"
-else
-	INPUTAPIFLAG=""
-fi
-
 AC_SUBST(DEBUGFLAGS)
-AC_SUBST(INPUTAPIFLAG)
-
 AC_SUBST(PLUGINS)
 
 AM_DISABLE_STATIC
 AM_ENABLE_SHARED
 
 
-PLUGIN_DIR='${datadir}/ts/plugins'
+PLUGIN_DIR='${libdir}/ts/plugins'
 AC_SUBST(PLUGIN_DIR)
 
 TS_CONF='${sysconfdir}/ts.conf'

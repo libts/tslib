@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: linear.c,v 1.8 2003/03/05 23:03:04 dlowder Exp $
+ * $Id: linear.c,v 1.9 2004/07/21 19:12:59 dlowder Exp $
  *
  * Linearly scale touchscreen values
  */
@@ -74,25 +74,25 @@ linear_read(struct tslib_module_info *info, struct ts_sample *samp, int nr)
 static int linear_fini(struct tslib_module_info *info)
 {
 	free(info);
+	return 0;
 }
 
 static const struct tslib_ops linear_ops =
 {
-	read:		linear_read,
-	fini:		linear_fini,
+	.read	= linear_read,
+	.fini	= linear_fini,
 };
 
 static int linear_xyswap(struct tslib_module_info *inf, char *str, void *data)
 {
 	struct tslib_linear *lin = (struct tslib_linear *)inf;
 
-	lin->swap_xy = (int)data;
+	lin->swap_xy = 1;
 	return 0;
 }
 
 static const struct tslib_vars linear_vars[] =
 {
-	{ "noxyswap",	(void *)0, linear_xyswap },
 	{ "xyswap",	(void *)1, linear_xyswap }
 };
 
@@ -104,7 +104,6 @@ struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 	struct tslib_linear *lin;
 	struct stat sbuf;
 	int pcal_fd;
-	int a[7];
 	char pcalbuf[200];
 	int index;
 	char *tokptr;

@@ -1,4 +1,4 @@
-$Id: README,v 1.3 2002/06/19 18:55:08 dlowder Exp $
+$Id: README,v 1.4 2004/07/21 19:12:58 dlowder Exp $
 
 General
 =======
@@ -14,8 +14,9 @@ specifies one module, and the parameters for that module.  The modules
 are loaded in order, with the first one processing the touchscreen data
 first.  For example:
 
-  module variance xlimit=50 ylimit=50 pthreshold=100
-  module dejitter xdelta=3 ydelta=2 pthreshold=100
+  module_raw input
+  module variance delta=30
+  module dejitter delta=100
   module linear
 
 These parameters are described below.
@@ -23,8 +24,8 @@ These parameters are described below.
 With this configuration file, we end up with the following data flow
 through the library:
 
-  raw device --> variance --> dejitter --> linear --> application
-                 module       module       module
+  raw read --> variance --> dejitter --> linear --> application
+  module       module       module       module
 
 You can re-order these modules as you wish, add more modules, or remove them
 all together.  When you call ts_read(), the values you read are values that
@@ -34,9 +35,42 @@ raw data directly from the device.
 
 There are a couple of programs in the tslib/test directory which give example
 usages.  They are by no means exhaustive, nor probably even good examples.
-They are basically the programs I used to test this library.
+They are basically the programs used to test this library.
 
 
+Environment Variables
+=====================
+
+TSLIB_TSDEVICE			TS device file name.
+				Default (non inputapi): /dev/touchscreen/ucb1x00
+				Default (inputapi): /dev/input/event0
+TSLIB_CALIBFILE			Calibration file.
+				Default: ${sysconfdir}/pointercal
+TSLIB_CONFFILE			Config file.
+				Default: ${sysconfdir}/ts.conf
+TSLIB_PLUGINDIR			Plugin directory.
+				Default: ${datadir}/plugins
+TSLIB_CONSOLEDEVICE		Console device.
+				Default: /dev/tty
+TSLIB_FBDEVICE			Framebuffer device.
+				Default: /dev/fb0
+
+
+Module Creation Notes
+=====================
+
+For those creating tslib modules, it is important to note a couple things with
+regard to handling of the ability for a user to request more than one ts event
+at a time.  The first thing to note is that the lower layers may send up less
+events than the user requested, because some events may be filtered out by
+intermediate layers. Next, your module should send up just as many events
+as the user requested in nr. If your module is one that consumes events,
+such as variance, then you loop on the read from the lower layers, and only
+send the events up when
+1) you have the number of events requested by the user, or
+2) one of the events from the lower layers was a pen release.
+
+ 
 Module Parameters
 =================
 
@@ -44,39 +78,47 @@ module:	variance
 ----------------
 
 Description:
-  Variance filter.  Calculates the variance on the last 4 X and Y axis values
-  independently, and averages the two samples with the smallest variance.
+  Variance filter. Tries to do it's best in order to filter out random noise
+  coming from touchscreen ADC's. This is achieved by limiting the sample
+  movement speed to some value (e.g. the pen is not supposed to move quicker
+  than some threshold).
+
+  This is a 'greedy' filter, e.g. it gives less samples on output than
+  receives on input.
 
 Parameters:
-  xlimit
-	Sets the X axis variance limit on the last 4 touch screen samples,
-	in touch screen coordinates.  Variances outside this limit will
-	cause 4 extra samples to be collected.
+  delta
+	Set the squared distance in touchscreen units between previous and
+	current pen position (e.g. (X2-X1)^2 + (Y2-Y1)^2). This defines the
+	criteria for determining whenever two samples are 'near' or 'far'
+	to each other.
 
-  ylimit
-	Sets the Y axis variance limit on the last 4 touch screen samples,
-	in touch screen coordinates.  Variances outside this limit will
-	cause 4 extra samples to be collected.
+	Now if the distance between previous and current sample is 'far',
+	the sample is marked as 'potential noise'. This doesn't mean yet
+	that it will be discarded; if the next reading will be close to it,
+	this will be considered just a regular 'quick motion' event, and it
+	will sneak to the next layer. Also, if the sample after the
+	'potential noise' is 'far' from both previously discussed samples,
+	this is also considered a 'quick motion' event and the sample sneaks
+	into the output stream.
 
-  pthreshold
-	Sets the pressure threshold, above which we believe the pen
-	to be down.
 
 module: dejitter
 ----------------
 
 Description:
-  Removes jitter on the X and Y co-ordinates.  Samples whos X and Y
-  differentials are within these limits will be treated as an identical
-  value, and gobbled up.
+  Removes jitter on the X and Y co-ordinates. This is achieved by applying a
+  weighted smoothing filter. The latest samples have most weight; earlier
+  samples have less weight. This allows to achieve 1:1 input->output rate.
 
 Parameters:
-  xdelta
-  ydelta
-	Sets the minimum differential between the current and the previous
-	X or Y sample.
+  delta
+	Squared distance between two samples ((X2-X1)^2 + (Y2-Y1)^2) that
+	defines the 'quick motion' threshold. If the pen moves quick, it
+	is not feasible to smooth pen motion, besides quick motion is not
+	precise anyway; so if quick motion is detected the module just
+	discards the backlog and simply copies input to output.
 
-  pthreshold
 
 module: linear
 --------------

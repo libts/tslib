@@ -7,7 +7,7 @@
  *
  * This file is placed under the LGPL.
  *
- * $Id: tslib.h,v 1.2 2002/06/17 17:21:43 dlowder Exp $
+ * $Id: tslib.h,v 1.3 2004/07/21 19:12:59 dlowder Exp $
  *
  * Touch screen library interface definitions.
  */
@@ -43,7 +43,6 @@ extern int (*ts_error_fn)(const char *fmt, va_list ap);
 
 /*
  * Returns the file descriptor in use for the touchscreen device.
- * (not currently implemented)
  */
 int ts_fd(struct tsdev *);
 

@@ -6,91 +6,92 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_config.c,v 1.3 2002/07/01 23:02:57 dlowder Exp $
+ * $Id: ts_config.c,v 1.4 2004/07/21 19:12:59 dlowder Exp $
  *
  * Read the configuration and load the appropriate drivers.
  */
 #include "config.h"
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "tslib-private.h"
 
-struct opt {
-	const char *str;
-	int (*fn)(struct tsdev *ts, char *rest);
-};
-
-static int ts_opt_module(struct tsdev *ts, char *rest)
-{
-	char *tok = strsep(&rest, " \t");
-
-	return ts_load_module(ts, tok, rest);
-}
-
-static struct opt options[] = {
-	{ "module", ts_opt_module },
-};
-
-#define NR_OPTS (sizeof(options) / sizeof(options[0]))
+/* Maximum line size is BUF_SIZE - 2 
+ * -1 for fgets and -1 to test end of line
+ */
+#define BUF_SIZE 512
 
 int ts_config(struct tsdev *ts)
 {
-	char buf[80], *p;
+	char buf[BUF_SIZE], *p;
 	FILE *f;
-	int line = 0, ret = 0;
+	int line = 0;
+	int ret;
 
 	char *conffile;
 
-	if( (conffile = getenv("TSLIB_CONFFILE")) != NULL) {
-		f = fopen(conffile,"r");
-	} else {
-		f = fopen(TS_CONF, "r");
+	if( (conffile = getenv("TSLIB_CONFFILE")) == NULL) {
+		conffile = strdup (TS_CONF);
 	}
-	if (!f)
-		return -1;
 
-	while ((p = fgets(buf, sizeof(buf), f)) != NULL && ret == 0) {
-		struct opt *opt;
-		char *e, *tok;
+	f = fopen(conffile, "r");
+	if (!f) {
+		perror("Couldnt open tslib config file");
+		return -1;
+	}
+
+	buf[BUF_SIZE - 2] = '\0';
+	while ((p = fgets(buf, BUF_SIZE, f)) != NULL) {
+		char *e;
+		char *tok;
+		char *module_name;
 
 		line++;
 
-		/*
-		 * Did we read a whole line?
-		 */
+		/* Chomp */
 		e = strchr(p, '\n');
-		if (!e) {
-			ts_error("%d: line too long", line);
+		if (e) {
+			*e = '\0';
+		}
+
+		/* Did we read a whole line? */
+		if (buf[BUF_SIZE - 2] != '\0') {
+			ts_error("%s: line %d too long\n", conffile, line);
 			break;
 		}
 
-		/*
-		 * Chomp.
-		 */
-		*e = '\0';
-
 		tok = strsep(&p, " \t");
-
-		/*
-		 * Ignore comments or blank lines.
+		
+		/* Ignore comments or blank lines.
+		 * Note: strsep modifies p (see man strsep)
 		 */
-		if (!tok || *tok == '#')
+
+		if (p==NULL || *tok == '#')
 			continue;
 
-		/*
-		 * Search for the option.
-		 */
-		for (opt = options; opt < options + NR_OPTS; opt++)
-			if (strcasecmp(tok, opt->str) == 0) {
-				ret = opt->fn(ts, p);
-				break;
-			}
-
-		if (opt == options + NR_OPTS) {
-			ts_error("%d: option `%s' not recognised", line, tok);
-			ret = -1;
+		/* Search for the option. */
+		if (strcasecmp(tok, "module") == 0) {
+			module_name = strsep(&p, " \t");
+			ret = ts_load_module(ts, module_name, p);
 		}
+		else if (strcasecmp(tok, "module_raw") == 0) {
+			module_name = strsep(&p, " \t");
+			ret = ts_load_module_raw(ts, module_name, p);
+		} else {
+			ts_error("%s: Unrecognised option %s:%d:%s\n", conffile, line, tok);
+			break;
+		}
+		if (ret != 0) {
+			ts_error("Couldnt load module %s\n", module_name);
+			break;
+		}
+	}
+
+	if (ts->list_raw == NULL) {
+		ts_error("No raw modules loaded.\n");
+		return -1;
 	}
 
 	fclose(f);

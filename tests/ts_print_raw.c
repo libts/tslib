@@ -23,7 +23,6 @@
 int main()
 {
 	struct tsdev *ts;
-	int x, y;
 	char *tsdevice=NULL;
 
         if( (tsdevice = getenv("TSLIB_TSDEVICE")) != NULL ) {
