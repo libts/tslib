@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_parse_vars.c,v 1.1.1.1 2001/12/22 21:12:06 rmk Exp $
+ * $Id: ts_parse_vars.c,v 1.2 2002/06/19 18:55:08 dlowder Exp $
  *
  * Read raw pressure, x, y, and timestamp from a touchscreen device.
  */
@@ -30,7 +30,7 @@ int tslib_parse_vars(struct tslib_module_info *mod,
 		return 0;
 
 	s = alloca(strlen(str));
-
+	strncpy(s,str,strlen(str));
 	while ((p = strsep(&s, " \t")) != NULL && ret == 0) {
 		const struct tslib_vars *v;
 		char *eq;

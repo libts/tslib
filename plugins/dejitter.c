@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: dejitter.c,v 1.2 2002/06/17 17:21:42 dlowder Exp $
+ * $Id: dejitter.c,v 1.3 2002/06/19 18:55:08 dlowder Exp $
  *
  * Threshold filter for touchscreen values
  */
@@ -22,9 +22,10 @@
 
 struct tslib_threshold {
 	struct tslib_module_info	module;
-	unsigned int			pthreshold;
-	unsigned int			xdelta;
-	unsigned int			ydelta;
+	int			pthreshold;
+	int			xdelta;
+	int			ydelta;
+	int			delta2;
 	unsigned int			x;
 	unsigned int			y;
 	unsigned int			down;
@@ -41,31 +42,31 @@ static int threshold_read(struct tslib_module_info *info, struct ts_sample *samp
 		int nr = 0;
 
 		for (s = samp; s < samp + ret; s++) {
-			int dx, dy;
+			int dr2;
 #ifdef DEBUG
 			printf("BEFORE DEJITTER---------------> %d %d %d\n",s->x,s->y,s->pressure);
 #endif /*DEBUG*/
 			if (thr->down) {
-				dx = thr->x - s->x;
-				if (dx < 0)
-					dx = -dx;
-				dy = thr->y - s->y;
-				if (dy < 0)
-					dy = -dy;
-
-				if (dx < thr->xdelta)
+#ifdef DEBUG
+			printf("Thr values = %d %d\n",thr->x, thr->y);
+			printf("New values = %d %d\n",s->x, s->y);
+			printf("Delta2 = %d\n",thr->delta2);
+#endif /*DEBUG*/
+				dr2 = (thr->x - s->x)*(thr->x - s->x) 
+					+ (thr->y - s->y)*(thr->y - s->y);
+				if(dr2 < thr->delta2) {
 					s->x = thr->x;
-				if (dy < thr->ydelta)
 					s->y = thr->y;
+				} else {
+					thr->x = s->x;
+					thr->y = s->y;
+				}
 
-				if (thr->x != s->x || thr->y != s->y)
-					samp[nr++] = *s;
 			}
 
 			thr->down = s->pressure >= thr->pthreshold;
 
-			thr->x = s->x;
-			thr->y = s->y;
+			samp[nr++] = *s;
 		}
 
 		ret = nr;
@@ -99,6 +100,7 @@ static int threshold_limit(struct tslib_module_info *inf, char *str, void *data)
 	switch ((int)data) {
 	case 1:
 		thr->xdelta = v;
+		printf("in threshold_limit, xdelta=%d\n",thr->xdelta);
 		break;
 
 	case 2:
@@ -122,7 +124,8 @@ static const struct tslib_vars threshold_vars[] =
 	{ "pthreshold",	(void *)3, threshold_limit }
 };
 
-#define NR_VARS (sizeof(threshold_vars) / sizeof(threshold_vars[0]))
+//#define NR_VARS (sizeof(threshold_vars) / sizeof(threshold_vars[0]))
+#define NR_VARS 3
 
 struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 {
@@ -134,14 +137,16 @@ struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 
 	thr->module.ops = &threshold_ops;
 
-	thr->xdelta = 3;
-	thr->ydelta = 3;
+	thr->xdelta = 10;
+	thr->ydelta = 10;
 	thr->pthreshold = 100;
 
 	if (tslib_parse_vars(&thr->module, threshold_vars, NR_VARS, params)) {
 		free(thr);
 		return NULL;
 	}
+	printf("xdelta, ydelta = %d,%d\n",thr->xdelta, thr->ydelta);
+	thr->delta2 = (thr->xdelta)*(thr->xdelta) + (thr->ydelta)*(thr->ydelta);
 
 	return &thr->module;
 }

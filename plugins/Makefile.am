@@ -6,7 +6,7 @@
 # This file is placed under the LGPL.  Please see the file
 # COPYING for more details.
 #
-# $Id: Makefile.am,v 1.2 2002/06/17 17:21:42 dlowder Exp $
+# $Id: Makefile.am,v 1.3 2002/06/19 18:55:08 dlowder Exp $
 #
 
 CFLAGS                  := $(CFLAGS) $(DEBUGFLAGS) $(INPUTAPIFLAG)
@@ -30,4 +30,3 @@ dejitter_la_LDFLAGS	 = -module $(LTVSN)
 
 linear_la_SOURCES	 = linear.c
 linear_la_LDFLAGS	 = -module $(LTVSN)
-

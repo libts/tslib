@@ -1,3 +1,12 @@
+2002-06-19  Douglas Lowder <dlowder@earthlink.net>
+
+- Fixed a problem that caused tslib_parse_vars() (src/ts_parse_vars.c) to not
+  read parameters correctly from the ts.conf file.
+
+- Made modifications to simplify and improve the performance of the dejitter filter
+  (plugins/dejitter.c).
+
+
 2002-06-17  Douglas Lowder <dlowder@earthlink.net>
 
 - I added a simple script, autogen-clean.sh, to make it easier to change configure.in
@@ -32,3 +41,4 @@
 
 - Joanne Woo <jwoo@mvista.com> added C++ wrappers to the header files so this library
   can be safely used with C++ code.
+
