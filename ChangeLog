@@ -3,6 +3,12 @@
 	* AUTHORS: Add self to AUTHORS file.
 	* configure.in: Deleted.
 
+2004-11-22 Holger Freyther <zecke@handhelds.org>
+
+	* plugins/dejitter.c: Sometimes after ts_open/ts_close/ts_open on
+	  the first sample(s) dejitter will crash.  memset the tslib_dejitter
+	  structure with zeros so djt->nr's value isn't undefined.
+
 2004-10-19 Chris Larson <kergoth@handhelds.org>
 
 	* Files all over the tree: Fixed up a bunch of compile warnings,

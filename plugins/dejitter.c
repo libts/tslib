@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: dejitter.c,v 1.8 2004/10/19 22:01:27 dlowder Exp $
+ * $Id: dejitter.c,v 1.9 2005/02/26 00:58:32 kergoth Exp $
  *
  * Problem: some touchscreens read the X/Y values from ADC with a
  * great level of noise in their lowest bits. This produces "jitter"
@@ -205,6 +205,7 @@ struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 	if (djt == NULL)
 		return NULL;
 
+	memset(djt, 0, sizeof(struct tslib_dejitter));
 	djt->module.ops = &dejitter_ops;
 
 	djt->delta = 100;
