@@ -2,11 +2,14 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT(libts, 0.0.2, kergoth@handhelds.org)
+AC_INIT(tslib, 0.0.2, kergoth@handhelds.org)
 # AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE(dist-bzip2)
 AC_CONFIG_SRCDIR([src/ts_close.c])
 AM_CONFIG_HEADER(config.h)
+
+PACKAGE_DESCRIPTION="Touchscreen Access Library"
+AC_SUBST(PACKAGE_DESCRIPTION)
 
 # Set our default flags variables
 TS_DEFAULT_FLAGS
@@ -192,7 +195,7 @@ AC_SUBST(TS_CONF)
 # Library versioning
 LT_RELEASE=0.0
 LT_CURRENT=1
-LT_REVISION=0
+LT_REVISION=1
 LT_AGE=1
 AC_SUBST(LT_RELEASE)
 AC_SUBST(LT_CURRENT)
@@ -204,5 +207,6 @@ AC_CONFIG_FILES([Makefile
                  etc/Makefile
                  plugins/Makefile
                  src/Makefile
-                 tests/Makefile])
+                 tests/Makefile
+                 tslib-$LT_RELEASE.pc:tslib.pc.in])
 AC_OUTPUT
