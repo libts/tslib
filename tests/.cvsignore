@@ -1,0 +1,9 @@
+.deps
+.libs
+Makefile
+Makefile.in
+ts_calibrate
+ts_harvest
+ts_print
+ts_print_raw
+ts_test
