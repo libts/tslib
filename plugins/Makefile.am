@@ -6,7 +6,7 @@
 # This file is placed under the LGPL.  Please see the file
 # COPYING for more details.
 #
-# $Id: Makefile.am,v 1.5 2005/02/26 01:47:22 kergoth Exp $
+# $Id: Makefile.am,v 1.6 2005/02/26 01:54:50 kergoth Exp $
 #
 
 AM_CFLAGS		= $(DEBUGFLAGS) $(LIBFLAGS)
@@ -85,6 +85,12 @@ else
 INPUT_MODULE =
 endif
 
+if ENABLE_H2200_LINEAR_MODULE
+H2200_LINEAR_MODULE = linear_h2200.la
+else
+H2200_LINEAR_MODULE =
+endif
+
 pluginexec_LTLIBRARIES = \
 	$(LINEAR_MODULE) \
 	$(DEJITTER_MODULE) \
@@ -96,6 +102,7 @@ pluginexec_LTLIBRARIES = \
 	$(H3600_MODULE) \
 	$(MK712_MODULE) \
 	$(ARCTIC2_MODULE) \
+	$(H2200_LINEAR_MODULE) \
 	$(INPUT_MODULE)
   
 variance_la_SOURCES	= variance.c
@@ -131,3 +138,6 @@ arctic2_la_LDFLAGS	= -module $(LTVSN)
 
 input_la_SOURCES	= input-raw.c
 input_la_LDFLAGS	= -module $(LTVSN)
+
+linear_h2200_la_SOURCES	= linear-h2200.c
+linear_h2200_la_LDFLAGS	= -module $(LTVSN)

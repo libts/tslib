@@ -67,6 +67,15 @@ AC_ARG_ENABLE(dejitter,
 AC_MSG_RESULT($dejitter_module)
 AM_CONDITIONAL(ENABLE_DEJITTER_MODULE, test "$dejitter_module" = "yes")
 
+AC_MSG_CHECKING([whether linear-h2200 module is requested]) 
+AC_ARG_ENABLE(dejitter,
+	AS_HELP_STRING([--enable-linear-h2200],
+		[Enable building of linearizing filter for iPAQ h2200 (default=yes)]),
+	[h2200_linear_module=$enableval],
+	[h2200_linear_module=yes])
+AC_MSG_RESULT($h2200_linear_module)
+AM_CONDITIONAL(ENABLE_H2200_LINEAR_MODULE, test "$h2200_linear_module" = "yes")
+
 AC_MSG_CHECKING([whether variance module is requested])
 AC_ARG_ENABLE(variance,
 	AS_HELP_STRING([--enable-variance],

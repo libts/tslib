@@ -3,6 +3,12 @@
 	* AUTHORS: Add self to AUTHORS file.
 	* configure.in: Deleted.
 
+2005-02-16 Michael Opdenacker <michaelo@handhelds.org>
+
+	* configure.ac, plugins/Makefile.am, plugins/linear-h2200.c: Add
+	  tslib plugin to linearly scale touchscreen values for the HP iPAQ
+	  h22xx.
+
 2004-12-14 Chris Larson <kergoth@handhelds.org>
 
 	* Files all over the tree: Apply patch to add support for using
