@@ -29,3 +29,6 @@
   print statements in ts_read_raw and in the plugins that are wrapped with #ifdef DEBUG --
   this way I can see how many events are being filtered away and get a better idea
   of what the filters are doing.
+
+- Joanne Woo <jwoo@mvista.com> added C++ wrappers to the header files so this library
+  can be safely used with C++ code.
