@@ -1,3 +1,7 @@
+2002-11-08  Douglas Lowder <dlowder@earthlink.net>
+- Added patch from Scott Anderson to improve tests/ts_calibrate.c by taking
+  median of multiple samples for each point.
+
 2002-08-29  Douglas Lowder <dlowder@earthlink.net>
 - Added tests/ts_print_raw.c to print raw uncalibrated touchscreen events
   (useful for debugging)

@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: linear.c,v 1.5 2002/07/11 18:19:55 dlowder Exp $
+ * $Id: linear.c,v 1.6 2002/11/08 23:28:55 dlowder Exp $
  *
  * Linearly scale touchscreen values
  */
@@ -16,6 +16,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
+
+#include <stdio.h>
 
 #include "tslib.h"
 #include "tslib-filter.h"
@@ -46,7 +48,7 @@ linear_read(struct tslib_module_info *info, struct ts_sample *samp, int nr)
 
 		for (nr = 0; nr < ret; nr++, samp++) {
 #ifdef DEBUG
-			printf("BEFORE CALIB--------------------> %d %d %d\n",samp->x, samp->y, samp->pressure);
+			fprintf(stderr,"BEFORE CALIB--------------------> %d %d %d\n",samp->x, samp->y, samp->pressure);
 #endif /*DEBUG*/
 			xtemp = samp->x; ytemp = samp->y;
 			samp->x = 	( lin->a[2] +

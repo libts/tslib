@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: dejitter.c,v 1.5 2002/07/10 17:45:45 dlowder Exp $
+ * $Id: dejitter.c,v 1.6 2002/11/08 23:28:55 dlowder Exp $
  *
  * Threshold filter for touchscreen values
  */
@@ -14,6 +14,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+
+#include <stdio.h>
 
 #include "tslib.h"
 #include "tslib-filter.h"
@@ -44,7 +46,7 @@ static int threshold_read(struct tslib_module_info *info, struct ts_sample *samp
 		for (s = samp; s < samp + ret; s++) {
 			int dr2;
 #ifdef DEBUG
-			printf("BEFORE DEJITTER---------------> %d %d %d\n",s->x,s->y,s->pressure);
+			fprintf(stderr,"BEFORE DEJITTER---------------> %d %d %d\n",s->x,s->y,s->pressure);
 #endif /*DEBUG*/
 			thr->down = (s->pressure >= thr->pthreshold);
 			if (thr->down) {

@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: variance.c,v 1.2 2002/06/17 17:21:43 dlowder Exp $
+ * $Id: variance.c,v 1.3 2002/11/08 23:28:55 dlowder Exp $
  *
  * Variance filter for touchscreen values
  */
@@ -14,6 +14,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+
+#include <stdio.h>
 
 #include "tslib.h"
 #include "tslib-filter.h"

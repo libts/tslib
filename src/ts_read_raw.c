@@ -10,11 +10,13 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_read_raw.c,v 1.6 2002/07/11 18:19:55 dlowder Exp $
+ * $Id: ts_read_raw.c,v 1.7 2002/11/08 23:28:55 dlowder Exp $
  *
  * Read raw pressure, x, y, and timestamp from a touchscreen device.
  */
 #include "config.h"
+
+#include <stdio.h>
 
 #include <stdlib.h>
 #ifdef HAVE_UNISTD_H
@@ -142,7 +144,7 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 		samp->y = curr_y;
 		samp->pressure = curr_p;
 #ifdef DEBUG
-        printf("RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
+        fprintf(stderr,"RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
 #endif /*DEBUG*/
 		samp++;
 		total++;
@@ -169,7 +171,7 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 				samp->y = hevt->y;
 				samp->pressure = hevt->pressure;
 #ifdef DEBUG
-        printf("RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
+        fprintf(stderr,"RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
 #endif /*DEBUG*/
 				gettimeofday(&samp->tv,NULL);
 				samp++;
@@ -190,7 +192,7 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 				else
 					samp->pressure=0;
 #ifdef DEBUG
-        printf("RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
+        fprintf(stderr,"RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
 #endif /*DEBUG*/
 				gettimeofday(&samp->tv,NULL);
 				samp++;
@@ -208,7 +210,7 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 				samp->y = evt->y;
 				samp->pressure = evt->pressure;
 #ifdef DEBUG
-        printf("RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
+        fprintf(stderr,"RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
 #endif /*DEBUG*/
 				samp->tv.tv_usec = evt->stamp.tv_usec;
 				samp->tv.tv_sec = evt->stamp.tv_sec;
