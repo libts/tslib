@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: linear.c,v 1.4 2002/07/01 23:02:57 dlowder Exp $
+ * $Id: linear.c,v 1.5 2002/07/11 18:19:55 dlowder Exp $
  *
  * Linearly scale touchscreen values
  */
@@ -116,12 +116,12 @@ struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 	lin->module.ops = &linear_ops;
 
 // Use default values that leave ts numbers unchanged after transform
-	lin->a[0] = 0;
-	lin->a[1] = 1;
+	lin->a[0] = 1;
+	lin->a[1] = 0;
 	lin->a[2] = 0;
 	lin->a[3] = 0;
-	lin->a[4] = 0;
-	lin->a[5] = 1;
+	lin->a[4] = 1;
+	lin->a[5] = 0;
 	lin->a[6] = 1;
 	lin->p_offset = 0;
 	lin->p_mult   = 1;

@@ -10,7 +10,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_read_raw.c,v 1.5 2002/07/10 17:45:45 dlowder Exp $
+ * $Id: ts_read_raw.c,v 1.6 2002/07/11 18:19:55 dlowder Exp $
  *
  * Read raw pressure, x, y, and timestamp from a touchscreen device.
  */
@@ -26,20 +26,25 @@
 #ifdef USE_INPUT_API
 #include <linux/input.h>
 #else
-struct ts_event  {
+struct ts_event  {   /* Used in UCB1x00 style touchscreens (the default) */
 	unsigned short pressure;
 	unsigned short x;
 	unsigned short y;
 	unsigned short pad;
 	struct timeval stamp;
 };
-struct h3600_ts_event {
+struct h3600_ts_event { /* Used in the Compaq IPAQ */
 	unsigned short pressure;
 	unsigned short x;
 	unsigned short y;
 	unsigned short pad;
 };
-
+struct mk712_ts_event { /* Used in the Hitachi Webpad */
+	unsigned int header;
+	unsigned int x;
+	unsigned int y;
+	unsigned int reserved;
+};
 #endif /* USE_INPUT_API */
 
 #include "tslib-private.h"
@@ -51,6 +56,7 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 #else
 	struct ts_event *evt;
 	struct h3600_ts_event *hevt;
+	struct mk712_ts_event *mevt;
 #endif /* USE_INPUT_API */
 	int ret;
 	int total = 0;
@@ -169,6 +175,27 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 				samp++;
 				hevt++;
 				ret -= sizeof(*hevt);
+			}
+		}
+	} else if( strcmp(tseventtype,"MK712") == 0) { /* Hitachi Webpad events */
+		mevt = alloca(sizeof(*mevt) * nr);
+		ret = read(ts->fd, mevt, sizeof(*mevt) * nr);
+		if(ret >= 0) {
+			int nr = ret / sizeof(*mevt);
+			while(ret >= sizeof(*mevt)) {
+				samp->x = (short)mevt->x;
+				samp->y = (short)mevt->y;
+				if(mevt->header==0)
+					samp->pressure=1;
+				else
+					samp->pressure=0;
+#ifdef DEBUG
+        printf("RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
+#endif /*DEBUG*/
+				gettimeofday(&samp->tv,NULL);
+				samp++;
+				mevt++;
+				ret -= sizeof(*mevt);
 			}
 		}
 	} else { /* Use normal UCB1x00 type events */

@@ -1,3 +1,10 @@
+2002-07-11  Douglas Lowder <dlowder@earthlink.net>
+- Added code in src/ts_read_raw.c to handle reading events from the mk712
+  touchscreen driver on the Hitachi Webpad.
+
+- Fixed a bug in plugins/linear.c (incorrect default calibration in
+  absence of /etc/pointercal)
+
 2002-07-10  Douglas Lowder <dlowder@earthlink.net>
 
 - Added a patch by Holger Schurig <h.schurig@mn-logistik.de> to fix
