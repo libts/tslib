@@ -10,7 +10,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_read_raw.c,v 1.4 2002/07/08 17:44:28 dlowder Exp $
+ * $Id: ts_read_raw.c,v 1.5 2002/07/10 17:45:45 dlowder Exp $
  *
  * Read raw pressure, x, y, and timestamp from a touchscreen device.
  */
@@ -54,6 +54,9 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 #endif /* USE_INPUT_API */
 	int ret;
 	int total = 0;
+
+	char *tseventtype=NULL;
+	char *defaulttseventtype="UCB1x00";
 
 #ifdef USE_INPUT_API
 	/* warning: maybe those static vars should be part of the tsdev struct? */
@@ -147,7 +150,10 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 	if (ret) ret = -1;
 	if (total) ret = total;
 #else
-	if( strcmp(getenv("TSLIB_TSEVENTTYPE"),"H3600") == 0) { /* iPAQ style h3600 touchscreen events */
+	tseventtype = getenv("TSLIB_TSEVENTTYPE");
+	if(tseventtype==NULL) tseventtype=defaulttseventtype;
+
+	if( strcmp(tseventtype,"H3600") == 0) { /* iPAQ style h3600 touchscreen events */
 		hevt = alloca(sizeof(*hevt) * nr);
 		ret = read(ts->fd, hevt, sizeof(*hevt) * nr);
 		if(ret >= 0) {

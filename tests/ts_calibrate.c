@@ -6,7 +6,7 @@
  * This file is placed under the GPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_calibrate.c,v 1.4 2002/07/01 23:02:58 dlowder Exp $
+ * $Id: ts_calibrate.c,v 1.5 2002/07/10 17:45:45 dlowder Exp $
  *
  * Basic test program for touchscreen library.
  */
@@ -46,6 +46,14 @@ static int getxy(struct tsdev *ts, int *x, int *y)
 {
 	struct ts_sample samp, sa;
 
+	do {
+		sa = samp;
+		if (ts_read_raw(ts, &samp, 1) < 0) {
+			perror("ts_read");
+			close_framebuffer();
+			exit(1);
+		}
+	} while (samp.pressure == 0);
 	do {
 		sa = samp;
 		if (ts_read_raw(ts, &samp, 1) < 0) {
@@ -170,6 +178,10 @@ int main()
 		perror("ts_open");
 		exit(1);
 	}
+	if (ts_config(ts)) {
+		perror("ts_config");
+		exit(1);
+	}
 
 	if (open_framebuffer()) {
 		close_framebuffer();
@@ -189,7 +201,7 @@ int main()
 	printf("xres = %d, yres = %d\n",xres,yres);
 
 // Read a touchscreen event to clear the buffer
-	getxy(ts, 0, 0);
+	//getxy(ts, 0, 0);
 
 // Now paint a crosshair on the upper left and start taking calibration
 // data

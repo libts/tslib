@@ -1,3 +1,18 @@
+2002-07-10  Douglas Lowder <dlowder@earthlink.net>
+
+- Added a patch by Holger Schurig <h.schurig@mn-logistik.de> to fix
+  issues encountered on an Accelent PXA250 board.  The patch is against
+  tests/ts_calibrate.c.  Among other things, it removes the extra event
+  that was being read before the first crosshair is painted.
+
+- Modified the code in plugins/dejitter.c to guarantee that the "release"
+  touchscreen event (event with pressure=0 that occurs when the pointer is
+  lifted from the screen) has the same xy position as the preceding event.
+  This eliminates the cursor "jumping" that can occur otherwise.
+
+- Fixed a bug in src/ts_read_raw.c that caused segfaults if TSLIB_TSEVENTTYPE
+  was not defined in the environment.
+
 2002-07-05  Douglas Lowder <dlowder@earthlink.net>
 
 - libts.so now handles both UCB1x00 and H3600 type touchscreen events.  Default
@@ -6,21 +21,6 @@
 
 - With the above change, generation of libtsipaq.so is no longer required,
   and it has been removed.
-
-- Removed autogenned files from CVS repository
-
-2002-07-03  Douglas Lowder <dlowder@earthlink.net>
-
-- Added back the code to open the virtual console (works if device file chosen
-  correctly).
-
-- Made the console device and framebuffer device configurable for ts_calibrate
-  and ts_test: new environment variables defined.
-  TSLIB_FBDEVICE (defaults to /dev/fb0)
-  TSLIB_CONSOLEDEVICE (defaults to /dev/tty)
-
-  On a system using devfs, the above should be set to /dev/fb/0 and /dev/vc/,
-  respectively.
 
 2002-07-03  Douglas Lowder <dlowder@earthlink.net>
 
