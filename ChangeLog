@@ -1,3 +1,8 @@
+2005-03-01 Chris Larson <kergoth@handhelds.org>
+
+	* src/tslib-filter.h: BUGFIX: make the symbol used by the plugins,
+	  tslib_parse_vars, visible.
+
 2005-02-28 Chris Larson <kergoth@handhelds.org>
 
 	* tslib.pc.in: Add pkg-config file for tslib.

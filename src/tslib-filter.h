@@ -7,13 +7,15 @@
  *
  * This file is placed under the LGPL.
  *
- * $Id: tslib-filter.h,v 1.2 2002/06/17 17:21:43 dlowder Exp $
+ * $Id: tslib-filter.h,v 1.3 2005/03/01 18:18:05 kergoth Exp $
  *
  * Internal touch screen library definitions.
  */
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
+
+#include <tslib.h>
 
 struct tslib_module_info;
 struct tsdev;
@@ -36,7 +38,7 @@ struct tslib_module_info {
 	const struct tslib_ops *ops;
 };
 
-extern int tslib_parse_vars(struct tslib_module_info *,
+TSAPI extern int tslib_parse_vars(struct tslib_module_info *,
 			    const struct tslib_vars *, int,
 			    const char *);
 
