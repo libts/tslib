@@ -1,7 +1,7 @@
-dnl $Id: configure.in,v 1.1.1.1 2001/12/22 21:12:06 rmk Exp $
+dnl $Id: configure.in,v 1.2 2002/01/15 14:11:38 rmk Exp $
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/ts_close.c)
-AM_INIT_AUTOMAKE(libts,0.0.0)
+AM_INIT_AUTOMAKE(libts,0.0.1)
 AM_CONFIG_HEADER(config.h)
 
 AC_ARG_ENABLE(linear,   [  --enable-linear         Enable building of linear scaling [default=yes]],
@@ -23,9 +23,9 @@ AC_SUBST(TS_CONF)
 
 dnl Library versioning
 LT_RELEASE=0.0
-LT_CURRENT=0
+LT_CURRENT=1
 LT_REVISION=0
-LT_AGE=0
+LT_AGE=1
 AC_SUBST(LT_RELEASE)
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
