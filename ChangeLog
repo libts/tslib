@@ -8,6 +8,16 @@
 - Fixed the test program so that the crosshair is drawn XORed with the text on the screen,
   so the text is not corrupted when the crosshair moves over it. (tests/fbutils.c)
 
+- Made the code much more configurable by adding checks for environment variables:
+  TSLIB_CALIBFILE -- location of calibration file for linear plugin (default: /etc/pointercal)
+  TSLIB_CONFFILE -- location of configuration file (default: /usr/local/etc/ts.conf)
+  TSLIB_PLUGINDIR -- location of plugins (default: /usr/local/share/ts/plugins)
+  TSLIB_TSDEVICE -- Name of touchscreen device file if not using input API (default: /dev/touchscreen/ucb1x00)
+
+- Added new file, src/ts_read_raw_ipaq.c, to make code work with the h3600_ts driver
+  on the Compaq iPAQ.  This creates a new library, libtsipaq.so, that should replace
+  the default libts.so if using this code on an iPAQ.
+
 2002-06-19  Douglas Lowder <dlowder@earthlink.net>
 
 - Fixed a problem that caused tslib_parse_vars() (src/ts_parse_vars.c) to not
