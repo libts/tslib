@@ -13,13 +13,15 @@
 #ifndef _FBUTILS_H
 #define _FBUTILS_H
 
+#include <asm/types.h>
+
 /* This constant, being ORed with the color index tells the library
  * to draw in exclusive-or mode (that is, drawing the same second time
  * in the same place will remove the element leaving the background intact).
  */
 #define XORMODE	0x80000000
 
-extern int xres, yres;
+extern __u32 xres, yres;
 
 int open_framebuffer(void);
 void close_framebuffer(void);
