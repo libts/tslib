@@ -1,3 +1,9 @@
+2004-07-08 Chris Larson <kergoth@handhelds.org>
+
+	* plugins/input-raw.c: As EV_SYN can be checked for at runtime rather
+	  than build time, #define it when compiling against kernel headers
+	  that do not define it (2.4).
+
 2004-01-26 Andrew Zabolotny <zap@homelink.ru>
 
 	* README: Updated documentation on module parameters.

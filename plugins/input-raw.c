@@ -10,7 +10,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: input-raw.c,v 1.1 2004/07/21 19:17:18 dlowder Exp $
+ * $Id: input-raw.c,v 1.2 2004/07/21 19:19:13 dlowder Exp $
  *
  * Read raw pressure, x, y, and timestamp from a touchscreen device.
  */
@@ -27,6 +27,11 @@
 #include <sys/types.h>
 
 #include <linux/input.h>
+#ifdef TSLIB_INPUT_EVSYN
+# ifndef EV_SYN /* 2.4 kernel headers */
+#  define EV_SYN 0x00
+# endif
+#endif
 
 #include "tslib-private.h"
 
