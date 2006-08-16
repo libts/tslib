@@ -29,7 +29,7 @@ static int corgi_read(struct tslib_module_info *inf, struct ts_sample *samp, int
 #ifdef DEBUG
         fprintf(stderr,"RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
 #endif /*DEBUG*/
-			samp->tv.tv_usec = corgi_evt->millisecs % 1000;
+			samp->tv.tv_usec = (corgi_evt->millisecs % 1000) * 1000;
 			samp->tv.tv_sec = corgi_evt->millisecs / 1000;
 			samp++;
 			corgi_evt++;

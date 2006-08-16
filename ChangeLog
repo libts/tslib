@@ -1,3 +1,9 @@
+2006-08-16 Chris Larson <clarson@kergoth.com>
+
+	* plugins/collie.c,plugins/corgi.c: Apply patch from Richard Purdie to
+	  fix the microseconds field of the timeval struct, as it was
+	  inadvertantly holding milliseconds.
+
 2005-03-01 Chris Larson <kergoth@handhelds.org>
 
 	* src/tslib-filter.h: BUGFIX: make the symbol used by the plugins,

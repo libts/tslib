@@ -29,7 +29,7 @@ static int collie_read(struct tslib_module_info *inf, struct ts_sample *samp, in
 #ifdef DEBUG
         fprintf(stderr,"RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
 #endif /*DEBUG*/
-			samp->tv.tv_usec = collie_evt->millisecs % 1000;
+			samp->tv.tv_usec = (collie_evt->millisecs % 1000) * 1000;
 			samp->tv.tv_sec = collie_evt->millisecs / 1000;
 			samp++;
 			collie_evt++;
