@@ -18,6 +18,7 @@
 
 #include <errno.h>
 #include <stdio.h>
+#include <limits.h>
 
 #include <stdlib.h>
 #ifdef HAVE_UNISTD_H
@@ -33,6 +34,9 @@
 
 #include "tslib-private.h"
 
+#define GRAB_EVENTS_WANTED	1
+#define GRAB_EVENTS_ACTIVE	2
+
 struct tslib_input {
 	struct tslib_module_info module;
 
@@ -42,6 +46,7 @@ struct tslib_input {
 
 	int	sane_fd;
 	int	using_syn;
+	int	grab_events;
 };
 
 static int check_fd(struct tslib_input *i)
@@ -64,6 +69,14 @@ static int check_fd(struct tslib_input *i)
 
 	if (bit & (1 << EV_SYN))
 		i->using_syn = 1;
+	
+	if (i->grab_events == GRAB_EVENTS_WANTED) {
+		if (ioctl(ts->fd, EVIOCGRAB, (void *)1)) {
+			fprintf(stderr, "Unable to grab selected input device\n");
+			return -1;
+		}
+		i->grab_events = GRAB_EVENTS_ACTIVE;
+	}
 
 	return 0;
 }
@@ -222,6 +235,15 @@ static int ts_input_read(struct tslib_module_info *inf,
 
 static int ts_input_fini(struct tslib_module_info *inf)
 {
+	struct tslib_input *i = (struct tslib_input *)inf;
+	struct tsdev *ts = inf->dev;
+
+	if (i->grab_events == GRAB_EVENTS_ACTIVE) {
+		if (ioctl(ts->fd, EVIOCGRAB, (void *)0)) {
+			fprintf(stderr, "Unable to un-grab selected input device\n");
+		}
+	}
+
 	free(inf);
 	return 0;
 }
@@ -230,6 +252,36 @@ static const struct tslib_ops __ts_input_ops = {
 	.read	= ts_input_read,
 	.fini	= ts_input_fini,
 };
+
+static int parse_raw_grab(struct tslib_module_info *inf, char *str, void *data)
+{
+	struct tslib_input *i = (struct tslib_input *)inf;
+	unsigned long v;
+	int err = errno;
+
+	v = strtoul(str, NULL, 0);
+
+	if (v == ULONG_MAX && errno == ERANGE)
+		return -1;
+	
+	errno = err;
+	switch ((int)data) {
+	case 1:
+		if (v)
+			i->grab_events = GRAB_EVENTS_WANTED;
+		break;
+	default:
+		return -1;
+	}
+	return 0;
+}
+
+static const struct tslib_vars raw_vars[] =
+{
+	{ "grab_events", (void *)1, parse_raw_grab },
+};
+
+#define NR_VARS (sizeof(raw_vars) / sizeof(raw_vars[0]))
 
 TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 {
@@ -245,5 +297,12 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 	i->current_p = 0;
 	i->sane_fd = 0;
 	i->using_syn = 0;
+	i->grab_events = 0;
+
+	if (tslib_parse_vars(&i->module, raw_vars, NR_VARS, params)) {
+		free(i);
+		return NULL;
+	}
+
 	return &(i->module);
 }
