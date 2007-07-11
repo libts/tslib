@@ -154,6 +154,15 @@ AC_ARG_ENABLE(arctic2,
 AC_MSG_RESULT($arctic2_module)
 AM_CONDITIONAL(ENABLE_ARCTIC2_MODULE, test "$arctic2_module" = "yes")
 
+AC_MSG_CHECKING([whether tatung module is requested])
+AC_ARG_ENABLE(tatung,
+        AS_HELP_STRING([--enable-tatung],
+                [Enable building of tatung raw module (Tatung Webpad support) (default=yes)]),
+        [tatung_module=$enableval],
+        [tatung_module=yes])
+AC_MSG_RESULT($tatung_module)
+AM_CONDITIONAL(ENABLE_TATUNG_MODULE, test "$tatung_module" = "yes")
+
 AC_MSG_CHECKING([whether input module is requested])
 AC_ARG_ENABLE(input,
         AS_HELP_STRING([--enable-input],

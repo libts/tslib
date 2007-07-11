@@ -79,6 +79,12 @@ else
 ARCTIC2_MODULE =
 endif
 
+if ENABLE_TATUNG_MODULE
+TATUNG_MODULE = tatung.la
+else
+TATUNG_MODULE =
+endif
+
 if ENABLE_INPUT_MODULE
 INPUT_MODULE = input.la
 else
@@ -102,6 +108,7 @@ pluginexec_LTLIBRARIES = \
 	$(H3600_MODULE) \
 	$(MK712_MODULE) \
 	$(ARCTIC2_MODULE) \
+	$(TATUNG_MODULE) \
 	$(H2200_LINEAR_MODULE) \
 	$(INPUT_MODULE)
   
@@ -135,6 +142,9 @@ mk712_la_LDFLAGS	= -module $(LTVSN)
 
 arctic2_la_SOURCES	= arctic2-raw.c
 arctic2_la_LDFLAGS	= -module $(LTVSN)
+
+tatung_la_SOURCES	= tatung-raw.c
+tatung_la_LDFLAGS	= -module $(LTVSN)
 
 input_la_SOURCES	= input-raw.c
 input_la_LDFLAGS	= -module $(LTVSN)
