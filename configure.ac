@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT(tslib, 0.0.2, kergoth@handhelds.org)
+AC_INIT(tslib, 1.0.0, kergoth@handhelds.org)
 # AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE(dist-bzip2)
 AC_CONFIG_SRCDIR([src/ts_close.c])
@@ -202,10 +202,10 @@ TS_CONF='${sysconfdir}/ts.conf'
 AC_SUBST(TS_CONF)
 
 # Library versioning
-LT_RELEASE=0.0
-LT_CURRENT=1
-LT_REVISION=1
-LT_AGE=1
+LT_RELEASE=1.0
+LT_CURRENT=0
+LT_REVISION=0
+LT_AGE=0
 AC_SUBST(LT_RELEASE)
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
