@@ -49,25 +49,65 @@ struct tslib_input {
 	int	grab_events;
 };
 
+#define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
+#define BIT(nr)                 (1UL << (nr))
+#define BIT_MASK(nr)            (1UL << ((nr) % BITS_PER_LONG))
+#define BIT_WORD(nr)            ((nr) / BITS_PER_LONG)
+#define BITS_PER_BYTE           8
+#define BITS_PER_LONG           (sizeof(long) * BITS_PER_BYTE)
+#define BITS_TO_LONGS(nr)       DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
+
 static int check_fd(struct tslib_input *i)
 {
 	struct tsdev *ts = i->module.dev;
 	int version;
-	u_int32_t bit;
-	u_int64_t absbit;
+	long evbit[BITS_TO_LONGS(EV_CNT)];
+	long absbit[BITS_TO_LONGS(ABS_CNT)];
+	long keybit[BITS_TO_LONGS(KEY_CNT)];
 
-	if (! ((ioctl(ts->fd, EVIOCGVERSION, &version) >= 0) &&
-		(version == EV_VERSION) &&
-		(ioctl(ts->fd, EVIOCGBIT(0, sizeof(bit) * 8), &bit) >= 0) &&
-		(bit & (1 << EV_ABS)) &&
-		(ioctl(ts->fd, EVIOCGBIT(EV_ABS, sizeof(absbit) * 8), &absbit) >= 0) &&
-		(absbit & (1 << ABS_X)) &&
-		(absbit & (1 << ABS_Y)) && (absbit & (1 << ABS_PRESSURE)))) {
-		fprintf(stderr, "selected device is not a touchscreen I understand\n");
+	if (ioctl(ts->fd, EVIOCGVERSION, &version) < 0) {
+		fprintf(stderr, "selected device is not a Linux input event device\n");
 		return -1;
 	}
 
-	if (bit & (1 << EV_SYN))
+	if (version != EV_VERSION) {
+		fprintf(stderr, "selected device uses a different version of the
+event protocol than tslib was compiled for\n");
+		return -1;
+	}
+
+	if ( (ioctl(ts->fd, EVIOCGBIT(0, EV_CNT), evbit) < 0) ||
+		!(evbit[BIT_WORD(EV_ABS)] & BIT_MASK(EV_ABS)) ||
+		!(evbit[BIT_WORD(EV_KEY)] & BIT_MASK(EV_KEY)) ) {
+		fprintf(stderr, "selected device uses is not a touchscreen (must
+support ABS and KEY event types)\n");
+		return -1;
+	}
+
+	if ((ioctl(ts->fd, EVIOCGBIT(EV_ABS, ABS_CNT), absbit)) < 0 ||
+		!(absbit[BIT_WORD(ABS_X)] & BIT_MASK(ABS_X)) ||
+		!(absbit[BIT_WORD(ABS_Y)] & BIT_MASK(ABS_Y))) {
+		fprintf(stderr, "selected device uses is not a touchscreen (must
+support ABS_X and ABS_Y events)\n");
+		return -1;
+	}
+
+	/* Since some touchscreens (eg. infrared) physically can't measure pressure,
+	the input system doesn't report it on those. Tslib relies on pressure, thus
+	we set it to constant 255. It's still controlled by BTN_TOUCH - when not
+	touched, the pressure is forced to 0. */
+
+	if (!(absbit[BIT_WORD(ABS_PRESSURE)] & BIT_MASK(ABS_PRESSURE)))
+		i->current_p = 255;
+
+	if ((ioctl(ts->fd, EVIOCGBIT(EV_KEY, KEY_CNT), keybit) < 0) ||
+		!(absbit[BIT_WORD(BTN_TOUCH)] & BIT_MASK(BTN_TOUCH)) ) {
+		fprintf(stderr, "selected device uses is not a touchscreen (must
+support BTN_TOUCH events)\n");
+ 		return -1;
+ 	}
+
+	if (evbit[BIT_WORD(EV_SYN)] & BIT_MASK(EV_SYN))	
 		i->using_syn = 1;
 	
 	if (i->grab_events == GRAB_EVENTS_WANTED) {
