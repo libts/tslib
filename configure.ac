@@ -177,7 +177,7 @@ AC_ARG_WITH(plugindir,
         AS_HELP_STRING([--with-plugindir=ARG],
                 [Where to look for plugins (default=${libdir}/ts)]),
         [PLUGIN_DIR=$withval],
-        [PLUGIN_DIR='${libdir}/ts/'])
+        [PLUGIN_DIR='${libdir}/ts'])
 AC_MSG_RESULT($PLUGIN_DIR)
 AC_SUBST(PLUGIN_DIR)
 
