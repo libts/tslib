@@ -15,6 +15,7 @@
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <dlfcn.h>
@@ -46,17 +47,27 @@ int __ts_load_module(struct tsdev *ts, const char *module, const char *params, i
 	printf ("Loading module %s\n", fn);
 #endif
 	handle = dlopen(fn, RTLD_NOW);
-	if (!handle)
+	if (!handle) {
+#ifdef DEBUG
+		fprintf (stderr, "%s dlopen() failed: %s\n", fn, dlerror());
+#endif
 		return -1;
+	}
 
 	init = dlsym(handle, "mod_init");
 	if (!init) {
+#ifdef DEBUG
+		fprintf (stderr, "%s dlsym() failed: %s\n", fn, dlerror());
+#endif
 		dlclose(handle);
 		return -1;
 	}
 
 	info = init(ts, params);
 	if (!info) {
+#ifdef DEBUG
+		fprintf (stderr, "Can't init %s\n", fn);
+#endif
 		dlclose(handle);
 		return -1;
 	}
@@ -69,6 +80,9 @@ int __ts_load_module(struct tsdev *ts, const char *module, const char *params, i
 		ret = __ts_attach(ts, info);
 	}
 	if (ret) {
+#ifdef DEBUG
+		fprintf (stderr, "Can't attach %s\n", fn);
+#endif
 		info->ops->fini(info);
 		dlclose(handle);
 	}
