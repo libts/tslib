@@ -114,15 +114,19 @@ pluginexec_LTLIBRARIES = \
   
 variance_la_SOURCES	= variance.c
 variance_la_LDFLAGS	= -module $(LTVSN)
+variance_la_LIBADD	= $(top_builddir)/src/libts.la
   
 dejitter_la_SOURCES	= dejitter.c
 dejitter_la_LDFLAGS	= -module $(LTVSN)
+dejitter_la_LIBADD	= $(top_builddir)/src/libts.la
   
 linear_la_SOURCES	= linear.c
 linear_la_LDFLAGS	= -module $(LTVSN)
+linear_la_LIBADD	= $(top_builddir)/src/libts.la
 
 pthres_la_SOURCES	= pthres.c
 pthres_la_LDFLAGS	= -module $(LTVSN)
+pthres_la_LIBADD	= $(top_builddir)/src/libts.la
 
 # hw access
 corgi_la_SOURCES	= corgi-raw.c
@@ -148,6 +152,7 @@ tatung_la_LDFLAGS	= -module $(LTVSN)
 
 input_la_SOURCES	= input-raw.c
 input_la_LDFLAGS	= -module $(LTVSN)
+input_la_LIBADD		= $(top_builddir)/src/libts.la
 
 linear_h2200_la_SOURCES	= linear-h2200.c
 linear_h2200_la_LDFLAGS	= -module $(LTVSN)
