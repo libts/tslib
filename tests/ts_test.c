@@ -44,7 +44,7 @@ static int button_palette [6] =
 	1, 5, 0
 };
 
-#define NR_BUTTONS 2
+#define NR_BUTTONS 3
 static struct ts_button buttons [NR_BUTTONS];
 
 static void sig(int sig)
@@ -112,6 +112,7 @@ int main()
 	int x, y;
 	unsigned int i;
 	unsigned int mode = 0;
+	int quit_pressed = 0;
 
 	char *tsdevice=NULL;
 
@@ -152,13 +153,15 @@ int main()
 
 	/* Initialize buttons */
 	memset (&buttons, 0, sizeof (buttons));
-	buttons [0].w = buttons [1].w = xres / 4;
-	buttons [0].h = buttons [1].h = 20;
-	buttons [0].x = xres / 4 - buttons [0].w / 2;
-	buttons [1].x = (3 * xres) / 4 - buttons [0].w / 2;
-	buttons [0].y = buttons [1].y = 10;
+	buttons [0].w = buttons [1].w = buttons [2].w = xres / 4;
+	buttons [0].h = buttons [1].h = buttons [2].h = 20;
+	buttons [0].x = 0;
+	buttons [1].x = (3 * xres) / 8;
+	buttons [2].x = (3 * xres) / 4;
+	buttons [0].y = buttons [1].y = buttons [2].y = 10;
 	buttons [0].text = "Drag";
 	buttons [1].text = "Draw";
+	buttons [2].text = "Quit";
 
 	refresh_screen ();
 
@@ -196,6 +199,8 @@ int main()
 					mode = 1;
 					refresh_screen ();
 					break;
+				case 2:
+					quit_pressed = 1;
 				}
 
 		printf("%ld.%06ld: %6d %6d %6d\n", samp.tv.tv_sec, samp.tv.tv_usec,
@@ -209,6 +214,8 @@ int main()
 			mode |= 0x80000000;
 		} else
 			mode &= ~0x80000000;
+		if (quit_pressed)
+			break;
 	}
 	close_framebuffer();
 }
