@@ -71,24 +71,21 @@ static int check_fd(struct tslib_input *i)
 	}
 
 	if (version != EV_VERSION) {
-		fprintf(stderr, "selected device uses a different version of the
-event protocol than tslib was compiled for\n");
+		fprintf(stderr, "selected device uses a different version of the event protocol than tslib was compiled for\n");
 		return -1;
 	}
 
 	if ( (ioctl(ts->fd, EVIOCGBIT(0, EV_CNT), evbit) < 0) ||
 		!(evbit[BIT_WORD(EV_ABS)] & BIT_MASK(EV_ABS)) ||
 		!(evbit[BIT_WORD(EV_KEY)] & BIT_MASK(EV_KEY)) ) {
-		fprintf(stderr, "selected device uses is not a touchscreen (must
-support ABS and KEY event types)\n");
+		fprintf(stderr, "selected device uses is not a touchscreen (must support ABS and KEY event types)\n");
 		return -1;
 	}
 
 	if ((ioctl(ts->fd, EVIOCGBIT(EV_ABS, ABS_CNT), absbit)) < 0 ||
 		!(absbit[BIT_WORD(ABS_X)] & BIT_MASK(ABS_X)) ||
 		!(absbit[BIT_WORD(ABS_Y)] & BIT_MASK(ABS_Y))) {
-		fprintf(stderr, "selected device uses is not a touchscreen (must
-support ABS_X and ABS_Y events)\n");
+		fprintf(stderr, "selected device uses is not a touchscreen (must support ABS_X and ABS_Y events)\n");
 		return -1;
 	}
 
@@ -102,14 +99,13 @@ support ABS_X and ABS_Y events)\n");
 
 	if ((ioctl(ts->fd, EVIOCGBIT(EV_KEY, KEY_CNT), keybit) < 0) ||
 		!(absbit[BIT_WORD(BTN_TOUCH)] & BIT_MASK(BTN_TOUCH)) ) {
-		fprintf(stderr, "selected device uses is not a touchscreen (must
-support BTN_TOUCH events)\n");
- 		return -1;
- 	}
+		fprintf(stderr, "selected device uses is not a touchscreen (must support BTN_TOUCH events)\n");
+		return -1;
+	}
 
-	if (evbit[BIT_WORD(EV_SYN)] & BIT_MASK(EV_SYN))	
+	if (evbit[BIT_WORD(EV_SYN)] & BIT_MASK(EV_SYN))
 		i->using_syn = 1;
-	
+
 	if (i->grab_events == GRAB_EVENTS_WANTED) {
 		if (ioctl(ts->fd, EVIOCGRAB, (void *)1)) {
 			fprintf(stderr, "Unable to grab selected input device\n");
@@ -143,7 +139,7 @@ static int ts_input_read(struct tslib_module_info *inf,
 				total = -1;
 				break;
 			}
-	
+
 			switch (ev.type) {
 			case EV_KEY:
 				switch (ev.code) {
@@ -193,7 +189,7 @@ static int ts_input_read(struct tslib_module_info *inf,
 	} else {
 		unsigned char *p = (unsigned char *) &ev;
 		int len = sizeof(struct input_event);
-	
+
 		while (total < nr) {
 			ret = read(ts->fd, p, len);
 			if (ret == -1) {
@@ -202,7 +198,7 @@ static int ts_input_read(struct tslib_module_info *inf,
 				}
 				break;
 			}
-	
+
 			if (ret < (int)sizeof(struct input_event)) {
 				/* short read
 				 * restart read to get the rest of the event
@@ -212,7 +208,7 @@ static int ts_input_read(struct tslib_module_info *inf,
 				continue;
 			}
 			/* successful read of a whole event */
-	
+
 			if (ev.type == EV_ABS) {
 				switch (ev.code) {
 				case ABS_X:
@@ -303,7 +299,7 @@ static int parse_raw_grab(struct tslib_module_info *inf, char *str, void *data)
 
 	if (v == ULONG_MAX && errno == ERANGE)
 		return -1;
-	
+
 	errno = err;
 	switch ((int)data) {
 	case 1:
