@@ -33,7 +33,7 @@ int tslib_parse_vars(struct tslib_module_info *mod,
 		return 0;
 
 	//s = alloca(strlen(str));
-	bzero(s_holder,1024);
+	memset(s_holder, 0, 1024);
 	strncpy(s_holder,str,strlen(str));
 	s = s_holder;
 	while ((p = strsep(&s, " \t")) != NULL && ret == 0) {

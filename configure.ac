@@ -49,7 +49,7 @@ AC_FUNC_SELECT_ARGTYPES
 AC_TYPE_SIGNAL
 AC_FUNC_STAT
 AC_FUNC_VPRINTF
-AC_CHECK_FUNCS([bzero gettimeofday memmove memset munmap select strcasecmp strchr strdup strtoul])
+AC_CHECK_FUNCS([gettimeofday memmove memset munmap select strcasecmp strchr strdup strtoul])
 
 # filters
 AC_MSG_CHECKING([whether linear modules is requested])
