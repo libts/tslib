@@ -94,13 +94,14 @@ static int check_fd(struct tslib_input *i)
 	we set it to constant 255. It's still controlled by BTN_TOUCH - when not
 	touched, the pressure is forced to 0. */
 
-	if (!(absbit[BIT_WORD(ABS_PRESSURE)] & BIT_MASK(ABS_PRESSURE)))
+	if (!(absbit[BIT_WORD(ABS_PRESSURE)] & BIT_MASK(ABS_PRESSURE))) {
 		i->current_p = 255;
 
-	if ((ioctl(ts->fd, EVIOCGBIT(EV_KEY, KEY_CNT), keybit) < 0) ||
-		!(absbit[BIT_WORD(BTN_TOUCH)] & BIT_MASK(BTN_TOUCH)) ) {
-		fprintf(stderr, "selected device uses is not a touchscreen (must support BTN_TOUCH events)\n");
-		return -1;
+		if ((ioctl(ts->fd, EVIOCGBIT(EV_KEY, KEY_CNT), keybit) < 0) ||
+			!(absbit[BIT_WORD(BTN_TOUCH)] & BIT_MASK(BTN_TOUCH)) ) {
+			fprintf(stderr, "selected device uses is not a touchscreen (must support BTN_TOUCH events)\n");
+			return -1;
+		}
 	}
 
 	if (evbit[BIT_WORD(EV_SYN)] & BIT_MASK(EV_SYN))
