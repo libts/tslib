@@ -162,6 +162,31 @@ static void get_sample (struct tsdev *ts, calibration *cal,
 	printf("%s : X = %4d Y = %4d\n", name, cal->x [index], cal->y [index]);
 }
 
+static int clearbuf(struct tsdev *ts)
+{
+	int fd = ts_fd(ts);
+	fd_set fdset;
+	struct timeval tv;
+	int nfds;
+	struct ts_sample sample;
+
+	while (1) {
+		FD_ZERO(&fdset);
+		FD_SET(fd, &fdset);
+
+		tv.tv_sec = 0;
+		tv.tv_usec = 0;
+
+		nfds = select(fd + 1, &fdset, NULL, NULL, &tv);
+		if (nfds == 0) break;
+
+		if (ts_read_raw(ts, &sample, 1) < 0) {
+			perror("ts_read");
+			exit(1);
+		}
+	}
+}
+
 int main()
 {
 	struct tsdev *ts;
@@ -210,13 +235,17 @@ int main()
 
 	printf("xres = %d, yres = %d\n", xres, yres);
 
-// Read a touchscreen event to clear the buffer
-	//getxy(ts, 0, 0);
+	// Clear the buffer
+	clearbuf(ts);
 
 	get_sample (ts, &cal, 0, 50,        50,        "Top left");
+	clearbuf(ts);
 	get_sample (ts, &cal, 1, xres - 50, 50,        "Top right");
+	clearbuf(ts);
 	get_sample (ts, &cal, 2, xres - 50, yres - 50, "Bot right");
+	clearbuf(ts);
 	get_sample (ts, &cal, 3, 50,        yres - 50, "Bot left");
+	clearbuf(ts);
 	get_sample (ts, &cal, 4, xres / 2,  yres / 2,  "Center");
 
 	if (perform_calibration (&cal)) {
