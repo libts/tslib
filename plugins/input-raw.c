@@ -31,6 +31,15 @@
 #ifndef EV_SYN /* 2.4 kernel headers */
 # define EV_SYN 0x00
 #endif
+#ifndef EV_CNT
+# define EV_CNT (EV_MAX+1)
+#endif
+#ifndef ABS_CNT
+# define ABS_CNT (ABS_MAX+1)
+#endif
+#ifndef KEY_CNT
+# define KEY_CNT (KEY_MAX+1)
+#endif
 
 #include "tslib-private.h"
 
