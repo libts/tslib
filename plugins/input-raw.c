@@ -1,5 +1,5 @@
 /*
- *  tslib/src/ts_read_raw_module.c
+ *  tslib/plugins/input-raw.c
  *
  *  Original version:
  *  Copyright (C) 2001 Russell King.
