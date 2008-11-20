@@ -204,11 +204,8 @@ int main()
 	if( (tsdevice = getenv("TSLIB_TSDEVICE")) != NULL ) {
 		ts = ts_open(tsdevice,0);
 	} else {
-#ifdef USE_INPUT_API
-		ts = ts_open("/dev/input/event0", 0);
-#else
-		ts = ts_open("/dev/touchscreen/ucb1x00", 0);
-#endif /* USE_INPUT_API */
+		if (!(ts = ts_open("/dev/input/event0", 0)))
+			ts = ts_open("/dev/touchscreen/ucb1x00", 0)
 	}
 
 	if (!ts) {

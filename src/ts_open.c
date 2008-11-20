@@ -18,10 +18,6 @@
 #endif
 #include <sys/fcntl.h>
 
-#ifdef USE_INPUT_API
-#include <linux/input.h>
-#endif /* USE_INPUT_API */
-
 #include "tslib-private.h"
 
 extern struct tslib_module_info __ts_raw;

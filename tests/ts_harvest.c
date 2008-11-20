@@ -74,18 +74,15 @@ int main()
 	signal(SIGINT, sig);
 	signal(SIGTERM, sig);
 
-	if ((tsdevice = getenv("TSLIB_TSDEVICE")) == NULL) {
-#ifdef USE_INPUT_API
-		tsdevice = strdup ("/dev/input/event0");
-#else
-		tsdevice = strdup ("/dev/touchscreen/ucb1x00");
-#endif /* USE_INPUT_API */
-        }
-
-	ts = ts_open (tsdevice, 0);
+	if( (tsdevice = getenv("TSLIB_TSDEVICE")) != NULL ) {
+		ts = ts_open(tsdevice,0);
+	} else {
+		if (!(ts = ts_open("/dev/input/event0", 0)))
+			ts = ts_open("/dev/touchscreen/ucb1x00", 0)
+	}
 
 	if (!ts) {
-		perror (tsdevice);
+		perror("ts_open");
 		exit(1);
 	}
 
