@@ -1,0 +1,26 @@
+- Update README, remove the cvs keywords bits, update or remove the plugin
+  documentation.
+- select'ing on ts_fd() is a problem.  Our plugins can swallow entire events,
+  which means you could return from select and try to read non-existant events
+  from tslib.  We should probably set up an event queue w/ an asyncronous
+  interface, or just make a pipe and funnel actual events through that, and
+  have ts_fd() return that.
+- Give thought to what changes should be made going forward.  In my opinion,
+  the top priorities are moving path selection for device open out of the
+  hands of the library user.  Input knows it's to work with input devices, and
+  most other input_raw plugins have some idea of what devices they should be
+  working with.  Perhaps we should move that into a new callback in the raw
+  plugins.  Beyond that, one could consider making a generic filtering
+  mechanism for input events, injecting the filtered events into the input
+  layer as a new device via uinput, since most apps already support it, and
+  moving calibration into the library or a supplemental library, with user
+  selectable calibration algorithms.
+
+- Parse out the old cvs metadata in the commit log to rewrite the git repo
+  history using filter-branch.
+- Go through the history, using the original commit log message (minus
+  metadata) as the short log message, and use the notes added to the ChangeLog
+  in that commit as the long commit log message.  Hopefully the parsing of the
+  ChangeLog diffs won't be too terrible at least for the common case.
+- Produce a new, clean git branch, minus svn metadata, minus cvs metadata, and
+  minus a ChangeLog file (moved that info into the log messages).
