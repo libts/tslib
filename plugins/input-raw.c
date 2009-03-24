@@ -156,12 +156,9 @@ static int ts_input_read(struct tslib_module_info *inf,
 				case BTN_TOUCH:
 					if (ev.value == 0) {
 						/* pen up */
-						samp->x = 0;
-						samp->y = 0;
-						samp->pressure = 0;
-						samp->tv = ev.time;
-						samp++;
-						total++;
+						i->current_x = 0;
+						i->current_y = 0;
+						i->current_p = 0;
 					}
 					break;
 				}
