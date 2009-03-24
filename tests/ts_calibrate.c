@@ -21,6 +21,7 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/time.h>
+#include <sys/stat.h>
 #include <linux/kd.h>
 #include <linux/vt.h>
 #include <linux/fb.h>
@@ -250,9 +251,11 @@ int main()
 		for (i = 0; i < 7; i++) printf("%d ", cal.a [i]);
 		printf("\n");
 		if ((calfile = getenv("TSLIB_CALIBFILE")) != NULL) {
-			cal_fd = open (calfile, O_CREAT | O_RDWR);
+			cal_fd = open (calfile, O_CREAT | O_RDWR,
+			               S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 		} else {
-			cal_fd = open ("/etc/pointercal", O_CREAT | O_RDWR);
+			cal_fd = open ("/etc/pointercal", O_CREAT | O_RDWR,
+			               S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 		}
 		sprintf (cal_buffer,"%d %d %d %d %d %d %d",
 			 cal.a[1], cal.a[2], cal.a[0],
