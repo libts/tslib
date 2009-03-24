@@ -254,7 +254,7 @@ int main()
 			cal_fd = open (calfile, O_CREAT | O_RDWR,
 			               S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 		} else {
-			cal_fd = open ("/etc/pointercal", O_CREAT | O_RDWR,
+			cal_fd = open (TS_POINTERCAL, O_CREAT | O_RDWR,
 			               S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 		}
 		sprintf (cal_buffer,"%d %d %d %d %d %d %d",

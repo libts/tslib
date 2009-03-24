@@ -9,7 +9,7 @@
 # $Id: Makefile.am,v 1.7 2005/02/28 23:44:12 kergoth Exp $
 #
 
-AM_CFLAGS		= $(DEBUGFLAGS) $(LIBFLAGS) $(VIS_CFLAGS)
+AM_CFLAGS		= -DTS_POINTERCAL=\"@TS_POINTERCAL@\" $(DEBUGFLAGS) $(LIBFLAGS) $(VIS_CFLAGS)
 LDADD		= -rpath $(PLUGIN_DIR)
 INCLUDES		= -I$(top_srcdir)/src
   

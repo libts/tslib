@@ -200,6 +200,9 @@ AC_SUBST(LIBFLAGS)
 TS_CONF='${sysconfdir}/ts.conf'
 AC_SUBST(TS_CONF)
 
+TS_POINTERCAL='${sysconfdir}/pointercal'
+AC_SUBST(TS_POINTERCAL)
+
 # Library versioning
 LT_RELEASE=1.0
 LT_CURRENT=0

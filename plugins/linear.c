@@ -108,7 +108,6 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 	int index;
 	char *tokptr;
 	char *calfile=NULL;
-	char *defaultcalfile = "/etc/pointercal";
 
 	lin = malloc(sizeof(struct tslib_linear));
 	if (lin == NULL)
@@ -132,7 +131,7 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 	/*
 	 * Check calibration file
 	 */
-	if( (calfile = getenv("TSLIB_CALIBFILE")) == NULL) calfile = defaultcalfile;
+	if( (calfile = getenv("TSLIB_CALIBFILE")) == NULL) calfile = TS_POINTERCAL;
 	if(stat(calfile,&sbuf)==0) {
 		pcal_fd = open(calfile,O_RDONLY);
 		read(pcal_fd,pcalbuf,200);

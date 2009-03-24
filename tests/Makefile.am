@@ -9,7 +9,7 @@
 # $Id: Makefile.am,v 1.4 2004/07/21 19:12:59 dlowder Exp $
 #
 
-AM_CFLAGS               = $(DEBUGFLAGS)
+AM_CFLAGS               = -DTS_POINTERCAL=\"@TS_POINTERCAL@\" $(DEBUGFLAGS)
 INCLUDES		= -I$(top_srcdir)/src
 
 bin_PROGRAMS		= ts_test ts_calibrate ts_print ts_print_raw ts_harvest
