@@ -196,7 +196,7 @@ int main()
 	char cal_buffer[256];
 	char *tsdevice = NULL;
 	char *calfile = NULL;
-	unsigned int i;
+	unsigned int i, len;
 
 	signal(SIGSEGV, sig);
 	signal(SIGINT, sig);
@@ -257,10 +257,11 @@ int main()
 			cal_fd = open (TS_POINTERCAL, O_CREAT | O_RDWR,
 			               S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 		}
-		sprintf (cal_buffer,"%d %d %d %d %d %d %d",
-			 cal.a[1], cal.a[2], cal.a[0],
-			 cal.a[4], cal.a[5], cal.a[3], cal.a[6]);
-		write (cal_fd, cal_buffer, strlen (cal_buffer) + 1);
+		len = sprintf(cal_buffer,"%d %d %d %d %d %d %d %d %d",
+		              cal.a[1], cal.a[2], cal.a[0],
+		              cal.a[4], cal.a[5], cal.a[3], cal.a[6],
+		              xres, yres);
+		write (cal_fd, cal_buffer, len);
 		close (cal_fd);
                 i = 0;
 	} else {

@@ -24,6 +24,9 @@ struct tsdev {
 	struct tslib_module_info *list_raw; /* points to position in 'list' where raw reads
 					       come from.  default is the position of the
 					       ts_read_raw module. */
+	unsigned int res_x;
+	unsigned int res_y;
+	int rotation;
 };
 
 int __ts_attach(struct tsdev *ts, struct tslib_module_info *info);

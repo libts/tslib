@@ -2,6 +2,7 @@
  *  tslib/plugins/linear.c
  *
  *  Copyright (C) 2001 Russell King.
+ *  Copyright (C) 2005 Alberto Mardegan <mardy@sourceforge.net>
  *
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
@@ -19,7 +20,7 @@
 
 #include <stdio.h>
 
-#include "tslib.h"
+#include "tslib-private.h"
 #include "tslib-filter.h"
 
 struct tslib_linear {
@@ -33,6 +34,10 @@ struct tslib_linear {
 
 // Linear scaling and offset parameters for x,y (can include rotation)
 	int	a[7];
+
+// Screen resolution at the time when calibration was performed
+	unsigned int cal_res_x;
+	unsigned int cal_res_y;
 };
 
 static int
@@ -57,6 +62,10 @@ linear_read(struct tslib_module_info *info, struct ts_sample *samp, int nr)
 			samp->y =	( lin->a[5] +
 					lin->a[3]*xtemp +
 					lin->a[4]*ytemp ) / lin->a[6];
+			if (info->dev->res_x && lin->cal_res_x)
+				samp->x = samp->x * info->dev->res_x / lin->cal_res_x;
+			if (info->dev->res_y && lin->cal_res_y)
+				samp->y = samp->y * info->dev->res_y / lin->cal_res_y;
 
 			samp->pressure = ((samp->pressure + lin->p_offset)
 						 * lin->p_mult) / lin->p_div;
@@ -103,7 +112,7 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 
 	struct tslib_linear *lin;
 	struct stat sbuf;
-	int pcal_fd;
+	FILE *pcal_fd;
 	char pcalbuf[200];
 	int index;
 	char *tokptr;
@@ -132,23 +141,17 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 	 * Check calibration file
 	 */
 	if( (calfile = getenv("TSLIB_CALIBFILE")) == NULL) calfile = TS_POINTERCAL;
-	if(stat(calfile,&sbuf)==0) {
-		pcal_fd = open(calfile,O_RDONLY);
-		read(pcal_fd,pcalbuf,200);
-		lin->a[0] = atoi(strtok(pcalbuf," "));
-		index=1;
-		while(index<7) {
-			tokptr = strtok(NULL," ");
-			if(*tokptr!='\0') {
-				lin->a[index] = atoi(tokptr);
-				index++;
-			}
-		}
+	if (stat(calfile, &sbuf)==0) {
+		pcal_fd = fopen(calfile, "r");
+		for (index = 0; index < 7; index++)
+			if (fscanf(pcal_fd, "%d", &lin->a[index]) != 1) break;
+		fscanf(pcal_fd, "%d %d", &lin->cal_res_x, &lin->cal_res_y);
 #ifdef DEBUG
 		printf("Linear calibration constants: ");
 		for(index=0;index<7;index++) printf("%d ",lin->a[index]);
 		printf("\n");
 #endif /*DEBUG*/
+		fclose(pcal_fd);
 		close(pcal_fd);
 	}
 		

@@ -47,6 +47,11 @@ struct ts_sample {
 	struct timeval	tv;
 };
 
+enum ts_param {
+	TS_SCREEN_RES = 0,						/* 2 integer args, x and y */
+	TS_SCREEN_ROT,							/* 1 integer arg, 1 = rotate */
+};
+
 /*
  * Close the touchscreen device, free all resources.
  */
@@ -56,6 +61,11 @@ TSAPI int ts_close(struct tsdev *);
  * Configure the touchscreen device.
  */
 TSAPI int ts_config(struct tsdev *);
+
+/*
+ * Changes a setting.
+ */
+TSAPI int ts_option(struct tsdev *, enum ts_param, ...);
 
 /*
  * Change this hook to point to your custom error handling function.
