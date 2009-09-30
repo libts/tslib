@@ -84,14 +84,14 @@ static int check_fd(struct tslib_input *i)
 		return -1;
 	}
 
-	if ( (ioctl(ts->fd, EVIOCGBIT(0, EV_CNT), evbit) < 0) ||
+	if ( (ioctl(ts->fd, EVIOCGBIT(0, sizeof(evbit)), evbit) < 0) ||
 		!(evbit[BIT_WORD(EV_ABS)] & BIT_MASK(EV_ABS)) ||
 		!(evbit[BIT_WORD(EV_KEY)] & BIT_MASK(EV_KEY)) ) {
 		fprintf(stderr, "tslib: Selected device is not a touchscreen (must support ABS and KEY event types)\n");
 		return -1;
 	}
 
-	if ((ioctl(ts->fd, EVIOCGBIT(EV_ABS, ABS_CNT), absbit)) < 0 ||
+	if ((ioctl(ts->fd, EVIOCGBIT(EV_ABS, sizeof(absbit)), absbit)) < 0 ||
 		!(absbit[BIT_WORD(ABS_X)] & BIT_MASK(ABS_X)) ||
 		!(absbit[BIT_WORD(ABS_Y)] & BIT_MASK(ABS_Y))) {
 		fprintf(stderr, "tslib: Selected device is not a touchscreen (must support ABS_X and ABS_Y events)\n");
@@ -106,7 +106,7 @@ static int check_fd(struct tslib_input *i)
 	if (!(absbit[BIT_WORD(ABS_PRESSURE)] & BIT_MASK(ABS_PRESSURE))) {
 		i->current_p = 255;
 
-		if ((ioctl(ts->fd, EVIOCGBIT(EV_KEY, KEY_CNT), keybit) < 0) ||
+		if ((ioctl(ts->fd, EVIOCGBIT(EV_KEY, sizeof(keybit)), keybit) < 0) ||
 			!(keybit[BIT_WORD(BTN_TOUCH)] & BIT_MASK(BTN_TOUCH)) ) {
 			fprintf(stderr, "tslib: Selected device is not a touchscreen (must support BTN_TOUCH events)\n");
 			return -1;
