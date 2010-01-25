@@ -150,7 +150,6 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 		printf("\n");
 #endif /*DEBUG*/
 		fclose(pcal_fd);
-		close(pcal_fd);
 	}
 		
 		
