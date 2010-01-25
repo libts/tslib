@@ -113,9 +113,7 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 	struct tslib_linear *lin;
 	struct stat sbuf;
 	FILE *pcal_fd;
-	char pcalbuf[200];
 	int index;
-	char *tokptr;
 	char *calfile=NULL;
 
 	lin = malloc(sizeof(struct tslib_linear));
