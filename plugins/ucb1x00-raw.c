@@ -49,7 +49,7 @@ static const struct tslib_ops ucb1x00_ops =
 	.read	= ucb1x00_read,
 };
 
-TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *ucb1x00_mod_init(struct tsdev *dev, const char *params)
 {
 	struct tslib_module_info *m;
 
@@ -60,3 +60,7 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 	m->ops = &ucb1x00_ops;
 	return m;
 }
+
+#ifndef TSLIB_STATIC_UCB1X00_MODULE
+	TSLIB_MODULE_INIT(ucb1x00_mod_init);
+#endif

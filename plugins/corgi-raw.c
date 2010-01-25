@@ -47,7 +47,7 @@ static const struct tslib_ops corgi_ops =
 	.read	= corgi_read,
 };
 
-TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *corgi_mod_init(struct tsdev *dev, const char *params)
 {
 	struct tslib_module_info *m;
 
@@ -58,3 +58,7 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 	m->ops = &corgi_ops;
 	return m;
 }
+
+#ifndef TSLIB_STATIC_CORGI_MODULE
+	TSLIB_MODULE_INIT(corgi_mod_init);
+#endif

@@ -48,7 +48,7 @@ static const struct tslib_ops arctic2_ops =
 	.read	= arctic2_read,
 };
 
-TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *arctic2_mod_init(struct tsdev *dev, const char *params)
 {
 	struct tslib_module_info *m;
 
@@ -59,3 +59,7 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 	m->ops = &arctic2_ops;
 	return m;
 }
+
+#ifndef TSLIB_STATIC_ARCTIC2_MODULE
+	TSLIB_MODULE_INIT(arctic2_mod_init);
+#endif

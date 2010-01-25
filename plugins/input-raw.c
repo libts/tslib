@@ -326,7 +326,7 @@ static const struct tslib_vars raw_vars[] =
 
 #define NR_VARS (sizeof(raw_vars) / sizeof(raw_vars[0]))
 
-TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *input_mod_init(struct tsdev *dev, const char *params)
 {
 	struct tslib_input *i;
 
@@ -349,3 +349,7 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 
 	return &(i->module);
 }
+
+#ifndef TSLIB_STATIC_INPUT_MODULE
+	TSLIB_MODULE_INIT(input_mod_init);
+#endif 

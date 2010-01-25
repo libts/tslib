@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 
+#include "config.h"
 #include "tslib-private.h"
 #include "tslib-filter.h"
 
@@ -107,7 +108,7 @@ static const struct tslib_vars linear_vars[] =
 
 #define NR_VARS (sizeof(linear_vars) / sizeof(linear_vars[0]))
 
-TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *linear_mod_init(struct tsdev *dev, const char *params)
 {
 
 	struct tslib_linear *lin;
@@ -163,3 +164,7 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 
 	return &lin->module;
 }
+
+#ifndef TSLIB_STATIC_LINEAR_MODULE
+	TSLIB_MODULE_INIT(linear_mod_init);
+#endif

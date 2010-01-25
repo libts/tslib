@@ -29,6 +29,7 @@
 
 #include <stdio.h>
 
+#include "config.h"
 #include "tslib.h"
 #include "tslib-filter.h"
 
@@ -197,7 +198,7 @@ static const struct tslib_vars dejitter_vars[] =
 
 #define NR_VARS (sizeof(dejitter_vars) / sizeof(dejitter_vars[0]))
 
-TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *dejitter_mod_init(struct tsdev *dev, const char *params)
 {
 	struct tslib_dejitter *djt;
 
@@ -219,3 +220,7 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 
 	return &djt->module;
 }
+
+#ifndef TSLIB_STATIC_DEJITTER_MODULE
+	TSLIB_MODULE_INIT(dejitter_mod_init);
+#endif

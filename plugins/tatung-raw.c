@@ -57,7 +57,7 @@ static const struct tslib_ops tatung_ops =
 	.read	= tatung_read,
 };
 
-TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *tatung_mod_init(struct tsdev *dev, const char *params)
 {
 	struct tslib_module_info *m;
 
@@ -68,3 +68,7 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 	m->ops = &tatung_ops;
 	return m;
 }
+
+#ifndef TSLIB_STATIC_TATUNG_MODULE
+	TSLIB_MODULE_INIT(tatung_mod_init);
+#endif

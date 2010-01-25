@@ -20,6 +20,7 @@
 #include <errno.h>
 #include <limits.h>
 
+#include "config.h"
 #include "tslib.h"
 #include "tslib-filter.h"
 
@@ -131,7 +132,7 @@ static const struct tslib_vars pthres_vars[] =
 
 #define NR_VARS (sizeof(pthres_vars) / sizeof(pthres_vars[0]))
 
-TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *pthres_mod_init(struct tsdev *dev, const char *params)
 {
 
 	struct tslib_pthres *p;
@@ -155,3 +156,7 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 
 	return &p->module;
 }
+
+#ifndef TSLIB_STATIC_PTHRES_MODULE
+	TSLIB_MODULE_INIT(pthres_mod_init);
+#endif

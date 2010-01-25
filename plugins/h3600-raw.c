@@ -47,7 +47,7 @@ static const struct tslib_ops h3600_ops =
 	.read	= h3600_read,
 };
 
-TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *h3600_mod_init(struct tsdev *dev, const char *params)
 {
 	struct tslib_module_info *m;
 
@@ -58,3 +58,7 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 	m->ops = &h3600_ops;
 	return m;
 }
+
+#ifndef TSLIB_STATIC_H3600_MODULE
+	TSLIB_MODULE_INIT(h3600_mod_init);
+#endif

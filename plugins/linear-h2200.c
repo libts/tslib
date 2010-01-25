@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 
+#include "config.h"
 #include "tslib.h"
 #include "tslib-filter.h"
 
@@ -106,7 +107,7 @@ static const struct tslib_ops linear_h2200_ops =
 	.fini	= linear_h2200_fini,
 };
 
-TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *linear_h2200_mod_init(struct tsdev *dev, const char *params)
 {
 
 	struct tslib_linear_h2200 *lin;
@@ -119,3 +120,7 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 
 	return &lin->module;
 }
+
+#ifndef TSLIB_STATIC_LINEAR_H2200_MODULE
+	TSLIB_MODULE_INIT(linear_h2200_mod_init);
+#endif

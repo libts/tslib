@@ -50,7 +50,7 @@ static const struct tslib_ops mk712_ops =
 	.read	= mk712_read,
 };
 
-TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *mk712_mod_init(struct tsdev *dev, const char *params)
 {
 	struct tslib_module_info *m;
 
@@ -61,3 +61,7 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 	m->ops = &mk712_ops;
 	return m;
 }
+
+#ifndef TSLIB_STATIC_MK712_MODULE
+	TSLIB_MODULE_INIT(mk712_mod_init);
+#endif

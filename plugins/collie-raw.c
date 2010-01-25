@@ -48,7 +48,7 @@ static const struct tslib_ops collie_ops =
 	.read	= collie_read,
 };
 
-TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *collie_mod_init(struct tsdev *dev, const char *params)
 {
 	struct tslib_module_info *m;
 
@@ -59,3 +59,7 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 	m->ops = &collie_ops;
 	return m;
 }
+
+#ifndef TSLIB_STATIC_COLLIE_MODULE
+	TSLIB_MODULE_INIT(collie_mod_init);
+#endif

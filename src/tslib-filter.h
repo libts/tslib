@@ -38,6 +38,9 @@ struct tslib_module_info {
 	const struct tslib_ops *ops;
 };
 
+typedef struct tslib_module_info *(*tslib_module_init)(struct tsdev *dev, const char *params);
+#define TSLIB_MODULE_INIT(f) TSAPI tslib_module_init mod_init = &f
+
 TSAPI extern int tslib_parse_vars(struct tslib_module_info *,
 			    const struct tslib_vars *, int,
 			    const char *);
