@@ -19,3 +19,15 @@ stamp-h
 stamp-h.in
 stamp-h1
 *.pc
+*.lo
+*.la
+*.o
+*.m4
+.libs
+.deps
+tests/ts_calibrate
+tests/ts_harvest
+tests/ts_print
+tests/ts_print_raw
+tests/ts_test
+
