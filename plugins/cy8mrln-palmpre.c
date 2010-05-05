@@ -46,12 +46,6 @@ struct cy8mrln_palmpre_input
 	uint8_t null;		   //\0
 }__attribute__((packed));
 
-struct cood
-{
-	int x;
-	int y;
-};
-
 struct tslib_cy8mrln_palmpre 
 {
 	struct tslib_module_info module;
