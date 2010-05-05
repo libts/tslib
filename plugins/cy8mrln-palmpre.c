@@ -28,10 +28,16 @@
 #include "tslib-private.h"
 #include "tslib-filter.h"
 
+#define NOISE          12
+#define SCREEN_WIDTH   319
+#define SCREEN_HEIGHT  527
+#define H_FIELDS       7
+#define V_FIELDS       11
+
 struct cy8mrln_palmpre_input
 {  
 	uint16_t n_r;
-	uint16_t values[7][11];
+	uint16_t field[H_FIELDS * V_FIELDS];
 	uint16_t ffff;		  //seperator? always ff
 	uint8_t seq_nr1;		//incremented if seq_nr0 = scanrate
 	uint16_t seq_nr2;	       //incremeted if seq_nr1 = 255
@@ -39,6 +45,12 @@ struct cy8mrln_palmpre_input
 	uint8_t seq_nr0;		//incremented. 0- scanrate
 	uint8_t null;		   //\0
 }__attribute__((packed));
+
+struct cood
+{
+	int x;
+	int y;
+};
 
 struct tslib_cy8mrln_palmpre 
 {
@@ -190,10 +202,137 @@ static const struct tslib_vars raw_vars[] =
 
 #define NR_VARS (sizeof(raw_vars) / sizeof(raw_vars[0]))
 
+void
+interpolate(uint16_t field[H_FIELDS * V_FIELDS], int i, struct ts_sample *out) {
+	float f11, f12, f13, f21, f22, f23, f31, f32, f33;
+	int x = SCREEN_WIDTH / H_FIELDS * (H_FIELDS - (i % H_FIELDS));
+	int y = SCREEN_HEIGHT / (V_FIELDS - 1) * (i / H_FIELDS);
+	static int dx = SCREEN_WIDTH / H_FIELDS;
+	static int dy = SCREEN_HEIGHT / V_FIELDS;
+	
+	/* caluculate corrections for top, bottom, left and right fields */
+	f12 = (i < (H_FIELDS + 1)) ? 0.0 : 0.5 * field[i - H_FIELDS] / field[i];
+	f32 = (i > (H_FIELDS * (V_FIELDS - 2)))
+	      ? 0.0 : 0.5 * field[i + H_FIELDS] / field[i];
+	f21 = (i % H_FIELDS == (H_FIELDS - 1))
+	      ? 0.0 : 0.5 * field[i + 1] / field[i];
+	f23 = (i % H_FIELDS == 0) ? 0.0 : 0.5 * field[i - 1] / field[i];
+
+	/*
+	   correct values for the edges, shift the mesuarment point by half a 
+	   field diminsion to the outside
+	*/
+	if (i == 0) {
+		x = x + dx / 2;
+		f21 = f21 * 2.0;
+		y = y - dy / 2;
+		f32 = f32 * 2.0;
+	} else if (i == (H_FIELDS - 1)) {
+		x = x - dx / 2;
+		f23 = f23 * 2.0;
+		y = y - dy / 2;
+		f32 = f32 * 2.0;
+	} else if (i % H_FIELDS == (H_FIELDS - 1)) {
+		x = x - dx / 2;
+		f23 = f23 * 2.0;
+	} else if (i % H_FIELDS == 0) {
+		x = x + dx / 2;
+		f21 = f21 * 2.0;
+	} else if (i < H_FIELDS) {
+		y = y - dy / 2;
+		f32 = f32 * 2.0;
+	} else if (i == (H_FIELDS * (V_FIELDS - 2))) {
+		x = x + dx / 2;
+		f21 = f21 * 2.0;
+		y = y + dy / 2;
+		f12 = f12 * 2.0;
+	} else if (i == (H_FIELDS * (V_FIELDS - 1) - 1)) {
+		x = x - dx / 2;
+		f23 = f23 * 2.0;
+		y = y + dy / 2;
+		f12 = f12 * 2.0;
+	} else if (i > (H_FIELDS * (V_FIELDS - 2))) {
+		y = y + dy / 2;
+		f12 = f12 * 2.0;
+	}
+
+	/* caluclate corrections for the corners */
+/*
+	f11 = (i % H_FIELDS == (H_FIELDS - 1) || i < (H_FIELDS + 1))
+	      ? 0.0 : 0.4 * field[i - H_FIELDS + 1] / field[i];
+	f13 = (i % H_FIELDS == 0 || i < (H_FIELDS + 1))
+	      ? 0.0 : 0.4 * field[i - H_FIELDS - 1] / field[i];
+	f31 = (i % H_FIELDS == (H_FIELDS - 1)
+	       || i > (H_FIELDS * (V_FIELDS - 1) - 1))
+	      ? 0.0 : 0.4 * field[i + H_FIELDS + 1] / field[i];
+	f33 = (i % H_FIELDS == 0 || i > (H_FIELDS * (V_FIELDS - 1) - 1))
+	      ? 0.0 : 0.4 * field[i + H_FIELDS - 1] / field[i];
+*/
+
+	out->x = x // + (f13 + f33 - f11 - f31) * dx /* use corners too?*/
+		 + (f23 - f21) * dx
+//	         + (f21 == 0.0) ? ((f23 * 2 + (dx / 2)) * dx) : (f23 * dx)
+//	         - (f23 == 0.0) ? ((f21 * 2 + (dx / 2)) * dx) : (f21 * dx)
+	         - (dx / 2);
+	out->y = y // + (f31 + f33 - f11 - f13) * dy /* use corners too?*/
+	         + (f32 - f12) * dy + (dy / 2);
+
+	out->pressure = field[i];
+#ifdef DEBUG
+	printf("RAW--------------------------->f21: %f (%d), f23: %f (%d), f12: %f (%d), f32: %f (%d), ", 
+	       f21, field[i - 1], f23, field[i + 1], f12,
+	       field[i - H_FIELDS], f32, field[i + H_FIELDS]);
+#endif /*DEBUG*/
+}
+
 static int
 cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample *samp, int nr)
 {
-	return 0;
+	struct tsdev *ts = info->dev;
+	struct cy8mrln_palmpre_input *cy8mrln_evt;
+	int ret;
+	cy8mrln_evt = alloca(sizeof(*cy8mrln_evt) * nr);
+	ret = read(ts->fd, cy8mrln_evt, sizeof(*cy8mrln_evt) * nr);
+	if (ret > 0) {
+		int nr = ret / sizeof(*cy8mrln_evt);
+		max_index = 0;
+		max_value = 0;
+		while(ret >= (int)sizeof(*cy8mrln_evt)) {
+                        for (i = 0; i < (H_FIELDS * V_FIELDS); i++) {
+				/* auto calibrate zero values */
+				if (cy8mrln_evt->field[i] > info->nulls[i])
+					info->nulls[i] = cy8mrln_evt->field[i];
+
+				tmp_value = abs(info->nulls[i] - cy8mrln_evt->field[i]);
+
+				/* check for the maximum value */
+				if (tmp_value > max_value) {
+					max_value = tmp_value;
+					max_index = i;
+				}
+
+				cy8mrln_evt->field[i] = tmp_value;
+			}
+			/* only caluclate events that are not noise */
+			if (max_value > NOISE) {
+				interpolate(cy8mrln_evt->field, max_index, samp);
+#ifdef DEBUG
+				fprintf(stderr,"RAW---------------------------> %d %d %d\n",
+					samp->x, samp->y, samp->pressure);
+#endif /*DEBUG*/
+			}
+
+			gettimeofday(&samp->tv,NULL);
+			samp++;
+			cy8mrln_evt++;
+			ret -= sizeof(*cy8mrln_evt);
+		}
+	} else {
+		return -1;
+	}
+
+	ret = nr;
+	return ret;
 }
 
 static int 
