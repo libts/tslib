@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stddef.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -33,6 +34,10 @@
 #define SCREEN_HEIGHT  527
 #define H_FIELDS       7
 #define V_FIELDS       11
+
+#define container_of(ptr, type, member) ({ \
+	const typeof( ((type*)0)->member ) *__mptr = (ptr); \
+	(type *)( (char *)__mptr - offsetof(type, member)); })
 
 struct cy8mrln_palmpre_input
 {  
@@ -49,7 +54,7 @@ struct cy8mrln_palmpre_input
 struct tslib_cy8mrln_palmpre 
 {
 	struct tslib_module_info module;
-	uint16_t nulls[7][11];
+	uint16_t nulls[H_FIELDS * V_FIELDS];
 };
 
 static int scanrate = 60;
@@ -284,20 +289,25 @@ cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample *samp, int
 {
 	struct tsdev *ts = info->dev;
 	struct cy8mrln_palmpre_input *cy8mrln_evt;
+	struct tslib_cy8mrln_palmpre *cy8mrln_info;
+	int max_index = 0, max_value = 0, i = 0;
+	uint16_t tmp_value;
 	int ret;
+	
+	cy8mrln_info = container_of(info, struct tslib_cy8mrln_palmpre, module);
+	
 	cy8mrln_evt = alloca(sizeof(*cy8mrln_evt) * nr);
 	ret = read(ts->fd, cy8mrln_evt, sizeof(*cy8mrln_evt) * nr);
 	if (ret > 0) {
-		int nr = ret / sizeof(*cy8mrln_evt);
 		max_index = 0;
 		max_value = 0;
 		while(ret >= (int)sizeof(*cy8mrln_evt)) {
                         for (i = 0; i < (H_FIELDS * V_FIELDS); i++) {
 				/* auto calibrate zero values */
-				if (cy8mrln_evt->field[i] > info->nulls[i])
-					info->nulls[i] = cy8mrln_evt->field[i];
+				if (cy8mrln_evt->field[i] > cy8mrln_info->nulls[i])
+					cy8mrln_info->nulls[i] = cy8mrln_evt->field[i];
 
-				tmp_value = abs(info->nulls[i] - cy8mrln_evt->field[i]);
+				tmp_value = abs(cy8mrln_info->nulls[i] - cy8mrln_evt->field[i]);
 
 				/* check for the maximum value */
 				if (tmp_value > max_value) {
@@ -345,28 +355,29 @@ static const struct tslib_ops cy8mrln_palmpre_ops =
 TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init(struct tsdev *dev, const char *params)
 {
 	struct tslib_cy8mrln_palmpre *info;
-        struct cy8mrln_palmpre_input input;
+	struct cy8mrln_palmpre_input input;
 	
 	info = malloc(sizeof(struct tslib_cy8mrln_palmpre));
 	if(info == NULL)
 	     return NULL;
 	info->module.ops = &cy8mrln_palmpre_ops;
 
-        cy8mrln_palmpre_set_verbose(dev,verbose);
-        cy8mrln_palmpre_set_scanrate(dev,scanrate);
-        cy8mrln_palmpre_set_timestamp_mode(dev,timestamp_mode);
-        cy8mrln_palmpre_set_sleepmode(dev,sleepmode);
-        cy8mrln_palmpre_set_wot_scanrate(dev,wot_scanrate);
-        cy8mrln_palmpre_set_wot_threshold(dev,wot_threshold);
+	cy8mrln_palmpre_set_verbose(dev,verbose);
+	cy8mrln_palmpre_set_scanrate(dev,scanrate);
+	cy8mrln_palmpre_set_timestamp_mode(dev,timestamp_mode);
+	cy8mrln_palmpre_set_sleepmode(dev,sleepmode);
+	cy8mrln_palmpre_set_wot_scanrate(dev,wot_scanrate);
+	cy8mrln_palmpre_set_wot_threshold(dev,wot_threshold);
 
 	if (tslib_parse_vars(&info->module, raw_vars, NR_VARS, params)) {
 		free(info);
 		return NULL;
 	}
 
-        read(dev->fd, &input, sizeof(input));
+	// FIXME why do we read here one packet from fd?
+	read(dev->fd, &input, sizeof(input));
 
-        memcpy(info->nulls, input.values, 7*11*sizeof(uint16_t));
+	memcpy(info->nulls, input.field, H_FIELDS * V_FIELDS * sizeof(uint16_t));
 
 	return &(info->module);
 }
