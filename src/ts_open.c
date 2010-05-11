@@ -6,7 +6,6 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_open.c,v 1.4 2004/07/21 19:12:59 dlowder Exp $
  *
  * Open a touchscreen device.
  */

@@ -1,5 +1,4 @@
 #!/bin/sh
-# $Id: autogen.sh,v 1.3 2005/02/26 01:47:22 kergoth Exp $
 
 autoreconf -f -i -I `pwd`/m4
 exit $?

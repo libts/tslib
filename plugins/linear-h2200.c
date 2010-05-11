@@ -6,7 +6,6 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: linear-h2200.c,v 1.1 2005/02/26 01:54:51 kergoth Exp $
  *
  * Linearly scale touchscreen values for HP iPAQ h22xx.
  */

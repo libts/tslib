@@ -6,7 +6,6 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: dejitter.c,v 1.10 2005/02/26 01:47:23 kergoth Exp $
  *
  * Problem: some touchscreens read the X/Y values from ADC with a
  * great level of noise in their lowest bits. This produces "jitter"

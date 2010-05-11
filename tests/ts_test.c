@@ -6,7 +6,6 @@
  * This file is placed under the GPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_test.c,v 1.6 2004/10/19 22:01:27 dlowder Exp $
  *
  * Basic test program for touchscreen library.
  */

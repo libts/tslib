@@ -6,7 +6,6 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_config.c,v 1.5 2004/10/19 22:01:27 dlowder Exp $
  *
  * Read the configuration and load the appropriate drivers.
  */

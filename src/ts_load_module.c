@@ -6,7 +6,6 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_load_module.c,v 1.4 2004/10/19 22:01:27 dlowder Exp $
  *
  * Close a touchscreen device.
  */

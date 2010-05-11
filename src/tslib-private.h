@@ -7,7 +7,6 @@
  *
  * This file is placed under the LGPL.
  *
- * $Id: tslib-private.h,v 1.3 2004/07/21 19:12:59 dlowder Exp $
  *
  * Internal touch screen library definitions.
  */

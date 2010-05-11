@@ -6,7 +6,6 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_fd.c,v 1.1 2002/01/15 16:18:07 rmk Exp $
  *
  * Return the file descriptor for a touchscreen device.
  */

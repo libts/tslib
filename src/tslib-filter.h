@@ -7,7 +7,6 @@
  *
  * This file is placed under the LGPL.
  *
- * $Id: tslib-filter.h,v 1.3 2005/03/01 18:18:05 kergoth Exp $
  *
  * Internal touch screen library definitions.
  */

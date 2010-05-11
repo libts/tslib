@@ -7,7 +7,6 @@
  *
  * This file is placed under the LGPL.
  *
- * $Id: testutils.h
  *
  * Misc utils for ts test programs
  */

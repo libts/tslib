@@ -7,7 +7,6 @@
  *
  * This file is placed under the LGPL.
  *
- * $Id: tslib.h,v 1.4 2005/02/26 01:47:23 kergoth Exp $
  *
  * Touch screen library interface definitions.
  */

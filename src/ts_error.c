@@ -6,7 +6,6 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: ts_error.c,v 1.1.1.1 2001/12/22 21:12:06 rmk Exp $
  *
  * Error handling for tslib.
  */

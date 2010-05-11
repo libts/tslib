@@ -10,7 +10,6 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: input-raw.c,v 1.5 2005/02/26 01:47:23 kergoth Exp $
  *
  * Read raw pressure, x, y, and timestamp from a touchscreen device.
  */

@@ -7,7 +7,6 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * $Id: linear.c,v 1.10 2005/02/26 01:47:23 kergoth Exp $
  *
  * Linearly scale touchscreen values
  */
