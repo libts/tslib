@@ -37,6 +37,9 @@ static struct {
 #ifdef TSLIB_STATIC_CORGI_MODULE
 	{ "corgi", corgi_mod_init },
 #endif 
+#ifdef TSLIB_CY8MRLN_PALMPRE_MODULE
+        { "cy8mrln_palmpre", cy8mrln_palmpre_mod_init },
+#endif
 #ifdef TSLIB_STATIC_DEJITTER_MODULE
 	{ "dejitter", dejitter_mod_init },
 #endif

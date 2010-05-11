@@ -96,6 +96,12 @@ else
 H2200_LINEAR_MODULE =
 endif
 
+if ENABLE_CY8MRLN_PALMPRE_MODULE
+CY8MRLN_PALMPRE_MODULE = cy8mrln_palmpre.la
+else
+CY8MRLN_PALMPRE_MODULE =
+endif
+
 pluginexec_LTLIBRARIES = \
 	$(LINEAR_MODULE) \
 	$(DEJITTER_MODULE) \
@@ -109,7 +115,8 @@ pluginexec_LTLIBRARIES = \
 	$(ARCTIC2_MODULE) \
 	$(TATUNG_MODULE) \
 	$(H2200_LINEAR_MODULE) \
-	$(INPUT_MODULE)
+	$(INPUT_MODULE) \
+	$(CY8MRLN_PALMPRE_MODULE)
   
 variance_la_SOURCES	= variance.c
 variance_la_LDFLAGS	= -module $(LTVSN)
@@ -155,3 +162,6 @@ input_la_LIBADD		= $(top_builddir)/src/libts.la
 
 linear_h2200_la_SOURCES	= linear-h2200.c
 linear_h2200_la_LDFLAGS	= -module $(LTVSN)
+
+cy8mrln_palmpre_la_SOURCES = cy8mrln-palmpre.c
+cy8mrln_palmpre_la_LDFLAGS = -module $(LTVSN)
