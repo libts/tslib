@@ -14,7 +14,6 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
-#include <linux/spi/cy8mrln.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,6 +27,8 @@
 #include "config.h"
 #include "tslib-private.h"
 #include "tslib-filter.h"
+
+#include "cy8mrln.h"
 
 #define NOISE          12
 #define SCREEN_WIDTH   319
