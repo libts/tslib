@@ -59,7 +59,7 @@ struct tslib_cy8mrln_palmpre
 };
 
 static int scanrate = 60;
-static int verbose = 1;
+static int verbose = 0;
 static int wot_threshold = 22;
 static int sleepmode = CY8MRLN_ON_STATE;
 static int wot_scanrate = WOT_SCANRATE_512HZ;
