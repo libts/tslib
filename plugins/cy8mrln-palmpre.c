@@ -68,64 +68,94 @@ static int timestamp_mode = 1;
 static int 
 cy8mrln_palmpre_set_scanrate(struct tsdev* dev, int rate)
 {
-	if(ioctl(dev->fd,CY8MRLN_IOCTL_SET_SCANRATE,&rate) < 0)
-	     return -1;
+	if (dev == NULL || ioctl(dev->fd,CY8MRLN_IOCTL_SET_SCANRATE,&rate) < 0)
+		goto error;
+		
 	scanrate = rate;
 	return 0;
+	
+error:
+	printf("TSLIB: cy8mrln_palmpre: ERROR: could not set scanrate value\n");
+	return -1;
 }
 
 static int 
 cy8mrln_palmpre_set_verbose(struct tsdev* dev, int v)
 {
-	if(ioctl(dev->fd,CY8MRLN_IOCTL_SET_VERBOSE_MODE,&v) < 0)
-	     return -1;
+	if (dev == NULL || ioctl(dev->fd,CY8MRLN_IOCTL_SET_VERBOSE_MODE,&v) < 0)
+		goto error;
+	
 	verbose = v;
 	return 0;
+
+error:
+	printf("TSLIB: cy8mrln_palmpre: ERROR: could not set verbose value\n");
+	return -1;
 }
 
 static int 
 cy8mrln_palmpre_set_sleepmode(struct tsdev* dev, int mode)
 {
-	if(ioctl(dev->fd,CY8MRLN_IOCTL_SET_SLEEPMODE,&mode) < 0)
-	     return -1;
+	if (dev == NULL || ioctl(dev->fd,CY8MRLN_IOCTL_SET_SLEEPMODE,&mode) < 0)
+		goto error;
+
 	sleepmode = mode;
 	return 0;
+	
+error:
+	printf("TSLIB: cy8mrln_palmpre: ERROR: could not set sleepmode value\n");
+	return -1;
 }
 
 static int 
 cy8mrln_palmpre_set_wot_scanrate(struct tsdev* dev, int rate)
 {
-	if(ioctl(dev->fd,CY8MRLN_IOCTL_SET_WOT_SCANRATE,&rate) < 0)
-	     return -1;
+	if (dev == NULL || ioctl(dev->fd,CY8MRLN_IOCTL_SET_WOT_SCANRATE,&rate) < 0)
+		goto error;
+
 	wot_scanrate = rate;
 	return 0;
+
+error:
+	printf("TSLIB: cy8mrln_palmpre: ERROR: could not set scanrate value\n");
+	return -1;
 }
 
 static int 
 cy8mrln_palmpre_set_wot_threshold(struct tsdev* dev, int v)
 {
+	if (dev == NULL) 
+		goto error;
 	if(v < WOT_THRESHOLD_MIN || v > WOT_THRESHOLD_MAX)
-	     return -1;
+		goto error;
 	if(ioctl(dev->fd,CY8MRLN_IOCTL_SET_WOT_THRESHOLD,&v) < 0)
-	     return -1;
+		goto error;
+		
 	wot_threshold = v;
 	return 0;
+	
+error:
+	printf("TSLIB: cy8mrln_palmpre: ERROR: could not set wot treshhold value\n");
+	return -1;
 }
 
 static int 
 cy8mrln_palmpre_set_timestamp_mode(struct tsdev* dev, int v)
 {
 	v = v ? 1 : 0;
-	if(ioctl(dev->fd,CY8MRLN_IOCTL_SET_TIMESTAMP_MODE,&v) < 0)
-	     return -1;
+	if(dev == NULL || ioctl(dev->fd,CY8MRLN_IOCTL_SET_TIMESTAMP_MODE,&v) < 0)
+	     goto error;
 	timestamp_mode = v;
 	return 0;
+	
+error:
+	printf("TSLIB: cy8mrln_palmpre: ERROR: could not set timestamp value\n");
+	return -1;
 }
 
 static int
 parse_scanrate(struct tslib_module_info *info, char *str, void *data)
 {
-        (void)data;
 	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
 	unsigned long rate = strtoul(str, NULL, 0);
 
@@ -138,7 +168,6 @@ parse_scanrate(struct tslib_module_info *info, char *str, void *data)
 static int
 parse_verbose(struct tslib_module_info *info, char *str, void *data)
 {
-        (void)data;
 	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
 	unsigned long v = strtoul(str, NULL, 0);
 
@@ -151,7 +180,6 @@ parse_verbose(struct tslib_module_info *info, char *str, void *data)
 static int
 parse_wot_scanrate(struct tslib_module_info *info, char *str, void *data)
 {
-        (void)data;
 	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
 	unsigned long rate = strtoul(str, NULL, 0);
 
@@ -161,7 +189,6 @@ parse_wot_scanrate(struct tslib_module_info *info, char *str, void *data)
 static int
 parse_wot_threshold(struct tslib_module_info *info, char *str, void *data)
 {
-        (void)data;
 	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
 	unsigned long threshold = strtoul(str, NULL, 0);
 
@@ -171,23 +198,19 @@ parse_wot_threshold(struct tslib_module_info *info, char *str, void *data)
 static int
 parse_sleepmode(struct tslib_module_info *info, char *str, void *data)
 {
-        (void)data;
 	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
 	unsigned long sleep = strtoul(str, NULL, 0);
 
 	return cy8mrln_palmpre_set_sleepmode(i->module.dev, sleep);
-	return 0;
 }
 
 static int
 parse_timestamp_mode(struct tslib_module_info *info, char *str, void *data)
 {
-        (void)data;
 	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
 	unsigned long sleep = strtoul(str, NULL, 0);
 
 	return cy8mrln_palmpre_set_sleepmode(i->module.dev, sleep);
-	return 0;
 }
 
 static const struct tslib_vars raw_vars[] =
