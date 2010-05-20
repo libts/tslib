@@ -36,6 +36,8 @@
 #define H_FIELDS       7
 #define V_FIELDS       11
 
+#define DEBUG
+
 #define container_of(ptr, type, member) ({ \
 	const typeof( ((type*)0)->member ) *__mptr = (ptr); \
 	(type *)( (char *)__mptr - offsetof(type, member)); })
@@ -302,7 +304,7 @@ interpolate(uint16_t field[H_FIELDS * V_FIELDS], int i, struct ts_sample *out) {
 
 	out->pressure = field[i];
 #ifdef DEBUG
-	printf("RAW--------------------------->f21: %f (%d), f23: %f (%d), f12: %f (%d), f32: %f (%d), ", 
+	printf("RAW--------------------------->f21: %f (%d), f23: %f (%d), f12: %f (%d), f32: %f (%d), \n", 
 	       f21, field[i - 1], f23, field[i + 1], f12,
 	       field[i - H_FIELDS], f32, field[i + H_FIELDS]);
 #endif /*DEBUG*/
