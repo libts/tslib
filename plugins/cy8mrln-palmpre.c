@@ -304,7 +304,8 @@ interpolate(uint16_t field[H_FIELDS * V_FIELDS], int i, struct ts_sample *out) {
 
 	out->pressure = field[i];
 #ifdef DEBUG
-	printf("RAW--------------------------->f21: %f (%d), f23: %f (%d), f12: %f (%d), f32: %f (%d), \n", 
+	printf("RAW---------------------------> f22: %f (%d) f21: %f (%d), f23: %f (%d), f12: %f (%d), f32: %f (%d), \n", 
+	       f22, fields[i],
 	       f21, field[i - 1], f23, field[i + 1], f12,
 	       field[i - H_FIELDS], f32, field[i + H_FIELDS]);
 #endif /*DEBUG*/
