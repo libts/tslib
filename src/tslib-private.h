@@ -17,6 +17,8 @@ extern "C" {
 #include "tslib.h"
 #include "tslib-filter.h"
 
+#define DEBUG
+
 struct tsdev {
 	int fd;
 	struct tslib_module_info *list;
