@@ -350,10 +350,10 @@ cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample *samp, int
 				fprintf(stderr,"RAW---------------------------> %d %d %d\n",
 					samp->x, samp->y, samp->pressure);
 #endif /*DEBUG*/
+				gettimeofday(&samp->tv,NULL);
 				samp++;
 			}
 
-			gettimeofday(&samp->tv,NULL);
 			cy8mrln_evt++;
 			ret -= sizeof(*cy8mrln_evt);
 		}
