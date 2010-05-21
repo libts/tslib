@@ -36,8 +36,6 @@
 #define H_FIELDS       7
 #define V_FIELDS       11
 
-#define DEBUG
-
 #define container_of(ptr, type, member) ({ \
 	const typeof( ((type*)0)->member ) *__mptr = (ptr); \
 	(type *)( (char *)__mptr - offsetof(type, member)); })
@@ -304,8 +302,7 @@ interpolate(uint16_t field[H_FIELDS * V_FIELDS], int i, struct ts_sample *out) {
 
 	out->pressure = field[i];
 #ifdef DEBUG
-	printf("RAW---------------------------> f22: %f (%d) f21: %f (%d), f23: %f (%d), f12: %f (%d), f32: %f (%d), \n", 
-	       f22, field[i],
+	printf("RAW--------------------------->f21: %f (%d), f23: %f (%d), f12: %f (%d), f32: %f (%d), ", 
 	       f21, field[i - 1], f23, field[i + 1], f12,
 	       field[i - H_FIELDS], f32, field[i + H_FIELDS]);
 #endif /*DEBUG*/
@@ -319,7 +316,7 @@ cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample *samp, int
 	struct tslib_cy8mrln_palmpre *cy8mrln_info;
 	int max_index = 0, max_value = 0, i = 0;
 	uint16_t tmp_value;
-	int ret, valid_samples = 0;
+	int ret;
 	
 	cy8mrln_info = container_of(info, struct tslib_cy8mrln_palmpre, module);
 	
@@ -351,11 +348,10 @@ cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample *samp, int
 				fprintf(stderr,"RAW---------------------------> %d %d %d\n",
 					samp->x, samp->y, samp->pressure);
 #endif /*DEBUG*/
-				gettimeofday(&samp->tv,NULL);
-				samp++;
-				valid_samples++;
 			}
 
+			gettimeofday(&samp->tv,NULL);
+			samp++;
 			cy8mrln_evt++;
 			ret -= sizeof(*cy8mrln_evt);
 		}
@@ -363,7 +359,8 @@ cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample *samp, int
 		return -1;
 	}
 
-	return valid_samples;
+	ret = nr;
+	return ret;
 }
 
 static int 
