@@ -319,7 +319,7 @@ cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample *samp, int
 	struct tslib_cy8mrln_palmpre *cy8mrln_info;
 	int max_index = 0, max_value = 0, i = 0;
 	uint16_t tmp_value;
-	int ret;
+	int ret, valid_samples = 0;
 	
 	cy8mrln_info = container_of(info, struct tslib_cy8mrln_palmpre, module);
 	
@@ -353,6 +353,7 @@ cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample *samp, int
 #endif /*DEBUG*/
 				gettimeofday(&samp->tv,NULL);
 				samp++;
+				valid_samples++;
 			}
 
 			cy8mrln_evt++;
@@ -362,8 +363,7 @@ cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample *samp, int
 		return -1;
 	}
 
-	ret = nr;
-	return ret;
+	return valid_samples;
 }
 
 static int 
