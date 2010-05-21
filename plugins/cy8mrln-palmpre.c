@@ -36,8 +36,6 @@
 #define H_FIELDS       7
 #define V_FIELDS       11
 
-#define DEBUG
-
 #define container_of(ptr, type, member) ({ \
 	const typeof( ((type*)0)->member ) *__mptr = (ptr); \
 	(type *)( (char *)__mptr - offsetof(type, member)); })
@@ -392,6 +390,7 @@ TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init(struct tsdev *dev, cons
 {
 	struct tslib_cy8mrln_palmpre *info;
 	struct cy8mrln_palmpre_input input;
+	int ret = 0;
 	
 	info = malloc(sizeof(struct tslib_cy8mrln_palmpre));
 	if(info == NULL)
@@ -410,9 +409,12 @@ TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init(struct tsdev *dev, cons
 		return NULL;
 	}
 
-	// FIXME why do we read here one packet from fd?
-	read(dev->fd, &input, sizeof(input));
-
+	/* We need the intial values the touchscreen repots with no touch input force
+	 * later use */
+	do {
+		ret = read(dev->fd, &input, sizeof(input));
+	}
+	while (ret <= 0);
 	memcpy(info->nulls, input.field, H_FIELDS * V_FIELDS * sizeof(uint16_t));
 
 	return &(info->module);
