@@ -30,7 +30,7 @@
 
 #include "cy8mrln.h"
 
-#define NOISE          12
+#define NOISE          25
 #define SCREEN_WIDTH   319
 #define SCREEN_HEIGHT  527
 #define H_FIELDS       7
