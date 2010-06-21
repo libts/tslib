@@ -35,6 +35,7 @@
 #define SCREEN_HEIGHT  527
 #define H_FIELDS       7
 #define V_FIELDS       11
+#define TS_PRESSURE    255
 
 #define container_of(ptr, type, member) ({ \
 	const typeof( ((type*)0)->member ) *__mptr = (ptr); \
@@ -300,7 +301,7 @@ interpolate(uint16_t field[H_FIELDS * V_FIELDS], int i, struct ts_sample *out) {
 	out->y = y // + (f31 + f33 - f11 - f13) * dy /* use corners too?*/
 	         + (f32 - f12) * dy + (dy / 2);
 
-	out->pressure = field[i];
+	out->pressure = TS_PRESSURE;
 #ifdef DEBUG
 	printf("RAW---------------------------> f22: %f (%d) f21: %f (%d), f23: %f (%d), f12: %f (%d), f32: %f (%d), \n", 
 	       f22, field[i],
