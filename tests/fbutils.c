@@ -93,11 +93,13 @@ int open_framebuffer(void)
         	        return -1;
         	}
 
+#ifndef TSLIB_NO_VT_WAITACTIVE
         	if (ioctl(con_fd, VT_WAITACTIVE, nr) < 0) {
         	        perror("VT_WAITACTIVE");
         	        close(con_fd);
         	        return -1;
         	}
+#endif
 
         	if (ioctl(con_fd, KDSETMODE, KD_GRAPHICS) < 0) {
         	        perror("KDSETMODE");
