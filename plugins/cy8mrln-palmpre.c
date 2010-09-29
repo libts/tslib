@@ -66,7 +66,7 @@ struct cy8mrln_palmpre_input
 struct tslib_cy8mrln_palmpre 
 {
 	struct tslib_module_info module;
-	uint16_t nulls[H_FIELDS * V_FIELDS];
+	uint16_t references[H_FIELDS * V_FIELDS];
         int scanrate;
         int verbose;
         int wot_threshold;
@@ -75,11 +75,34 @@ struct tslib_cy8mrln_palmpre
         int timestamp_mode;
         int ts_pressure;
         int noise;
+        int last_n_valid_samples;
+        struct ts_sample* last_valid_samples;
 };
 
+static int cy8mrln_palmpre_set_scanrate(struct tslib_cy8mrln_palmpre* info, int rate);
+static int cy8mrln_palmpre_set_verbose(struct tslib_cy8mrln_palmpre* info, int v);
+static int cy8mrln_palmpre_set_sleepmode(struct tslib_cy8mrln_palmpre* info, int mode);
+static int cy8mrln_palmpre_set_wot_scanrate(struct tslib_cy8mrln_palmpre* info, int rate);
+static int cy8mrln_palmpre_set_wot_threshold(struct tslib_cy8mrln_palmpre* info, int v);
+static int cy8mrln_palmpre_set_timestamp_mode(struct tslib_cy8mrln_palmpre* info, int v);
+static int cy8mrln_palmpre_set_noise (struct tslib_cy8mrln_palmpre* info, int n);
+static int cy8mrln_palmpre_set_ts_pressure(struct tslib_cy8mrln_palmpre* info, int p);
+static int parse_scanrate(struct tslib_module_info *info, char *str, void *data);
+static int parse_verbose(struct tslib_module_info *info, char *str, void *data);
+static int parse_wot_scanrate(struct tslib_module_info *info, char *str, void *data);
+static int parse_wot_threshold(struct tslib_module_info *info, char *str, void *data);
+static int parse_sleepmode(struct tslib_module_info *info, char *str, void *data);
+static int parse_timestamp_mode(struct tslib_module_info *info, char *str, void *data);
+static int parse_noise(struct tslib_module_info *info, char *str, void *data);
+static int parse_ts_pressure(struct tslib_module_info *info, char *str, void *data);
+static void cy8mrln_palmpre_update_references(uint16_t references[H_FIELDS * V_FIELDS], uint16_t field[H_FIELDS * V_FIELDS]);
+static void cy8mrln_palmpre_interpolate(uint16_t field[H_FIELDS * V_FIELDS], uint16_t references[H_FIELDS * V_FIELDS], int x, int y, struct ts_sample *out);
+static int cy8mrln_palmpre_fini(struct tslib_module_info *info);
+static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample *samp, int nr);
+TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init(struct tsdev *dev, const char *params);
 
-static int 
-cy8mrln_palmpre_set_scanrate(struct tslib_cy8mrln_palmpre* info, int rate)
+
+static int cy8mrln_palmpre_set_scanrate(struct tslib_cy8mrln_palmpre* info, int rate)
 {
 	if (info == NULL || info->module.dev == NULL || ioctl(info->module.dev->fd,CY8MRLN_IOCTL_SET_SCANRATE,&rate) < 0)
 		goto error;
@@ -92,8 +115,7 @@ error:
 	return -1;
 }
 
-static int 
-cy8mrln_palmpre_set_verbose(struct tslib_cy8mrln_palmpre* info, int v)
+static int cy8mrln_palmpre_set_verbose(struct tslib_cy8mrln_palmpre* info, int v)
 {
 	if (info == NULL || info->module.dev == NULL || ioctl(info->module.dev->fd,CY8MRLN_IOCTL_SET_VERBOSE_MODE,&v) < 0)
 		goto error;
@@ -106,8 +128,7 @@ error:
 	return -1;
 }
 
-static int 
-cy8mrln_palmpre_set_sleepmode(struct tslib_cy8mrln_palmpre* info, int mode)
+static int cy8mrln_palmpre_set_sleepmode(struct tslib_cy8mrln_palmpre* info, int mode)
 {
 	if (info == NULL || info->module.dev == NULL || ioctl(info->module.dev->fd,CY8MRLN_IOCTL_SET_SLEEPMODE,&mode) < 0)
 		goto error;
@@ -120,8 +141,7 @@ error:
 	return -1;
 }
 
-static int 
-cy8mrln_palmpre_set_wot_scanrate(struct tslib_cy8mrln_palmpre* info, int rate)
+static int cy8mrln_palmpre_set_wot_scanrate(struct tslib_cy8mrln_palmpre* info, int rate)
 {
 	if (info == NULL || info->module.dev == NULL || ioctl(info->module.dev->fd,CY8MRLN_IOCTL_SET_WOT_SCANRATE,&rate) < 0)
 		goto error;
@@ -134,8 +154,7 @@ error:
 	return -1;
 }
 
-static int 
-cy8mrln_palmpre_set_wot_threshold(struct tslib_cy8mrln_palmpre* info, int v)
+static int cy8mrln_palmpre_set_wot_threshold(struct tslib_cy8mrln_palmpre* info, int v)
 {
 	if (info == NULL || info->module.dev == NULL) 
 		goto error;
@@ -152,8 +171,7 @@ error:
 	return -1;
 }
 
-static int 
-cy8mrln_palmpre_set_timestamp_mode(struct tslib_cy8mrln_palmpre* info, int v)
+static int cy8mrln_palmpre_set_timestamp_mode(struct tslib_cy8mrln_palmpre* info, int v)
 {
 	v = v ? 1 : 0;
 	if(info == NULL || info->module.dev == NULL || ioctl(info->module.dev->fd,CY8MRLN_IOCTL_SET_TIMESTAMP_MODE,&v) < 0)
@@ -166,8 +184,7 @@ error:
 	return -1;
 }
 
-static int 
-cy8mrln_palmpre_set_noise (struct tslib_cy8mrln_palmpre* info, int n)
+static int cy8mrln_palmpre_set_noise (struct tslib_cy8mrln_palmpre* info, int n)
 {
         if (info == NULL) {
                 printf("TSLIB: cy8mrln_palmpre: ERROR: could not set noise value\n");
@@ -177,8 +194,7 @@ cy8mrln_palmpre_set_noise (struct tslib_cy8mrln_palmpre* info, int n)
         return 0;
 }
 
-static int
-cy8mrln_palmpre_set_ts_pressure(struct tslib_cy8mrln_palmpre* info, int p)
+static int cy8mrln_palmpre_set_ts_pressure(struct tslib_cy8mrln_palmpre* info, int p)
 {
         if (info == NULL) {
                 printf("TSLIB: cy8mrln_palmpre: ERROR: could not set ts_pressure value\n");
@@ -188,8 +204,7 @@ cy8mrln_palmpre_set_ts_pressure(struct tslib_cy8mrln_palmpre* info, int p)
         return 0;
 }
 
-static int
-parse_scanrate(struct tslib_module_info *info, char *str, void *data)
+static int parse_scanrate(struct tslib_module_info *info, char *str, void *data)
 {
         (void)data;
 	struct tslib_cy8mrln_palmpre *i = container_of(info, struct tslib_cy8mrln_palmpre, module);
@@ -201,8 +216,7 @@ parse_scanrate(struct tslib_module_info *info, char *str, void *data)
 	return cy8mrln_palmpre_set_scanrate(i, rate);
 }
 
-static int
-parse_verbose(struct tslib_module_info *info, char *str, void *data)
+static int parse_verbose(struct tslib_module_info *info, char *str, void *data)
 {
         (void)data;
 	struct tslib_cy8mrln_palmpre *i = container_of(info, struct tslib_cy8mrln_palmpre, module);
@@ -214,8 +228,7 @@ parse_verbose(struct tslib_module_info *info, char *str, void *data)
 	return cy8mrln_palmpre_set_verbose(i, v);
 }
 
-static int
-parse_wot_scanrate(struct tslib_module_info *info, char *str, void *data)
+static int parse_wot_scanrate(struct tslib_module_info *info, char *str, void *data)
 {
         (void)data;
 	struct tslib_cy8mrln_palmpre *i = container_of(info, struct tslib_cy8mrln_palmpre, module);
@@ -224,8 +237,7 @@ parse_wot_scanrate(struct tslib_module_info *info, char *str, void *data)
 	return cy8mrln_palmpre_set_wot_scanrate(i, rate);
 }
 
-static int
-parse_wot_threshold(struct tslib_module_info *info, char *str, void *data)
+static int parse_wot_threshold(struct tslib_module_info *info, char *str, void *data)
 {
         (void)data;
 	struct tslib_cy8mrln_palmpre *i = container_of(info, struct tslib_cy8mrln_palmpre, module);
@@ -234,8 +246,7 @@ parse_wot_threshold(struct tslib_module_info *info, char *str, void *data)
 	return cy8mrln_palmpre_set_wot_threshold(i, threshold);
 }
 
-static int
-parse_sleepmode(struct tslib_module_info *info, char *str, void *data)
+static int parse_sleepmode(struct tslib_module_info *info, char *str, void *data)
 {
         (void)data;
 	struct tslib_cy8mrln_palmpre *i = container_of(info, struct tslib_cy8mrln_palmpre, module);
@@ -244,8 +255,7 @@ parse_sleepmode(struct tslib_module_info *info, char *str, void *data)
 	return cy8mrln_palmpre_set_sleepmode(i, sleep);
 }
 
-static int
-parse_timestamp_mode(struct tslib_module_info *info, char *str, void *data)
+static int parse_timestamp_mode(struct tslib_module_info *info, char *str, void *data)
 {
         (void)data;
 	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
@@ -257,8 +267,7 @@ parse_timestamp_mode(struct tslib_module_info *info, char *str, void *data)
 
 	return cy8mrln_palmpre_set_sleepmode(i, sleep);
 }
-static int
-parse_noise(struct tslib_module_info *info, char *str, void *data)
+static int parse_noise(struct tslib_module_info *info, char *str, void *data)
 {
         (void)data;
 	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
@@ -271,8 +280,7 @@ parse_noise(struct tslib_module_info *info, char *str, void *data)
         return cy8mrln_palmpre_set_noise (i, noise);
 }
 
-static int
-parse_ts_pressure(struct tslib_module_info *info, char *str, void *data)
+static int parse_ts_pressure(struct tslib_module_info *info, char *str, void *data)
 {
         (void)data;
 	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
@@ -282,6 +290,156 @@ parse_ts_pressure(struct tslib_module_info *info, char *str, void *data)
 		return -1;
 
         return cy8mrln_palmpre_set_ts_pressure (i, tp);
+}
+
+#define NR_VARS (sizeof(raw_vars) / sizeof(raw_vars[0]))
+/*
+ *      f12
+ * f21 (x/y) f23
+ *      f32
+ */
+
+static void cy8mrln_palmpre_interpolate(uint16_t field[H_FIELDS * V_FIELDS], uint16_t references[H_FIELDS * V_FIELDS], int x, int y, struct ts_sample *out) {
+	float f12, f21, f23, f32;
+	int posx = SCREEN_WIDTH - SCREEN_WIDTH / H_FIELDS * x;
+	int posy = SCREEN_HEIGHT / V_FIELDS * y;
+	static const int dx = SCREEN_WIDTH / H_FIELDS;
+	static const int dy = SCREEN_HEIGHT / V_FIELDS;
+        (void)references;
+	
+	/* caluculate corrections for top, bottom, left and right fields */
+        f12 = (y == 0) ? 0.5 : 0.5 * ((float)field[(y - 1) * H_FIELDS + x] / field[y * H_FIELDS + x]);
+        f32 = (y == (V_FIELDS - 1)) ? 0.5 : 0.5 * (float)field[(y + 1) * H_FIELDS + x] / field[y * H_FIELDS + x];
+	f21 = (x == (H_FIELDS - 1)) ? 0.5 : 0.5 * (float)field[y * H_FIELDS + x + 1] / field[y * H_FIELDS + x];
+	f23 = (x == 0) ? 0.5 : 0.5 * (float) field[y * H_FIELDS + x - 1] / field[y * H_FIELDS + x];
+
+	/* correct values for the edges, shift the mesuarment point by half a 
+	 * field diminsion to the outside */
+        if (x == 0) {
+                posx = posx + dx / 2.0;
+		f21 = f21 * 2.0;
+        } else if (x == (H_FIELDS - 1)) {
+                posx = posx - dx / 2.0;
+		f23 = f23 * 2.0;
+        }
+
+        if (y == 0) {
+                posy = posy - dy / 2.0;
+		f32 = f32 * 2.0;
+        } else if (y == (V_FIELDS - 1)) {
+                posy = posy + dy / 2.0;
+                f12 = f12 * 2.0;
+        }
+
+	out->x = posx // + (f13 + f33 - f11 - f31) * dx /* use corners too?*/
+		 + (f23 - f21) * dx
+//	         + (f21 == 0.0) ? ((f23 * 2 + (dx / 2)) * dx) : (f23 * dx)
+//	         - (f23 == 0.0) ? ((f21 * 2 + (dx / 2)) * dx) : (f21 * dx)
+	         - (dx / 2);
+	out->y = posy // + (f31 + f33 - f11 - f13) * dy /* use corners too?*/
+	         + (f32 - f12) * dy + (dy / 2);
+
+#ifdef DEBUG
+	printf("RAW---------------------------> (%i/%i) f12: %f f21: %f, f23: %f, f32: %f\n", x, y, f12, f21, f23, f32);
+#endif /*DEBUG*/
+}
+
+static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample *samp, int nr)
+{
+	struct tsdev *ts = info->dev;
+        //We can only read one input struct at once
+	struct cy8mrln_palmpre_input cy8mrln_evt;
+	struct tslib_cy8mrln_palmpre *cy8mrln_info;
+	int max_x = 0, max_y = 0, max_value = 0, x, y;
+	uint16_t tmp_value;
+	int ret, valid_samples = 0;
+	struct ts_sample *p = samp;
+	
+	/* initalize all samples with proper values */
+        memset(p, '\0', nr * sizeof (*p));
+	
+	cy8mrln_info = container_of(info, struct tslib_cy8mrln_palmpre, module);
+	
+	ret = read(ts->fd, &cy8mrln_evt, sizeof(cy8mrln_evt));
+	if (ret > 0) {
+                cy8mrln_palmpre_update_references (cy8mrln_info->references, cy8mrln_evt.field);
+		max_x = 0;
+                max_y = 0;
+		max_value = 0;
+                for (x = 0; x < H_FIELDS; x++) {
+                        for (y = 0; y < V_FIELDS; y ++) {
+                                tmp_value = abs(cy8mrln_info->references[y * H_FIELDS + x] - cy8mrln_evt.field[y * H_FIELDS + x]);
+
+                                /* check for the maximum value */
+                                if (tmp_value > max_value) {
+                                        max_value = tmp_value;
+                                        max_x = x;
+                                        max_y = y;
+                                }
+                        }
+                }
+                /* only caluclate events that are not noise */
+                if (max_value > cy8mrln_info->noise) {
+                        cy8mrln_palmpre_interpolate(cy8mrln_evt.field, cy8mrln_info->references, max_x, max_y, &samp[valid_samples]);
+                        samp->pressure = cy8mrln_info->ts_pressure;
+#ifdef DEBUG
+                        fprintf(stderr,"RAW---------------------------> %d %d %d\n",
+                                samp->x, samp->y, samp->pressure);
+#endif /*DEBUG*/
+                        gettimeofday(&samp->tv,NULL);
+                        valid_samples++;
+                        if (cy8mrln_info->last_valid_samples == NULL) {
+                                cy8mrln_info->last_valid_samples = malloc (sizeof (struct ts_sample) * valid_samples);
+                        } else if (cy8mrln_info->last_n_valid_samples != valid_samples) {
+                                cy8mrln_info->last_valid_samples = realloc (cy8mrln_info->last_valid_samples, sizeof (struct ts_sample) * valid_samples);
+                        }
+                        memcpy (cy8mrln_info->last_valid_samples, samp, sizeof (struct ts_sample) * valid_samples);
+                        cy8mrln_info->last_n_valid_samples = valid_samples;
+                } else {
+                        //return last samples with pressure = 0 to emulate a klick
+                        if (cy8mrln_info->last_valid_samples != NULL) {
+                                valid_samples = cy8mrln_info->last_n_valid_samples;
+                                memcpy (samp, cy8mrln_info->last_valid_samples, sizeof (struct ts_sample) * valid_samples);
+                                for (x = 0; x < valid_samples; x++) {
+                                        samp[x].pressure = 0;
+                                }
+                                cy8mrln_info->last_n_valid_samples = 0;
+                                free (cy8mrln_info->last_valid_samples);
+                                cy8mrln_info->last_valid_samples = NULL;
+#ifdef DEBUG
+                                fprintf (stderr, "cy8mrln_palmpre: Returning %i old values with 0 pressure\n", valid_samples);
+#endif
+                        }
+                }
+	} else {
+                return -1;
+        }
+
+	return valid_samples;
+}
+
+static void cy8mrln_palmpre_update_references(uint16_t references[H_FIELDS * V_FIELDS], uint16_t field[H_FIELDS * V_FIELDS])
+{
+        int x, y;
+        for (x = 0; x < H_FIELDS; x++) {
+                for (y = 0; y < V_FIELDS; y ++) {
+                        if (field[y * H_FIELDS + x] > references[y * H_FIELDS + x])
+                                references[y * H_FIELDS + x] = field[y * H_FIELDS + x];
+                }
+        }
+}
+
+static int cy8mrln_palmpre_fini(struct tslib_module_info *info)
+{
+	struct tslib_cy8mrln_palmpre *i = container_of(info, struct tslib_cy8mrln_palmpre, module);
+        if (i->last_valid_samples != NULL) {
+                free (i->last_valid_samples);
+        }
+        free (i);
+#ifdef DEBUG
+        fprintf (stderr, "finishing cy8mrln_palmpre");
+#endif
+	return 0;
 }
 
 static const struct tslib_vars raw_vars[] =
@@ -295,149 +453,6 @@ static const struct tslib_vars raw_vars[] =
         { "noise", NULL, parse_noise},
         { "ts_pressure", NULL, parse_ts_pressure}
 };
-
-#define NR_VARS (sizeof(raw_vars) / sizeof(raw_vars[0]))
-
-void
-interpolate(uint16_t field[H_FIELDS * V_FIELDS], int i, struct ts_sample *out) {
-	float f12, f21, f22, f23, f32; //f33, f31, f13, f11
-	int x = SCREEN_WIDTH / H_FIELDS * (H_FIELDS - (i % H_FIELDS));
-	int y = SCREEN_HEIGHT / (V_FIELDS - 1) * (i / H_FIELDS);
-	static int dx = SCREEN_WIDTH / H_FIELDS;
-	static int dy = SCREEN_HEIGHT / V_FIELDS;
-	
-	/* caluculate corrections for top, bottom, left and right fields */
-	f12 = (i < (H_FIELDS + 1)) ? 0.0 : 0.5 * field[i - H_FIELDS] / field[i];
-	f32 = (i > (H_FIELDS * (V_FIELDS - 2)))
-	      ? 0.0 : 0.5 * field[i + H_FIELDS] / field[i];
-	f21 = (i % H_FIELDS == (H_FIELDS - 1))
-	      ? 0.0 : 0.5 * field[i + 1] / field[i];
-	f23 = (i % H_FIELDS == 0) ? 0.0 : 0.5 * field[i - 1] / field[i];
-
-	/* correct values for the edges, shift the mesuarment point by half a 
-	 * field diminsion to the outside */
-	if (i == 0) {
-		x = x + dx / 2;
-		f21 = f21 * 2.0;
-		y = y - dy / 2;
-		f32 = f32 * 2.0;
-	} else if (i == (H_FIELDS - 1)) {
-		x = x - dx / 2;
-		f23 = f23 * 2.0;
-		y = y - dy / 2;
-		f32 = f32 * 2.0;
-	} else if (i % H_FIELDS == (H_FIELDS - 1)) {
-		x = x - dx / 2;
-		f23 = f23 * 2.0;
-	} else if (i % H_FIELDS == 0) {
-		x = x + dx / 2;
-		f21 = f21 * 2.0;
-	} else if (i < H_FIELDS) {
-		y = y - dy / 2;
-		f32 = f32 * 2.0;
-	} else if (i == (H_FIELDS * (V_FIELDS - 2))) {
-		x = x + dx / 2;
-		f21 = f21 * 2.0;
-		y = y + dy / 2;
-		f12 = f12 * 2.0;
-	} else if (i == (H_FIELDS * (V_FIELDS - 1) - 1)) {
-		x = x - dx / 2;
-		f23 = f23 * 2.0;
-		y = y + dy / 2;
-		f12 = f12 * 2.0;
-	} else if (i > (H_FIELDS * (V_FIELDS - 2))) {
-		y = y + dy / 2;
-		f12 = f12 * 2.0;
-	}
-
-	/* caluclate corrections for the corners */
-/*
-	f11 = (i % H_FIELDS == (H_FIELDS - 1) || i < (H_FIELDS + 1))
-	      ? 0.0 : 0.4 * field[i - H_FIELDS + 1] / field[i];
-	f13 = (i % H_FIELDS == 0 || i < (H_FIELDS + 1))
-	      ? 0.0 : 0.4 * field[i - H_FIELDS - 1] / field[i];
-	f31 = (i % H_FIELDS == (H_FIELDS - 1)
-	       || i > (H_FIELDS * (V_FIELDS - 1) - 1))
-	      ? 0.0 : 0.4 * field[i + H_FIELDS + 1] / field[i];
-	f33 = (i % H_FIELDS == 0 || i > (H_FIELDS * (V_FIELDS - 1) - 1))
-	      ? 0.0 : 0.4 * field[i + H_FIELDS - 1] / field[i];
-*/
-
-	out->x = x // + (f13 + f33 - f11 - f31) * dx /* use corners too?*/
-		 + (f23 - f21) * dx
-//	         + (f21 == 0.0) ? ((f23 * 2 + (dx / 2)) * dx) : (f23 * dx)
-//	         - (f23 == 0.0) ? ((f21 * 2 + (dx / 2)) * dx) : (f21 * dx)
-	         - (dx / 2);
-	out->y = y // + (f31 + f33 - f11 - f13) * dy /* use corners too?*/
-	         + (f32 - f12) * dy + (dy / 2);
-
-#ifdef DEBUG
-	printf("RAW---------------------------> f22: %f (%d) f21: %f (%d), f23: %f (%d), f12: %f (%d), f32: %f (%d), \n", 
-	       f22, field[i],
-	       f21, field[i - 1], f23, field[i + 1], f12,
-	       field[i - H_FIELDS], f32, field[i + H_FIELDS]);
-#endif /*DEBUG*/
-}
-
-static int
-cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample *samp, int nr)
-{
-	struct tsdev *ts = info->dev;
-        //We can only read one input struct at once
-	struct cy8mrln_palmpre_input cy8mrln_evt;
-	struct tslib_cy8mrln_palmpre *cy8mrln_info;
-	int max_index = 0, max_value = 0, i = 0;
-	uint16_t tmp_value;
-	int ret, valid_samples = 0;
-	struct ts_sample *p = samp;
-	
-	/* initalize all samples with proper values */
-        memset(p, '\0', nr * sizeof (*p));
-	
-	cy8mrln_info = container_of(info, struct tslib_cy8mrln_palmpre, module);
-	
-	ret = read(ts->fd, &cy8mrln_evt, sizeof(cy8mrln_evt));
-	if (ret > 0) {
-		max_index = 0;
-		max_value = 0;
-                for (i = 0; i < (H_FIELDS * V_FIELDS); i++) {
-                        /* auto calibrate zero values */
-                        if (cy8mrln_evt.field[i] > cy8mrln_info->nulls[i])
-                                cy8mrln_info->nulls[i] = cy8mrln_evt.field[i];
-
-                        tmp_value = abs(cy8mrln_info->nulls[i] - cy8mrln_evt.field[i]);
-
-                        /* check for the maximum value */
-                        if (tmp_value > max_value) {
-                                max_value = tmp_value;
-                                max_index = i;
-                        }
-
-                        cy8mrln_evt.field[i] = tmp_value;
-                }
-                /* only caluclate events that are not noise */
-                if (max_value > cy8mrln_info->noise) {
-                        interpolate(cy8mrln_evt.field, max_index, samp);
-                        samp->pressure = cy8mrln_info -> ts_pressure;
-#ifdef DEBUG
-                        fprintf(stderr,"RAW---------------------------> %d %d %d\n",
-                                samp->x, samp->y, samp->pressure);
-#endif /*DEBUG*/
-                        gettimeofday(&samp->tv,NULL);
-                        samp++;
-                        valid_samples++;
-                }
-	}
-
-	return valid_samples;
-}
-
-static int 
-cy8mrln_palmpre_fini(struct tslib_module_info *info)
-{
-        (void)info;
-	return 0;
-}
 
 
 static const struct tslib_ops cy8mrln_palmpre_ops = 
@@ -456,6 +471,8 @@ TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init(struct tsdev *dev, cons
 	if(info == NULL)
 	     return NULL;
 	info->module.ops = &cy8mrln_palmpre_ops;
+        info->last_valid_samples = NULL;
+        info->last_n_valid_samples = 0;
 
 	cy8mrln_palmpre_set_verbose(info, DEFAULT_VERBOSE);
 	cy8mrln_palmpre_set_scanrate(info, DEFAULT_SCANRATE);
@@ -477,7 +494,7 @@ TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init(struct tsdev *dev, cons
 		ret = read(dev->fd, &input, sizeof(input));
 	}
 	while (ret <= 0);
-	memcpy(info->nulls, input.field, H_FIELDS * V_FIELDS * sizeof(uint16_t));
+	memcpy(info->references, input.field, H_FIELDS * V_FIELDS * sizeof(uint16_t));
 
 	return &(info->module);
 }
