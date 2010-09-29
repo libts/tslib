@@ -24,12 +24,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <linux/spi/cy8mrln.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stddef.h>
+#include "cy8mrln.h"
 #include "config.h"
 #include "tslib-private.h"
 #include "tslib-filter.h"
@@ -292,7 +287,7 @@ static int parse_ts_pressure(struct tslib_module_info *info, char *str, void *da
         return cy8mrln_palmpre_set_ts_pressure (i, tp);
 }
 
-#define NR_VARS (sizeof(raw_vars) / sizeof(raw_vars[0]))
+#define NR_VARS (sizeof(cy8mrln_palmpre_vars) / sizeof(cy8mrln_palmpre_vars[0]))
 /*
  *      f12
  * f21 (x/y) f23
@@ -308,10 +303,10 @@ static void cy8mrln_palmpre_interpolate(uint16_t field[H_FIELDS * V_FIELDS], uin
         (void)references;
 	
 	/* caluculate corrections for top, bottom, left and right fields */
-        f12 = (y == 0) ? 0.5 : 0.5 * ((float)field[(y - 1) * H_FIELDS + x] / field[y * H_FIELDS + x]);
-        f32 = (y == (V_FIELDS - 1)) ? 0.5 : 0.5 * (float)field[(y + 1) * H_FIELDS + x] / field[y * H_FIELDS + x];
-	f21 = (x == (H_FIELDS - 1)) ? 0.5 : 0.5 * (float)field[y * H_FIELDS + x + 1] / field[y * H_FIELDS + x];
-	f23 = (x == 0) ? 0.5 : 0.5 * (float) field[y * H_FIELDS + x - 1] / field[y * H_FIELDS + x];
+        f12 = (y == 0) ? 0.0f : 0.5 * ((float)field[(y - 1) * H_FIELDS + x] / field[y * H_FIELDS + x]);
+        f32 = (y == (V_FIELDS - 1)) ? 0.0f : 0.5 * (float)field[(y + 1) * H_FIELDS + x] / field[y * H_FIELDS + x];
+	f21 = (x == (H_FIELDS - 1)) ? 0.0f : 0.5 * (float)field[y * H_FIELDS + x + 1] / field[y * H_FIELDS + x];
+	f23 = (x == 0) ? 0.0f : 0.5 * (float) field[y * H_FIELDS + x - 1] / field[y * H_FIELDS + x];
 
 	/* correct values for the edges, shift the mesuarment point by half a 
 	 * field diminsion to the outside */
@@ -340,7 +335,7 @@ static void cy8mrln_palmpre_interpolate(uint16_t field[H_FIELDS * V_FIELDS], uin
 	         + (f32 - f12) * dy + (dy / 2);
 
 #ifdef DEBUG
-	printf("RAW---------------------------> (%i/%i) f12: %f f21: %f, f23: %f, f32: %f\n", x, y, f12, f21, f23, f32);
+	fprintf(stderr, "RAW---------------------------> (%i/%i) f12: %f f21: %f, f23: %f, f32: %f\n", x, y, f12, f21, f23, f32);
 #endif /*DEBUG*/
 }
 
@@ -366,9 +361,9 @@ static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample
 		max_x = 0;
                 max_y = 0;
 		max_value = 0;
-                for (x = 0; x < H_FIELDS; x++) {
-                        for (y = 0; y < V_FIELDS; y ++) {
-                                tmp_value = abs(cy8mrln_info->references[y * H_FIELDS + x] - cy8mrln_evt.field[y * H_FIELDS + x]);
+                for (y = 0; y < V_FIELDS; y ++) {
+                        for (x = 0; x < H_FIELDS; x++) {
+                                tmp_value = cy8mrln_evt.field[y * H_FIELDS + x];
 
                                 /* check for the maximum value */
                                 if (tmp_value > max_value) {
@@ -383,8 +378,8 @@ static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample
                         cy8mrln_palmpre_interpolate(cy8mrln_evt.field, cy8mrln_info->references, max_x, max_y, &samp[valid_samples]);
                         samp->pressure = cy8mrln_info->ts_pressure;
 #ifdef DEBUG
-                        fprintf(stderr,"RAW---------------------------> %d %d %d\n",
-                                samp->x, samp->y, samp->pressure);
+                        fprintf(stderr,"RAW for (%d/%d): %d-----------> %d %d %d\n",
+                                max_x, max_y, max_value,samp->x, samp->y, samp->pressure);
 #endif /*DEBUG*/
                         gettimeofday(&samp->tv,NULL);
                         valid_samples++;
@@ -396,7 +391,7 @@ static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample
                         memcpy (cy8mrln_info->last_valid_samples, samp, sizeof (struct ts_sample) * valid_samples);
                         cy8mrln_info->last_n_valid_samples = valid_samples;
                 } else {
-                        //return last samples with pressure = 0 to emulate a klick
+                        //return last samples with pressure = 0 to show a mouse up
                         if (cy8mrln_info->last_valid_samples != NULL) {
                                 valid_samples = cy8mrln_info->last_n_valid_samples;
                                 memcpy (samp, cy8mrln_info->last_valid_samples, sizeof (struct ts_sample) * valid_samples);
@@ -421,10 +416,14 @@ static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample
 static void cy8mrln_palmpre_update_references(uint16_t references[H_FIELDS * V_FIELDS], uint16_t field[H_FIELDS * V_FIELDS])
 {
         int x, y;
-        for (x = 0; x < H_FIELDS; x++) {
-                for (y = 0; y < V_FIELDS; y ++) {
-                        if (field[y * H_FIELDS + x] > references[y * H_FIELDS + x])
-                                references[y * H_FIELDS + x] = field[y * H_FIELDS + x];
+        for (y = 0; y < V_FIELDS; y ++) {
+                for (x = 0; x < H_FIELDS; x++) {
+                        if (field[y * H_FIELDS + x] > references[y * H_FIELDS + x]) {
+                                references [y * H_FIELDS + x] = field [y * H_FIELDS + x];
+                                field [y * H_FIELDS + x] = 0;
+                        } else {
+                                field [y * H_FIELDS + x] = references [y * H_FIELDS + x] - field [y * H_FIELDS + x];
+                        }
                 }
         }
 }
@@ -442,7 +441,7 @@ static int cy8mrln_palmpre_fini(struct tslib_module_info *info)
 	return 0;
 }
 
-static const struct tslib_vars raw_vars[] =
+static const struct tslib_vars cy8mrln_palmpre_vars[] =
 {
 	{ "scanrate", NULL, parse_scanrate},
 	{ "verbose", NULL, parse_verbose},
@@ -483,7 +482,7 @@ TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init(struct tsdev *dev, cons
         cy8mrln_palmpre_set_noise(info, DEFAULT_NOISE);
         cy8mrln_palmpre_set_ts_pressure(info, DEFAULT_TS_PRESSURE);
 
-	if (tslib_parse_vars(&info->module, raw_vars, NR_VARS, params)) {
+	if (tslib_parse_vars(&info->module, cy8mrln_palmpre_vars, NR_VARS, params)) {
 		free(info);
 		return NULL;
 	}
