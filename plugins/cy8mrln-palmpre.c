@@ -303,10 +303,10 @@ static void cy8mrln_palmpre_interpolate(uint16_t field[H_FIELDS * V_FIELDS], uin
         (void)references;
 
 	/* caluculate corrections for top, bottom, left and right fields */
-	f12 = (y == 0) ? (-0.5 * (float)field[y * H_FIELDS + x]) : ((float)field[(y - 1) * H_FIELDS + x] / field[y * H_FIELDS + x]) - (0.5 * field[y * H_FIELDS + x]);
-	f32 = (y == (V_FIELDS - 1)) ? (-0.5 * (float)field[y * H_FIELDS + x]) : ((float)field[(y + 1) * H_FIELDS + x] / field[y * H_FIELDS + x]) - (0.5 * field[y * H_FIELDS + x]);
-	f21 = (x == (H_FIELDS - 1)) ? (-0.5 * (float)field[y * H_FIELDS + x]) : ((float)field[y * H_FIELDS + x + 1] / field[y * H_FIELDS + x]) - (0.5 * field[y * H_FIELDS + x]);
-	f23 = (x == 0) ? (-0.5 * (float)field[y * H_FIELDS + x]) : ((float) field[y * H_FIELDS + x - 1] / field[y * H_FIELDS + x]) - (0.5 * field[y * H_FIELDS + x]);
+	f12 = (y == 0) ? -0.5f : 0.5 * ((float)field[(y - 1) * H_FIELDS + x] / field[y * H_FIELDS + x]) - 0.5;
+	f32 = (y == (V_FIELDS - 1)) ? -0.5f : 0.5 * ((float)field[(y + 1) * H_FIELDS + x] / field[y * H_FIELDS + x]) - 0.5;
+	f21 = (x == (H_FIELDS - 1)) ? -0.5f : 0.5 * ((float)field[y * H_FIELDS + x + 1] / field[y * H_FIELDS + x]) - 0.5;
+	f23 = (x == 0) ? -0.5f : 0.5 * ((float) field[y * H_FIELDS + x - 1] / field[y * H_FIELDS + x]) - 0.5;
 
 	/* correct values for the edges, shift the mesuarment point by half a 
 	 * field diminsion to the outside */
