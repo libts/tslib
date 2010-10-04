@@ -18,22 +18,23 @@
 
 #include "tslib-private.h"
 
-char s_holder[1024];
+#define BUF_SIZE 1024
+
+char s_holder[BUF_SIZE];
 
 int tslib_parse_vars(struct tslib_module_info *mod,
 		     const struct tslib_vars *vars, int nr,
 		     const char *str)
 {
 	char *s, *p;
-	//char *s, *p;
 	int ret = 0;
 
 	if (!str)
 		return 0;
 
-	//s = alloca(strlen(str));
-	memset(s_holder, 0, 1024);
-	strncpy(s_holder,str,strlen(str));
+	strncpy(s_holder, str, BUF_SIZE - 1);
+	s_holder[BUF_SIZE - 1] = '\0';
+
 	s = s_holder;
 	while ((p = strsep(&s, " \t")) != NULL && ret == 0) {
 		const struct tslib_vars *v;
