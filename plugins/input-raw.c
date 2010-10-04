@@ -134,6 +134,7 @@ static int ts_input_read(struct tslib_module_info *inf,
 	struct input_event ev;
 	int ret = nr;
 	int total = 0;
+	int pen_up = 0;
 
 	if (i->sane_fd == 0)
 		i->sane_fd = check_fd(i);
@@ -153,20 +154,23 @@ static int ts_input_read(struct tslib_module_info *inf,
 			case EV_KEY:
 				switch (ev.code) {
 				case BTN_TOUCH:
-					if (ev.value == 0) {
-						/* pen up */
-						i->current_x = 0;
-						i->current_y = 0;
-						i->current_p = 0;
-					}
+					if (ev.value == 0)
+						pen_up = 1;
 					break;
 				}
 				break;
 			case EV_SYN:
 				/* Fill out a new complete event */
-				samp->x = i->current_x;
-				samp->y = i->current_y;
-				samp->pressure = i->current_p;
+				if (pen_up) {
+					samp->x = 0;
+					samp->y = 0;
+					samp->pressure = 0;
+					pen_up = 0;
+				} else {
+					samp->x = i->current_x;
+					samp->y = i->current_y;
+					samp->pressure = i->current_p;
+				}
 				samp->tv = ev.time;
 	#ifdef DEBUG
 				fprintf(stderr, "RAW---------------------> %d %d %d %d.%d\n",
