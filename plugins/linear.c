@@ -12,6 +12,9 @@
  */
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
+#include <errno.h>
+#include <stdint.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -100,9 +103,49 @@ static int linear_xyswap(struct tslib_module_info *inf, char *str, void *data)
 	return 0;
 }
 
+static int linear_p_offset(struct tslib_module_info *inf, char *str, void *data)
+{
+	struct tslib_linear *lin = (struct tslib_linear *)inf;
+
+	unsigned long offset = strtoul(str, NULL, 0);
+
+	if(offset == ULONG_MAX && errno == ERANGE)
+		return -1;
+
+	lin->p_offset = offset;
+	return 0;
+}
+
+static int linear_p_mult(struct tslib_module_info *inf, char *str, void *data)
+{
+	struct tslib_linear *lin = (struct tslib_linear *)inf;
+	unsigned long mult = strtoul(str, NULL, 0);
+
+	if(mult == ULONG_MAX && errno == ERANGE)
+		return -1;
+
+	lin->p_mult = mult;
+	return 0;
+}
+
+static int linear_p_div(struct tslib_module_info *inf, char *str, void *data)
+{
+	struct tslib_linear *lin = (struct tslib_linear *)inf;
+	unsigned long div = strtoul(str, NULL, 0);
+
+	if(div == ULONG_MAX && errno == ERANGE)
+		return -1;
+
+	lin->p_div = div;
+	return 0;
+}
+
 static const struct tslib_vars linear_vars[] =
 {
-	{ "xyswap",	(void *)1, linear_xyswap }
+	{ "xyswap",	(void *)1, linear_xyswap },
+        { "pressure_offset", NULL , linear_p_offset},
+        { "pressure_mul", NULL, linear_p_mult},
+        { "pressure_div", NULL, linear_p_div},
 };
 
 #define NR_VARS (sizeof(linear_vars) / sizeof(linear_vars[0]))
