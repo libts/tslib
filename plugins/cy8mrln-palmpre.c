@@ -39,7 +39,7 @@
 #define DEFAULT_SLEEPMODE CY8MRLN_ON_STATE
 #define DEFAULT_WOT_SCANRATE WOT_SCANRATE_512HZ
 #define DEFAULT_TIMESTAMP_MODE 1
-#define DEFAULT_TS_PRESSURE 255
+#define DEFAULT_TS_PRESSURE_MUL 4
 #define DEFAULT_NOISE 25
 
 #define container_of(ptr, type, member) ({ \
@@ -68,7 +68,7 @@ struct tslib_cy8mrln_palmpre
 	int				sleepmode;
 	int				wot_scanrate;
 	int				timestamp_mode;
-	int				ts_pressure;
+	int				ts_pressure_multiplicator;
 	int				noise;
 	int				last_n_valid_samples;
 	struct ts_sample*		last_valid_samples;
@@ -81,7 +81,7 @@ static int cy8mrln_palmpre_set_wot_scanrate(struct tslib_cy8mrln_palmpre* info, 
 static int cy8mrln_palmpre_set_wot_threshold(struct tslib_cy8mrln_palmpre* info, int v);
 static int cy8mrln_palmpre_set_timestamp_mode(struct tslib_cy8mrln_palmpre* info, int v);
 static int cy8mrln_palmpre_set_noise (struct tslib_cy8mrln_palmpre* info, int n);
-static int cy8mrln_palmpre_set_ts_pressure(struct tslib_cy8mrln_palmpre* info, int p);
+static int cy8mrln_palmpre_set_ts_pressure_multiplicator(struct tslib_cy8mrln_palmpre* info, int p);
 static int parse_scanrate(struct tslib_module_info *info, char *str, void *data);
 static int parse_verbose(struct tslib_module_info *info, char *str, void *data);
 static int parse_wot_scanrate(struct tslib_module_info *info, char *str, void *data);
@@ -89,7 +89,7 @@ static int parse_wot_threshold(struct tslib_module_info *info, char *str, void *
 static int parse_sleepmode(struct tslib_module_info *info, char *str, void *data);
 static int parse_timestamp_mode(struct tslib_module_info *info, char *str, void *data);
 static int parse_noise(struct tslib_module_info *info, char *str, void *data);
-static int parse_ts_pressure(struct tslib_module_info *info, char *str, void *data);
+static int parse_ts_pressure_multiplicator (struct tslib_module_info *info, char *str, void *data);
 static void cy8mrln_palmpre_update_references(uint16_t references[H_FIELDS * V_FIELDS], uint16_t field[H_FIELDS * V_FIELDS]);
 static void cy8mrln_palmpre_interpolate(uint16_t field[H_FIELDS * V_FIELDS], int x, int y, struct ts_sample *out);
 static int cy8mrln_palmpre_fini(struct tslib_module_info *info);
@@ -189,13 +189,13 @@ static int cy8mrln_palmpre_set_noise (struct tslib_cy8mrln_palmpre* info, int n)
 	return 0;
 }
 
-static int cy8mrln_palmpre_set_ts_pressure(struct tslib_cy8mrln_palmpre* info, int p)
+static int cy8mrln_palmpre_set_ts_pressure_multiplicator(struct tslib_cy8mrln_palmpre* info, int p)
 {
 	if (info == NULL) {
 		printf("TSLIB: cy8mrln_palmpre: ERROR: could not set ts_pressure value\n");
 		return -1;
 	}
-	info->ts_pressure = p;
+	info->ts_pressure_multiplicator = p;
 	return 0;
 }
 
@@ -275,7 +275,7 @@ static int parse_noise(struct tslib_module_info *info, char *str, void *data)
 	return cy8mrln_palmpre_set_noise (i, noise);
 }
 
-static int parse_ts_pressure(struct tslib_module_info *info, char *str, void *data)
+static int parse_ts_pressure_multiplicator(struct tslib_module_info *info, char *str, void *data)
 {
 	(void)data;
 	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
@@ -284,7 +284,7 @@ static int parse_ts_pressure(struct tslib_module_info *info, char *str, void *da
 	if(tp == ULONG_MAX && errno == ERANGE)
 		return -1;
 
-	return cy8mrln_palmpre_set_ts_pressure (i, tp);
+	return cy8mrln_palmpre_set_ts_pressure_multiplicator (i, tp);
 }
 
 #define NR_VARS (sizeof(cy8mrln_palmpre_vars) / sizeof(cy8mrln_palmpre_vars[0]))
@@ -378,7 +378,7 @@ static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample
 		/* only caluclate events that are not noise */
 		if (max_value > cy8mrln_info->noise) {
 			cy8mrln_palmpre_interpolate(cy8mrln_evt.field, max_x, max_y, &samp[valid_samples]);
-			samp->pressure = cy8mrln_info->ts_pressure;
+			samp->pressure = cy8mrln_info->ts_pressure_multiplicator * max_value;
 #ifdef DEBUG
 			fprintf(stderr,"RAW for (%d/%d): %d-----------> %d %d %d\n",
 				max_x, max_y, max_value,samp->x, samp->y, samp->pressure);
@@ -452,7 +452,7 @@ static const struct tslib_vars cy8mrln_palmpre_vars[] =
 	{ "sleepmode",		NULL, parse_sleepmode},
 	{ "timestamp_mode",     NULL, parse_timestamp_mode},
 	{ "noise",		NULL, parse_noise},
-	{ "ts_pressure",	NULL, parse_ts_pressure}
+	{ "ts_pressure_mul",	NULL, parse_ts_pressure_multiplicator}
 };
 
 
@@ -482,7 +482,7 @@ TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init(struct tsdev *dev, cons
 	cy8mrln_palmpre_set_wot_scanrate(info, DEFAULT_WOT_SCANRATE);
 	cy8mrln_palmpre_set_wot_threshold(info, DEFAULT_WOT_THRESHOLD);
 	cy8mrln_palmpre_set_noise(info, DEFAULT_NOISE);
-	cy8mrln_palmpre_set_ts_pressure(info, DEFAULT_TS_PRESSURE);
+	cy8mrln_palmpre_set_ts_pressure_multiplicator(info, DEFAULT_TS_PRESSURE_MUL);
 
 	if (tslib_parse_vars(&info->module, cy8mrln_palmpre_vars, NR_VARS, params)) {
 		free(info);
