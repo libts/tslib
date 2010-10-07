@@ -519,6 +519,8 @@ TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init(struct tsdev *dev, cons
 	if(info == NULL)
 	     return NULL;
 	info->module.ops = &cy8mrln_palmpre_ops;
+        //required to set the default valuse
+        info->module.dev = dev;
 	info->last_valid_samples = NULL;
 	info->last_n_valid_samples = 0;
 
