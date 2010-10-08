@@ -372,21 +372,43 @@ static int parse_sensor_delta_y(struct tslib_module_info *info, char *str, void 
 
 static void cy8mrln_palmpre_interpolate(struct tslib_cy8mrln_palmpre* info, uint16_t field[H_FIELDS * V_FIELDS], int x, int y, struct ts_sample *out)
 {
-	float f12, f21, f23, f32;
+        float fx, fy;
+        int tmpx1, tmpx2, tmpx3, tmpy1, tmpy2, tmpy3;
 	int posx = SCREEN_WIDTH - info->sensor_delta_x * x - info->sensor_offset_x;
 	int posy = info->sensor_delta_y * y + info->sensor_offset_y;
 
-	/* caluculate corrections for top, bottom, left and right fields */
-	f12 = (y == 0) ? -0.5f : 0.5 * ((float)field[(y - 1) * H_FIELDS + x] / field[y * H_FIELDS + x]) - 0.5;
-	f32 = (y == (V_FIELDS - 1)) ? -0.5f : 0.5 * ((float)field[(y + 1) * H_FIELDS + x] / field[y * H_FIELDS + x]) - 0.5;
-	f21 = (x == (H_FIELDS - 1)) ? -0.5f : 0.5 * ((float)field[y * H_FIELDS + x + 1] / field[y * H_FIELDS + x]) - 0.5;
-	f23 = (x == 0) ? -0.5f : 0.5 * ((float) field[y * H_FIELDS + x - 1] / field[y * H_FIELDS + x]) - 0.5;
 
-	out->x = posx + (f23 - f21) * info->sensor_delta_x;
-	out->y = posy + (f32 - f12) * info->sensor_delta_y;
+        tmpx2 = field[y * H_FIELDS + x];
+        if (x == (H_FIELDS - 1)) {
+            tmpx3 = 0;
+        } else {
+            tmpx3 = field[y * H_FIELDS + x + 1];
+        }
+        if (x == 0)
+             tmpx1 = 0;
+        else
+             tmpx1 = field[y * H_FIELDS + x - 1];
+
+        tmpy2 = field[y * H_FIELDS + x];
+        if (y == (V_FIELDS - 1)) {
+            tmpy3 = 0;
+        } else {
+            tmpy3 = field[(y + 1) * H_FIELDS + x];
+        }
+        if (y == 0)
+             tmpy1 = 0;
+        else
+             tmpy1 = field[(y -1) * H_FIELDS + x];
+
+        fx = (float)(tmpx1 - tmpx3) / ((float)tmpx2 * 1.5);
+        fy = (float)(tmpy3 - tmpy1) / ((float)tmpy2 * 1.5);
+
+
+	out->x = posx + fx * info->sensor_delta_x;
+	out->y = posy + fy * info->sensor_delta_y;
 
 #ifdef DEBUG
-	fprintf(stderr, "RAW--------> (%i(%i)/%i(%i)) f12: %0.3f f21: %0.3f, f23: %0.3f, f32: %0.3f -> x: %0.3f y: %0.3f\n", x, posx, y, posy, f12, f21, f23, f32, f23 - f21, f32 - f12);
+        fprintf (stderr, "fx: %f, fy: %f\n", fx, fy);
 #endif /*DEBUG*/
 }
 
