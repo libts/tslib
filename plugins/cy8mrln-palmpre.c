@@ -24,7 +24,11 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#ifdef HAVE_LINUX_SPI_CY8MRLN_H
 #include <linux/spi/cy8mrln.h>
+#else
+#include "cy8mrln.h"
+#endif
 #include "config.h"
 #include "tslib-private.h"
 #include "tslib-filter.h"
