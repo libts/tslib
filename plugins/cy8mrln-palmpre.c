@@ -1,16 +1,16 @@
 /*
- *  tslib/plugins/cy8mrln-palmpre.c
- *
- *  Copyright (C) 2010 Frederik Sdun <frederik.sdun@googlemail.com>
- *		     Thomas Zimmermann <ml@vdm-design.de>
- *		     Simon Busch <morphis@gravedo.de>
- *
- * This file is placed under the LGPL.  Please see the file
- * COPYING for more details.
- *
- * Plugin for the cy8mrln touchscreen with the firmware used on the Palm Pre (Plus).
- *
- */
+*  tslib/plugins/cy8mrln-palmpre.c
+*
+*  Copyright (C) 2010 Frederik Sdun <frederik.sdun@googlemail.com>
+*		     Thomas Zimmermann <ml@vdm-design.de>
+*		     Simon Busch <morphis@gravedo.de>
+*
+* This file is placed under the LGPL.  Please see the file
+* COPYING for more details.
+*
+* Plugin for the cy8mrln touchscreen with the firmware used on the Palm Pre (Plus).
+*
+*/
 
 #include <errno.h>
 #include <fcntl.h>
@@ -197,15 +197,20 @@ static int cy8mrln_palmpre_set_noise (struct tslib_cy8mrln_palmpre* info, int n)
 		printf("TSLIB: cy8mrln_palmpre: ERROR: could not set noise value\n");
 		return -1;
 	}
+
 	info->noise = n;
+
 	return 0;
 }
 
 static int cy8mrln_palmpre_set_sensor_offset_x (struct tslib_cy8mrln_palmpre* info, int n)
 {
 	if (info == NULL)
-             return -1;
-        printf("sensor_offset_x: %i\n", n);
+		return -1;
+
+#ifdef DEBUG
+	printf("sensor_offset_x: %i\n", n);
+#endif
 	
 	info->sensor_offset_x = n;
 	return 0;
@@ -214,8 +219,11 @@ static int cy8mrln_palmpre_set_sensor_offset_x (struct tslib_cy8mrln_palmpre* in
 static int cy8mrln_palmpre_set_sensor_offset_y (struct tslib_cy8mrln_palmpre* info, int n)
 {
 	if (info == NULL)
-             return -1;
-        printf("sensor_offset_y: %i\n", n);
+		return -1;
+
+#ifdef DEBUG 
+	printf("sensor_offset_y: %i\n", n);
+#endif
 	
 	info->sensor_offset_y = n;
 	return 0;
@@ -224,9 +232,12 @@ static int cy8mrln_palmpre_set_sensor_offset_y (struct tslib_cy8mrln_palmpre* in
 static int cy8mrln_palmpre_set_sensor_delta_x (struct tslib_cy8mrln_palmpre* info, int n)
 {
 	if (info == NULL)
-             return -1;
-        printf("sensor_delta_x: %i\n", n);
-	
+		return -1;
+
+#ifdef DEBUG
+	printf("sensor_delta_x: %i\n", n);
+#endif
+
 	info->sensor_delta_x = n;
 	return 0;
 }
@@ -234,9 +245,12 @@ static int cy8mrln_palmpre_set_sensor_delta_x (struct tslib_cy8mrln_palmpre* inf
 static int cy8mrln_palmpre_set_sensor_delta_y (struct tslib_cy8mrln_palmpre* info, int n)
 {
 	if (info == NULL)
-             return -1;
-        printf("sensor_delta_y: %i\n", n);
-	
+		return -1;
+
+#ifdef DEBUG
+	printf("sensor_delta_y: %i\n", n);
+#endif
+
 	info->sensor_delta_y = n;
 	return 0;
 }
@@ -365,50 +379,50 @@ static int parse_sensor_delta_y(struct tslib_module_info *info, char *str, void 
 
 #define NR_VARS (sizeof(cy8mrln_palmpre_vars) / sizeof(cy8mrln_palmpre_vars[0]))
 /*
- *      f12
- * f21 (x/y) f23
- *      f32
- */
+*      f12
+* f21 (x/y) f23
+*      f32
+*/
 
 static void cy8mrln_palmpre_interpolate(struct tslib_cy8mrln_palmpre* info, uint16_t field[H_FIELDS * V_FIELDS], int x, int y, struct ts_sample *out)
 {
-        float fx, fy;
-        int tmpx1, tmpx2, tmpx3, tmpy1, tmpy2, tmpy3;
+	float fx, fy;
+	int tmpx1, tmpx2, tmpx3, tmpy1, tmpy2, tmpy3;
 	int posx = SCREEN_WIDTH - info->sensor_delta_x * x - info->sensor_offset_x;
 	int posy = info->sensor_delta_y * y + info->sensor_offset_y;
 
 
-        tmpx2 = field[y * H_FIELDS + x];
-        if (x == (H_FIELDS - 1)) {
-            tmpx3 = 0;
-        } else {
-            tmpx3 = field[y * H_FIELDS + x + 1];
-        }
-        if (x == 0)
-             tmpx1 = 0;
-        else
-             tmpx1 = field[y * H_FIELDS + x - 1];
+	tmpx2 = field[y * H_FIELDS + x];
+	if (x == (H_FIELDS - 1)) {
+	    tmpx3 = 0;
+	} else {
+	    tmpx3 = field[y * H_FIELDS + x + 1];
+	}
+	if (x == 0)
+	    tmpx1 = 0;
+	else
+	    tmpx1 = field[y * H_FIELDS + x - 1];
 
-        tmpy2 = field[y * H_FIELDS + x];
-        if (y == (V_FIELDS - 1)) {
-            tmpy3 = 0;
-        } else {
-            tmpy3 = field[(y + 1) * H_FIELDS + x];
-        }
-        if (y == 0)
-             tmpy1 = 0;
-        else
-             tmpy1 = field[(y -1) * H_FIELDS + x];
+	tmpy2 = field[y * H_FIELDS + x];
+	if (y == (V_FIELDS - 1)) {
+	    tmpy3 = 0;
+	} else {
+	    tmpy3 = field[(y + 1) * H_FIELDS + x];
+	}
+	if (y == 0)
+	    tmpy1 = 0;
+	else
+	    tmpy1 = field[(y -1) * H_FIELDS + x];
 
-        fx = (float)(tmpx1 - tmpx3) / ((float)tmpx2 * 1.5);
-        fy = (float)(tmpy3 - tmpy1) / ((float)tmpy2 * 1.5);
+	fx = (float)(tmpx1 - tmpx3) / ((float)tmpx2 * 1.5);
+	fy = (float)(tmpy3 - tmpy1) / ((float)tmpy2 * 1.5);
 
 
 	out->x = posx + fx * info->sensor_delta_x;
 	out->y = posy + fy * info->sensor_delta_y;
 
 #ifdef DEBUG
-        fprintf (stderr, "fx: %f, fy: %f\n", fx, fy);
+	fprintf (stderr, "fx: %f, fy: %f\n", fx, fy);
 #endif /*DEBUG*/
 }
 
@@ -436,7 +450,7 @@ static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample
 		max_value = 0;
 		for (y = 0; y < V_FIELDS; y ++) {
 			for (x = 0; x < H_FIELDS; x++) {
-				tmp_value = cy8mrln_evt.field[y * H_FIELDS + x];
+		      tmp_value = cy8mrln_evt.field[y * H_FIELDS + x];
 
 				/* check for the maximum value */
 				if (tmp_value > max_value) {
