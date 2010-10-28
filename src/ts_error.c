@@ -13,6 +13,8 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#include "tslib-private.h"
+
 static int stderrfn(const char *fmt, va_list ap)
 {
 	return vfprintf(stderr, fmt, ap);
