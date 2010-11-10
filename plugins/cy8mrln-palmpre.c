@@ -41,10 +41,12 @@
 #define DEFAULT_WOT_SCANRATE WOT_SCANRATE_512HZ
 #define DEFAULT_TIMESTAMP_MODE 1
 #define DEFAULT_NOISE 25
-#define DEFAULT_SENSOR_OFFSET_X 10
-#define DEFAULT_SENSOR_OFFSET_Y 10
-#define DEFAULT_SENSOR_DELTA_X (((SCREEN_WIDTH) - (DEFAULT_SENSOR_OFFSET_X) * 2) / ((H_FIELDS) - 1) + 1)
-#define DEFAULT_SENSOR_DELTA_Y (((SCREEN_HEIGHT) - (DEFAULT_SENSOR_OFFSET_Y) * 2) / ((V_FIELDS) - 1) + 1)
+#define DEFAULT_SENSOR_DELTA_X (SCREEN_WIDTH / H_FIELDS)
+#define DEFAULT_SENSOR_DELTA_Y (SCREEN_HEIGHT / V_FIELDS)
+#define DEFAULT_SENSOR_OFFSET_X (DEFAULT_SENSOR_DELTA_X / 2)
+#define DEFAULT_SENSOR_OFFSET_Y (DEFAULT_SENSOR_DELTA_Y / 2)
+
+#define field_nr(x, y) (y * H_FIELDS + (H_FIELDS - x) - 1)
 
 #define container_of(ptr, type, member) ({ \
 	const typeof( ((type*)0)->member ) *__mptr = (ptr); \
@@ -338,7 +340,7 @@ static int parse_sensor_offset_x(struct tslib_module_info *info, char *str, void
 	if(x == ULONG_MAX && errno == ERANGE)
 		return -1;
 
-	return cy8mrln_palmpre_set_noise (i, x);
+	return cy8mrln_palmpre_set_sensor_offset_x (i, x);
 }
 
 static int parse_sensor_offset_y(struct tslib_module_info *info, char *str, void *data)
@@ -350,7 +352,7 @@ static int parse_sensor_offset_y(struct tslib_module_info *info, char *str, void
 	if(y == ULONG_MAX && errno == ERANGE)
 		return -1;
 
-	return cy8mrln_palmpre_set_noise (i, y);
+	return cy8mrln_palmpre_set_sensor_offset_y (i, y);
 }
 
 static int parse_sensor_delta_x(struct tslib_module_info *info, char *str, void *data)
@@ -388,35 +390,33 @@ static void cy8mrln_palmpre_interpolate(struct tslib_cy8mrln_palmpre* info, uint
 {
 	float fx, fy;
 	int tmpx1, tmpx2, tmpx3, tmpy1, tmpy2, tmpy3;
-	int posx = SCREEN_WIDTH - info->sensor_delta_x * x - info->sensor_offset_x;
+	int posx = info->sensor_delta_x * x + info->sensor_offset_x;
 	int posy = info->sensor_delta_y * y + info->sensor_offset_y;
 
-
-	tmpx2 = field[y * H_FIELDS + x];
+	tmpx2 = field[field_nr(x, y)];
 	if (x == (H_FIELDS - 1)) {
 	    tmpx3 = 0;
 	} else {
-	    tmpx3 = field[y * H_FIELDS + x + 1];
+	    tmpx3 = field[field_nr(x, y) + 1];
 	}
 	if (x == 0)
 	    tmpx1 = 0;
 	else
-	    tmpx1 = field[y * H_FIELDS + x - 1];
+	    tmpx1 = field[field_nr(x, y)- 1];
 
-	tmpy2 = field[y * H_FIELDS + x];
+	tmpy2 = field[field_nr(x, y)];
 	if (y == (V_FIELDS - 1)) {
 	    tmpy3 = 0;
 	} else {
-	    tmpy3 = field[(y + 1) * H_FIELDS + x];
+	    tmpy3 = field[field_nr(x, y) + H_FIELDS];
 	}
 	if (y == 0)
 	    tmpy1 = 0;
 	else
-	    tmpy1 = field[(y -1) * H_FIELDS + x];
+	    tmpy1 = field[field_nr(x, y) - H_FIELDS];
 
 	fx = (float)(tmpx1 - tmpx3) / ((float)tmpx2 * 1.5);
 	fy = (float)(tmpy3 - tmpy1) / ((float)tmpy2 * 1.5);
-
 
 	out->x = posx + fx * info->sensor_delta_x;
 	out->y = posy + fy * info->sensor_delta_y;
@@ -450,7 +450,7 @@ static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample
 		max_value = 0;
 		for (y = 0; y < V_FIELDS; y ++) {
 			for (x = 0; x < H_FIELDS; x++) {
-		      tmp_value = cy8mrln_evt.field[y * H_FIELDS + x];
+				tmp_value = cy8mrln_evt.field[field_nr(x, y)];
 
 				/* check for the maximum value */
 				if (tmp_value > max_value) {
