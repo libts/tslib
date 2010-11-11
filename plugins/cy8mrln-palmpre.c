@@ -40,9 +40,11 @@
 #define DEFAULT_SLEEPMODE CY8MRLN_ON_STATE
 #define DEFAULT_WOT_SCANRATE WOT_SCANRATE_512HZ
 #define DEFAULT_TIMESTAMP_MODE 1
+#define DEFAULT_GESTURE_HEIGHT 1
 #define DEFAULT_NOISE 25
+#define DEFAULT_PRESSURE 60
 #define DEFAULT_SENSOR_DELTA_X (SCREEN_WIDTH / H_FIELDS)
-#define DEFAULT_SENSOR_DELTA_Y (SCREEN_HEIGHT / V_FIELDS)
+#define DEFAULT_SENSOR_DELTA_Y (SCREEN_HEIGHT / (V_FIELDS - GESTURE_HEIGHT))
 #define DEFAULT_SENSOR_OFFSET_X (DEFAULT_SENSOR_DELTA_X / 2)
 #define DEFAULT_SENSOR_OFFSET_Y (DEFAULT_SENSOR_DELTA_Y / 2)
 
@@ -74,11 +76,13 @@ struct tslib_cy8mrln_palmpre
 	int				sleepmode;
 	int				wot_scanrate;
 	int				timestamp_mode;
+	int				gesture_height;
 	int				noise;
-        int                             sensor_offset_x;
-        int                             sensor_offset_y;
-        int                             sensor_delta_x;
-        int                             sensor_delta_y;
+	int				pressure;
+	int				sensor_offset_x;
+	int				sensor_offset_y;
+	int				sensor_delta_x;
+	int				sensor_delta_y;
 	int				last_n_valid_samples;
 	struct ts_sample*		last_valid_samples;
 };
@@ -89,7 +93,9 @@ static int cy8mrln_palmpre_set_sleepmode (struct tslib_cy8mrln_palmpre* info, in
 static int cy8mrln_palmpre_set_wot_scanrate (struct tslib_cy8mrln_palmpre* info, int rate);
 static int cy8mrln_palmpre_set_wot_threshold (struct tslib_cy8mrln_palmpre* info, int v);
 static int cy8mrln_palmpre_set_timestamp_mode (struct tslib_cy8mrln_palmpre* info, int v);
+static int cy8mrln_palmpre_set_gesture_height (struct tslib_cy8mrln_palmpre* info, int h);
 static int cy8mrln_palmpre_set_noise (struct tslib_cy8mrln_palmpre* info, int n);
+static int cy8mrln_palmpre_set_pressure (struct tslib_cy8mrln_palmpre* info, int p);
 static int cy8mrln_palmpre_set_sensor_offset_x (struct tslib_cy8mrln_palmpre* info, int n);
 static int cy8mrln_palmpre_set_sensor_offset_y (struct tslib_cy8mrln_palmpre* info, int n);
 static int cy8mrln_palmpre_set_sensor_delta_x (struct tslib_cy8mrln_palmpre* info, int n);
@@ -100,7 +106,9 @@ static int parse_wot_scanrate (struct tslib_module_info *info, char *str, void *
 static int parse_wot_threshold (struct tslib_module_info *info, char *str, void *data);
 static int parse_sleepmode (struct tslib_module_info *info, char *str, void *data);
 static int parse_timestamp_mode (struct tslib_module_info *info, char *str, void *data);
+static int parse_gesture_height (struct tslib_module_info *info, char *str, void *data);
 static int parse_noise (struct tslib_module_info *info, char *str, void *data);
+static int parse_pressure (struct tslib_module_info *info, char *str, void *data);
 static int parse_sensor_offset_x(struct tslib_module_info *info, char *str, void *data);
 static int parse_sensor_offset_y(struct tslib_module_info *info, char *str, void *data);
 static int parse_sensor_delta_x(struct tslib_module_info *info, char *str, void *data);
@@ -193,6 +201,18 @@ error:
 	return -1;
 }
 
+static int cy8mrln_palmpre_set_gesture_height (struct tslib_cy8mrln_palmpre* info, int h)
+{
+	if (info == NULL) {
+		printf("TSLIB: cy8mrln_palmpre: ERROR: could not set gesture_height value\n");
+		return -1;
+	}
+
+	info->gesture_height = h;
+
+	return 0;
+}
+
 static int cy8mrln_palmpre_set_noise (struct tslib_cy8mrln_palmpre* info, int n)
 {
 	if (info == NULL) {
@@ -201,6 +221,18 @@ static int cy8mrln_palmpre_set_noise (struct tslib_cy8mrln_palmpre* info, int n)
 	}
 
 	info->noise = n;
+
+	return 0;
+}
+
+static int cy8mrln_palmpre_set_pressure (struct tslib_cy8mrln_palmpre* info, int p)
+{
+	if (info == NULL) {
+		printf("TSLIB: cy8mrln_palmpre: ERROR: could not set default_pressure value\n");
+		return -1;
+	}
+
+	info->pressure = p;
 
 	return 0;
 }
@@ -319,6 +351,19 @@ static int parse_timestamp_mode(struct tslib_module_info *info, char *str, void 
 
 	return cy8mrln_palmpre_set_sleepmode(i, sleep);
 }
+
+static int parse_gesture_height(struct tslib_module_info *info, char *str, void *data)
+{
+	(void)data;
+	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
+	unsigned long gesture_height = strtoul (str, NULL, 0);
+
+	if(noise == ULONG_MAX && errno == ERANGE)
+		return -1;
+
+	return cy8mrln_palmpre_set_gesture_height (i, gesture_height);
+}
+
 static int parse_noise(struct tslib_module_info *info, char *str, void *data)
 {
 	(void)data;
@@ -329,6 +374,18 @@ static int parse_noise(struct tslib_module_info *info, char *str, void *data)
 		return -1;
 
 	return cy8mrln_palmpre_set_noise (i, noise);
+}
+
+static int parse_pressure(struct tslib_module_info *info, char *str, void *data)
+{
+	(void)data;
+	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
+	unsigned long pressure = strtoul (str, NULL, 0);
+
+	if(noise == ULONG_MAX && errno == ERANGE)
+		return -1;
+
+	return cy8mrln_palmpre_set_pressure (i, pressure);
 }
 
 static int parse_sensor_offset_x(struct tslib_module_info *info, char *str, void *data)
@@ -381,42 +438,42 @@ static int parse_sensor_delta_y(struct tslib_module_info *info, char *str, void 
 
 #define NR_VARS (sizeof(cy8mrln_palmpre_vars) / sizeof(cy8mrln_palmpre_vars[0]))
 /*
-*      f12
-* f21 (x/y) f23
-*      f32
+*     y1
+* x1 (xy) x3
+*     y3
 */
 
 static void cy8mrln_palmpre_interpolate(struct tslib_cy8mrln_palmpre* info, uint16_t field[H_FIELDS * V_FIELDS], int x, int y, struct ts_sample *out)
 {
 	float fx, fy;
-	int tmpx1, tmpx2, tmpx3, tmpy1, tmpy2, tmpy3;
+	int tmpxy, tmpx1, tmpx3, tmpy1, tmpy3;
 	int posx = info->sensor_delta_x * x + info->sensor_offset_x;
 	int posy = info->sensor_delta_y * y + info->sensor_offset_y;
 
-	tmpx2 = field[field_nr(x, y)];
+	tmpxy = field[field_nr(x, y)];
+
 	if (x == (H_FIELDS - 1)) {
-	    tmpx3 = 0;
+		tmpx3 = info->pressure - tmpxy;
 	} else {
-	    tmpx3 = field[field_nr(x, y) + 1];
+		tmpx3 = field[field_nr(x, y) - 1];
 	}
 	if (x == 0)
-	    tmpx1 = 0;
+		tmpx1 = info->pressure - tmpxy;
 	else
-	    tmpx1 = field[field_nr(x, y)- 1];
+		tmpx1 = field[field_nr(x, y) + 1];
 
-	tmpy2 = field[field_nr(x, y)];
 	if (y == (V_FIELDS - 1)) {
-	    tmpy3 = 0;
+		tmpy3 = info->pressure - tmpxy;
 	} else {
-	    tmpy3 = field[field_nr(x, y) + H_FIELDS];
+		tmpy3 = field[field_nr(x, y) + H_FIELDS];
 	}
 	if (y == 0)
-	    tmpy1 = 0;
+		tmpy1 = info->pressure - tmpxy;
 	else
-	    tmpy1 = field[field_nr(x, y) - H_FIELDS];
+		tmpy1 = field[field_nr(x, y) - H_FIELDS];
 
-	fx = (float)(tmpx1 - tmpx3) / ((float)tmpx2 * 1.5);
-	fy = (float)(tmpy3 - tmpy1) / ((float)tmpy2 * 1.5);
+	fx = (float)(tmpx3 - tmpx1) / ((float)tmpxy * 1.5);
+	fy = (float)(tmpy3 - tmpy1) / ((float)tmpxy * 1.5);
 
 	out->x = posx + fx * info->sensor_delta_x;
 	out->y = posy + fy * info->sensor_delta_y;
@@ -526,17 +583,19 @@ static int cy8mrln_palmpre_fini(struct tslib_module_info *info)
 
 static const struct tslib_vars cy8mrln_palmpre_vars[] =
 {
-	{ "scanrate",		NULL, parse_scanrate},
-	{ "verbose",		NULL, parse_verbose},
-	{ "wot_scanrate",	NULL, parse_wot_scanrate},
-	{ "wot_threshold",      NULL, parse_wot_threshold},
-	{ "sleepmode",		NULL, parse_sleepmode},
-	{ "timestamp_mode",     NULL, parse_timestamp_mode},
-	{ "noise",		NULL, parse_noise},
-        { "sensor_offset_x",     NULL, parse_sensor_offset_x},
-        { "sensor_offset_y",     NULL, parse_sensor_offset_y},
-        { "sensor_delta_x",     NULL, parse_sensor_delta_x},
-        { "sensor_delta_y",     NULL, parse_sensor_delta_y},
+	{ "scanrate",			NULL, parse_scanrate},
+	{ "verbose",			NULL, parse_verbose},
+	{ "wot_scanrate",		NULL, parse_wot_scanrate},
+	{ "wot_threshold",		NULL, parse_wot_threshold},
+	{ "sleepmode",			NULL, parse_sleepmode},
+	{ "timestamp_mode",		NULL, parse_timestamp_mode},
+	{ "gesture_height",		NULL, parse_gesture_height},
+	{ "noise",			NULL, parse_noise},
+	{ "pressure",			NULL, parse_pressure},
+	{ "sensor_offset_x",		NULL, parse_sensor_offset_x},
+	{ "sensor_offset_y",		NULL, parse_sensor_offset_y},
+	{ "sensor_delta_x",		NULL, parse_sensor_delta_x},
+	{ "sensor_delta_y",		NULL, parse_sensor_delta_y},
 };
 
 static const struct tslib_ops cy8mrln_palmpre_ops = 
@@ -566,11 +625,14 @@ TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init(struct tsdev *dev, cons
 	cy8mrln_palmpre_set_sleepmode(info, DEFAULT_SLEEPMODE);
 	cy8mrln_palmpre_set_wot_scanrate(info, DEFAULT_WOT_SCANRATE);
 	cy8mrln_palmpre_set_wot_threshold(info, DEFAULT_WOT_THRESHOLD);
+	cy8mrln_palmpre_set_gesture_height(info, DEFAULT_GESTURE_HEIGHT);
 	cy8mrln_palmpre_set_noise(info, DEFAULT_NOISE);
-        cy8mrln_palmpre_set_sensor_offset_x (info, DEFAULT_SENSOR_OFFSET_X);
-        cy8mrln_palmpre_set_sensor_offset_y (info, DEFAULT_SENSOR_OFFSET_Y);
-        cy8mrln_palmpre_set_sensor_delta_x (info, DEFAULT_SENSOR_DELTA_X);
-        cy8mrln_palmpre_set_sensor_delta_y (info, DEFAULT_SENSOR_DELTA_Y);
+	cy8mrln_palmpre_set_pressure(info, DEFAULT_PRESSURE);
+	cy8mrln_palmpre_set_sensor_offset_x (info, DEFAULT_SENSOR_OFFSET_X);
+	cy8mrln_palmpre_set_sensor_offset_y (info, DEFAULT_SENSOR_OFFSET_Y);
+	cy8mrln_palmpre_set_sensor_delta_x (info, DEFAULT_SENSOR_DELTA_X);
+	cy8mrln_palmpre_set_sensor_delta_y (info, DEFAULT_SENSOR_DELTA_Y);
+
 
 	if (tslib_parse_vars(&info->module, cy8mrln_palmpre_vars, NR_VARS, params)) {
 		free(info);
