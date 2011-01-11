@@ -44,7 +44,7 @@
 #define DEFAULT_NOISE 25
 #define DEFAULT_PRESSURE 60
 #define DEFAULT_SENSOR_DELTA_X (SCREEN_WIDTH / H_FIELDS)
-#define DEFAULT_SENSOR_DELTA_Y (SCREEN_HEIGHT / (V_FIELDS - GESTURE_HEIGHT))
+#define DEFAULT_SENSOR_DELTA_Y (SCREEN_HEIGHT / (V_FIELDS - DEFAULT_GESTURE_HEIGHT))
 #define DEFAULT_SENSOR_OFFSET_X (DEFAULT_SENSOR_DELTA_X / 2)
 #define DEFAULT_SENSOR_OFFSET_Y (DEFAULT_SENSOR_DELTA_Y / 2)
 
@@ -358,7 +358,7 @@ static int parse_gesture_height(struct tslib_module_info *info, char *str, void 
 	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
 	unsigned long gesture_height = strtoul (str, NULL, 0);
 
-	if(noise == ULONG_MAX && errno == ERANGE)
+	if(gesture_height == ULONG_MAX && errno == ERANGE)
 		return -1;
 
 	return cy8mrln_palmpre_set_gesture_height (i, gesture_height);
@@ -382,7 +382,7 @@ static int parse_pressure(struct tslib_module_info *info, char *str, void *data)
 	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
 	unsigned long pressure = strtoul (str, NULL, 0);
 
-	if(noise == ULONG_MAX && errno == ERANGE)
+	if(pressure == ULONG_MAX && errno == ERANGE)
 		return -1;
 
 	return cy8mrln_palmpre_set_pressure (i, pressure);
