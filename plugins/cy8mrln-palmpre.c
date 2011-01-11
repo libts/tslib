@@ -25,7 +25,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include "cy8mrln.h"
+#include <linux/spi/cy8mrln.h>
 #include "config.h"
 #include "tslib-private.h"
 #include "tslib-filter.h"
