@@ -1,3 +1,4 @@
+// vim: set noexpandtab shiftwidth=4 tabstop=4 ts=4:
 /*
 *  tslib/plugins/cy8mrln-palmpre.c
 *
