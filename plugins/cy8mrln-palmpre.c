@@ -49,6 +49,11 @@
 #define DEFAULT_SENSOR_OFFSET_X (DEFAULT_SENSOR_DELTA_X / 2)
 #define DEFAULT_SENSOR_OFFSET_Y (DEFAULT_SENSOR_DELTA_Y / 2)
 
+#define MIN_VALUE 700
+#define MAX_VALUE 1500
+#define ASLEEP_SCANRATE 5
+#define DISCARD_FRAMES 5
+
 #define field_nr(x, y) (y * H_FIELDS + (H_FIELDS - x) - 1)
 
 #define container_of(ptr, type, member) ({ \
@@ -86,6 +91,8 @@ struct tslib_cy8mrln_palmpre
 	int				sensor_delta_y;
 	int				last_n_valid_samples;
 	struct ts_sample*		last_valid_samples;
+	int 			discard_frames;
+	int 			old_scanrate;
 };
 
 static int cy8mrln_palmpre_set_scanrate (struct tslib_cy8mrln_palmpre* info, int rate);
@@ -114,7 +121,7 @@ static int parse_sensor_offset_x(struct tslib_module_info *info, char *str, void
 static int parse_sensor_offset_y(struct tslib_module_info *info, char *str, void *data);
 static int parse_sensor_delta_x(struct tslib_module_info *info, char *str, void *data);
 static int parse_sensor_delta_y(struct tslib_module_info *info, char *str, void *data);
-static void cy8mrln_palmpre_update_references (uint16_t references[H_FIELDS * V_FIELDS], uint16_t field[H_FIELDS * V_FIELDS]);
+static int cy8mrln_palmpre_update_references (uint16_t references[H_FIELDS * V_FIELDS], uint16_t field[H_FIELDS * V_FIELDS]);
 static void cy8mrln_palmpre_interpolate (struct tslib_cy8mrln_palmpre* info, uint16_t field[H_FIELDS * V_FIELDS], int x, int y, struct ts_sample *out);
 static int cy8mrln_palmpre_fini (struct tslib_module_info *info);
 static int cy8mrln_palmpre_read (struct tslib_module_info *info, struct ts_sample *samp, int nr);
@@ -502,7 +509,43 @@ static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample
 	
 	ret = read(ts->fd, &cy8mrln_evt, sizeof(cy8mrln_evt));
 	if (ret > 0) {
-		cy8mrln_palmpre_update_references (cy8mrln_info->references, cy8mrln_evt.field);
+		if (cy8mrln_palmpre_update_references (cy8mrln_info->references, cy8mrln_evt.field)) {
+			if (cy8mrln_info->discard_frames == 0) {
+				//backup current scanrate
+				cy8mrln_info->old_scanrate = cy8mrln_info->scanrate;
+				cy8mrln_palmpre_set_scanrate (cy8mrln_info, ASLEEP_SCANRATE);
+				cy8mrln_info->discard_frames = DISCARD_FRAMES;
+#ifdef DEBUG
+				fprintf (stderr, "go to sleep\n");
+#endif
+			}
+
+			return 0;
+		}
+
+		//reset scanrate after waking up
+		if (cy8mrln_info->discard_frames == DISCARD_FRAMES) {
+			cy8mrln_palmpre_set_scanrate (cy8mrln_info, cy8mrln_info->old_scanrate);
+#ifdef DEBUG
+			fprintf (stderr, "woke up\n");
+#endif
+		}
+
+		if (cy8mrln_info->discard_frames) {
+#ifdef DEBUG
+			fprintf (stderr, "cy8mrln_palmpre: discarded frames %i\n", cy8mrln_info->discard_frames);
+			for (y = 0; y < V_FIELDS; y ++) {
+				for (x = 0; x < H_FIELDS; x++) {
+					fprintf (stderr, "%3i", cy8mrln_evt.field[field_nr(x, y)]);
+				}
+				fprintf (stderr, "\n");
+			}
+#endif
+			cy8mrln_info->discard_frames --;
+			//discard frame
+			return 0;
+		}
+
 		max_x = 0;
 		max_y = 0;
 		max_value = 0;
@@ -518,6 +561,7 @@ static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample
 				}
 			}
 		}
+
 		/* only caluclate events that are not noise */
 		if (max_value > cy8mrln_info->noise) {
 			cy8mrln_palmpre_interpolate(cy8mrln_info, cy8mrln_evt.field, max_x, max_y, &samp[valid_samples]);
@@ -554,11 +598,19 @@ static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample
 	return valid_samples;
 }
 
-static void cy8mrln_palmpre_update_references(uint16_t references[H_FIELDS * V_FIELDS], uint16_t field[H_FIELDS * V_FIELDS])
+static int cy8mrln_palmpre_update_references(uint16_t references[H_FIELDS * V_FIELDS], uint16_t field[H_FIELDS * V_FIELDS])
 {
 	int x, y;
+
 	for (y = 0; y < V_FIELDS; y ++) {
 		for (x = 0; x < H_FIELDS; x++) {
+			if (field[y * H_FIELDS + x] < MIN_VALUE || field[y * H_FIELDS + x] > MAX_VALUE) {
+#ifdef DEBUG
+				fprintf(stderr, "Discrading frame with %i at[%i/%i]\n", field[y * H_FIELDS + x], x, y);
+#endif
+				return 1;
+			}
+
 			if (field[y * H_FIELDS + x] > references[y * H_FIELDS + x]) {
 				references [y * H_FIELDS + x] = field [y * H_FIELDS + x];
 				field [y * H_FIELDS + x] = 0;
@@ -567,6 +619,8 @@ static void cy8mrln_palmpre_update_references(uint16_t references[H_FIELDS * V_F
 			}
 		}
 	}
+
+	return 0;
 }
 
 static int cy8mrln_palmpre_fini(struct tslib_module_info *info)
@@ -633,6 +687,8 @@ TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init(struct tsdev *dev, cons
 	cy8mrln_palmpre_set_sensor_offset_y (info, DEFAULT_SENSOR_OFFSET_Y);
 	cy8mrln_palmpre_set_sensor_delta_x (info, DEFAULT_SENSOR_DELTA_X);
 	cy8mrln_palmpre_set_sensor_delta_y (info, DEFAULT_SENSOR_DELTA_Y);
+
+	info->discard_frames = 0;
 
 
 	if (tslib_parse_vars(&info->module, cy8mrln_palmpre_vars, NR_VARS, params)) {
