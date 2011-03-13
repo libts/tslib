@@ -65,6 +65,7 @@ TSLIB_CHECK_MODULE([h3600], [yes], [Enable building of h3600 raw module (HP iPaq
 TSLIB_CHECK_MODULE([mk712], [yes], [Enable building of mk712 raw module (Hi tachi support)])
 TSLIB_CHECK_MODULE([arctic2], [yes], [Enable building of arctic2 raw module (IBM Arctic II support)])
 TSLIB_CHECK_MODULE([tatung], [yes], [Enable building of tatung raw module (Tatung Webpad support)])
+TSLIB_CHECK_MODULE([dmc], [yes], [Enable building of dmc raw module (HP iPaq DMC support)])
 TSLIB_CHECK_MODULE([input], [yes], [Enable building of generic input raw module (Linux /dev/input/eventN support)])
 
 AC_MSG_CHECKING([where to place modules])

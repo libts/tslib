@@ -84,6 +84,12 @@ else
 TATUNG_MODULE =
 endif
 
+if ENABLE_DMC_MODULE
+DMC_MODULE = dmc.la
+else
+DMC_MODULE =
+endif
+
 if ENABLE_INPUT_MODULE
 INPUT_MODULE = input.la
 else
@@ -114,6 +120,7 @@ pluginexec_LTLIBRARIES = \
 	$(MK712_MODULE) \
 	$(ARCTIC2_MODULE) \
 	$(TATUNG_MODULE) \
+	$(DMC_MODULE) \
 	$(H2200_LINEAR_MODULE) \
 	$(INPUT_MODULE) \
 	$(CY8MRLN_PALMPRE_MODULE)
@@ -155,6 +162,9 @@ arctic2_la_LDFLAGS	= -module $(LTVSN)
 
 tatung_la_SOURCES	= tatung-raw.c
 tatung_la_LDFLAGS	= -module $(LTVSN)
+
+dmc_la_SOURCES		= dmc-raw.c
+dmc_la_LDFLAGS		= -module $(LTVSN)
 
 input_la_SOURCES	= input-raw.c
 input_la_LDFLAGS	= -module $(LTVSN)
