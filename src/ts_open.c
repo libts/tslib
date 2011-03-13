@@ -12,6 +12,7 @@
 #include "config.h"
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -24,7 +25,7 @@ extern struct tslib_module_info __ts_raw;
 struct tsdev *ts_open(const char *name, int nonblock)
 {
 	struct tsdev *ts;
-	int flags = O_RDONLY;
+	int flags = O_RDWR;
 
 	if (nonblock)
 		flags |= O_NONBLOCK;
@@ -34,6 +35,14 @@ struct tsdev *ts_open(const char *name, int nonblock)
 		memset(ts, 0, sizeof(struct tsdev));
 
 		ts->fd = open(name, flags);
+		/*
+		 * Try again in case file is simply not writable
+		 * It will do for most drivers
+		 */
+		if (ts->fd == -1 && errno == EACCES) {
+			flags = nonblock ? (O_RDONLY | O_NONBLOCK) : O_RDONLY;
+			ts->fd = open(name, flags);
+		}
 		if (ts->fd == -1)
 			goto free;
 	}
