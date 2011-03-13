@@ -67,6 +67,7 @@ TSLIB_CHECK_MODULE([arctic2], [yes], [Enable building of arctic2 raw module (IBM
 TSLIB_CHECK_MODULE([tatung], [yes], [Enable building of tatung raw module (Tatung Webpad support)])
 TSLIB_CHECK_MODULE([dmc], [yes], [Enable building of dmc raw module (HP iPaq DMC support)])
 TSLIB_CHECK_MODULE([input], [yes], [Enable building of generic input raw module (Linux /dev/input/eventN support)])
+TSLIB_CHECK_MODULE([touchkit], [yes], [Enable building of serial TouchKit raw module (Linux /dev/ttySX support)])
 
 AC_MSG_CHECKING([where to place modules])
 AC_ARG_WITH(plugindir,
