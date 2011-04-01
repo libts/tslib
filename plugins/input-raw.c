@@ -40,6 +40,11 @@
 # define KEY_CNT (KEY_MAX+1)
 #endif
 
+#ifndef ABS_MT_POSITION_X
+# define ABS_MT_POSITION_X       0x35    /* Center X ellipse position */
+# define ABS_MT_POSITION_Y       0x36    /* Center Y ellipse position */
+#endif
+
 #include "tslib-private.h"
 
 #define GRAB_EVENTS_WANTED	1
@@ -160,16 +165,17 @@ static int ts_input_read(struct tslib_module_info *inf,
 				}
 				break;
 			case EV_SYN:
-				/* Fill out a new complete event */
-				if (pen_up) {
-					samp->x = 0;
-					samp->y = 0;
-					samp->pressure = 0;
-					pen_up = 0;
-				} else {
-					samp->x = i->current_x;
-					samp->y = i->current_y;
-					samp->pressure = i->current_p;
+				if (ev.code == SYN_REPORT) {
+					/* Fill out a new complete event */
+					if (pen_up) {
+						samp->x = 0;
+						samp->y = 0;
+						samp->pressure = 0;
+						pen_up = 0;
+					} else {
+						samp->x = i->current_x;
+						samp->y = i->current_y;
+						samp->pressure = i->current_p;
 				}
 				samp->tv = ev.time;
 	#ifdef DEBUG
@@ -179,6 +185,7 @@ static int ts_input_read(struct tslib_module_info *inf,
 	#endif /* DEBUG */
 				samp++;
 				total++;
+				}
 				break;
 			case EV_ABS:
 				switch (ev.code) {
@@ -186,6 +193,12 @@ static int ts_input_read(struct tslib_module_info *inf,
 					i->current_x = ev.value;
 					break;
 				case ABS_Y:
+					i->current_y = ev.value;
+					break;
+				case ABS_MT_POSITION_X:
+					i->current_x = ev.value;
+					break;
+				case ABS_MT_POSITION_Y:
 					i->current_y = ev.value;
 					break;
 				case ABS_PRESSURE:
