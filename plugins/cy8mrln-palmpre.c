@@ -1,17 +1,15 @@
-// vim: set noexpandtab shiftwidth=4 tabstop=4 ts=4:
 /*
-*  tslib/plugins/cy8mrln-palmpre.c
-*
-*  Copyright (C) 2010 Frederik Sdun <frederik.sdun@googlemail.com>
-*		     Thomas Zimmermann <ml@vdm-design.de>
-*		     Simon Busch <morphis@gravedo.de>
-*
-* This file is placed under the LGPL.  Please see the file
-* COPYING for more details.
-*
-* Plugin for the cy8mrln touchscreen with the firmware used on the Palm Pre (Plus).
-*
-*/
+ * tslib/plugins/cy8mrln-palmpre.c
+ *
+ * Copyright (C) 2010-2011 Frederik Sdun <frederik.sdun@googlemail.com>
+ *                         Thomas Zimmermann <ml@vdm-design.de>
+ *                         Simon Busch <morphis@gravedo.de>
+ *
+ * This file is placed under the LGPL.  Please see the file
+ * COPYING for more details.
+ *
+ * Plugin for the cy8mrln touchscreen of the Palm Pre/Pre Plus/Pre 2 devices.
+ */
 
 #include <errno.h>
 #include <fcntl.h>
@@ -445,6 +443,7 @@ static int parse_sensor_delta_y(struct tslib_module_info *info, char *str, void 
 }
 
 #define NR_VARS (sizeof(cy8mrln_palmpre_vars) / sizeof(cy8mrln_palmpre_vars[0]))
+
 /*
 *     y1
 * x1 (xy) x3
@@ -709,3 +708,5 @@ TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init(struct tsdev *dev, cons
 #ifndef TSLIB_STATIC_CY8MRLN_MODULE
 	TSLIB_MODULE_INIT(cy8mrln_palmpre_mod_init);
 #endif
+
+// vim: set noexpandtab shiftwidth=4 tabstop=4 ts=4:
