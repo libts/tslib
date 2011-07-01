@@ -63,10 +63,10 @@ static void ts_harvest_put_cross (int x, int y, unsigned colidx)
 int main()
 {
 	struct tsdev *ts;
-	int x, y, x_incr, y_incr, x_ts, y_ts, xres_half, yres_half, x_new, y_new;
+	int x_ts, y_ts, x_incr, y_incr;
+	unsigned int x, y, xres_half, yres_half, x_new, y_new;
 	unsigned int i;
 	char *tsdevice=NULL;
-	struct ts_sample samp;
 	FILE *output_fid;
 
 	signal(SIGSEGV, sig);
