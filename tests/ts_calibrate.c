@@ -250,10 +250,10 @@ int main()
 		for (i = 0; i < 7; i++) printf("%d ", cal.a [i]);
 		printf("\n");
 		if ((calfile = getenv("TSLIB_CALIBFILE")) != NULL) {
-			cal_fd = open (calfile, O_CREAT | O_RDWR,
+			cal_fd = open (calfile, O_CREAT | O_TRUNC | O_RDWR,
 			               S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 		} else {
-			cal_fd = open (TS_POINTERCAL, O_CREAT | O_RDWR,
+			cal_fd = open (TS_POINTERCAL, O_CREAT | O_TRUNC | O_RDWR,
 			               S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 		}
 		len = sprintf(cal_buffer,"%d %d %d %d %d %d %d %d %d",
