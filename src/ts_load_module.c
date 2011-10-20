@@ -143,6 +143,7 @@ static struct tslib_module_info *__ts_load_module_shared(struct tsdev *ts, const
 static int __ts_load_module(struct tsdev *ts, const char *module, const char *params, int raw)
 {
 	struct tslib_module_info *info;
+	void *handle;
 	int ret;
 
 #ifdef DEBUG
@@ -164,9 +165,10 @@ static int __ts_load_module(struct tsdev *ts, const char *module, const char *pa
 #ifdef DEBUG
 		fprintf (stderr, "Can't attach %s\n", module);
 #endif
+		handle = info->handle;
 		info->ops->fini(info);
-		if (info->handle)
-			dlclose(info->handle);
+		if (handle)
+			dlclose(handle);
 	}
 
 	return ret;
