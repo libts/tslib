@@ -14,12 +14,24 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#include <dlfcn.h>
 
 #include "tslib-private.h"
 
 int ts_close(struct tsdev *ts)
 {
+	void *handle;
 	int ret;
+	struct tslib_module_info *info, *prev;
+
+	for(info = ts->list, prev = info;
+	    info != NULL;
+	    info = prev->next, prev = info) {
+		handle = info->handle;
+		info->ops->fini(info);
+		if (handle)
+			dlclose(handle);
+	}
 
 	ret = close(ts->fd);
 	free(ts);
