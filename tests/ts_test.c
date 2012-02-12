@@ -214,4 +214,6 @@ int main()
 			break;
 	}
 	close_framebuffer();
+
+	return 0;
 }
