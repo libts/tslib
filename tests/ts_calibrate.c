@@ -162,7 +162,7 @@ static void get_sample (struct tsdev *ts, calibration *cal,
 	printf("%s : X = %4d Y = %4d\n", name, cal->x [index], cal->y [index]);
 }
 
-static int clearbuf(struct tsdev *ts)
+static void clearbuf(struct tsdev *ts)
 {
 	int fd = ts_fd(ts);
 	fd_set fdset;
