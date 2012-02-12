@@ -23,7 +23,7 @@
 
 #include "../plugins/plugins.h"
 
-static struct {
+static const struct {
 	const char *name;
 	tslib_module_init mod_init;
 } tslib_modules[] = {
