@@ -249,6 +249,7 @@ void setcolor(unsigned colidx, unsigned value)
         	        perror("ioctl FBIOPUTCMAP");
 		break;
 	case 2:
+	case 3:
 	case 4:
 		red = (value >> 16) & 0xff;
 		green = (value >> 8) & 0xff;
@@ -275,6 +276,17 @@ static inline void __setpixel (union multiptr loc, unsigned xormode, unsigned co
 			*loc.p16 ^= color;
 		else
 			*loc.p16 = color;
+		break;
+	case 3:
+		if (xormode) {
+			*loc.p8++ ^= (color >> 16) & 0xff;
+			*loc.p8++ ^= (color >> 8) & 0xff;
+			*loc.p8 ^= color & 0xff;
+		} else {
+			*loc.p8++ = (color >> 16) & 0xff;
+			*loc.p8++ = (color >> 8) & 0xff;
+			*loc.p8 = color & 0xff;
+		}
 		break;
 	case 4:
 		if (xormode)
