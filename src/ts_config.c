@@ -10,6 +10,7 @@
  * Read the configuration and load the appropriate drivers.
  */
 #include "config.h"
+#include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -37,7 +38,7 @@ int ts_config(struct tsdev *ts)
 
 	f = fopen(conffile, "r");
 	if (!f) {
-		perror("Couldnt open tslib config file");
+		ts_error("Couldnt open tslib config file: %s\n", strerror(errno));
 		return -1;
 	}
 

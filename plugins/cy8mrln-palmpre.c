@@ -134,7 +134,7 @@ static int cy8mrln_palmpre_set_scanrate(struct tslib_cy8mrln_palmpre* info, int 
 	return 0;
 	
 error:
-	printf("TSLIB: cy8mrln_palmpre: ERROR: could not set scanrate value\n");
+	ts_error("TSLIB: cy8mrln_palmpre: ERROR: could not set scanrate value\n");
 	return -1;
 }
 
@@ -147,7 +147,7 @@ static int cy8mrln_palmpre_set_verbose(struct tslib_cy8mrln_palmpre* info, int v
 	return 0;
 
 error:
-	printf("TSLIB: cy8mrln_palmpre: ERROR: could not set verbose value\n");
+	ts_error("TSLIB: cy8mrln_palmpre: ERROR: could not set verbose value\n");
 	return -1;
 }
 
@@ -160,7 +160,7 @@ static int cy8mrln_palmpre_set_sleepmode(struct tslib_cy8mrln_palmpre* info, int
 	return 0;
 	
 error:
-	printf("TSLIB: cy8mrln_palmpre: ERROR: could not set sleepmode value\n");
+	ts_error("TSLIB: cy8mrln_palmpre: ERROR: could not set sleepmode value\n");
 	return -1;
 }
 
@@ -173,7 +173,7 @@ static int cy8mrln_palmpre_set_wot_scanrate(struct tslib_cy8mrln_palmpre* info, 
 	return 0;
 
 error:
-	printf("TSLIB: cy8mrln_palmpre: ERROR: could not set scanrate value\n");
+	ts_error("TSLIB: cy8mrln_palmpre: ERROR: could not set scanrate value\n");
 	return -1;
 }
 
@@ -190,7 +190,7 @@ static int cy8mrln_palmpre_set_wot_threshold(struct tslib_cy8mrln_palmpre* info,
 	return 0;
 	
 error:
-	printf("TSLIB: cy8mrln_palmpre: ERROR: could not set wot treshhold value\n");
+	ts_error("TSLIB: cy8mrln_palmpre: ERROR: could not set wot treshhold value\n");
 	return -1;
 }
 
@@ -203,14 +203,14 @@ static int cy8mrln_palmpre_set_timestamp_mode(struct tslib_cy8mrln_palmpre* info
 	return 0;
 	
 error:
-	printf("TSLIB: cy8mrln_palmpre: ERROR: could not set timestamp value\n");
+	ts_error("TSLIB: cy8mrln_palmpre: ERROR: could not set timestamp value\n");
 	return -1;
 }
 
 static int cy8mrln_palmpre_set_gesture_height (struct tslib_cy8mrln_palmpre* info, int h)
 {
 	if (info == NULL) {
-		printf("TSLIB: cy8mrln_palmpre: ERROR: could not set gesture_height value\n");
+		ts_error("TSLIB: cy8mrln_palmpre: ERROR: could not set gesture_height value\n");
 		return -1;
 	}
 
@@ -222,7 +222,7 @@ static int cy8mrln_palmpre_set_gesture_height (struct tslib_cy8mrln_palmpre* inf
 static int cy8mrln_palmpre_set_noise (struct tslib_cy8mrln_palmpre* info, int n)
 {
 	if (info == NULL) {
-		printf("TSLIB: cy8mrln_palmpre: ERROR: could not set noise value\n");
+		ts_error("TSLIB: cy8mrln_palmpre: ERROR: could not set noise value\n");
 		return -1;
 	}
 
@@ -234,7 +234,7 @@ static int cy8mrln_palmpre_set_noise (struct tslib_cy8mrln_palmpre* info, int n)
 static int cy8mrln_palmpre_set_pressure (struct tslib_cy8mrln_palmpre* info, int p)
 {
 	if (info == NULL) {
-		printf("TSLIB: cy8mrln_palmpre: ERROR: could not set default_pressure value\n");
+		ts_error("TSLIB: cy8mrln_palmpre: ERROR: could not set default_pressure value\n");
 		return -1;
 	}
 
