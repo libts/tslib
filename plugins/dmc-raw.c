@@ -52,28 +52,28 @@ int dmc_init_device(struct tsdev *dev)
 	tcsetattr(fd, TCSANOW, &t);
 
 	if (write(fd, "\x55", 1) != 1) {
-		fprintf(stderr, "dmc: failed to write. Check permissions of the device!\n");
+		ts_error("dmc: failed to write. Check permissions of the device!\n");
 		return EINVAL;
 	}
 	sleep(1);
 	if (write(fd, "\x05\x40", 2) != 2) {
-		perror("dmc write");
+		ts_error("dmc write: %s\n", strerror(errno));
 		goto fail;
 	}
 	if (read(fd, buf, 1) != 1) {
-		perror("dmc read");
+		ts_error("dmc read: %s\n", strerror(errno));
 		goto fail;
 	}
 	if (buf[0] != 0x6) {
-		fprintf(stderr, "dmc: got wrong return value. The touchscreen may not work.\n");
+		ts_error("dmc: got wrong return value. The touchscreen may not work.\n");
 	}
 	if (write(fd, "\x31", 1) != 1) {
-		perror("dmc write");
+		ts_error("dmc write: %s\n", strerror(errno));
 		goto fail;
 	}
 	return 0;
 fail:
-	fprintf(stderr, "dmc: selected device is not a touchscreen I understand\n");
+	ts_error("dmc: selected device is not a touchscreen I understand\n");
 	return EINVAL;
 }
 
