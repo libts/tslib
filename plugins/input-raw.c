@@ -104,15 +104,16 @@ static int check_fd(struct tslib_input *i)
 
 	/* Since some touchscreens (eg. infrared) physically can't measure pressure,
 	the input system doesn't report it on those. Tslib relies on pressure, thus
-	we set it to constant 255. It's still controlled by BTN_TOUCH - when not
-	touched, the pressure is forced to 0. */
+	we set it to constant 255. It's still controlled by BTN_TOUCH/BTN_LEFT -
+	when not touched, the pressure is forced to 0. */
 
 	if (!(absbit[BIT_WORD(ABS_PRESSURE)] & BIT_MASK(ABS_PRESSURE))) {
 		i->current_p = 255;
 
 		if ((ioctl(ts->fd, EVIOCGBIT(EV_KEY, sizeof(keybit)), keybit) < 0) ||
-			!(keybit[BIT_WORD(BTN_TOUCH)] & BIT_MASK(BTN_TOUCH)) ) {
-			fprintf(stderr, "tslib: Selected device is not a touchscreen (must support BTN_TOUCH events)\n");
+			!(keybit[BIT_WORD(BTN_TOUCH)] & BIT_MASK(BTN_TOUCH) ||
+			  keybit[BIT_WORD(BTN_LEFT)] & BIT_MASK(BTN_LEFT))) {
+			fprintf(stderr, "tslib: Selected device is not a touchscreen (must support BTN_TOUCH or BTN_LEFT events)\n");
 			return -1;
 		}
 	}
@@ -159,6 +160,7 @@ static int ts_input_read(struct tslib_module_info *inf,
 			case EV_KEY:
 				switch (ev.code) {
 				case BTN_TOUCH:
+				case BTN_LEFT:
 					if (ev.value == 0)
 						pen_up = 1;
 					break;
@@ -270,6 +272,7 @@ static int ts_input_read(struct tslib_module_info *inf,
 			} else if (ev.type == EV_KEY) {
 				switch (ev.code) {
 				case BTN_TOUCH:
+				case BTN_LEFT:
 					if (ev.value == 0) {
 						/* pen up */
 						samp->x = 0;
