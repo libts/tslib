@@ -22,15 +22,19 @@ int ts_close(struct tsdev *ts)
 {
 	void *handle;
 	int ret;
-	struct tslib_module_info *info, *prev;
-
-	for(info = ts->list, prev = info;
-	    info != NULL;
-	    info = prev->next, prev = info) {
+	struct tslib_module_info *info, *next;
+	
+	info = ts->list;
+	while(info) {
+		/* Save the "next" pointer now because info will be freed */
+		next = info->next;
+		
 		handle = info->handle;
 		info->ops->fini(info);
 		if (handle)
 			dlclose(handle);
+		
+		info = next;
 	}
 
 	ret = close(ts->fd);
