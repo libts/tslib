@@ -22,6 +22,17 @@
  */
 #define BUF_SIZE 512
 
+/* Discard any empty tokens
+ * Note: strsep modifies p (see man strsep)
+ */
+void discard_null_tokens(char **p, char **tokPtr)
+{
+	while (*p != NULL && **tokPtr == '\0')
+	{
+		*tokPtr = strsep(p, " \t");
+	}
+}
+
 int ts_config(struct tsdev *ts)
 {
 	char buf[BUF_SIZE], *p;
@@ -62,21 +73,23 @@ int ts_config(struct tsdev *ts)
 		}
 
 		tok = strsep(&p, " \t");
-		
+		discard_null_tokens(&p, &tok);
+
 		/* Ignore comments or blank lines.
 		 * Note: strsep modifies p (see man strsep)
 		 */
-
 		if (p==NULL || *tok == '#')
 			continue;
 
 		/* Search for the option. */
 		if (strcasecmp(tok, "module") == 0) {
 			module_name = strsep(&p, " \t");
+			discard_null_tokens(&p, &module_name);
 			ret = ts_load_module(ts, module_name, p);
 		}
 		else if (strcasecmp(tok, "module_raw") == 0) {
 			module_name = strsep(&p, " \t");
+			discard_null_tokens(&p, &module_name);
 			ret = ts_load_module_raw(ts, module_name, p);
 		} else {
 			ts_error("%s: Unrecognised option %s:%d:%s\n", conffile, line, tok);
