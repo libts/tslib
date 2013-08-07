@@ -15,6 +15,9 @@
   layer as a new device via uinput, since most apps already support it, and
   moving calibration into the library or a supplemental library, with user
   selectable calibration algorithms.
+- Fully implement the multi-touch protocol. See
+  Documentation/input/multi-touch-protocol.txt for details. We should support
+  both type A and type B.
 
 - Parse out the old cvs metadata in the commit log to rewrite the git repo
   history using filter-branch.
