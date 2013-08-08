@@ -49,6 +49,9 @@ static const struct {
 #ifdef TSLIB_STATIC_INPUT_MODULE
 	{ "input", input_mod_init },
 #endif
+#ifdef TSLIB_STATIC_GALAX_MODULE
+	{ "galax", galax_mod_init },
+#endif
 #ifdef TSLIB_STATIC_LINEAR_MODULE 
 	{ "linear", linear_mod_init },
 #endif
