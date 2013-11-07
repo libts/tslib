@@ -4,13 +4,15 @@
  * Inspired from input-raw.c
  * 2009.05 Fred Salabartan
  *
+ * Add support for version 0100 by Oskari Rauta <oskari.rauta@gmail.com> 2013
+ *
  * Modify by Jean-Baptiste Théou <jean-baptiste.theou@vodalys.com> (2013)
  * 
  * This file is placed under the LGPL. Please see the file
  * COPYING for more details.
  *
  * Plugin for "eGalax Inc. Touch" (using usbhid driver)
- * (Vendor=0eef Product=0001 Version=0112)
+ * (Vendor=0eef Product=0001 Version=0112/210/0100)
  */
 
 #include "config.h"
@@ -56,6 +58,7 @@
 
 #define VERSION_0112 1
 #define VERSION_210  2
+#define VERSION_0100 3
 // VERSION_210 must use /dev/input/event1
 
 
@@ -103,6 +106,9 @@ static int ts_galax_check_fd (struct tslib_galax *i)
 	}
 	else if(infos.version == 0x210){
 		i->model_version = VERSION_210;
+	}
+	else if(infos.version == 0x0100){
+		i->model_version = VERSION_0100;
 	}
 	else{
 		fprintf (stderr, "Unsupported model\n");
@@ -215,6 +221,13 @@ static int ts_galax_read (struct tslib_module_info *inf,
 						case ABS_X: i->current_x = ev.value; break;
 						case ABS_Y: i->current_y = ev.value; break;
 						case ABS_PRESSURE: i->current_p = ev.value; break;
+					}
+				}
+				else if(i->model_version == VERSION_0100){
+					switch (ev.code) {
+						case ABS_X: i->current_x = ev.value; break;
+						case ABS_Y: i->current_y = ev.value; break;
+						case ABS_PRESSURE: i->current-p = ev.value; break;
 					}
 				}
 				break;
