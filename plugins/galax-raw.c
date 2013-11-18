@@ -227,7 +227,7 @@ static int ts_galax_read (struct tslib_module_info *inf,
 					switch (ev.code) {
 						case ABS_X: i->current_x = ev.value; break;
 						case ABS_Y: i->current_y = ev.value; break;
-						case ABS_PRESSURE: i->current-p = ev.value; break;
+						case ABS_PRESSURE: i->current_p = ev.value; break;
 					}
 				}
 				break;
