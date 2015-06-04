@@ -41,6 +41,7 @@ static unsigned char *fbuffer;
 static unsigned char **line_addr;
 static int fb_fd=0;
 static int bytes_per_pixel;
+static int transp_mask;
 static unsigned colormap [256];
 __u32 xres, yres;
 
@@ -138,6 +139,8 @@ int open_framebuffer(void)
 	memset(fbuffer,0,fix.smem_len);
 
 	bytes_per_pixel = (var.bits_per_pixel + 7) / 8;
+	transp_mask = ((1 << var.transp.length) - 1) <<
+		var.transp.offset; /* transp.length unlikely > 32 */
 	line_addr = malloc (sizeof (__u32) * var.yres_virtual);
 	addr = 0;
 	for (y = 0; y < var.yres_virtual; y++, addr += fix.line_length)
@@ -270,12 +273,14 @@ static inline void __setpixel (union multiptr loc, unsigned xormode, unsigned co
 			*loc.p8 ^= color;
 		else
 			*loc.p8 = color;
+		*loc.p8 |= transp_mask;
 		break;
 	case 2:
 		if (xormode)
 			*loc.p16 ^= color;
 		else
 			*loc.p16 = color;
+		*loc.p16 |= transp_mask;
 		break;
 	case 3:
 		if (xormode) {
@@ -287,12 +292,14 @@ static inline void __setpixel (union multiptr loc, unsigned xormode, unsigned co
 			*loc.p8++ = (color >> 8) & 0xff;
 			*loc.p8 = color & 0xff;
 		}
+		*loc.p8 |= transp_mask;
 		break;
 	case 4:
 		if (xormode)
 			*loc.p32 ^= color;
 		else
 			*loc.p32 = color;
+		*loc.p32 |= transp_mask;
 		break;
 	}
 }
