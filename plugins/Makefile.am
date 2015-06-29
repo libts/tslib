@@ -121,6 +121,12 @@ else
 CY8MRLN_PALMPRE_MODULE =
 endif
 
+if ENABLE_ST1232_MODULE
+ST1232_MODULE = st1232.la
+else
+ST1232_MODULE =
+endif
+
 pluginexec_LTLIBRARIES = \
 	$(LINEAR_MODULE) \
 	$(DEJITTER_MODULE) \
@@ -138,7 +144,8 @@ pluginexec_LTLIBRARIES = \
 	$(INPUT_MODULE) \
 	$(GALAX_MODULE) \
 	$(TOUCHKIT_MODULE) \
-	$(CY8MRLN_PALMPRE_MODULE)
+	$(CY8MRLN_PALMPRE_MODULE) \
+	$(ST1232_MODULE)
   
 variance_la_SOURCES	= variance.c
 variance_la_LDFLAGS	= -module $(LTVSN)
@@ -197,3 +204,7 @@ linear_h2200_la_LDFLAGS	= -module $(LTVSN)
 
 cy8mrln_palmpre_la_SOURCES = cy8mrln-palmpre.c
 cy8mrln_palmpre_la_LDFLAGS = -module $(LTVSN)
+
+st1232_la_SOURCES = st1232-raw.c
+st1232_la_LDFLAGS = -module $(LTVSN)
+st1232_la_LIBADD = $(top_builddir)/src/libts.la

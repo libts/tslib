@@ -71,6 +71,10 @@ if ENABLE_STATIC_INPUT_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/input-raw.c
 endif
 
+if ENABLE_STATIC_ST1232_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/st1232-raw.c
+endif
+
 libts_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
 		   -release $(LT_RELEASE) -export-dynamic
 libts_la_LIBADD  = -ldl

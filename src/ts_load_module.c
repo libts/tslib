@@ -73,6 +73,9 @@ static const struct {
 #ifdef TSLIB_STATIC_VARIANCE_MODULE
 	{ "variance", variance_mod_init },
 #endif
+#ifdef TSLIB_STATIC_ST1232_MODULE
+	{ "st1232", st1232_mod_init },
+#endif
 };
 
 #define countof(arr) (sizeof(arr) / sizeof((arr)[0]))
