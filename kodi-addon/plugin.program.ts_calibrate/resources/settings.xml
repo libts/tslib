@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+  <category label="1000" >
+    <setting type="sep" />
+    <setting id="TS_RECALIBRATE" type="bool" label="1010" default="false" />
+  </category>
+</settings>
