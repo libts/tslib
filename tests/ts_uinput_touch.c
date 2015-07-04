@@ -9,8 +9,9 @@
  *
  *
  * Takes tslib events and send them to uinput as
- *   BTN_TOUCH, ABS_X, ABS_Y and ABS_PRESSURE values.
- * Short tap send button event and longer tap send only coordinates.
+ *   BTN_TOUCH, BTN_RIGHT, ABS_X, ABS_Y and ABS_PRESSURE values.
+ * Short tap send button touch event, little longer tap send button right event
+ *   and longer tap send only coordinates.
  * Tested only with Kodi application.
  *
  * code based on
@@ -77,7 +78,8 @@ char *uinput_names[] = {"/dev/uinput", "/dev/input/uinput", "/dev/misc/uinput"};
 #define UINPUT_NAMES_NUM ((int) (sizeof(uinput_names)/sizeof(char *)))
 
 __u32 xres = 0, yres = 0;
-struct timeval tv_short_tap = {0, 300};  /* sec, msec */
+struct timeval tv_short_tap = {0, 300};  /* sec, msec, short tap sends BTN_TOUCH */
+struct timeval tv_right_tap = {1, 0};    /* sec, msec, longer tap sends BTN_RIGHT */
 bool calibration_mode = false;
 int sock = -1;
 
@@ -169,11 +171,6 @@ static void signal_handler(int signal_number) {
     return;
 
   printf("signal handler %d, current calibration_mode=%d\n", signal_number, calibration_mode == true ? 1 : 0);
-  if (calibration_mode) {
-    tv_short_tap.tv_sec += 600; /* little more time */
-  } else {
-    tv_short_tap.tv_sec -= 600;
-  }
 }
 
 static int perform_calibration(calibration *cal) {
@@ -501,6 +498,11 @@ int main(int argc, char *argv[])
   else
     printf("Short tap time: %li.%li sec\n", tv_short_tap.tv_sec, tv_short_tap.tv_usec);
 
+  if (tv_right_tap.tv_sec == 0)
+    printf("Right tap time: %li msec\n", tv_right_tap.tv_usec);
+  else
+    printf("Right tap time: %li.%li sec\n", tv_right_tap.tv_sec, tv_right_tap.tv_usec);
+
   memset (&sa, 0, sizeof (sa));
   sa.sa_handler = &signal_handler;
   sigaction(SIGUSR1, &sa, NULL);
@@ -511,10 +513,11 @@ int main(int argc, char *argv[])
     daemonize();
   }
 
-  set_ioctl(uinput_fd, UI_SET_EVBIT, EV_SYN);
-  set_ioctl(uinput_fd, UI_SET_EVBIT, EV_KEY);
+  set_ioctl(uinput_fd, UI_SET_EVBIT,  EV_SYN);
+  set_ioctl(uinput_fd, UI_SET_EVBIT,  EV_KEY);
   set_ioctl(uinput_fd, UI_SET_KEYBIT, BTN_TOUCH);
-  set_ioctl(uinput_fd, UI_SET_EVBIT, EV_ABS);
+  set_ioctl(uinput_fd, UI_SET_KEYBIT, BTN_RIGHT);
+  set_ioctl(uinput_fd, UI_SET_EVBIT,  EV_ABS);
   set_ioctl(uinput_fd, UI_SET_ABSBIT, ABS_X);
   set_ioctl(uinput_fd, UI_SET_ABSBIT, ABS_Y);
   set_ioctl(uinput_fd, UI_SET_ABSBIT, ABS_PRESSURE);
@@ -538,6 +541,8 @@ int main(int argc, char *argv[])
     die("error: ioctl UI_DEV_CREATE")
 
   tv_short_tap.tv_usec *= 1000;   /* msec to usec */
+  tv_right_tap.tv_usec *= 1000;   /* msec to usec */
+
   timerclear(&tv_last);
   while (1) {
     touch_str = "";
@@ -601,7 +606,16 @@ int main(int argc, char *argv[])
         send_event(uinput_fd, EV_KEY, BTN_TOUCH, 0);
         send_event(uinput_fd, EV_SYN, 0, 0);
 
-        touch_str = "released and send button";
+        touch_str = "released and send tap";
+      } else if (timercmp(&tv_sub, &tv_right_tap, <=)) {
+        send_event(uinput_fd, EV_ABS, ABS_PRESSURE, 255);
+        send_event(uinput_fd, EV_KEY, BTN_RIGHT, 1);
+        send_event(uinput_fd, EV_SYN, 0, 0);
+        send_event(uinput_fd, EV_ABS, ABS_PRESSURE, 0);
+        send_event(uinput_fd, EV_KEY, BTN_RIGHT, 0);
+        send_event(uinput_fd, EV_SYN, 0, 0);
+
+        touch_str = "released and send right";
       } else {
         send_event(uinput_fd, EV_ABS, ABS_PRESSURE, 0);
         send_event(uinput_fd, EV_SYN, 0, 0);
