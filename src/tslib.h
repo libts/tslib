@@ -52,11 +52,6 @@ enum ts_param {
 };
 
 /*
- * Close the touchscreen device, free all resources.
- */
-TSAPI int ts_close(struct tsdev *);
-
-/*
  * Configure the touchscreen device.
  */
 TSAPI int ts_config(struct tsdev *);
@@ -95,6 +90,16 @@ TSAPI int ts_read(struct tsdev *, struct ts_sample *, int);
  * Returns a raw, unscaled sample from the touchscreen.
  */
 TSAPI int ts_read_raw(struct tsdev *, struct ts_sample *, int);
+
+
+
+/*
+ * Close the touchscreen device, free all resources.
+ */
+TSAPI int ts_close(struct tsdev *);
+
+
+
 
 #ifdef __cplusplus
 }

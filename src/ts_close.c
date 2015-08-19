@@ -1,5 +1,5 @@
 /*
- *  tslib/src/ts_close.c
+ *  tslib/src/ts_open.c
  *
  *  Copyright (C) 2001 Russell King.
  *
@@ -7,38 +7,25 @@
  * COPYING for more details.
  *
  *
- * Close a touchscreen device.
+ * Open a touchscreen device.
  */
 #include "config.h"
 #include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#include <dlfcn.h>
+#include <sys/fcntl.h>
 
 #include "tslib-private.h"
 
+extern struct tslib_module_info __ts_raw;
+
 int ts_close(struct tsdev *ts)
 {
-	void *handle;
-	int ret;
-	struct tslib_module_info *info, *next;
-	
-	info = ts->list;
-	while(info) {
-		/* Save the "next" pointer now because info will be freed */
-		next = info->next;
-		
-		handle = info->handle;
-		info->ops->fini(info);
-		if (handle)
-			dlclose(handle);
-		
-		info = next;
-	}
-
-	ret = close(ts->fd);
-	free(ts);
-
-	return ret;
+	if ( ts->fd >0) 
+		return close( ts->fd);
+	else
+		return -1;
 }
