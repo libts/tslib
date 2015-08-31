@@ -127,6 +127,12 @@ else
 ST1232_MODULE =
 endif
 
+if ENABLE_WAVESHARE_MODULE
+WAVESHARE_MODULE = waveshare.la
+else
+WAVESHARE_MODULE =
+endif
+
 pluginexec_LTLIBRARIES = \
 	$(LINEAR_MODULE) \
 	$(DEJITTER_MODULE) \
@@ -145,7 +151,8 @@ pluginexec_LTLIBRARIES = \
 	$(GALAX_MODULE) \
 	$(TOUCHKIT_MODULE) \
 	$(CY8MRLN_PALMPRE_MODULE) \
-	$(ST1232_MODULE)
+	$(ST1232_MODULE) \
+	$(WAVESHARE_MODULE)
   
 variance_la_SOURCES	= variance.c
 variance_la_LDFLAGS	= -module $(LTVSN)
@@ -208,3 +215,7 @@ cy8mrln_palmpre_la_LDFLAGS = -module $(LTVSN)
 st1232_la_SOURCES = st1232-raw.c
 st1232_la_LDFLAGS = -module $(LTVSN)
 st1232_la_LIBADD = $(top_builddir)/src/libts.la
+
+waveshare_la_SOURCES = waveshare-raw.c
+waveshare_la_LDFLAGS = -module $(LTVSN)
+waveshare_la_LIBADD = $(top_builddir)/src/libts.la
