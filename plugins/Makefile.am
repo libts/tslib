@@ -133,6 +133,12 @@ else
 CY8MRLN_PALMPRE_MODULE =
 endif
 
+if ENABLE_WAVESHARE_MODULE
+WAVESHARE_MODULE = waveshare.la
+else
+WAVESHARE_MODULE =
+endif
+
 pluginexec_LTLIBRARIES = \
 	$(LINEAR_MODULE) \
 	$(DEJITTER_MODULE) \
@@ -152,7 +158,8 @@ pluginexec_LTLIBRARIES = \
 	$(INPUT_MODULE) \
 	$(GALAX_MODULE) \
 	$(TOUCHKIT_MODULE) \
-	$(CY8MRLN_PALMPRE_MODULE)
+	$(CY8MRLN_PALMPRE_MODULE) \
+	$(WAVESHARE_MODULE)
   
 variance_la_SOURCES	= variance.c
 variance_la_LDFLAGS	= -module $(LTVSN)
@@ -219,3 +226,7 @@ linear_h2200_la_LDFLAGS	= -module $(LTVSN)
 
 cy8mrln_palmpre_la_SOURCES = cy8mrln-palmpre.c
 cy8mrln_palmpre_la_LDFLAGS = -module $(LTVSN)
+
+waveshare_la_SOURCES	= waveshare-raw.c
+waveshare_la_LDFLAGS	= -module $(LTVSN)
+waveshare_la_LIBADD	= $(top_builddir)/src/libts.la
