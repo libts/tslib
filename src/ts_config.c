@@ -14,6 +14,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+#include <dlfcn.h>
 
 #include "tslib-private.h"
 
@@ -108,5 +112,33 @@ int ts_config(struct tsdev *ts)
 
 	fclose(f);
 
+	return ret;
+}
+
+int ts_reconfig(struct tsdev *ts)
+{
+	void *handle;
+	int ret;
+	struct tslib_module_info *info, *next;
+	int fd;
+
+	info = ts->list;
+	while(info) {
+		/* Save the "next" pointer now because info will be freed */
+		next = info->next;
+
+		handle = info->handle;
+		info->ops->fini(info);
+		if (handle)
+			dlclose(handle);
+
+		info = next;
+	}
+
+	fd = ts->fd;	/* save temp */
+	memset(ts, 0, sizeof(struct tsdev));
+	ts->fd = fd;
+
+	ret = ts_config(ts);
 	return ret;
 }
