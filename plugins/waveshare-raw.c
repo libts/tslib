@@ -24,72 +24,15 @@
 
 struct tslib_input {
   struct tslib_module_info module;
-  int vendor;
-  int product;
   int len;
 };
 
 static int waveshare_read(struct tslib_module_info *inf, struct ts_sample *samp, int nr)
 {
-  static bool reopen = true;
-  struct stat devstat;
-  struct hidraw_devinfo info;
-  char name_buf[512];
-  int cnt;
-  bool found = false;
   struct tslib_input *i = (struct tslib_input *) inf;
   struct tsdev *ts = inf->dev;
-  struct tsdev *ts_tmp;
   char *buf;
   int ret;
-
-  if (reopen == true) {
-    reopen = false;
-
-    if (i->vendor > 0 && i->product > 0) {
-      fprintf(stderr, "waveshare: searching for device using hidraw....\n");
-      for (cnt=0; cnt<HIDRAW_MAX_DEVICES; cnt++) {
-        snprintf(name_buf, sizeof(buf), "/dev/hidraw%d", cnt);
-        fprintf(stderr, "waveshare: device: %s\n", name_buf);
-        ret = stat(name_buf, &devstat);
-        if (ret < 0)
-          continue;
-
-        ts_tmp = ts_open(name_buf, 0);
-        if (!ts_tmp) {
-          continue;
-        }
-
-        fprintf(stderr, "  opened\n");
-        ret = ioctl(ts_tmp->fd, HIDIOCGRAWINFO, &info);
-        if (ret < 0) {
-          ts_close(ts_tmp);
-          continue;
-        }
-
-        info.vendor &= 0xFFFF;
-        info.product &= 0xFFFF;
-        fprintf(stderr, "  vid=%04X, pid=%04X\n", info.vendor, info.product);
-
-        if (i->vendor == info.vendor && i->product == info.product) {
-          if (ts->fd > 0)
-            close(ts->fd);
-
-          ts->fd = ts_tmp->fd;
-          free(ts_tmp);
-          found = true;
-          fprintf(stderr, "  correct device\n");
-          break;
-        }
-
-        ts_close(ts_tmp);
-      } /* for HIDRAW_MAX_DEVICES */
-
-      if (found == false) {
-        return -1;
-      }
-    } /* vid/pid set */
-  } /* reopen */
 
   buf = alloca(i->len * nr);
 
@@ -127,22 +70,6 @@ static const struct tslib_ops waveshare_ops =
   .read = waveshare_read,
 };
 
-static int parse_vid_pid(struct tslib_module_info *inf, char *str, void *data)
-{
-  struct tslib_input *i = (struct tslib_input *)inf;
-
-  if (strlen(str) < 9 || (int) data != 1)
-    return 0;   /* -1 */
-
-  str[4] = str[9] = '\0';
-  i->vendor = strtol(&str[0], NULL, 16);
-  i->product = strtol(&str[5], NULL, 16);
-//#ifdef DEBUG
-  fprintf(stderr, "waveshare vid:pid - %04X:%04X\n", i->vendor, i->product);
-//#endif /*DEBUG*/
-  return 0;
-}
-
 static int parse_len(struct tslib_module_info *inf, char *str, void *data)
 {
   struct tslib_input *i = (struct tslib_input *)inf;
@@ -168,7 +95,6 @@ static int parse_len(struct tslib_module_info *inf, char *str, void *data)
 
 static const struct tslib_vars raw_vars[] =
 {
-  { "vid_pid", (void *) 1, parse_vid_pid },
   { "len", (void *) 1, parse_len },
 };
 
@@ -185,8 +111,6 @@ TSAPI struct tslib_module_info *waveshare_mod_init(struct tsdev *dev, const char
     return NULL;
 
   i->module.ops = &waveshare_ops;
-  i->vendor = 0;
-  i->product = 0;
   i->len = 25;
 
   if (tslib_parse_vars(&i->module, raw_vars, NR_VARS, params)) {
