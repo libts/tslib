@@ -194,6 +194,7 @@ tatung_la_LDFLAGS	= -module $(LTVSN)
 
 dmc_la_SOURCES		= dmc-raw.c
 dmc_la_LDFLAGS		= -module $(LTVSN)
+dmc_la_LIBADD			= $(top_builddir)/src/libts.la
 
 input_la_SOURCES	= input-raw.c
 input_la_LDFLAGS	= -module $(LTVSN)
@@ -205,6 +206,7 @@ galax_la_LIBADD = $(top_builddir)/src/libts.la
 
 touchkit_la_SOURCES	= touchkit-raw.c
 touchkit_la_LDFLAGS	= -module $(LTVSN)
+touchkit_la_LIBADD	= $(top_builddir)/src/libts.la
 
 linear_h2200_la_SOURCES	= linear-h2200.c
 linear_h2200_la_LDFLAGS	= -module $(LTVSN)

@@ -76,6 +76,18 @@ static const struct {
 #ifdef TSLIB_STATIC_ST1232_MODULE
 	{ "st1232", st1232_mod_init },
 #endif
+#ifdef TSLIB_STATIC_CY8MRLN_PALMPRE_MODULE
+	{ "cy8mrln-palmpre", cy8mrln_palmpre_mod_init },
+#endif
+#ifdef TSLIB_STATIC_DMC_MODULE
+	{ "dmc", dmc_mod_init },
+#endif
+#ifdef TSLIB_STATIC_TOUCHKIT_MODULE
+	{ "touchkit", touchkit_mod_init },
+#endif
+#ifdef TSLIB_STATIC_WAVESHARE_MODULE
+	{ "waveshare", waveshare_mod_init },
+#endif
 };
 
 #define countof(arr) (sizeof(arr) / sizeof((arr)[0]))
