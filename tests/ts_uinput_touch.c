@@ -74,6 +74,7 @@ typedef struct {
   int a[7];
 } calibration;
 
+struct tsdev *ts = NULL;
 char *uinput_names[] = {"/dev/uinput", "/dev/input/uinput", "/dev/misc/uinput"};
 #define UINPUT_NAMES_NUM ((int) (sizeof(uinput_names)/sizeof(char *)))
 
@@ -99,7 +100,7 @@ static void daemonize() {
     die("failed to become a session leader while daemonising(errno=%d)", errno)
   }
 
-  signal(SIGHUP,SIG_IGN);
+  /* signal(SIGHUP,SIG_IGN); */
   pid=fork();
   if (pid == -1) {
     die("failed to fork while daemonizing (errno=%d)", errno)
@@ -129,7 +130,7 @@ static void daemonize() {
   }
 }
 
-static void sig(int sig)
+static void signal_end(int sig)
 {
   fflush(stderr);
   printf("signal %d caught\n", sig);
@@ -163,7 +164,15 @@ static int send_event(int fd, __u16 type, __u16 code, __s32 value)
 }
 
 static void signal_handler(int signal_number) {
-  if (signal_number == SIGUSR1)
+	if (signal_number == SIGHUP) {
+  	/* reload modules (and calibration data) */
+  	printf("signal handler %d, reconfig ts\n", signal_number);
+  	if (ts_reconfig(ts)) {
+  	  die("ts_reconfig")
+	  }
+	  
+	  return;
+	} else if (signal_number == SIGUSR1)
     calibration_mode = true;
   else if (signal_number == SIGUSR2)
     calibration_mode = false;
@@ -366,25 +375,25 @@ static void run_calibration(struct tsdev *ts)
 
 int get_resolution(void)
 {
-  static char *fbdevice;
+  char *env_str;
   int fd;
   static struct fb_var_screeninfo var;
 
-  fbdevice = getenv("TSLIB_FBDEVICE");
-  if (fbdevice == NULL)
-    return -1;
+  env_str = getenv("TSLIB_FBDEVICE");
+  if (env_str == NULL)
+    goto not_found;
 
-  printf("using fb device: %s\n", fbdevice);
-  fd = open(fbdevice, O_RDWR);
+  printf("using fb device: %s\n", env_str);
+  fd = open(env_str, O_RDWR);
   if (fd == -1) {
     perror("open fbdevice");
-    return -1;
+    goto not_found;
   }
 
   if (ioctl(fd, FBIOGET_VSCREENINFO, &var) < 0) {
     perror("ioctl FBIOGET_VSCREENINFO");
     close(fd);
-    return -1;
+    goto not_found;
   }
 
   xres = var.xres;
@@ -392,13 +401,28 @@ int get_resolution(void)
 
   close(fd);
   return 0;
+
+not_found:
+	env_str = getenv("TSLIB_RES_X");
+	if (env_str != NULL)
+	  xres = atoi(env_str);
+
+	env_str = getenv("TSLIB_RES_Y");
+	if (env_str != NULL)
+	  yres = atoi(env_str);
+	
+	if (xres == 0 || yres == 0) {
+		xres = yres = 0;
+		return -1;
+	}
+	
+	return 0;
 }
 
 int main(int argc, char *argv[])
 {
   int c;
   char *tsdevice;
-  struct tsdev *ts;
   int ret;
   struct ts_sample samp;
   int uinput_fd;
@@ -423,7 +447,7 @@ int main(int argc, char *argv[])
     }
   }
 
-  get_resolution();
+  ret = get_resolution();
 
   while ((c = getopt(argc, argv, "?dt:x:y:")) != -1) {
     switch (c) {
@@ -460,12 +484,11 @@ int main(int argc, char *argv[])
 
   printf("resolution: %dx%d\n", xres, yres);
 
-  signal(SIGSEGV, sig);
-  signal(SIGINT, sig);
-  signal(SIGTERM, sig);
+  signal(SIGSEGV, signal_end);
+  signal(SIGINT, signal_end);
+  signal(SIGTERM, signal_end);
 
   tsdevice = getenv("TSLIB_TSDEVICE");
-
   if (tsdevice == NULL) {
     errno = ENOENT;
     die("error: TSLIB_TSDEVICE")
@@ -482,7 +505,7 @@ int main(int argc, char *argv[])
     die("ts_config")
   }
 
-  system("modprobe uinput");
+  ret = system("modprobe uinput");
 
   for (c=0; c < UINPUT_NAMES_NUM; c++) {
     uinput_fd = open(uinput_names[c], O_WRONLY | O_NONBLOCK);
@@ -505,6 +528,7 @@ int main(int argc, char *argv[])
 
   memset (&sa, 0, sizeof (sa));
   sa.sa_handler = &signal_handler;
+  sigaction(SIGHUP, &sa, NULL);
   sigaction(SIGUSR1, &sa, NULL);
   sigaction(SIGUSR2, &sa, NULL);
 
@@ -572,7 +596,12 @@ int main(int argc, char *argv[])
       run_calibration(ts);
       calibration_mode = false;
       close(sock);
-      printf("calibration mode finished\n");
+      printf("calibration mode finished, reload plugins\n");
+
+      clearbuf(ts);
+      if (ts_reconfig(ts)) {
+        die("ts_reconfig")
+      }
     }
 
     ret = ts_read(ts, &samp, 1);
