@@ -17,7 +17,7 @@ include_HEADERS  = tslib.h
 lib_LTLIBRARIES  = libts.la
 libts_la_SOURCES = ts_attach.c ts_close.c ts_config.c ts_error.c \
 		   ts_fd.c ts_load_module.c ts_open.c ts_parse_vars.c \
-		   ts_read.c ts_read_raw.c ts_option.c
+		   ts_read.c ts_read_raw.c ts_option.c ts_reconfig.c
 
 if ENABLE_STATIC_LINEAR_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/linear.c
