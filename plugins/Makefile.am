@@ -194,7 +194,7 @@ tatung_la_LDFLAGS	= -module $(LTVSN)
 
 dmc_la_SOURCES		= dmc-raw.c
 dmc_la_LDFLAGS		= -module $(LTVSN)
-dmc_la_LIBADD			= $(top_builddir)/src/libts.la
+dmc_la_LIBADD		= $(top_builddir)/src/libts.la
 
 input_la_SOURCES	= input-raw.c
 input_la_LDFLAGS	= -module $(LTVSN)
