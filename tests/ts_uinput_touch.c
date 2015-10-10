@@ -9,9 +9,7 @@
  *
  *
  * Takes tslib events and send them to uinput as
- *   BTN_TOUCH, BTN_RIGHT, ABS_X, ABS_Y and ABS_PRESSURE values.
- * Short tap send button touch event, little longer tap send button right event
- *   and longer tap send only coordinates.
+ *   ABS_X, ABS_Y, BTN_TOUCH and ABS_PRESSURE values.
  * Tested only with Kodi application.
  *
  * code based on
@@ -79,8 +77,6 @@ char *uinput_names[] = {"/dev/uinput", "/dev/input/uinput", "/dev/misc/uinput"};
 #define UINPUT_NAMES_NUM ((int) (sizeof(uinput_names)/sizeof(char *)))
 
 __u32 xres = 0, yres = 0;
-struct timeval tv_short_tap = {0, 300};  /* sec, msec, short tap sends BTN_TOUCH */
-struct timeval tv_right_tap = {1, 0};    /* sec, msec, longer tap sends BTN_RIGHT */
 bool calibration_mode = false;
 int sock = -1;
 
@@ -164,15 +160,15 @@ static int send_event(int fd, __u16 type, __u16 code, __s32 value)
 }
 
 static void signal_handler(int signal_number) {
-	if (signal_number == SIGHUP) {
-  	/* reload modules (and calibration data) */
-  	printf("signal handler %d, reconfig ts\n", signal_number);
-  	if (ts_reconfig(ts)) {
-  	  die("ts_reconfig")
-	  }
-	  
-	  return;
-	} else if (signal_number == SIGUSR1)
+  if (signal_number == SIGHUP) {
+    /* reload modules (and calibration data) */
+    printf("signal handler %d, reconfig ts\n", signal_number);
+    if (ts_reconfig(ts)) {
+      die("ts_reconfig")
+    }
+
+    return;
+  } else if (signal_number == SIGUSR1)
     calibration_mode = true;
   else if (signal_number == SIGUSR2)
     calibration_mode = false;
@@ -403,20 +399,20 @@ int get_resolution(void)
   return 0;
 
 not_found:
-	env_str = getenv("TSLIB_RES_X");
-	if (env_str != NULL)
-	  xres = atoi(env_str);
+  env_str = getenv("TSLIB_RES_X");
+  if (env_str != NULL)
+    xres = atoi(env_str);
 
-	env_str = getenv("TSLIB_RES_Y");
-	if (env_str != NULL)
-	  yres = atoi(env_str);
-	
-	if (xres == 0 || yres == 0) {
-		xres = yres = 0;
-		return -1;
-	}
-	
-	return 0;
+  env_str = getenv("TSLIB_RES_Y");
+  if (env_str != NULL)
+    yres = atoi(env_str);
+
+  if (xres == 0 || yres == 0) {
+    xres = yres = 0;
+    return -1;
+  }
+
+  return 0;
 }
 
 int main(int argc, char *argv[])
@@ -428,42 +424,17 @@ int main(int argc, char *argv[])
   int uinput_fd;
   struct uinput_user_dev uidev;
   int daemon = 0;
-  struct timeval tv_last;
-  struct timeval tv_sub;
   char *touch_str;
   int val;
   struct sigaction sa;
   struct sockaddr_un remote_addr;
 
-  touch_str = getenv("TSLIB_TAP_TIME");
-  if (touch_str != NULL) {
-    val = atoi(touch_str);
-    if (val < 1000) {
-      tv_short_tap.tv_sec = 0;
-      tv_short_tap.tv_usec = val;
-    } else {
-      tv_short_tap.tv_sec = val / 1000;
-      tv_short_tap.tv_usec = val % 1000;
-    }
-  }
-
   ret = get_resolution();
 
-  while ((c = getopt(argc, argv, "?dt:x:y:")) != -1) {
+  while ((c = getopt(argc, argv, "?dx:y:")) != -1) {
     switch (c) {
       case 'd':
         daemon = 1;
-        break;
-      case 't':
-        val = atoi(optarg);
-        if (val < 1000) {
-          tv_short_tap.tv_sec = 0;
-          tv_short_tap.tv_usec = val;
-        } else {
-          tv_short_tap.tv_sec = val / 1000;
-          tv_short_tap.tv_usec = val % 1000;
-        }
-
         break;
       case 'x':
         xres = atoi(optarg);
@@ -516,16 +487,6 @@ int main(int argc, char *argv[])
   if (uinput_fd < 0)
     die("error: opening uinput")
 
-  if (tv_short_tap.tv_sec == 0)
-    printf("Short tap time: %li msec\n", tv_short_tap.tv_usec);
-  else
-    printf("Short tap time: %li.%li sec\n", tv_short_tap.tv_sec, tv_short_tap.tv_usec);
-
-  if (tv_right_tap.tv_sec == 0)
-    printf("Right tap time: %li msec\n", tv_right_tap.tv_usec);
-  else
-    printf("Right tap time: %li.%li sec\n", tv_right_tap.tv_sec, tv_right_tap.tv_usec);
-
   memset (&sa, 0, sizeof (sa));
   sa.sa_handler = &signal_handler;
   sigaction(SIGHUP, &sa, NULL);
@@ -540,7 +501,6 @@ int main(int argc, char *argv[])
   set_ioctl(uinput_fd, UI_SET_EVBIT,  EV_SYN);
   set_ioctl(uinput_fd, UI_SET_EVBIT,  EV_KEY);
   set_ioctl(uinput_fd, UI_SET_KEYBIT, BTN_TOUCH);
-  set_ioctl(uinput_fd, UI_SET_KEYBIT, BTN_RIGHT);
   set_ioctl(uinput_fd, UI_SET_EVBIT,  EV_ABS);
   set_ioctl(uinput_fd, UI_SET_ABSBIT, ABS_X);
   set_ioctl(uinput_fd, UI_SET_ABSBIT, ABS_Y);
@@ -564,12 +524,7 @@ int main(int argc, char *argv[])
   if (ioctl(uinput_fd, UI_DEV_CREATE) < 0)
     die("error: ioctl UI_DEV_CREATE")
 
-  tv_short_tap.tv_usec *= 1000;   /* msec to usec */
-  tv_right_tap.tv_usec *= 1000;   /* msec to usec */
-
-  timerclear(&tv_last);
   while (1) {
-    touch_str = "";
     if (calibration_mode) {
       usleep(250000);   /* app become ready */
       printf("calibration mode started\n");
@@ -614,44 +569,18 @@ int main(int argc, char *argv[])
     } else if (ret != 1)
       continue;
 
-    send_event(uinput_fd, EV_ABS, ABS_X, samp.x);
-    send_event(uinput_fd, EV_ABS, ABS_Y, samp.y);
-
-    if (samp.pressure > 0) {  /* touched */
+    if (samp.pressure > 0) {
+      touch_str = "touched";
+      send_event(uinput_fd, EV_ABS, ABS_X, samp.x);
+      send_event(uinput_fd, EV_ABS, ABS_Y, samp.y);
       send_event(uinput_fd, EV_ABS, ABS_PRESSURE, 255);
+      send_event(uinput_fd, EV_KEY, BTN_TOUCH, 1);
       send_event(uinput_fd, EV_SYN, 0, 0);
-
-      if (timerisset(&tv_last) == false) {
-        memcpy(&tv_last, &samp.tv, sizeof(struct timeval)); /* touched first time */
-        touch_str = "touched first";
-      }
-    } else {  /* released */
-      timersub(&samp.tv, &tv_last, &tv_sub);
-      if (timercmp(&tv_sub, &tv_short_tap, <=)) {
-        send_event(uinput_fd, EV_ABS, ABS_PRESSURE, 255);
-        send_event(uinput_fd, EV_KEY, BTN_TOUCH, 1);
-        send_event(uinput_fd, EV_SYN, 0, 0);
-        send_event(uinput_fd, EV_ABS, ABS_PRESSURE, 0);
-        send_event(uinput_fd, EV_KEY, BTN_TOUCH, 0);
-        send_event(uinput_fd, EV_SYN, 0, 0);
-
-        touch_str = "released and send tap";
-      } else if (timercmp(&tv_sub, &tv_right_tap, <=)) {
-        send_event(uinput_fd, EV_ABS, ABS_PRESSURE, 255);
-        send_event(uinput_fd, EV_KEY, BTN_RIGHT, 1);
-        send_event(uinput_fd, EV_SYN, 0, 0);
-        send_event(uinput_fd, EV_ABS, ABS_PRESSURE, 0);
-        send_event(uinput_fd, EV_KEY, BTN_RIGHT, 0);
-        send_event(uinput_fd, EV_SYN, 0, 0);
-
-        touch_str = "released and send right";
-      } else {
-        send_event(uinput_fd, EV_ABS, ABS_PRESSURE, 0);
-        send_event(uinput_fd, EV_SYN, 0, 0);
-        touch_str = "released";
-      }
-
-      timerclear(&tv_last);
+    } else {
+      touch_str = "released";
+      send_event(uinput_fd, EV_ABS, ABS_PRESSURE, 0);
+      send_event(uinput_fd, EV_KEY, BTN_TOUCH, 0);
+      send_event(uinput_fd, EV_SYN, 0, 0);
     }
 
     printf("%ld.%06ld: %6d %6d %6d  %s\n", samp.tv.tv_sec, samp.tv.tv_usec,
