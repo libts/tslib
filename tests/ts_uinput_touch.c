@@ -415,6 +415,22 @@ not_found:
   return 0;
 }
 
+int get_touch_home_time(void)
+{
+  char *env_str;
+  int touch_home_time = 0;
+
+  env_str = getenv("TSLIB_TOUCH_HOME_TIME");
+  if (env_str != NULL) {
+    touch_home_time = atoi(env_str);
+    if (touch_home_time < 0 || touch_home_time > 5000)
+      touch_home_time = 100;  /*  100 msec */
+  }
+
+  touch_home_time *= 1000;  /* msec to usec */
+  return touch_home_time;
+}
+
 int main(int argc, char *argv[])
 {
   int c;
@@ -424,11 +440,25 @@ int main(int argc, char *argv[])
   int uinput_fd;
   struct uinput_user_dev uidev;
   int daemon = 0;
+  int touch_home_time = 0;
   char *touch_str;
   int val;
   struct sigaction sa;
   struct sockaddr_un remote_addr;
 
+  printf("\nts_uinput_touch environment variables:\n");
+  printf("       TSLIB_TSDEVICE: '%s'\n", getenv("TSLIB_TSDEVICE"));
+  printf("      TSLIB_PLUGINDIR: '%s'\n", getenv("TSLIB_PLUGINDIR"));
+  printf("  TSLIB_CONSOLEDEVICE: '%s'\n", getenv("TSLIB_CONSOLEDEVICE"));
+  printf("       TSLIB_FBDEVICE: '%s'\n", getenv("TSLIB_FBDEVICE"));
+  printf("      TSLIB_CALIBFILE: '%s'\n", getenv("TSLIB_CALIBFILE"));
+  printf("       TSLIB_CONFFILE: '%s'\n", getenv("TSLIB_CONFFILE"));
+  printf("          TSLIB_RES_X: '%s'\n", getenv("TSLIB_RES_X"));
+  printf("          TSLIB_RES_Y: '%s'\n", getenv("TSLIB_RES_Y"));
+  printf("TSLIB_TOUCH_HOME_TIME: '%s'\n", getenv("TSLIB_TOUCH_HOME_TIME"));
+  printf("\n");
+
+  touch_home_time = get_touch_home_time();
   ret = get_resolution();
 
   while ((c = getopt(argc, argv, "?dx:y:")) != -1) {
@@ -581,6 +611,13 @@ int main(int argc, char *argv[])
       send_event(uinput_fd, EV_ABS, ABS_PRESSURE, 0);
       send_event(uinput_fd, EV_KEY, BTN_TOUCH, 0);
       send_event(uinput_fd, EV_SYN, 0, 0);
+
+      if (touch_home_time > 0) {
+        usleep(touch_home_time);   /* short delay for kodi */
+        send_event(uinput_fd, EV_ABS, ABS_X, -50);  /* hide cursor */
+        send_event(uinput_fd, EV_ABS, ABS_Y, -50);
+        send_event(uinput_fd, EV_SYN, 0, 0);
+      }
     }
 
     printf("%ld.%06ld: %6d %6d %6d  %s\n", samp.tv.tv_sec, samp.tv.tv_usec,
