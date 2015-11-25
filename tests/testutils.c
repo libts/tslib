@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <errno.h>
 #include <sys/time.h>
 #include "tslib.h"
 #include "fbutils.h"
@@ -37,6 +38,9 @@ void getxy(struct tsdev *ts, int *x, int *y)
 
 	do {
 		if (ts_read_raw(ts, &samp[0], 1) < 0) {
+			if (errno == EINTR)
+				return;
+
 			perror("ts_read");
 			close_framebuffer ();
 			exit(1);
@@ -50,6 +54,9 @@ void getxy(struct tsdev *ts, int *x, int *y)
 		if (index < MAX_SAMPLES-1)
 			index++;
 		if (ts_read_raw(ts, &samp[index], 1) < 0) {
+			if (errno == EINTR)
+				return;
+
 			perror("ts_read");
 			close_framebuffer ();
 			exit(1);

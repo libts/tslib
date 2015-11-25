@@ -57,6 +57,11 @@ enum ts_param {
 TSAPI int ts_close(struct tsdev *);
 
 /*
+ * Reloads all modules - useful to reload calibration data.
+ */
+TSAPI int ts_reconfig(struct tsdev *);
+
+/*
  * Configure the touchscreen device.
  */
 TSAPI int ts_config(struct tsdev *);

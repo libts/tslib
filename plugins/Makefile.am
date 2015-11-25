@@ -121,6 +121,18 @@ else
 CY8MRLN_PALMPRE_MODULE =
 endif
 
+if ENABLE_ST1232_MODULE
+ST1232_MODULE = st1232.la
+else
+ST1232_MODULE =
+endif
+
+if ENABLE_WAVESHARE_MODULE
+WAVESHARE_MODULE = waveshare.la
+else
+WAVESHARE_MODULE =
+endif
+
 pluginexec_LTLIBRARIES = \
 	$(LINEAR_MODULE) \
 	$(DEJITTER_MODULE) \
@@ -138,7 +150,9 @@ pluginexec_LTLIBRARIES = \
 	$(INPUT_MODULE) \
 	$(GALAX_MODULE) \
 	$(TOUCHKIT_MODULE) \
-	$(CY8MRLN_PALMPRE_MODULE)
+	$(CY8MRLN_PALMPRE_MODULE) \
+	$(ST1232_MODULE) \
+	$(WAVESHARE_MODULE)
   
 variance_la_SOURCES	= variance.c
 variance_la_LDFLAGS	= -module $(LTVSN)
@@ -180,6 +194,7 @@ tatung_la_LDFLAGS	= -module $(LTVSN)
 
 dmc_la_SOURCES		= dmc-raw.c
 dmc_la_LDFLAGS		= -module $(LTVSN)
+dmc_la_LIBADD		= $(top_builddir)/src/libts.la
 
 input_la_SOURCES	= input-raw.c
 input_la_LDFLAGS	= -module $(LTVSN)
@@ -191,9 +206,18 @@ galax_la_LIBADD = $(top_builddir)/src/libts.la
 
 touchkit_la_SOURCES	= touchkit-raw.c
 touchkit_la_LDFLAGS	= -module $(LTVSN)
+touchkit_la_LIBADD	= $(top_builddir)/src/libts.la
 
 linear_h2200_la_SOURCES	= linear-h2200.c
 linear_h2200_la_LDFLAGS	= -module $(LTVSN)
 
 cy8mrln_palmpre_la_SOURCES = cy8mrln-palmpre.c
 cy8mrln_palmpre_la_LDFLAGS = -module $(LTVSN)
+
+st1232_la_SOURCES = st1232-raw.c
+st1232_la_LDFLAGS = -module $(LTVSN)
+st1232_la_LIBADD = $(top_builddir)/src/libts.la
+
+waveshare_la_SOURCES = waveshare-raw.c
+waveshare_la_LDFLAGS = -module $(LTVSN)
+waveshare_la_LIBADD = $(top_builddir)/src/libts.la

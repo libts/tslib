@@ -123,7 +123,7 @@ static const struct tslib_ops dmc_ops =
 	.read	= dmc_read,
 };
 
-TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *dmc_mod_init(struct tsdev *dev, const char *params)
 {
 	struct tslib_dmc *m;
 
@@ -137,3 +137,7 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
 	m->module.ops = &dmc_ops;
 	return (struct tslib_module_info*)m;
 }
+
+#ifndef TSLIB_STATIC_DMC_MODULE
+	TSLIB_MODULE_INIT(dmc_mod_init);
+#endif

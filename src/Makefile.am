@@ -17,7 +17,7 @@ include_HEADERS  = tslib.h
 lib_LTLIBRARIES  = libts.la
 libts_la_SOURCES = ts_attach.c ts_close.c ts_config.c ts_error.c \
 		   ts_fd.c ts_load_module.c ts_open.c ts_parse_vars.c \
-		   ts_read.c ts_read_raw.c ts_option.c
+		   ts_read.c ts_read_raw.c ts_option.c ts_reconfig.c
 
 if ENABLE_STATIC_LINEAR_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/linear.c
@@ -69,6 +69,26 @@ endif
 
 if ENABLE_STATIC_INPUT_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/input-raw.c
+endif
+
+if ENABLE_STATIC_DMC_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/dmc-raw.c
+endif
+
+if ENABLE_STATIC_GALAX_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/galax-raw.c
+endif
+
+if ENABLE_STATIC_TOUCHKIT_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/touchkit-raw.c
+endif
+
+if ENABLE_STATIC_ST1232_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/st1232-raw.c
+endif
+
+if ENABLE_STATIC_WAVESHARE_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/waveshare-raw.c
 endif
 
 libts_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
