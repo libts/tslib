@@ -69,12 +69,10 @@ static int variance_read(struct tslib_module_info *info, struct ts_sample *samp,
 			 * get the pen up notification too late. This 
 			 * will happen if info->next->ops->read() blocks.
 			 */
-			if (var->flags & VAR_PENDOWN) {
-				var->flags |= VAR_SUBMITNOISE;
-				var->noise = cur;
-			}
+            /* Keep var->last updated with the most recent value on pen release */
+            var->last = cur;
 			/* Reset the state machine on pen up events. */
-			var->flags &= ~(VAR_PENDOWN | VAR_NOISEVALID | VAR_LASTVALID);
+			var->flags &= ~(VAR_PENDOWN | VAR_NOISEVALID | VAR_LASTVALID | VAR_SUBMITNOISE);
 			goto acceptsample;
 		} else
 			var->flags |= VAR_PENDOWN;
