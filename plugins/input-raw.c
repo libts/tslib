@@ -28,7 +28,11 @@
 #include <sys/time.h>
 #include <sys/types.h>
 
+#ifdef __FreeBSD__
+#include <dev/evdev/input.h>
+#else
 #include <linux/input.h>
+#endif
 #ifndef EV_SYN /* 2.4 kernel headers */
 # define EV_SYN 0x00
 #endif
