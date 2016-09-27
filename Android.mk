@@ -161,7 +161,7 @@ include $(BUILD_SHARED_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES :=  tests/testutils.c \
-        tests/fbutils.c \
+        tests/fbutils-linux.c \
         tests/font_8x8.c \
         tests/font_8x16.c \
         tests/ts_calibrate.c
@@ -182,7 +182,7 @@ include $(BUILD_EXECUTABLE)
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := tests/testutils.c \
-        tests/fbutils.c \
+        tests/fbutils-linux.c \
         tests/font_8x8.c \
         tests/font_8x16.c \
         tests/ts_test_mt.c
