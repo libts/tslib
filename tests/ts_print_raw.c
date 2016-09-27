@@ -16,6 +16,7 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/time.h>
+#include <inttypes.h>
 
 #include "tslib.h"
 
@@ -56,7 +57,8 @@ int main()
 		if (ret != 1)
 			continue;
 
-		printf("%ld.%06ld: %6d %6d %6d\n", samp.tv.tv_sec, samp.tv.tv_usec, samp.x, samp.y, samp.pressure);
+		printf("%jd.%06jd: %6d %6d %6d\n", (intmax_t)samp.tv.tv_sec,
+			(intmax_t)samp.tv.tv_usec, samp.x, samp.y, samp.pressure);
 
 	}
 }

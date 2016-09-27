@@ -19,6 +19,7 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/time.h>
+#include <inttypes.h>
 
 #include "tslib.h"
 #include "fbutils.h"
@@ -199,8 +200,8 @@ int main()
 					quit_pressed = 1;
 				}
 
-		printf("%ld.%06ld: %6d %6d %6d\n", samp.tv.tv_sec, samp.tv.tv_usec,
-			samp.x, samp.y, samp.pressure);
+		printf("%jd.%06jd: %6d %6d %6d\n", (intmax_t)samp.tv.tv_sec,
+			(intmax_t)samp.tv.tv_usec, samp.x, samp.y, samp.pressure);
 
 		if (samp.pressure > 0) {
 			if (mode == 0x80000001)
