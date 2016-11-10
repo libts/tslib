@@ -18,11 +18,12 @@ static int ucb1x00_read(struct tslib_module_info *inf, struct ts_sample *samp, i
 	struct tsdev *ts = inf->dev;
 	struct ucb1x00_ts_event *ucb1x00_evt;
 	int ret;
-	int total = 0;
+	int nr_read;
+
 	ucb1x00_evt = alloca(sizeof(*ucb1x00_evt) * nr);
 	ret = read(ts->fd, ucb1x00_evt, sizeof(*ucb1x00_evt) * nr);
 	if(ret > 0) {
-		int nr = ret / sizeof(*ucb1x00_evt);
+		nr_read = ret / sizeof(*ucb1x00_evt);
 		while(ret >= (int)sizeof(*ucb1x00_evt)) {
 			samp->x = ucb1x00_evt->x;
 			samp->y = ucb1x00_evt->y;
@@ -40,7 +41,7 @@ static int ucb1x00_read(struct tslib_module_info *inf, struct ts_sample *samp, i
 		return -1;
 	}
 
-	ret = nr;
+	ret = nr_read;
 	return ret;
 }
 

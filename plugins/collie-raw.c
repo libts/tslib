@@ -17,11 +17,12 @@ static int collie_read(struct tslib_module_info *inf, struct ts_sample *samp, in
 	struct tsdev *ts = inf->dev;
 	struct collie_ts_event *collie_evt;
 	int ret;
-	int total = 0;
+	int nr_read;
+
 	collie_evt = alloca(sizeof(*collie_evt) * nr);
 	ret = read(ts->fd, collie_evt, sizeof(*collie_evt) * nr);
 	if(ret > 0) {
-		int nr = ret / sizeof(*collie_evt);
+		nr_read = ret / sizeof(*collie_evt);
 		while(ret >= (int)sizeof(*collie_evt)) {
 			samp->x = collie_evt->x;
 			samp->y = collie_evt->y;
@@ -39,7 +40,7 @@ static int collie_read(struct tslib_module_info *inf, struct ts_sample *samp, in
 		return -1;
 	}
 
-	ret = nr;
+	ret = nr_read;
 	return ret;
 }
 

@@ -18,11 +18,12 @@ static int arctic2_read(struct tslib_module_info *inf, struct ts_sample *samp, i
 	struct tsdev *ts = inf->dev;
 	struct arctic2_ts_event *arctic2_evt;
 	int ret;
-	int total = 0;
+	int nr_read;
+
 	arctic2_evt = alloca(sizeof(*arctic2_evt) * nr);
 	ret = read(ts->fd, arctic2_evt, sizeof(*arctic2_evt) * nr);
 	if(ret > 0) {
-		int nr = ret / sizeof(*arctic2_evt);
+		nr_read = ret / sizeof(*arctic2_evt);
 		while(ret >= (int)sizeof(*arctic2_evt)) {
 			samp->x = (short)arctic2_evt->x;
 			samp->y = (short)arctic2_evt->y;
@@ -39,7 +40,7 @@ static int arctic2_read(struct tslib_module_info *inf, struct ts_sample *samp, i
 		return -1;
 	}
 
-	ret = nr;
+	ret = nr_read;
 	return ret;
 }
 

@@ -17,11 +17,12 @@ static int h3600_read(struct tslib_module_info *inf, struct ts_sample *samp, int
 	struct tsdev *ts = inf->dev;
 	struct h3600_ts_event *h3600_evt;
 	int ret;
-	int total = 0;
+	int nr_read;
+
 	h3600_evt = alloca(sizeof(*h3600_evt) * nr);
 	ret = read(ts->fd, h3600_evt, sizeof(*h3600_evt) * nr);
 	if(ret > 0) {
-		int nr = ret / sizeof(*h3600_evt);
+		nr_read = ret / sizeof(*h3600_evt);
 		while(ret >= (int)sizeof(*h3600_evt)) {
 			samp->x = h3600_evt->x;
 			samp->y = h3600_evt->y;
@@ -38,7 +39,7 @@ static int h3600_read(struct tslib_module_info *inf, struct ts_sample *samp, int
 		return -1;
 	}
 
-	ret = nr;
+	ret = nr_read;
 	return ret;
 }
 

@@ -17,11 +17,12 @@ static int mk712_read(struct tslib_module_info *inf, struct ts_sample *samp, int
 	struct tsdev *ts = inf->dev;
 	struct mk712_ts_event *mk712_evt;
 	int ret;
-	int total = 0;
+	int nr_read;
+
 	mk712_evt = alloca(sizeof(*mk712_evt) * nr);
 	ret = read(ts->fd, mk712_evt, sizeof(*mk712_evt) * nr);
 	if(ret > 0) {
-		int nr = ret / sizeof(*mk712_evt);
+		nr_read = ret / sizeof(*mk712_evt);
 		while(ret >= (int)sizeof(*mk712_evt)) {
 			samp->x = (short)mk712_evt->x;
 			samp->y = (short)mk712_evt->y;
@@ -41,7 +42,7 @@ static int mk712_read(struct tslib_module_info *inf, struct ts_sample *samp, int
 		return -1;
 	}
 
-	ret = nr;
+	ret = nr_read;
 	return ret;
 }
 
