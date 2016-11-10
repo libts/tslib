@@ -57,9 +57,11 @@ struct tslib_input {
 	int	current_y;
 	int	current_p;
 
-	int	sane_fd;
 	int	using_syn;
 	int	grab_events;
+
+	int	last_fd;
+	short	no_pressure;
 };
 
 #define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
@@ -107,15 +109,14 @@ static int check_fd(struct tslib_input *i)
 	we set it to constant 255. It's still controlled by BTN_TOUCH/BTN_LEFT -
 	when not touched, the pressure is forced to 0. */
 
-	if (!(absbit[BIT_WORD(ABS_PRESSURE)] & BIT_MASK(ABS_PRESSURE))) {
-		i->current_p = 255;
+	if (!(absbit[BIT_WORD(ABS_PRESSURE)] & BIT_MASK(ABS_PRESSURE)))
+		i->no_pressure = 1;
 
-		if ((ioctl(ts->fd, EVIOCGBIT(EV_KEY, sizeof(keybit)), keybit) < 0) ||
-			!(keybit[BIT_WORD(BTN_TOUCH)] & BIT_MASK(BTN_TOUCH) ||
-			  keybit[BIT_WORD(BTN_LEFT)] & BIT_MASK(BTN_LEFT))) {
-			fprintf(stderr, "tslib: Selected device is not a touchscreen (must support BTN_TOUCH or BTN_LEFT events)\n");
-			return -1;
-		}
+	if ((ioctl(ts->fd, EVIOCGBIT(EV_KEY, sizeof(keybit)), keybit) < 0) ||
+		!(keybit[BIT_WORD(BTN_TOUCH)] & BIT_MASK(BTN_TOUCH) ||
+		  keybit[BIT_WORD(BTN_LEFT)] & BIT_MASK(BTN_LEFT))) {
+		fprintf(stderr, "tslib: Selected device is not a touchscreen (must support BTN_TOUCH or BTN_LEFT events)\n");
+		return -1;
 	}
 
 	if (evbit[BIT_WORD(EV_SYN)] & BIT_MASK(EV_SYN))
@@ -129,7 +130,7 @@ static int check_fd(struct tslib_input *i)
 		i->grab_events = GRAB_EVENTS_ACTIVE;
 	}
 
-	return 0;
+	return ts->fd;
 }
 
 static int ts_input_read(struct tslib_module_info *inf,
@@ -142,11 +143,14 @@ static int ts_input_read(struct tslib_module_info *inf,
 	int total = 0;
 	int pen_up = 0;
 
-	if (i->sane_fd == 0)
-		i->sane_fd = check_fd(i);
+	if (ts->fd != i->last_fd)
+		i->last_fd = check_fd(i);
 
-	if (i->sane_fd == -1)
+	if (i->last_fd == -1)
 		return 0;
+
+	if (i->no_pressure)
+		i->current_p = 255;
 
 	if (i->using_syn) {
 		while (total < nr) {
@@ -357,9 +361,10 @@ TSAPI struct tslib_module_info *input_mod_init(struct tsdev *dev, const char *pa
 	i->current_x = 0;
 	i->current_y = 0;
 	i->current_p = 0;
-	i->sane_fd = 0;
 	i->using_syn = 0;
 	i->grab_events = 0;
+	i->no_pressure = 0;
+	i->last_fd = -2;
 
 	if (tslib_parse_vars(&i->module, raw_vars, NR_VARS, params)) {
 		free(i);
