@@ -11,7 +11,7 @@
 AM_CFLAGS               = -DTS_POINTERCAL=\"@TS_POINTERCAL@\" $(DEBUGFLAGS)
 INCLUDES		= -I$(top_srcdir)/src
 
-bin_PROGRAMS		= ts_test ts_calibrate ts_print ts_print_raw ts_harvest
+bin_PROGRAMS		= ts_test ts_calibrate ts_print ts_print_raw ts_harvest ts_finddev
 
 ts_test_SOURCES		= ts_test.c fbutils.c fbutils.h font_8x8.c font_8x16.c font.h
 ts_test_LDADD		= $(top_builddir)/src/libts.la
@@ -26,4 +26,7 @@ ts_calibrate_SOURCES	= ts_calibrate.c fbutils.c fbutils.h testutils.c testutils.
 ts_calibrate_LDADD	= $(top_builddir)/src/libts.la
 
 ts_harvest_SOURCES	= ts_harvest.c fbutils.c fbutils.h testutils.c testutils.h font_8x8.c font_8x16.c font.h
-ts_harvest_LDADD		= $(top_builddir)/src/libts.la
+ts_harvest_LDADD	= $(top_builddir)/src/libts.la
+
+ts_finddev_SOURCES      = ts_finddev.c
+ts_finddev_LDADD        = $(top_builddir)/src/libts.la

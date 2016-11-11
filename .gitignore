@@ -30,4 +30,5 @@ tests/ts_harvest
 tests/ts_print
 tests/ts_print_raw
 tests/ts_test
+tests/ts_finddev
 
