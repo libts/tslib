@@ -42,6 +42,18 @@ else
 PTHRES_MODULE =
 endif
 
+if ENABLE_DEBOUNCE_MODULE
+DEBOUNCE_MODULE = debounce.la
+else
+DEBOUNCE_MODULE =
+endif
+
+if ENABLE_SKIP_MODULE
+SKIP_MODULE = skip.la
+else
+SKIP_MODULE =
+endif
+
 if ENABLE_UCB1X00_MODULE
 UCB1X00_MODULE = ucb1x00.la
 else
@@ -126,6 +138,8 @@ pluginexec_LTLIBRARIES = \
 	$(DEJITTER_MODULE) \
 	$(VARIANCE_MODULE) \
 	$(PTHRES_MODULE) \
+	$(DEBOUNCE_MODULE) \
+	$(SKIP_MODULE) \
 	$(UCB1X00_MODULE) \
 	$(CORGI_MODULE) \
 	$(COLLIE_MODULE) \
@@ -155,6 +169,14 @@ linear_la_LIBADD	= $(top_builddir)/src/libts.la
 pthres_la_SOURCES	= pthres.c
 pthres_la_LDFLAGS	= -module $(LTVSN)
 pthres_la_LIBADD	= $(top_builddir)/src/libts.la
+
+debounce_la_SOURCES	= debounce.c
+debounce_la_LDFLAGS	= -module $(LTVSN)
+debounce_la_LIBADD	= $(top_builddir)/src/libts.la
+
+skip_la_SOURCES		= skip.c
+skip_la_LDFLAGS		= -module $(LTVSN)
+skip_la_LIBADD		= $(top_builddir)/src/libts.la
 
 # hw access
 corgi_la_SOURCES	= corgi-raw.c

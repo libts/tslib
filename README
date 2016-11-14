@@ -130,3 +130,52 @@ Parameters:
   xyswap
 	interchange the X and Y co-ordinates -- no longer used or needed
 	if the new linear calibration utility ts_calibrate is used.
+
+  pressure_offset
+	offset applied to the pressure value
+  pressure_mul
+	factor to multiply the pressure value with
+  pressure_div
+	value to divide the pressure value by
+
+
+module: pthres
+--------------
+
+Description:
+  Pressure threshold filter. Given a release is always pressure 0 and a
+  press is always >= 1, this discards samples below / above the specified
+  pressure threshold.
+
+Parameters:
+  pmin
+	Minimum pressure value for a sample to be valid.
+  pmax
+	Maximum pressure value for a sample to be valid.
+
+
+module: debounce
+----------------
+
+Description:
+  Simple debounce mechanism that drops input events for the specified time
+  after a touch gesture stopped.
+
+Parameters:
+  drop_threshold
+	drop events up to this number of milliseconds after the last
+	release event.
+
+
+module: skip
+------------
+
+Description:
+  Skip nhead samples after press and ntail samples before release. This
+  should help if for the device the first or last samples are unreliable.
+
+Parameters:
+  nhead
+	Number of events to drop after pressure
+  ntail
+	Number of events to drop before release
