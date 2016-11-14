@@ -17,7 +17,7 @@ static int tatung_read(struct tslib_module_info *inf, struct ts_sample *samp, in
 	struct tsdev *ts = inf->dev;
 	struct tatung_ts_event *tatung_evt;
 	int ret;
-	int total = 0;
+
 	tatung_evt = alloca(sizeof(*tatung_evt) * nr);
 	ret = read(ts->fd, tatung_evt, sizeof(*tatung_evt) * nr);
 	if(ret > 0) {
