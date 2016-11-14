@@ -15,7 +15,8 @@
 
 #include "tslib.h"
 
-void usage( int argc, char** argv ) {
+static void usage(char** argv)
+{
 	printf( "Usage: %s device_name wait_for_sec\n", argv[0] );
 	printf( "\tdevice_name  - tdevice to probe, example /dev/input/event0\n" );
 	printf( "\twait_for_sec - wait seconds for touch event, if 0 - dont wait!\n" );
@@ -27,12 +28,13 @@ void usage( int argc, char** argv ) {
 	exit(-1);
 }
 
-void alarm_handler( int sig ) {
-	// time is expired!
+static void alarm_handler()
+{
+	/* time is expired */
 	exit(0);
 }
 
-int main( int argc, char** argv )
+int main(int argc, char** argv)
 {
 	struct tsdev *ts;
 	struct ts_sample samp;
@@ -41,12 +43,12 @@ int main( int argc, char** argv )
 	int ret;
 
 	if (argc != 3)
-		usage( argc, argv );
+		usage(argv);
 
 	tsdevice = argv[1];
 	waitsec = atoi( argv[2] );
 	if (waitsec < 0)
-		usage( argc, argv );
+		usage(argv);
 
 	ts = ts_open( tsdevice, 0 );
 	if (!ts)
