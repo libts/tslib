@@ -95,7 +95,9 @@ static const struct tslib_ops linear_ops =
 	.fini	= linear_fini,
 };
 
-static int linear_xyswap(struct tslib_module_info *inf, char *str, void *data)
+static int linear_xyswap(struct tslib_module_info *inf,
+			 __attribute__ ((unused)) char *str,
+			 __attribute__ ((unused)) void *data)
 {
 	struct tslib_linear *lin = (struct tslib_linear *)inf;
 
@@ -103,7 +105,8 @@ static int linear_xyswap(struct tslib_module_info *inf, char *str, void *data)
 	return 0;
 }
 
-static int linear_p_offset(struct tslib_module_info *inf, char *str, void *data)
+static int linear_p_offset(struct tslib_module_info *inf, char *str,
+			   __attribute__ ((unused)) void *data)
 {
 	struct tslib_linear *lin = (struct tslib_linear *)inf;
 
@@ -116,7 +119,8 @@ static int linear_p_offset(struct tslib_module_info *inf, char *str, void *data)
 	return 0;
 }
 
-static int linear_p_mult(struct tslib_module_info *inf, char *str, void *data)
+static int linear_p_mult(struct tslib_module_info *inf, char *str,
+			 __attribute__ ((unused)) void *data)
 {
 	struct tslib_linear *lin = (struct tslib_linear *)inf;
 	unsigned long mult = strtoul(str, NULL, 0);
@@ -128,7 +132,8 @@ static int linear_p_mult(struct tslib_module_info *inf, char *str, void *data)
 	return 0;
 }
 
-static int linear_p_div(struct tslib_module_info *inf, char *str, void *data)
+static int linear_p_div(struct tslib_module_info *inf, char *str,
+			__attribute__ ((unused)) void *data)
 {
 	struct tslib_linear *lin = (struct tslib_linear *)inf;
 	unsigned long div = strtoul(str, NULL, 0);
@@ -150,7 +155,8 @@ static const struct tslib_vars linear_vars[] =
 
 #define NR_VARS (sizeof(linear_vars) / sizeof(linear_vars[0]))
 
-TSAPI struct tslib_module_info *linear_mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *linear_mod_init(__attribute__ ((unused)) struct tsdev *dev,
+						const char *params)
 {
 
 	struct tslib_linear *lin;

@@ -296,7 +296,8 @@ static const struct tslib_vars raw_vars[] =
 #define NR_VARS (sizeof(raw_vars) / sizeof(raw_vars[0]))
 
 
-TSAPI struct tslib_module_info *galax_mod_init (struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *galax_mod_init (__attribute__ ((unused)) struct tsdev *dev,
+						const char *params)
 {
  	struct tslib_galax *i;
 

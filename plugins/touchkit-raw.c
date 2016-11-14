@@ -57,7 +57,7 @@ static int touchkit_init(int dev)
 }
 
 static int touchkit_read(struct tslib_module_info *inf, struct ts_sample *samp,
-			 int nr)
+			 __attribute__ ((unused)) int nr)
 {
 	static int initDone = 0;
 	static unsigned char buffer[BUFFER_SIZE];	/* enough space for 2 "normal" packets */
@@ -144,7 +144,8 @@ static const struct tslib_ops touchkit_ops = {
 	.read = touchkit_read,
 };
 
-TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *mod_init(__attribute__ ((unused)) struct tsdev *dev,
+					 __attribute__ ((unused)) const char *params)
 {
 	struct tslib_module_info *m;
 
