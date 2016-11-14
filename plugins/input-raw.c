@@ -18,6 +18,8 @@
 #include <errno.h>
 #include <stdio.h>
 #include <limits.h>
+#include <string.h>
+#include <stdint.h>
 
 #include <stdlib.h>
 #ifdef HAVE_UNISTD_H
@@ -331,7 +333,7 @@ static int parse_raw_grab(struct tslib_module_info *inf, char *str, void *data)
 		return -1;
 
 	errno = err;
-	switch ((int)data) {
+	switch ((int)(intptr_t)data) {
 	case 1:
 		if (v)
 			i->grab_events = GRAB_EVENTS_WANTED;

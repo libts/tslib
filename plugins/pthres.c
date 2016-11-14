@@ -14,11 +14,10 @@
  */
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <errno.h>
 #include <limits.h>
+#include <stdint.h>
 
 #include "config.h"
 #include "tslib.h"
@@ -108,7 +107,7 @@ static int threshold_vars(struct tslib_module_info *inf, char *str, void *data)
 		return -1;
 
 	errno = err;
-	switch ((int)data) {
+	switch ((int)(intptr_t)data) {
 	case 0:
 		p->pmin = v;
 		break;

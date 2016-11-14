@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include <stdint.h>
 
 #include "config.h"
 #include "tslib.h"
@@ -143,7 +144,7 @@ static int variance_limit(struct tslib_module_info *inf, char *str, void *data)
 		return -1;
 
 	errno = err;
-	switch ((int)data) {
+	switch ((int)(intptr_t)data) {
 	case 1:
 		var->delta = v;
 		break;
