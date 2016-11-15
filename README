@@ -83,7 +83,8 @@ Description:
   than some threshold).
 
   This is a 'greedy' filter, e.g. it gives less samples on output than
-  receives on input.
+  receives on input. It can cause problems on capacitive touchscreens that
+  already apply such a filter.
 
 Parameters:
   delta
