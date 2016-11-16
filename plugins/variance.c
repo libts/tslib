@@ -83,7 +83,7 @@ static int variance_read(struct tslib_module_info *info, struct ts_sample *samp,
 		if (!(var->flags & VAR_LASTVALID)) {
 			var->last = cur;
 			var->flags |= VAR_LASTVALID;
-			continue;
+			goto acceptsample;
 		}
 
 		if (var->flags & VAR_PENDOWN) {
