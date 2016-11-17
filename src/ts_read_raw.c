@@ -20,9 +20,18 @@
 
 int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 {
-	int result = ts->list_raw->ops->read(ts->list_raw, samp, nr);
 #ifdef DEBUG
-	fprintf(stderr,"TS_READ_RAW----> x = %d, y = %d, pressure = %d\n", samp->x, samp->y, samp->pressure);
+	int i;
+#endif
+	int result = ts->list_raw->ops->read(ts->list_raw, samp, nr);
+
+#ifdef DEBUG
+	for (i = 0; i < result; i++) {
+		fprintf(stderr,"TS_READ_RAW----> x = %d, y = %d, pressure = %d\n",
+			samp->x, samp->y, samp->pressure);
+
+		samp++;
+	}
 #endif
 	return result;
 }

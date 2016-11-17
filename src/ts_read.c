@@ -22,11 +22,18 @@
 int ts_read(struct tsdev *ts, struct ts_sample *samp, int nr)
 {
 	int result;
+#ifdef DEBUG
+	int i;
+#endif
 
 	result = ts->list->ops->read(ts->list, samp, nr);
 #ifdef DEBUG
-	if (result)
-		fprintf(stderr,"TS_READ----> x = %d, y = %d, pressure = %d\n", samp->x, samp->y, samp->pressure);
+	for (i = 0; i < result; i++) {
+		fprintf(stderr,"TS_READ----> x = %d, y = %d, pressure = %d\n",
+			samp->x, samp->y, samp->pressure);
+
+		samp++;
+	}
 #endif
 	return result;
 
