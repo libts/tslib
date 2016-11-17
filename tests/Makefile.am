@@ -9,7 +9,7 @@
 #
 
 AM_CFLAGS               = -DTS_POINTERCAL=\"@TS_POINTERCAL@\" $(DEBUGFLAGS)
-INCLUDES		= -I$(top_srcdir)/src
+AM_CPPFLAGS		= -I$(top_srcdir)/src
 
 bin_PROGRAMS		= ts_test ts_calibrate ts_print ts_print_raw ts_harvest ts_finddev
 
