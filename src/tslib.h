@@ -47,8 +47,8 @@ struct ts_sample {
 };
 
 enum ts_param {
-	TS_SCREEN_RES = 0,						/* 2 integer args, x and y */
-	TS_SCREEN_ROT,							/* 1 integer arg, 1 = rotate */
+	TS_SCREEN_RES = 0,		/* 2 integer args, x and y */
+	TS_SCREEN_ROT			/* 1 integer arg, 1 = rotate */
 };
 
 /*
