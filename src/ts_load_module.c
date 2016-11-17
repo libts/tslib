@@ -156,7 +156,7 @@ static int __ts_load_module(struct tsdev *ts, const char *module, const char *pa
 	int ret;
 
 #ifdef DEBUG
-	printf ("Loading module %s\n", module);
+	printf ("Loading module %s (%s)\n", module, params);
 #endif
 
 	info = __ts_load_module_static(ts, module, params);
