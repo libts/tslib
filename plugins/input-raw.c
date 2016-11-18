@@ -60,6 +60,7 @@ struct tslib_input {
 	int	current_p;
 
 	int	using_syn;
+	int	using_mt;
 	int	grab_events;
 
 	int	last_fd;
@@ -99,11 +100,17 @@ static int check_fd(struct tslib_input *i)
 		return -1;
 	}
 
-	if ((ioctl(ts->fd, EVIOCGBIT(EV_ABS, sizeof(absbit)), absbit)) < 0 ||
-		!(absbit[BIT_WORD(ABS_X)] & BIT_MASK(ABS_X)) ||
-		!(absbit[BIT_WORD(ABS_Y)] & BIT_MASK(ABS_Y))) {
-		fprintf(stderr, "tslib: Selected device is not a touchscreen (must support ABS_X and ABS_Y events)\n");
-		return -1;
+	if ((ioctl(ts->fd, EVIOCGBIT(EV_ABS, sizeof(absbit)), absbit)) < 0) {
+		if ((absbit[BIT_WORD(ABS_X)] & BIT_MASK(ABS_X)) &&
+		    (absbit[BIT_WORD(ABS_Y)] & BIT_MASK(ABS_Y))) {
+			i->using_mt = 0;
+		} else if ((absbit[BIT_WORD(ABS_MT_POSITION_X)] & BIT_MASK(ABS_MT_POSITION_X)) &&
+			   (absbit[BIT_WORD(ABS_MT_POSITION_Y)] & BIT_MASK(ABS_MT_POSITION_Y))) {
+			i->using_mt = 1;
+		} else {
+			fprintf(stderr, "tslib: Selected device is not a touchscreen (must support ABS_X and ABS_Y or ABS_MT_POSITION_X and ABS_MT_POSITION_Y events)\n");
+			return -1;
+		}
 	}
 
 	/* Since some touchscreens (eg. infrared) physically can't measure pressure,
@@ -196,22 +203,30 @@ static int ts_input_read(struct tslib_module_info *inf,
 				}
 				break;
 			case EV_ABS:
-				switch (ev.code) {
-				case ABS_X:
-					i->current_x = ev.value;
-					break;
-				case ABS_Y:
-					i->current_y = ev.value;
-					break;
-				case ABS_MT_POSITION_X:
-					i->current_x = ev.value;
-					break;
-				case ABS_MT_POSITION_Y:
-					i->current_y = ev.value;
-					break;
-				case ABS_PRESSURE:
-					i->current_p = ev.value;
-					break;
+				if (!i->using_mt) {
+					switch (ev.code) {
+					case ABS_X:
+						i->current_x = ev.value;
+						break;
+					case ABS_Y:
+						i->current_y = ev.value;
+						break;
+					case ABS_PRESSURE:
+						i->current_p = ev.value;
+						break;
+					}
+				} else {
+					switch (ev.code) {
+					case ABS_MT_POSITION_X:
+						i->current_x = ev.value;
+						break;
+					case ABS_MT_POSITION_Y:
+						i->current_y = ev.value;
+						break;
+					case ABS_MT_PRESSURE:
+						i->current_p = ev.value;
+						break;
+					}
 				}
 				break;
 			}
