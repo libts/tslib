@@ -1,19 +1,9 @@
 Makefile
-Makefile.in
-aclocal.m4
 autom4te.cache
-config.guess
-config.h.in*
 config.h
 config.log
 config.status
-config.sub
-configure
-depcomp
-install-sh
 libtool
-ltmain.sh
-missing
 mkinstalldirs
 stamp-h
 stamp-h.in
@@ -23,6 +13,7 @@ stamp-h1
 *.la
 *.o
 *.m4
+!aclocal.m4
 .libs
 .deps
 tests/ts_calibrate
