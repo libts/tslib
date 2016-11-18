@@ -97,8 +97,9 @@ static int ts_galax_check_fd (struct tslib_galax *i)
 
  	if ((ioctl(ts->fd, EVIOCGID, &infos) < 0)) {
  		fprintf (stderr, "tslib: warning, can not read device identifier\n");
- 	} else if (infos.bustype != 3 || infos.vendor != 0x0EEF || infos.product != 0x0001) {
- 		fprintf (stderr, "tslib: this is not an eGalax touchscreen (3,0x0EEF,1,0x0112)\n"
+ 	} else if (infos.bustype != 3 || infos.vendor != 0x0EEF 
+			|| (infos.product != 0x0001 && infos.product != 0x7200 && infos.product != 0x7201 && infos.product != 0xC000)) {
+ 		fprintf (stderr, "tslib: this is not an eGalax touchscreen \n"
  		"Your device: bus=%d, vendor=0x%X, product=0x%X, version=0x%X\n",infos.bustype, infos.vendor, infos.product, infos.version);
  		return -1;
  	}

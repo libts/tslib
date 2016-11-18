@@ -145,7 +145,7 @@ static void get_sample (struct tsdev *ts, calibration *cal,
 		last_y <<= 16;
 		for (i = 0; i < NR_STEPS; i++) {
 			put_cross (last_x >> 16, last_y >> 16, 2 | XORMODE);
-			usleep (1000);
+			usleep (100000);
 			put_cross (last_x >> 16, last_y >> 16, 2 | XORMODE);
 			last_x += dx;
 			last_y += dy;
@@ -187,7 +187,7 @@ static void clearbuf(struct tsdev *ts)
 	}
 }
 
-int main()
+int main( int argc, char** argv)
 {
 	struct tsdev *ts;
 	calibration cal;
@@ -197,9 +197,27 @@ int main()
 	char *calfile = NULL;
 	unsigned int i, len;
 
+	int 	offset=50,
+		center_offset=0,
+		temp=0;
+
+
 	signal(SIGSEGV, sig);
 	signal(SIGINT, sig);
 	signal(SIGTERM, sig);
+
+
+	if( argc >=2)
+	{
+		temp=atoi(argv[1]);
+		if( temp) offset= temp;	
+	}
+	if( argc >=3)
+	{
+		temp=atoi(argv[2]);
+		if( temp) center_offset= temp;	
+	}
+
 
 	if( (tsdevice = getenv("TSLIB_TSDEVICE")) != NULL ) {
 		ts = ts_open(tsdevice,0);
@@ -235,15 +253,15 @@ int main()
 	// Clear the buffer
 	clearbuf(ts);
 
-	get_sample (ts, &cal, 0, 50,        50,        "Top left");
+	get_sample (ts, &cal, 0, offset,        offset,        "Top left");
 	clearbuf(ts);
-	get_sample (ts, &cal, 1, xres - 50, 50,        "Top right");
+	get_sample (ts, &cal, 1, xres - offset, offset,        "Top right");
 	clearbuf(ts);
-	get_sample (ts, &cal, 2, xres - 50, yres - 50, "Bot right");
+	get_sample (ts, &cal, 2, xres - offset, yres - offset, "Bot right");
 	clearbuf(ts);
-	get_sample (ts, &cal, 3, 50,        yres - 50, "Bot left");
+	get_sample (ts, &cal, 3, offset,        yres - offset, "Bot left");
 	clearbuf(ts);
-	get_sample (ts, &cal, 4, xres / 2,  yres / 2,  "Center");
+	get_sample (ts, &cal, 4, xres / 2-center_offset,  yres / 2-center_offset,  "Center");
 
 	if (perform_calibration (&cal)) {
 		printf ("Calibration constants: ");
