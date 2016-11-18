@@ -18,6 +18,7 @@
 #include <sys/ioctl.h>
 #include <linux/hidraw.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #include "config.h"
 #include "tslib-private.h"
@@ -131,7 +132,7 @@ static int parse_vid_pid(struct tslib_module_info *inf, char *str, void *data)
 {
   struct tslib_input *i = (struct tslib_input *)inf;
 
-  if (strlen(str) < 9 || (int) data != 1)
+  if (strlen(str) < 9 || (int)(intptr_t) data != 1)
     return 0;   /* -1 */
 
   str[4] = str[9] = '\0';
@@ -155,7 +156,7 @@ static int parse_len(struct tslib_module_info *inf, char *str, void *data)
     return -1;
 
   errno = err;
-  switch ((int) data) {
+  switch ((int)(intptr_t) data) {
     case 1:
       i->len = v;
       fprintf(stderr, "waveshare raw data len: %d bytes\n", i->len);
