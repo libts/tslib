@@ -87,10 +87,10 @@ static int check_fd(struct tslib_input *i)
 		return -1;
 	}
 
-	if (version < EV_VERSION) {
-		fprintf(stderr, "tslib: Selected device uses a different version of the event protocol than tslib was compiled for\n");
-		return -1;
-	}
+	/* support version EV_VERSION 0x010000 and 0x010001
+	 * this check causes more troubles than it solves here */
+	if (version < EV_VERSION)
+		fprintf(stderr, "tslib: Warning: Selected device uses a different version of the event protocol than tslib was compiled for\n");
 
 	if ( (ioctl(ts->fd, EVIOCGBIT(0, sizeof(evbit)), evbit) < 0) ||
 		!(evbit[BIT_WORD(EV_ABS)] & BIT_MASK(EV_ABS)) ||
