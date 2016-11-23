@@ -1,10 +1,13 @@
 - move ts_calibrate (and more?) from tests to tools
 
+- think about the variance filter for multitouch
+
 - select'ing on ts_fd() is a problem.  Our plugins can swallow entire events,
   which means you could return from select and try to read non-existant events
   from tslib.  We should probably set up an event queue w/ an asyncronous
   interface, or just make a pipe and funnel actual events through that, and
   have ts_fd() return that.
+
 - Give thought to what changes should be made going forward.  In my opinion,
   the top priorities are moving path selection for device open out of the
   hands of the library user.  Input knows it's to work with input devices, and
@@ -15,9 +18,6 @@
   layer as a new device via uinput, since most apps already support it, and
   moving calibration into the library or a supplemental library, with user
   selectable calibration algorithms.
-- Fully implement the multi-touch protocol. See
-  Documentation/input/multi-touch-protocol.txt for details. We should support
-  both type A and type B.
 
 - Parse out the old cvs metadata in the commit log to rewrite the git repo
   history using filter-branch.

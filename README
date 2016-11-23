@@ -36,6 +36,29 @@ There are a couple of programs in the tslib/test directory which give example
 usages.  They are by no means exhaustive, nor probably even good examples.
 They are basically the programs used to test this library.
 
+Multitouch
+==========
+
+Version 1.3 of tslib introduces ts_read_mt() that reads one struct ts_sample_mt
+per slot and desired number of samples. You have to provide slots*nr of them
+to hold the resulting values, see tests/ts_test_mt or tools/ts_uinput for
+examples.
+
+ts_read_mt()'s input-raw module understands the slotted protocol B. If you use a
+device that provides a different multitouch protocol, as of now, you can use
+something like this https://github.com/zub2/mt-translator to create a protocol-B-
+device for it.
+
+ts_read_mt() aims to be a drop-in replacement for ts_read(), so you can use
+it for any single touch device too, providing space for one slot.
+
+tools/ts_uinput
+===============
+
+ts_uinput uses ts_read_mt() and creates a new standard input event device using
+Linux' uinput. The new device provides the filtered and calibrated values.
+ts_uinput aims to make you independent of tslib's API and can be run as a daemon.
+For multitouch, it provides the slotted protocol B.
 
 Environment Variables
 =====================
@@ -85,6 +108,9 @@ Description:
   This is a 'greedy' filter, e.g. it gives less samples on output than
   receives on input. It can cause problems on capacitive touchscreens that
   already apply such a filter.
+
+  There is no multitouch support for this filter (yet). ts_read_mt() will
+  only read one slot, when this filter is used.
 
 Parameters:
   delta
