@@ -3,6 +3,7 @@
  *
  * (C) 2008 by Openmoko, Inc.
  * Author: Nelson Castillo
+ * Author: Martin Kepplinger (read_mt())
  *
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
@@ -43,6 +44,7 @@ struct tslib_skip {
 	int ntail;
 	int M;
 	struct ts_sample *buf;
+	struct ts_sample_mt **buf_mt;
 	int sent;
 };
 
@@ -119,6 +121,128 @@ static int skip_read(struct tslib_module_info *info, struct ts_sample *samp, int
 	return nread;
 }
 
+static int skip_read_mt(struct tslib_module_info *info, struct ts_sample_mt **samp, int max_slots, int nr)
+{
+	struct tslib_skip *skip = (struct tslib_skip *)info;
+	int nread = 0;
+	int i, j;
+	struct ts_sample_mt **cur;
+	short pen_up = 0;
+
+	cur = malloc(sizeof(struct ts_sample_mt **));
+	if (!cur)
+		return -ENOMEM;
+
+	cur[0] = calloc(max_slots, sizeof(struct ts_sample_mt));
+	if (!cur[0])
+		return -ENOMEM;
+
+	if (skip->ntail) {
+		skip->buf_mt = malloc(skip->ntail * sizeof(struct ts_sample_mt **));
+		if (!skip->buf_mt) {
+			free(cur[0]);
+			free(cur);
+			return -ENOMEM;
+		}
+
+		for (i = 0; i < skip->ntail; i++) {
+			skip->buf_mt[i] = calloc(max_slots, sizeof(struct ts_sample_mt));
+			if (!skip->buf_mt[i]){
+				for (j = 0; j < i; j++)
+					free(skip->buf_mt[j]);
+				free(skip->buf_mt);
+				free(cur[0]);
+				free(cur);
+				return -ENOMEM;
+			}
+		}
+	}
+
+	while (nread < nr) {
+		if (info->next->ops->read_mt(info->next, cur, max_slots, 1) < 1)
+			return nread;
+
+		/* skip the first N samples */
+		if (skip->N < skip->nhead) {
+			skip->N++;
+			for (i = 0; i < max_slots; i++) {
+				if (cur[0][i].valid == 1 && cur[0][i].pen_down == 0)
+					reset_skip(skip);
+			}
+			continue;
+		}
+
+		/* We didn't send DOWN -- Ignore UP */
+		for (i = 0; i < max_slots; i++) {
+			if (cur[0][i].valid == 1 && cur[0][i].pen_down == 0 && skip->sent == 0) {
+			      reset_skip(skip);
+			      continue;
+			}
+		}
+
+		/* Just accept the sample if ntail is zero */
+		if (skip->ntail == 0) {
+			memcpy(samp[nread], cur[0], max_slots * sizeof(struct ts_sample_mt));
+			nread++;
+			skip->sent = 1;
+			for (i = 0; i < max_slots; i++) {
+				if (cur[0][i].valid == 1 && cur[0][i].pen_down == 0)
+					reset_skip(skip);
+			}
+			continue;
+		}
+
+		/* ntail > 0,  Queue current point if we need to */
+		if (skip->sent == 0 && skip->M < skip->ntail) {
+			memcpy(skip->buf_mt[skip->M], cur[0], max_slots * sizeof(struct ts_sample_mt));
+			skip->M++;
+			continue;
+		}
+
+		/* queue full, accept one, queue one */
+
+		if (skip->M >= skip->ntail) {
+			skip->M = 0;
+		}
+
+		memcpy(samp[nread], skip->buf_mt[skip->M], max_slots * sizeof(struct ts_sample_mt));
+		nread++;
+
+#ifdef DEBUG
+		for (i = 0; i < max_slots; i++) {
+			if (skip->buf_mt[skip->M][i].valid == 1) {
+				fprintf(stderr, "skip---> (Slot %d: X:%d Y:%d) btn_touch:%d\n",
+					skip->buf_mt[skip->M][i].x, skip->buf_mt[skip->M][i].y,
+					skip->buf_mt[skip->M][i].pen_down);
+			}
+		}
+#endif
+
+
+		for (i = 0; i < max_slots; i++) {
+			if (cur[0][i].valid == 1 && cur[0][i].pen_down == 0) {
+				reset_skip(skip);
+				pen_up = 1;
+			}
+		}
+		if (pen_up == 1) {
+			memcpy(skip->buf_mt[skip->M], cur[0], max_slots * sizeof(struct ts_sample_mt));
+			skip->M++;
+			skip->sent = 1;
+		}
+	}
+
+	for (i = 0; i < skip->ntail; i++) {
+		free(skip->buf_mt[i]);
+	}
+
+	free(skip->buf_mt);
+	free(cur[0]);
+	free(cur);
+
+	return nread;
+}
+
 static int skip_fini(struct tslib_module_info *info)
 {
 	struct tslib_skip *skip = (struct tslib_skip *)info;
@@ -134,6 +258,7 @@ static int skip_fini(struct tslib_module_info *info)
 static const struct tslib_ops skip_ops =
 {
 	.read		= skip_read,
+	.read_mt	= skip_read_mt,
 	.fini		= skip_fini,
 };
 
@@ -188,6 +313,7 @@ TSAPI struct tslib_module_info *skip_mod_init(__attribute__ ((unused)) struct ts
 	skip->nhead = 1; /* by default remove the first */
 	skip->ntail = 1; /* by default remove the last */
 	skip->buf = NULL;
+	skip->buf_mt = NULL;
 
 	reset_skip(skip);
 
