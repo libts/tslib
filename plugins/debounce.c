@@ -34,6 +34,9 @@ struct tslib_debounce {
 	unsigned int			drop_threshold; // ms
 	unsigned long long		last_release;
 	int				last_pressure;
+	unsigned long long		*last_release_mt;
+	int				*last_pressure_mt;
+	int				current_max_slots;
 };
 
 static int debounce_read(struct tslib_module_info *info, struct ts_sample *samp, int nr)
@@ -95,8 +98,97 @@ static int debounce_read(struct tslib_module_info *info, struct ts_sample *samp,
 	return num;
 }
 
+static int debounce_read_mt(struct tslib_module_info *info, struct ts_sample_mt **samp,
+			    int max_slots, int nr_samples)
+{
+	struct tslib_debounce *p = (struct tslib_debounce *)info;
+	int ret;
+	unsigned long long now;
+	long dt;
+	__attribute__ ((unused)) enum { DOWN, MOVE, UP } mode[max_slots];
+	int drop = 0;
+	int nr;
+	int i;
+
+	if (p->last_release_mt == NULL || max_slots > p->current_max_slots) {
+		if (p->last_release_mt)
+			free(p->last_release_mt);
+
+		p->last_release_mt = calloc(max_slots, sizeof(unsigned long long));
+		if (!p->last_release_mt)
+			return -ENOMEM;
+
+		p->current_max_slots = max_slots;
+	}
+
+	if (p->last_pressure_mt == NULL || max_slots > p->current_max_slots) {
+		if (p->last_pressure_mt)
+			free(p->last_pressure_mt);
+
+		p->last_pressure_mt = calloc(max_slots, sizeof(int));
+		if (!p->last_pressure_mt)
+			return -ENOMEM;
+
+		p->current_max_slots = max_slots;
+	}
+
+	ret = info->next->ops->read_mt(info->next, samp, max_slots, nr_samples);
+	if (ret < 0)
+		return ret;
+
+#ifdef DEBUG
+	printf("DEBOUNCE: read %d samples (mem: %d nr x %d slots)\n", ret, nr_samples, max_slots);
+#endif
+
+	for (nr = 0; nr < ret; nr++) {
+		for (i = 0; i < max_slots; i++) {
+			if (samp[nr][i].valid != 1)
+				continue;
+
+			now = samp[nr][i].tv.tv_sec * 1e6 + samp[nr][i].tv.tv_usec;
+			dt = (long)(now - p->last_release_mt[i]) / 1000; // [ms]
+			mode[i] = MOVE;
+
+			if (!samp[nr][i].pressure) {
+				mode[i] = UP;
+				p->last_release_mt[i] = now;
+			} else if (!p->last_pressure_mt[i]) {
+				mode[i] = DOWN;
+			}
+
+			p->last_pressure_mt[i] = samp[nr][i].pressure;
+
+			if (samp[nr][i].pressure) {
+				if (dt >= 0 && dt < p->drop_threshold)
+					drop = 1;
+			}
+
+	#ifdef DEBUG
+			if (drop)
+				fprintf(stderr, "\033[%smtslib/debounce:\033[m  press=%u  x=%d  y=%d  dt=%ld%s\n",
+						mode[i] == DOWN ? "92" : mode[i] == MOVE ? "32" : "93",
+						samp[nr][i].pressure, samp[nr][i].x, samp[nr][i].y, dt,
+						drop ? "  \033[31mdropped\033[m" : "");
+	#endif
+
+			if (samp[nr][i].pressure && drop)
+				samp[nr][i].valid = 0;
+		}
+	}
+
+	return nr;
+}
+
 static int debounce_fini(struct tslib_module_info *info)
 {
+	struct tslib_debounce *p = (struct tslib_debounce *)info;
+
+	if (p->last_release_mt)
+		free(p->last_release_mt);
+
+	if (p->last_pressure_mt)
+		free(p->last_pressure_mt);
+
 	free(info);
 
 	return 0;
@@ -105,6 +197,7 @@ static int debounce_fini(struct tslib_module_info *info)
 static const struct tslib_ops debounce_ops =
 {
 	.read = debounce_read,
+	.read_mt = debounce_read_mt,
 	.fini = debounce_fini,
 };
 
@@ -151,6 +244,9 @@ TSAPI struct tslib_module_info *debounce_mod_init(__attribute__ ((unused)) struc
 	p->drop_threshold = 0;
 	p->last_release = 0ULL;
 	p->last_pressure = 0;
+	p->last_release_mt = NULL;
+	p->last_pressure_mt = NULL;
+	p->current_max_slots = 0;
 
 	if (tslib_parse_vars(&p->module, debounce_vars, NR_VARS, params)) {
 		free(p);
