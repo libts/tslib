@@ -11,8 +11,6 @@
 #ifndef _VIDEO_FONT_H
 #define _VIDEO_FONT_H
 
-#include <linux/types.h>
-
 struct fbcon_font_desc {
     int idx;
     char *name;

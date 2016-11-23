@@ -116,6 +116,25 @@ AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
 
+AC_CANONICAL_HOST
+
+target_os=""
+case $host_os in
+  linux*)
+        # do nothing
+        target_os="linux"
+        ;;
+   freebsd*)
+        target_os="freebsd"
+        ;;
+    *)
+        #Default Case
+        AC_MSG_ERROR([Your platform is not currently supported: $host_os])
+        ;;
+esac
+
+AM_CONDITIONAL([FREEBSD], [test "$target_os" = "freebsd"])
+
 AC_CONFIG_FILES([Makefile
                  etc/Makefile
                  plugins/Makefile

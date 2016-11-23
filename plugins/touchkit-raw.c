@@ -46,7 +46,9 @@ static int touchkit_init(int dev)
 	tty.c_iflag = IGNBRK | IGNPAR;
 	tty.c_oflag = 0;
 	tty.c_lflag = 0;
+#ifdef __linux__
 	tty.c_line = 0;
+#endif
 	tty.c_cc[VTIME] = 0;
 	tty.c_cc[VMIN] = 1;
 	tty.c_cflag = CS8 | CREAD | CLOCAL | HUPCL;

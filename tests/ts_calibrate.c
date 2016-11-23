@@ -21,9 +21,6 @@
 #include <sys/mman.h>
 #include <sys/time.h>
 #include <sys/stat.h>
-#include <linux/kd.h>
-#include <linux/vt.h>
-#include <linux/fb.h>
 
 #include "tslib.h"
 
