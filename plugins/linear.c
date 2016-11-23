@@ -13,13 +13,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#include <errno.h>
-#include <stdint.h>
-#include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
+#include <errno.h>
 #include <fcntl.h>
-
 #include <stdio.h>
 
 #include "config.h"
@@ -83,6 +79,62 @@ linear_read(struct tslib_module_info *info, struct ts_sample *samp, int nr)
 	return ret;
 }
 
+static int
+linear_read_mt(struct tslib_module_info *info, struct ts_sample_mt **samp, int max_slots, int nr_samples)
+{
+	struct tslib_linear *lin = (struct tslib_linear *)info;
+	int ret;
+	int xtemp,ytemp;
+	int i;
+	int nr;
+
+	ret = info->next->ops->read_mt(info->next, samp, max_slots, nr_samples);
+	if (ret < 0) {
+	#ifdef DEBUG
+		fprintf(stderr,"linear: couldn't read a sample\n");
+	#endif /*DEBUG*/
+		return ret;
+	}
+
+	for (nr = 0; nr < ret; nr++) {
+	#ifdef DEBUG
+		printf("LINEAR: read %d samples (mem: %d nr x %d slots)\n", ret, nr_samples, max_slots);
+		fprintf(stderr,"BEFORE CALIB-----------------------v\n");
+	#endif /*DEBUG*/
+		for (i = 0; i < max_slots; i++) {
+			if (samp[nr][i].valid != 1)
+				continue;
+
+		#ifdef DEBUG
+			fprintf(stderr,"          slot %d            %d %d %d\n",
+				i, samp[nr][i].x, samp[nr][i].y, samp[nr][i].pressure);
+		#endif /*DEBUG*/
+			xtemp = samp[nr][i].x;
+			ytemp = samp[nr][i].y;
+			samp[nr][i].x =	( lin->a[2] +
+					lin->a[0]*xtemp + 
+					lin->a[1]*ytemp ) / lin->a[6];
+			samp[nr][i].y =	( lin->a[5] +
+					lin->a[3]*xtemp +
+					lin->a[4]*ytemp ) / lin->a[6];
+			if (info->dev->res_x && lin->cal_res_x)
+				samp[nr][i].x = samp[nr][i].x * info->dev->res_x / lin->cal_res_x;
+			if (info->dev->res_y && lin->cal_res_y)
+				samp[nr][i].y = samp[nr][i].y * info->dev->res_y / lin->cal_res_y;
+
+			samp[nr][i].pressure = ((samp[nr][i].pressure + lin->p_offset)
+						 * lin->p_mult) / lin->p_div;
+			if (lin->swap_xy) {
+				int tmp = samp[nr][i].x;
+				samp[nr][i].x = samp[nr][i].y;
+				samp[nr][i].y = tmp;
+			}
+		}
+	}
+
+	return ret;
+}
+
 static int linear_fini(struct tslib_module_info *info)
 {
 	free(info);
@@ -91,8 +143,9 @@ static int linear_fini(struct tslib_module_info *info)
 
 static const struct tslib_ops linear_ops =
 {
-	.read	= linear_read,
-	.fini	= linear_fini,
+	.read		= linear_read,
+	.read_mt	= linear_read_mt,
+	.fini		= linear_fini,
 };
 
 static int linear_xyswap(struct tslib_module_info *inf,
