@@ -32,7 +32,7 @@ AC_CHECK_LIB([dl], [dlopen])
 # Checks for header files.
 AC_FUNC_ALLOCA
 AC_HEADER_STDC
-AC_CHECK_HEADERS([fcntl.h limits.h stdlib.h string.h sys/ioctl.h sys/time.h unistd.h stdint.h])
+AC_CHECK_HEADERS([fcntl.h limits.h stdlib.h string.h sys/ioctl.h sys/time.h unistd.h stdint.h sys/types.h errno.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
