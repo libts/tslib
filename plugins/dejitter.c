@@ -71,6 +71,10 @@ struct tslib_dejitter {
 	int nr;
 	int head;
 	struct ts_hist hist[NR_SAMPHISTLEN];
+	int *nr_mt;
+	int *head_mt;
+	struct ts_hist **hist_mt;
+	int slots;
 };
 
 static int sqr (int x)
@@ -156,16 +160,171 @@ static int dejitter_read(struct tslib_module_info *info, struct ts_sample *samp,
 	return count;
 }
 
+static void average_mt(struct tslib_dejitter *djt, struct ts_sample_mt **samp, int nr, int slot)
+{
+	const unsigned char *w;
+	int sn = djt->head_mt[slot];
+	int i, x = 0, y = 0;
+	unsigned int p = 0;
+
+        w = weight [djt->nr_mt[slot] - 2];
+
+	for (i = 0; i < djt->nr_mt[slot]; i++) {
+		x += djt->hist_mt[slot][sn].x * w [i];
+		y += djt->hist_mt[slot][sn].y * w [i];
+		p += djt->hist_mt[slot][sn].p * w [i];
+		sn = (sn - 1) & (NR_SAMPHISTLEN - 1);
+	}
+
+	samp[nr][slot].x = x >> w [NR_SAMPHISTLEN];
+	samp[nr][slot].y = y >> w [NR_SAMPHISTLEN];
+	samp[nr][slot].pressure = p >> w [NR_SAMPHISTLEN];
+#ifdef DEBUG
+	fprintf(stderr,"DEJITTER----------------> %d %d %d\n",
+		samp[nr][slot].x, samp[nr][slot].y, samp[nr][slot].pressure);
+#endif
+}
+
+static int dejitter_read_mt(struct tslib_module_info *info, struct ts_sample_mt **samp, int max_slots, int nr)
+{
+        struct tslib_dejitter *djt = (struct tslib_dejitter *)info;
+	int ret;
+	int i, j;
+
+	ret = info->next->ops->read_mt(info->next, samp, max_slots, nr);
+	if (ret < 0)
+		return ret;
+
+#ifdef DEBUG
+	if (ret == 0)
+		fprintf (stderr, "DEJITTER: couldn't read data\n");
+
+	printf("DEJITTER: read %d samples (mem: %d nr x %d slots)\n", ret, nr, max_slots);
+#endif
+
+	if (djt->hist_mt == NULL || max_slots > djt->slots) {
+		if (djt->hist_mt) {
+			for (i = 0; i < djt->slots; i++) {
+				if (&djt->hist_mt[i])
+					free(&djt->hist_mt[i]);
+			}
+			free(djt->hist_mt);
+			djt->hist_mt = NULL;
+		}
+
+		djt->hist_mt = malloc(max_slots * sizeof(struct ts_hist **));
+		if (!djt->hist_mt)
+			return -ENOMEM;
+
+		for (i = 0; i < max_slots; i++) {
+			djt->hist_mt[i] = calloc(NR_SAMPHISTLEN, sizeof(struct ts_hist));
+			if (&djt->hist[i] == NULL) {
+				for (j = 0; j < i; j++)
+					if (&djt->hist[j])
+						free(&djt->hist[j]);
+
+				if (djt->hist_mt)
+					free(djt->hist_mt);
+
+				return -ENOMEM;
+			}
+		}
+		djt->slots = max_slots;
+	}
+
+	if (djt->nr_mt == NULL || max_slots > djt->slots) {
+		if (djt->nr_mt)
+			free(djt->nr_mt);
+
+		djt->nr_mt = calloc(max_slots, sizeof(int));
+		if (!djt->nr_mt)
+			return -ENOMEM;
+	}
+
+	if (djt->head_mt == NULL || max_slots > djt->slots) {
+		if (djt->head_mt)
+			free(djt->head_mt);
+
+		djt->head_mt = calloc(max_slots, sizeof(int));
+		if (!djt->head_mt)
+			return -ENOMEM;
+	}
+
+	for (j = 0; j < ret; j++) {
+		for (i = 0; i < max_slots; i++) {
+			if (samp[j][i].valid != 1)
+				continue;
+
+			if (samp[j][i].pressure == 0) {
+				/*
+				 * Pen was released. Reset the state and
+				 * forget all history events.
+				 */
+				djt->nr_mt[i] = 0;
+				continue;
+			}
+
+			/* If the pen moves too fast, reset the backlog. */
+			if (djt->nr_mt[i]) {
+				int prev = (djt->head_mt[i] - 1) & (NR_SAMPHISTLEN - 1);
+				if (sqr(samp[j][i].x - djt->hist_mt[i][prev].x) +
+				    sqr(samp[j][i].y - djt->hist_mt[i][prev].y) > djt->delta) {
+	#ifdef DEBUG
+					fprintf (stderr, "DEJITTER: pen movement exceeds threshold\n");
+	#endif
+					djt->nr_mt[i] = 0;
+				}
+			}
+
+			djt->hist_mt[i][djt->head_mt[i]].x = samp[j][i].x;
+			djt->hist_mt[i][djt->head_mt[i]].y = samp[j][i].y;
+			djt->hist_mt[i][djt->head_mt[i]].p = samp[j][i].pressure;
+			if (djt->nr_mt[i] < NR_SAMPHISTLEN)
+				djt->nr_mt[i]++;
+
+			/* We'll pass through the very first sample since
+			 * we can't average it (no history yet).
+			 */
+			if (djt->nr_mt[i] > 1) {
+				average_mt(djt, samp, j, i);
+			}
+
+			djt->head_mt[i] = (djt->head_mt[i] + 1) & (NR_SAMPHISTLEN - 1);
+		}
+	}
+
+	return j;
+}
+
 static int dejitter_fini(struct tslib_module_info *info)
 {
+        struct tslib_dejitter *djt = (struct tslib_dejitter *)info;
+	int i;
+
+	for (i = 0; i < djt->slots; i++) {
+		if (djt->hist_mt[i])
+			free(djt->hist_mt[i]);
+	}
+
+	if (djt->hist_mt)
+		free(djt->hist_mt);
+
+	if (djt->nr_mt)
+		free(djt->nr_mt);
+
+	if (djt->head_mt)
+		free(djt->head_mt);
+
 	free(info);
+
 	return 0;
 }
 
 static const struct tslib_ops dejitter_ops =
 {
-	.read	= dejitter_read,
-	.fini	= dejitter_fini,
+	.read		= dejitter_read,
+	.read_mt	= dejitter_read_mt,
+	.fini		= dejitter_fini,
 };
 
 static int dejitter_limit(struct tslib_module_info *inf, char *str, void *data)
@@ -212,6 +371,10 @@ TSAPI struct tslib_module_info *dejitter_mod_init(__attribute__ ((unused)) struc
 
 	djt->delta = 100;
         djt->head = 0;
+        djt->hist_mt = NULL;
+        djt->nr_mt = NULL;
+        djt->head_mt = NULL;
+        djt->slots = 0;
 
 	if (tslib_parse_vars(&djt->module, dejitter_vars, NR_VARS, params)) {
 		free(djt);
