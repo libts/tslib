@@ -46,6 +46,36 @@ struct ts_sample {
 	struct timeval	tv;
 };
 
+struct ts_sample_mt {
+	/* most recent ABS_MT_* event codes.
+	 * see linux/input.h for descriptions */
+	int		x;
+	int		y;
+	unsigned int	pressure;
+	int		slot;
+	int		tracking_id;
+
+	int		tool_type;
+	int		tool_x;
+	int		tool_y;
+	unsigned int	touch_major;
+	unsigned int	width_major;
+	unsigned int	touch_minor;
+	unsigned int	width_minor;
+	int		orientation;
+	int		distance;
+	int		blob_id;
+
+	struct timeval	tv;
+
+	/* BTN_TOUCH state */
+	short		pen_down;
+
+	/* valid is set to 1 if this sample
+	 * contains new data; set to 0 otherwise */
+	short		valid;
+};
+
 enum ts_param {
 	TS_SCREEN_RES = 0,		/* 2 integer args, x and y */
 	TS_SCREEN_ROT			/* 1 integer arg, 1 = rotate */
@@ -95,6 +125,16 @@ TSAPI int ts_read(struct tsdev *, struct ts_sample *, int);
  * Returns a raw, unscaled sample from the touchscreen.
  */
 TSAPI int ts_read_raw(struct tsdev *, struct ts_sample *, int);
+
+/*
+ * Return a scaled touchscreen multitouch sample.
+ */
+TSAPI int ts_read_mt(struct tsdev *, struct ts_sample_mt **, int slots, int nr);
+
+/*
+ * Return a raw, unscaled touchscreen multitouch sample.
+ */
+TSAPI int ts_read_raw_mt(struct tsdev *, struct ts_sample_mt **, int slots, int nr);
 
 #ifdef __cplusplus
 }

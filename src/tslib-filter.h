@@ -27,6 +27,7 @@ struct tslib_vars {
 
 struct tslib_ops {
 	int (*read)(struct tslib_module_info *inf, struct ts_sample *samp, int nr);
+	int (*read_mt)(struct tslib_module_info *inf, struct ts_sample_mt **samp, int max_slots, int nr);
 	int (*fini)(struct tslib_module_info *inf);
 };
 

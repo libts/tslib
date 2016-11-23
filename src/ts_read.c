@@ -38,3 +38,26 @@ int ts_read(struct tsdev *ts, struct ts_sample *samp, int nr)
 	return result;
 
 }
+
+int ts_read_mt(struct tsdev *ts, struct ts_sample_mt **samp, int max_slots, int nr)
+{
+	int result;
+#ifdef DEBUG
+	int i, j;
+#endif
+
+	result = ts->list->ops->read_mt(ts->list, samp, max_slots, nr);
+#ifdef DEBUG
+	for (j = 0; j < result; j++) {
+		for (i = 0; i < max_slots; i++) {
+			if (samp[j][i].valid != 1)
+				continue;
+
+			fprintf(stderr,"TS_READ_MT----> slot %d: x = %d, y = %d, pressure = %d\n",
+				samp[j][i].slot, samp[j][i].x, samp[j][i].y, samp[j][i].pressure);
+		}
+	}
+#endif
+	return result;
+
+}
