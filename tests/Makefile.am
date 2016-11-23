@@ -13,7 +13,7 @@ AM_CPPFLAGS		= -I$(top_srcdir)/src
 
 bin_PROGRAMS		= ts_test ts_calibrate ts_print ts_print_raw ts_harvest ts_finddev
 
-ts_test_SOURCES		= ts_test.c fbutils.c fbutils.h font_8x8.c font_8x16.c font.h
+ts_test_SOURCES		= ts_test.c testutils.c testutils.h fbutils.c fbutils.h font_8x8.c font_8x16.c font.h
 ts_test_LDADD		= $(top_builddir)/src/libts.la
 
 ts_print_SOURCES	= ts_print.c

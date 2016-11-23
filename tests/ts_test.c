@@ -15,33 +15,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
-#include <sys/fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/mman.h>
-#include <sys/time.h>
 
 #include "tslib.h"
 #include "fbutils.h"
+#include "testutils.h"
 
 static int palette [] =
 {
 	0x000000, 0xffe080, 0xffffff, 0xe0c0a0, 0x304050, 0x80b8c0
 };
 #define NR_COLORS (sizeof (palette) / sizeof (palette [0]))
-
-struct ts_button {
-	int x, y, w, h;
-	char *text;
-	int flags;
-#define BUTTON_ACTIVE 0x00000001
-};
-
-/* [inactive] border fill text [active] border fill text */
-static int button_palette [6] =
-{
-	1, 4, 2,
-	1, 5, 0
-};
 
 #define NR_BUTTONS 3
 static struct ts_button buttons [NR_BUTTONS];
@@ -53,44 +36,6 @@ static void sig(int sig)
 	printf("signal %d caught\n", sig);
 	fflush(stdout);
 	exit(1);
-}
-
-static void button_draw (struct ts_button *button)
-{
-	int s = (button->flags & BUTTON_ACTIVE) ? 3 : 0;
-	rect (button->x, button->y, button->x + button->w - 1,
-	      button->y + button->h - 1, button_palette [s]);
-	fillrect (button->x + 1, button->y + 1,
-		  button->x + button->w - 2,
-		  button->y + button->h - 2, button_palette [s + 1]);
-	put_string_center (button->x + button->w / 2,
-			   button->y + button->h / 2,
-			   button->text, button_palette [s + 2]);
-}
-
-static int button_handle (struct ts_button *button, struct ts_sample *samp)
-{
-	int inside = (samp->x >= button->x) && (samp->y >= button->y) &&
-		(samp->x < button->x + button->w) &&
-		(samp->y < button->y + button->h);
-
-	if (samp->pressure > 0) {
-		if (inside) {
-			if (!(button->flags & BUTTON_ACTIVE)) {
-				button->flags |= BUTTON_ACTIVE;
-				button_draw (button);
-			}
-		} else if (button->flags & BUTTON_ACTIVE) {
-			button->flags &= ~BUTTON_ACTIVE;
-			button_draw (button);
-		}
-	} else if (button->flags & BUTTON_ACTIVE) {
-		button->flags &= ~BUTTON_ACTIVE;
-		button_draw (button);
-                return 1;
-	}
-
-        return 0;
 }
 
 static void refresh_screen ()
@@ -185,7 +130,7 @@ int main()
 			continue;
 
 		for (i = 0; i < NR_BUTTONS; i++)
-			if (button_handle (&buttons [i], &samp))
+			if (button_handle(&buttons [i], samp.x, samp.y, samp.pressure))
 				switch (i) {
 				case 0:
 					mode = 0;

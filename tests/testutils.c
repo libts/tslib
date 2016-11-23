@@ -18,6 +18,53 @@
 #include <sys/time.h>
 #include "tslib.h"
 #include "fbutils.h"
+#include "testutils.h"
+
+/* [inactive] border fill text [active] border fill text */
+int button_palette [6] =
+{
+        1, 4, 2,
+        1, 5, 0
+};
+
+void button_draw (struct ts_button *button)
+{
+	int s = (button->flags & BUTTON_ACTIVE) ? 3 : 0;
+
+	rect(button->x, button->y, button->x + button->w - 1,
+	     button->y + button->h - 1, button_palette [s]);
+	fillrect(button->x + 1, button->y + 1,
+		 button->x + button->w - 2,
+		 button->y + button->h - 2, button_palette [s + 1]);
+	put_string_center(button->x + button->w / 2,
+			  button->y + button->h / 2,
+			  button->text, button_palette [s + 2]);
+}
+
+int button_handle (struct ts_button *button, int x, int y, unsigned int p)
+{
+	int inside = (x >= button->x) && (y >= button->y) &&
+		     (x < button->x + button->w) &&
+		     (y < button->y + button->h);
+
+	if (p > 0) {
+		if (inside) {
+			if (!(button->flags & BUTTON_ACTIVE)) {
+				button->flags |= BUTTON_ACTIVE;
+				button_draw (button);
+			}
+		} else if (button->flags & BUTTON_ACTIVE) {
+			button->flags &= ~BUTTON_ACTIVE;
+			button_draw (button);
+		}
+	} else if (button->flags & BUTTON_ACTIVE) {
+		button->flags &= ~BUTTON_ACTIVE;
+		button_draw (button);
+		return 1;
+	}
+
+	return 0;
+}
 
 static int sort_by_x(const void* a, const void *b)
 {

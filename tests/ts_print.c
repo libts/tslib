@@ -11,11 +11,6 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <signal.h>
-#include <sys/fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/mman.h>
-#include <sys/time.h>
 
 #include "tslib.h"
 
