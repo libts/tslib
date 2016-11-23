@@ -8,7 +8,7 @@
 #
 #
 
-SUBDIRS		= etc src plugins tests
+SUBDIRS		= etc src plugins tests tools
 EXTRA_DIST	= autogen.sh
 
 ACLOCAL_AMFLAGS = -I m4/internal -I m4/external

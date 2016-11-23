@@ -121,6 +121,7 @@ AC_CONFIG_FILES([Makefile
                  plugins/Makefile
                  src/Makefile
                  tests/Makefile
+                 tools/Makefile
                  tslib.pc:tslib.pc.in
                  tslib-$LT_RELEASE.pc:tslib.pc.in])
 AC_OUTPUT
