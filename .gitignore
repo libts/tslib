@@ -23,6 +23,8 @@ stamp-h1
 *.la
 *.o
 *.m4
+!tslib_modules.m4
+!visibility.m4
 .libs
 .deps
 tests/ts_calibrate
