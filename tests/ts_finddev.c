@@ -2,7 +2,6 @@
  *  tslib/src/ts_finddev.c
  *
  *  Derived from tslib/src/ts_test.c by Douglas Lowder
- *  Just prints touchscreen events -- does not paint them on framebuffer
  *
  * This file is placed under the GPL.  Please see the file
  * COPYING for more details.
