@@ -1,5 +1,5 @@
 /*
- *  tslib/src/ts_print.c
+ *  tslib/tests/ts_print.c
  *
  *  Derived from tslib/src/ts_test.c by Douglas Lowder
  *  Just prints touchscreen events -- does not paint them on framebuffer

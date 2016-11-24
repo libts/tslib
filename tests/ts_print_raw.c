@@ -1,5 +1,5 @@
 /*
- *  tslib/src/ts_print.c
+ *  tslib/tests/ts_print_raw.c
  *
  *  Derived from tslib/src/ts_test.c by Douglas Lowder
  *  Just prints touchscreen events -- does not paint them on framebuffer
@@ -11,11 +11,6 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <signal.h>
-#include <sys/fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/mman.h>
-#include <sys/time.h>
 
 #include "tslib.h"
 
@@ -49,7 +44,7 @@ int main()
 		ret = ts_read_raw(ts, &samp, 1);
 
 		if (ret < 0) {
-			perror("ts_read");
+			perror("ts_read_raw");
 			exit(1);
 		}
 
