@@ -30,7 +30,9 @@ stamp-h1
 tests/ts_calibrate
 tests/ts_harvest
 tests/ts_print
+tests/ts_print_mt
 tests/ts_print_raw
+tests/ts_print_raw_mt
 tests/ts_test
 tools/ts_uinput
 tests/ts_finddev
