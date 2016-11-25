@@ -85,13 +85,11 @@ static void help(struct data_t *data)
 }
 
 #define MAX_CODES_PER_SLOT 20
-static int send_touch_events(struct data_t *data, struct ts_sample_mt **s,
-				   unsigned int nr, int max_slots)
+static int send_touch_events(struct data_t *data, struct ts_sample_mt **s, int nr, int max_slots)
 {
 	int i;
 	int j;
 	int c = 0;
-
 
 	for (j = 0; j < nr; j++) {
 		memset(data->ev, 0, sizeof(struct input_event) * MAX_CODES_PER_SLOT * max_slots);
