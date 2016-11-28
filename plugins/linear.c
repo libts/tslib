@@ -26,15 +26,15 @@ struct tslib_linear {
 	struct tslib_module_info module;
 	int	swap_xy;
 
-// Linear scaling and offset parameters for pressure
+	/* Linear scaling and offset parameters for pressure */
 	int	p_offset;
 	int	p_mult;
 	int	p_div;
 
-// Linear scaling and offset parameters for x,y (can include rotation)
+	/* Linear scaling and offset parameters for x,y (can include rotation) */
 	int	a[7];
 
-// Screen resolution at the time when calibration was performed
+	/* Screen resolution at the time when calibration was performed */
 	unsigned int cal_res_x;
 	unsigned int cal_res_y;
 };
@@ -51,9 +51,9 @@ linear_read(struct tslib_module_info *info, struct ts_sample *samp, int nr)
 		int nr;
 
 		for (nr = 0; nr < ret; nr++, samp++) {
-#ifdef DEBUG
+		#ifdef DEBUG
 			fprintf(stderr,"BEFORE CALIB--------------------> %d %d %d\n",samp->x, samp->y, samp->pressure);
-#endif /*DEBUG*/
+		#endif /* DEBUG */
 			xtemp = samp->x; ytemp = samp->y;
 			samp->x = 	( lin->a[2] +
 					lin->a[0]*xtemp + 
@@ -224,7 +224,7 @@ TSAPI struct tslib_module_info *linear_mod_init(__attribute__ ((unused)) struct 
 
 	lin->module.ops = &linear_ops;
 
-// Use default values that leave ts numbers unchanged after transform
+	/* Use default values that leave ts numbers unchanged after transform */
 	lin->a[0] = 1;
 	lin->a[1] = 0;
 	lin->a[2] = 0;

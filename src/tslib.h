@@ -35,7 +35,7 @@ extern "C" {
   #define TSAPI TSEXPORT
 #else
   #define TSAPI TSIMPORT
-#endif // TSLIB_INTERNAL
+#endif /* TSLIB_INTERNAL */
 
 struct tsdev;
 

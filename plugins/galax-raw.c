@@ -60,7 +60,7 @@
 #define VERSION_0112 1
 #define VERSION_210  2
 #define VERSION_0100 3
-// VERSION_210 must use /dev/input/event1
+/* VERSION_210 must use /dev/input/event1 */
 
 
 struct tslib_galax {

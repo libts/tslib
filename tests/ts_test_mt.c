@@ -219,7 +219,7 @@ int main(int argc, char **argv)
 
 		/* Show the cross */
 		for (j = 0; j < max_slots; j++) {
-			if ((mode & 15) != 1) { // not in draw mode
+			if ((mode & 15) != 1) { /* not in draw mode */
 				/* Hide slots > 0 if released */
 				if (j > 0 && (mode_mt[j] & 0x00000008))
 					continue;
@@ -232,7 +232,7 @@ int main(int argc, char **argv)
 
 		/* Hide it */
 		for (j = 0; j < max_slots; j++) {
-			if ((mode & 15) != 1) { // not in draw mode
+			if ((mode & 15) != 1) { /* not in draw mode */
 				if (j > 0 && (mode_mt[j] & 0x00000008))
 					continue;
 
@@ -286,8 +286,8 @@ int main(int argc, char **argv)
 			}
 
 			if (samp_mt[0][j].pressure > 0) {
-				if (mode == 0x80000001) {// draw mode while drawing
-					if (mode_mt[j] == 0x80000000) // slot while drawing
+				if (mode == 0x80000001) { /* draw mode while drawing */
+					if (mode_mt[j] == 0x80000000) /* slot while drawing */
 						line (x[j], y[j], samp_mt[0][j].x, samp_mt[0][j].y, 2);
 				}
 				x[j] = samp_mt[0][j].x;
@@ -298,7 +298,7 @@ int main(int argc, char **argv)
 			} else {
 				mode &= ~0x80000000;
 				mode_mt[j] &= ~0x80000000;
-				mode_mt[j] |= 0x00000008; // hide the cross
+				mode_mt[j] |= 0x00000008; /* hide the cross */
 			}
 			if (quit_pressed)
 				goto out;

@@ -138,9 +138,9 @@ static int parse_vid_pid(struct tslib_module_info *inf, char *str, void *data)
   str[4] = str[9] = '\0';
   i->vendor = strtol(&str[0], NULL, 16);
   i->product = strtol(&str[5], NULL, 16);
-//#ifdef DEBUG
+#ifdef DEBUG
   fprintf(stderr, "waveshare vid:pid - %04X:%04X\n", i->vendor, i->product);
-//#endif /*DEBUG*/
+#endif /*DEBUG*/
   return 0;
 }
 

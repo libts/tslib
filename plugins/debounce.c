@@ -31,7 +31,7 @@
 
 struct tslib_debounce {
 	struct tslib_module_info	module;
-	unsigned int			drop_threshold; // ms
+	unsigned int			drop_threshold; /* ms */
 	unsigned long long		last_release;
 	int				last_pressure;
 	unsigned long long		*last_release_mt;
@@ -58,7 +58,7 @@ static int debounce_read(struct tslib_module_info *info, struct ts_sample *samp,
 
 	for (s = samp, i = 0; i < ret; i++, s++) {
 		now = s->tv.tv_sec * 1e6 + s->tv.tv_usec;
-		dt = (long)(now - p->last_release) / 1000; // [ms]
+		dt = (long)(now - p->last_release) / 1000; /* ms */
 		mode = MOVE;
 
 		if (!s->pressure) {
@@ -146,7 +146,7 @@ static int debounce_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 				continue;
 
 			now = samp[nr][i].tv.tv_sec * 1e6 + samp[nr][i].tv.tv_usec;
-			dt = (long)(now - p->last_release_mt[i]) / 1000; // [ms]
+			dt = (long)(now - p->last_release_mt[i]) / 1000; /* ms */
 			mode[i] = MOVE;
 
 			if (!samp[nr][i].pressure) {
@@ -226,7 +226,7 @@ static int read_debounce_vars(struct tslib_module_info *inf, char *str, void *da
 
 static const struct tslib_vars debounce_vars[] =
 {
-	{ "drop_threshold", (void *)0, read_debounce_vars }, // [ms]
+	{ "drop_threshold", (void *)0, read_debounce_vars }, /* ms */
 };
 
 #define NR_VARS (sizeof(debounce_vars) / sizeof(debounce_vars[0]))

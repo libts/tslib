@@ -493,7 +493,7 @@ static void cy8mrln_palmpre_interpolate(struct tslib_cy8mrln_palmpre* info, uint
 static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample *samp, int nr)
 {
 	struct tsdev *ts = info->dev;
-	//We can only read one input struct at once
+	/* We can only read one input struct at once */
 	struct cy8mrln_palmpre_input cy8mrln_evt;
 	struct tslib_cy8mrln_palmpre *cy8mrln_info;
 	int max_x = 0, max_y = 0, max_value = 0, x, y;
@@ -510,7 +510,7 @@ static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample
 	if (ret > 0) {
 		if (cy8mrln_palmpre_update_references (cy8mrln_info->references, cy8mrln_evt.field)) {
 			if (cy8mrln_info->discard_frames == 0) {
-				//backup current scanrate
+				/* backup current scanrate */
 				cy8mrln_info->old_scanrate = cy8mrln_info->scanrate;
 				cy8mrln_palmpre_set_scanrate (cy8mrln_info, ASLEEP_SCANRATE);
 				cy8mrln_info->discard_frames = DISCARD_FRAMES;
@@ -522,7 +522,7 @@ static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample
 			return 0;
 		}
 
-		//reset scanrate after waking up
+		/* reset scanrate after waking up */
 		if (cy8mrln_info->discard_frames == DISCARD_FRAMES) {
 			cy8mrln_palmpre_set_scanrate (cy8mrln_info, cy8mrln_info->old_scanrate);
 #ifdef DEBUG
@@ -541,7 +541,7 @@ static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample
 			}
 #endif
 			cy8mrln_info->discard_frames --;
-			//discard frame
+			/* discard frame */
 			return 0;
 		}
 
@@ -575,7 +575,7 @@ static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample
 			memcpy (cy8mrln_info->last_valid_samples, samp, sizeof (struct ts_sample) * valid_samples);
 			cy8mrln_info->last_n_valid_samples = valid_samples;
 		} else {
-			//return last samples with pressure = 0 to show a mouse up
+			/* return last samples with pressure = 0 to show a mouse up */
 			if (cy8mrln_info->last_valid_samples != NULL) {
 				valid_samples = cy8mrln_info->last_n_valid_samples;
 				memcpy (samp, cy8mrln_info->last_valid_samples, sizeof (struct ts_sample) * valid_samples);
@@ -668,7 +668,7 @@ TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init(struct tsdev *dev, cons
 	if(info == NULL)
 	     return NULL;
 	info->module.ops = &cy8mrln_palmpre_ops;
-        //required to set the default valuse
+        /* required to set the default valuse */
         info->module.dev = dev;
 	info->last_valid_samples = NULL;
 	info->last_n_valid_samples = 0;
@@ -708,5 +708,3 @@ TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init(struct tsdev *dev, cons
 #ifndef TSLIB_STATIC_CY8MRLN_MODULE
 	TSLIB_MODULE_INIT(cy8mrln_palmpre_mod_init);
 #endif
-
-// vim: set noexpandtab shiftwidth=4 tabstop=4 ts=4:
