@@ -113,16 +113,8 @@ int perform_calibration(calibration *cal) {
 
 	/* If we got here, we're OK, so assign scaling to a[6] and return */
 	cal->a[6] = (int)scaling;
-	return 1;
-/*	
-// This code was here originally to just insert default values
-	for(j=0;j<7;j++) {
-		c->a[j]=0;
-	}
-	c->a[1] = c->a[5] = c->a[6] = 1;
-	return 1;
-*/
 
+	return 1;
 }
 
 static void get_sample (struct tsdev *ts, calibration *cal,
