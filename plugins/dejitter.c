@@ -65,9 +65,6 @@ struct ts_hist {
 struct tslib_dejitter {
 	struct tslib_module_info module;
 	int delta;
-	int x;
-	int y;
-	int down;
 	int nr;
 	int head;
 	struct ts_hist hist[NR_SAMPHISTLEN];
