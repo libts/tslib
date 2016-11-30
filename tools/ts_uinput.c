@@ -108,6 +108,12 @@ static int send_touch_events(struct data_t *data, struct ts_sample_mt **s, int n
 			if(s[j][i].valid != 1)
 				continue;
 
+			data->ev[c].time = s[j][i].tv;
+			data->ev[c].type = EV_ABS;
+			data->ev[c].code = ABS_MT_SLOT;
+			data->ev[c].value = s[j][i].slot;
+			c++;
+
 			/*
 			 * This simply supports legacy input events when only one
 			 * finger is used.
@@ -216,12 +222,6 @@ static int send_touch_events(struct data_t *data, struct ts_sample_mt **s, int n
 			data->ev[c].type = EV_ABS;
 			data->ev[c].code = ABS_MT_TRACKING_ID;
 			data->ev[c].value = s[j][i].tracking_id;
-			c++;
-
-			data->ev[c].time = s[j][i].tv;
-			data->ev[c].type = EV_ABS;
-			data->ev[c].code = ABS_MT_SLOT;
-			data->ev[c].value = s[j][i].slot;
 			c++;
 
 			if (data->mt_type_a == 1) {
