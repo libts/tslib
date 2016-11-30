@@ -41,6 +41,9 @@
 #ifndef KEY_CNT
 # define KEY_CNT (KEY_MAX+1)
 #endif
+#ifndef SYN_CNT
+# define SYN_CNT (SYN_MAX+1)
+#endif
 
 #ifndef ABS_MT_POSITION_X
 # define ABS_MT_POSITION_X       0x35    /* Center X ellipse position */
@@ -74,6 +77,7 @@ struct tslib_input {
 	short	mt;
 	int	last_fd;
 	short	no_pressure;
+	short	type_a;
 };
 
 #define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
@@ -105,6 +109,7 @@ static int check_fd(struct tslib_input *i)
 	long evbit[BITS_TO_LONGS(EV_CNT)];
 	long absbit[BITS_TO_LONGS(ABS_CNT)];
 	long keybit[BITS_TO_LONGS(KEY_CNT)];
+	long synbit[BITS_TO_LONGS(SYN_CNT)];
 
 	if (ioctl(ts->fd, EVIOCGVERSION, &version) < 0) {
 		fprintf(stderr, "tslib: Selected device is not a Linux input event device\n");
@@ -134,10 +139,9 @@ static int check_fd(struct tslib_input *i)
 	}
 
 	/* Since some touchscreens (eg. infrared) physically can't measure pressure,
-	the input system doesn't report it on those. Tslib relies on pressure, thus
-	we set it to constant 255. It's still controlled by BTN_TOUCH/BTN_LEFT -
-	when not touched, the pressure is forced to 0. */
-
+	 * the input system doesn't report it on those. Tslib relies on pressure, thus
+	 * we set it to constant 255. It's still controlled by BTN_TOUCH/BTN_LEFT -
+	 * when not touched, the pressure is forced to 0. */
 	if (!(absbit[BIT_WORD(ABS_PRESSURE)] & BIT_MASK(ABS_PRESSURE)))
 		i->no_pressure = 1;
 
@@ -154,11 +158,21 @@ static int check_fd(struct tslib_input *i)
 	    (absbit[BIT_WORD(ABS_MT_POSITION_Y)] & BIT_MASK(ABS_MT_POSITION_Y)))
 		i->mt = 1;
 
+	/* remember if we have a device that doesn't support pressure. We have to
+	 * set pressure ourselves in this case. */
 	if (i->mt && !(absbit[BIT_WORD(ABS_MT_PRESSURE)] & BIT_MASK(ABS_MT_PRESSURE)))
 		i->no_pressure = 1;
 
 	if (evbit[BIT_WORD(EV_SYN)] & BIT_MASK(EV_SYN))
 		i->using_syn = 1;
+
+	if ((ioctl(ts->fd, EVIOCGBIT(EV_SYN, sizeof(synbit)), synbit)) == -1)
+		fprintf(stderr, "tslib: ioctl error\n");
+
+	/* remember whether we have a multitouch type A device */
+	if (i->mt && synbit[BIT_WORD(SYN_MT_REPORT)] & BIT_MASK(SYN_MT_REPORT) &&
+	    !(absbit[BIT_WORD(ABS_MT_SLOT)] & BIT_MASK(ABS_MT_SLOT)))
+		i->type_a = 1;
 
 	if (i->grab_events == GRAB_EVENTS_WANTED) {
 		if (ioctl(ts->fd, EVIOCGRAB, (void *)1)) {
@@ -411,7 +425,8 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 					}
 					break;
 				case EV_SYN:
-					if (i->ev[it].code == SYN_REPORT) {
+					switch (i->ev[it].code) {
+					case SYN_REPORT:
 						if (pen_up && i->no_pressure) {
 							for (k = 0; k < max_slots; k++) {
 								if (i->buf[total][k].x != 0 ||
@@ -436,7 +451,15 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 							}
 						}
 
+						if (i->type_a)
+							i->slot = 0;
+
 						total++;
+						break;
+					case SYN_MT_REPORT:
+						if (i->type_a && i->slot < (max_slots - 1))
+							i->slot++;
+						break;
 					}
 					break;
 				case EV_ABS:
@@ -719,6 +742,7 @@ TSAPI struct tslib_module_info *input_mod_init(__attribute__ ((unused)) struct t
 	i->mt = 0;
 	i->no_pressure = 0;
 	i->last_fd = -2;
+	i->type_a = 0;
 
 	if (tslib_parse_vars(&i->module, raw_vars, NR_VARS, params)) {
 		free(i);
