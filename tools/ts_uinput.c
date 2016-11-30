@@ -60,6 +60,7 @@ struct data_t {
 	struct ts_sample_mt **s_array;
 	int slots;
 	unsigned short uinput_version;
+	short mt_type_a;
 };
 
 static void help(struct data_t *data)
@@ -78,6 +79,7 @@ static void help(struct data_t *data)
 	printf("  -n, --name          set name of new input device  (default: " DEFAULT_UINPUT_NAME")\n");
 	printf("  -i, --idev          touchscreen's input device\n");
 	printf("  -f, --fbdev         touchscreen's framebuffer device\n");
+	printf("  -s, --slots         override available concurrent touch contacts\n");
 	if (data->uinput_version > 3) {
 		printf("\n");
 		printf("Output: virtual device name under /sys/devices/virtual/input/\n");
@@ -221,6 +223,14 @@ static int send_touch_events(struct data_t *data, struct ts_sample_mt **s, int n
 			data->ev[c].code = ABS_MT_SLOT;
 			data->ev[c].value = s[j][i].slot;
 			c++;
+
+			if (data->mt_type_a == 1) {
+				data->ev[c].time = s[j][i].tv;
+				data->ev[c].type = EV_SYN;
+				data->ev[c].code = SYN_MT_REPORT;
+				data->ev[c].value = 0;
+				c++;
+			}
 		}
 
 		if (c > 0) {
@@ -328,6 +338,9 @@ static int setup_uinput(struct data_t *data, int *max_slots)
 						if (j == ABS_MT_SLOT) {
 							*max_slots = absinfo.maximum + 1 - absinfo.minimum;
 						}
+					} else if (i == EV_SYN) {
+						if (j == SYN_MT_REPORT)
+							data->mt_type_a = 1;
 					}
 				}
 			}
@@ -439,6 +452,7 @@ int main(int argc, char **argv)
 		.s_array = NULL,
 		.slots = 1,
 		.uinput_version = 0,
+		.mt_type_a = 0,
 	};
 	int i, j;
 	unsigned short run_daemon = 0;
@@ -451,10 +465,11 @@ int main(int argc, char **argv)
 			{ "daemonize",    no_argument,       0, 'd' },
 			{ "idev",         required_argument, 0, 'i' },
 			{ "fbdev",        required_argument, 0, 'f' },
+			{ "slots",        required_argument, 0, 's' },
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "dhn:f:i:v", long_options, &option_index);
+		int c = getopt_long(argc, argv, "dhn:f:i:vs:", long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -483,6 +498,10 @@ int main(int argc, char **argv)
 
 		case 'f':
 			data.fb_name = optarg;
+			break;
+
+		case 's':
+			data.slots = atoi(optarg);
 			break;
 
 		default:
