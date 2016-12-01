@@ -10,6 +10,8 @@
 
 SUBDIRS		= etc src plugins tests tools
 EXTRA_DIST	= autogen.sh README.markdown
+AM_DISTCHECK_CONFIGURE_FLAGS = --disable-dependency-tracking
+DISTCLEANFILES = $(PACKAGE)-$(LT_RELEASE).pc
 
 ACLOCAL_AMFLAGS = -I m4/internal -I m4/external
 AUTOMAKE_OPTIONS = 1.6

@@ -21,8 +21,6 @@
 
 #include "tslib-private.h"
 
-#include "../plugins/plugins.h"
-
 static const struct {
 	const char *name;
 	tslib_module_init mod_init;
