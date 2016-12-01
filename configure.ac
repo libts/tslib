@@ -4,7 +4,7 @@
 AC_PREREQ(2.57)
 AC_INIT(tslib, 1.3.0-rc2, kergoth@handhelds.org)
 # AC_CONFIG_AUX_DIR(config)
-AM_INIT_AUTOMAKE([dist-bzip2 subdir-objects])
+AM_INIT_AUTOMAKE([dist-bzip2 dist-xz subdir-objects])
 AC_CONFIG_SRCDIR([src/ts_close.c])
 AC_CONFIG_HEADERS(config.h)
 
