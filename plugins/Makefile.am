@@ -36,6 +36,12 @@ else
 VARIANCE_MODULE =
 endif
 
+if ENABLE_MEDIAN_MODULE
+MEDIAN_MODULE = median.la
+else
+MEDIAN_MODULE =
+endif
+
 if ENABLE_PTHRES_MODULE
 PTHRES_MODULE = pthres.la
 else
@@ -143,6 +149,7 @@ pluginexec_LTLIBRARIES = \
 	$(LINEAR_MODULE) \
 	$(DEJITTER_MODULE) \
 	$(VARIANCE_MODULE) \
+	$(MEDIAN_MODULE) \
 	$(PTHRES_MODULE) \
 	$(DEBOUNCE_MODULE) \
 	$(SKIP_MODULE) \
@@ -165,6 +172,10 @@ variance_la_SOURCES	= variance.c
 variance_la_LDFLAGS	= -module $(LTVSN)
 variance_la_LIBADD	= $(top_builddir)/src/libts.la
   
+median_la_SOURCES	= median.c
+median_la_LDFLAGS	= -module $(LTVSN)
+median_la_LIBADD	= $(top_builddir)/src/libts.la
+
 dejitter_la_SOURCES	= dejitter.c
 dejitter_la_LDFLAGS	= -module $(LTVSN)
 dejitter_la_LIBADD	= $(top_builddir)/src/libts.la

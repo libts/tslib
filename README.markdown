@@ -196,6 +196,18 @@ Parameters:
 	Number of events to drop before release
 
 
+### module: median
+
+#### Description:
+  Similar to what the variance filter does, the median filter suppresses
+  spikes in the gesture. For some theory, see https://en.wikipedia.org/wiki/Median_filter
+
+Parameters:
+* depth
+
+	Number of samples to apply the median filter to
+
+
 ## Module Creation Notes
 
 For those creating tslib modules, it is important to note a couple things with

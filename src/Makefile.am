@@ -35,6 +35,10 @@ if ENABLE_STATIC_VARIANCE_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/variance.c
 endif
 
+if ENABLE_STATIC_MEDIAN_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/median.c
+endif
+
 if ENABLE_STATIC_PTHRES_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/pthres.c
 endif
