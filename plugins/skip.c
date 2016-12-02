@@ -45,6 +45,7 @@ struct tslib_skip {
 	int M;
 	struct ts_sample *buf;
 	struct ts_sample_mt **buf_mt;
+	int slots;
 	int sent;
 };
 
@@ -138,23 +139,27 @@ static int skip_read_mt(struct tslib_module_info *info, struct ts_sample_mt **sa
 		return -ENOMEM;
 
 	if (skip->ntail) {
-		skip->buf_mt = malloc(skip->ntail * sizeof(struct ts_sample_mt **));
-		if (!skip->buf_mt) {
-			free(cur[0]);
-			free(cur);
-			return -ENOMEM;
-		}
-
-		for (i = 0; i < skip->ntail; i++) {
-			skip->buf_mt[i] = calloc(max_slots, sizeof(struct ts_sample_mt));
-			if (!skip->buf_mt[i]){
-				for (j = 0; j < i; j++)
-					free(skip->buf_mt[j]);
-				free(skip->buf_mt);
+		if (skip->slots < max_slots || skip->buf_mt == NULL) {
+			skip->buf_mt = malloc(skip->ntail * sizeof(struct ts_sample_mt **));
+			if (!skip->buf_mt) {
 				free(cur[0]);
 				free(cur);
 				return -ENOMEM;
 			}
+
+			for (i = 0; i < skip->ntail; i++) {
+				skip->buf_mt[i] = calloc(max_slots, sizeof(struct ts_sample_mt));
+				if (!skip->buf_mt[i]){
+					for (j = 0; j < i; j++)
+						free(skip->buf_mt[j]);
+					free(skip->buf_mt);
+					free(cur[0]);
+					free(cur);
+					return -ENOMEM;
+				}
+			}
+
+			skip->slots = max_slots;
 		}
 	}
 
@@ -237,7 +242,6 @@ static int skip_read_mt(struct tslib_module_info *info, struct ts_sample_mt **sa
 		free(skip->buf_mt[i]);
 	}
 
-	free(skip->buf_mt);
 	free(cur[0]);
 	free(cur);
 
@@ -247,9 +251,18 @@ static int skip_read_mt(struct tslib_module_info *info, struct ts_sample_mt **sa
 static int skip_fini(struct tslib_module_info *info)
 {
 	struct tslib_skip *skip = (struct tslib_skip *)info;
+	int i;
 
 	if (skip->buf)
 		free(skip->buf);
+
+	for (i = 0; i < skip->ntail; i++) {
+		if (skip->buf_mt[i])
+			free(skip->buf_mt[i]);
+	}
+
+	if (skip->buf_mt)
+		free(skip->buf_mt);
 
 	free(info);
 
@@ -315,6 +328,7 @@ TSAPI struct tslib_module_info *skip_mod_init(__attribute__ ((unused)) struct ts
 	skip->ntail = 1; /* by default remove the last */
 	skip->buf = NULL;
 	skip->buf_mt = NULL;
+	skip->slots = 0;
 
 	reset_skip(skip);
 
