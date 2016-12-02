@@ -289,8 +289,21 @@ static int median_read_mt(struct tslib_module_info *inf, struct ts_sample_mt **s
 static int median_fini(struct tslib_module_info *inf)
 {
 	struct median_context * c = ( struct median_context *) inf;
+	int i;
 
-	free( c->delay );
+	free(c->delay);
+
+	for (i = 0; i < c->slots; i++) {
+		if (c->delay_mt[i])
+			free(c->delay_mt[i]);
+	}
+
+	if (c->delay_mt)
+		free(c->delay_mt);
+
+	if (c->withsamples_mt)
+		free(c->withsamples_mt);
+
 	free(inf);
 
 	return 0;
