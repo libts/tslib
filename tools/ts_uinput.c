@@ -399,6 +399,7 @@ static int process(struct data_t *data, struct ts_sample_mt **s_array, int max_s
 static void cleanup(struct data_t *data)
 {
 	int i;
+	int ret;
 
 	if (data->s_array) {
 		for (i = 0; i < TS_READ_WHOLE_SAMPLES; i++) {
@@ -415,7 +416,10 @@ static void cleanup(struct data_t *data)
 		ts_close(data->ts);
 
 	if (data->fd_uinput) {
-		ioctl(data->fd_uinput, UI_DEV_DESTROY);
+		ret = ioctl(data->fd_uinput, UI_DEV_DESTROY);
+		if (ret == -1)
+			perror("ioctl UI_DEV_DESTROY");
+
 		close(data->fd_uinput);
 	}
 
