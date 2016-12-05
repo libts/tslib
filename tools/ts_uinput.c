@@ -527,7 +527,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!data.uinput_name) {
-		data.uinput_name = malloc(strlen(DEFAULT_UINPUT_NAME));
+		data.uinput_name = malloc(strlen(DEFAULT_UINPUT_NAME) + 1);
 		if (!data.uinput_name)
 			return errno;
 		sprintf(data.uinput_name, DEFAULT_UINPUT_NAME);
