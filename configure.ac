@@ -7,6 +7,7 @@ AC_INIT(tslib, 1.3.0-rc2, kergoth@handhelds.org)
 AM_INIT_AUTOMAKE([dist-bzip2 dist-xz subdir-objects])
 AC_CONFIG_SRCDIR([src/ts_close.c])
 AC_CONFIG_HEADERS(config.h)
+AC_CONFIG_MACRO_DIR([m4/internal])
 
 PACKAGE_DESCRIPTION="Touchscreen Access Library"
 AC_SUBST(PACKAGE_DESCRIPTION)
