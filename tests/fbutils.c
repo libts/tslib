@@ -72,6 +72,7 @@ int open_framebuffer(void)
         	}
 
 		if (ioctl(fd, VT_OPENQRY, &nr) < 0) {
+			close(fd);
         	        perror("ioctl VT_OPENQRY");
         	        return -1;
         	}
