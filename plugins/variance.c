@@ -150,6 +150,8 @@ static int variance_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 				free(cur_mt[j]);
 
 			free(cur_mt);
+
+			return -ENOMEM;
 		}
 	}
 
