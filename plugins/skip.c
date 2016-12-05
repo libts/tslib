@@ -135,8 +135,12 @@ static int skip_read_mt(struct tslib_module_info *info, struct ts_sample_mt **sa
 		return -ENOMEM;
 
 	cur[0] = calloc(max_slots, sizeof(struct ts_sample_mt));
-	if (!cur[0])
+	if (!cur[0]) {
+		if (cur)
+			free(cur);
+
 		return -ENOMEM;
+	}
 
 	if (skip->ntail) {
 		if (skip->slots < max_slots || skip->buf_mt == NULL) {
