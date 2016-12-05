@@ -176,7 +176,10 @@ static void clearbuf(struct tsdev *ts)
 int main()
 {
 	struct tsdev *ts;
-	calibration cal;
+	calibration cal = {
+		.x = { 0 },
+		.y = { 0 },
+	};
 	int cal_fd;
 	char cal_buffer[256];
 	char *tsdevice = NULL;
