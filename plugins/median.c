@@ -21,6 +21,8 @@
 #include "tslib.h"
 #include "tslib-filter.h"
 
+#define MEDIAN_DEPTH_MAX 128
+
 #define PREPARESAMPLE( array, context, member ) { \
 	int count = context->size; \
 	while( count-- ) { \
@@ -322,11 +324,14 @@ static int median_depth(struct tslib_module_info *inf, char *str,
 	struct median_context *m = (struct median_context *)inf;
 	unsigned long v;
 	int err = errno;
+	unsigned int max = MEDIAN_DEPTH_MAX;
 
 	v = strtoul(str, NULL, 0);
 
-	if (v == ULONG_MAX && errno == ERANGE)
+	if (v >= max) {
+		fprintf(stderr, "MEDIAN: depth exceeds maximum of %d\n", max);
 		return -1;
+	}
 
 	errno = err;
 	m->delay = malloc( sizeof( struct ts_sample ) * v );
