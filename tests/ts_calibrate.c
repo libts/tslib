@@ -242,6 +242,12 @@ int main()
 			cal_fd = open (TS_POINTERCAL, O_CREAT | O_TRUNC | O_RDWR,
 			               S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 		}
+		if (cal_fd < 0) {
+			perror("open");
+			close_framebuffer();
+			exit(1);
+		}
+
 		len = sprintf(cal_buffer,"%d %d %d %d %d %d %d %d %d",
 		              cal.a[1], cal.a[2], cal.a[0],
 		              cal.a[4], cal.a[5], cal.a[3], cal.a[6],
