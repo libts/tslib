@@ -660,7 +660,7 @@ static int ts_input_fini(struct tslib_module_info *inf)
 {
 	struct tslib_input *i = (struct tslib_input *)inf;
 	struct tsdev *ts = inf->dev;
-	int j, k;
+	int j;
 
 	if (i->grab_events == GRAB_EVENTS_ACTIVE) {
 		if (ioctl(ts->fd, EVIOCGRAB, (void *)0)) {
@@ -669,14 +669,11 @@ static int ts_input_fini(struct tslib_module_info *inf)
 	}
 
 	for (j = 0; j < i->nr; j++) {
-		if (i->buf[j]) {
-			for (k = 0; k < i->max_slots; k++) {
-				if (&i->buf[j][k])
-					free(&i->buf[j][k]);
-			}
-			free (i->buf[j]);
-		}
+		if (i->buf[j])
+			free(i->buf[j]);
 	}
+	if (i->buf)
+		free (i->buf);
 
 	free(inf);
 

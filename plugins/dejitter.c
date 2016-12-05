@@ -202,8 +202,8 @@ static int dejitter_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 	if (djt->hist_mt == NULL || max_slots > djt->slots) {
 		if (djt->hist_mt) {
 			for (i = 0; i < djt->slots; i++) {
-				if (&djt->hist_mt[i])
-					free(&djt->hist_mt[i]);
+				if (djt->hist_mt[i])
+					free(djt->hist_mt[i]);
 			}
 			free(djt->hist_mt);
 			djt->hist_mt = NULL;

@@ -405,8 +405,8 @@ static void cleanup(struct data_t *data)
 
 	if (data->s_array) {
 		for (i = 0; i < TS_READ_WHOLE_SAMPLES; i++) {
-			if (&data->s_array[i])
-				free(&data->s_array[i]);
+			if (data->s_array[i])
+				free(data->s_array[i]);
 		}
 		free(data->s_array);
 	}

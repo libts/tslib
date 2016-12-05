@@ -193,8 +193,8 @@ static int median_read_mt(struct tslib_module_info *inf, struct ts_sample_mt **s
 
 	if (c->delay_mt == NULL || max_slots > c->slots) {
 		for (i = 0; i < c->slots; i++) {
-			if (&c->delay_mt[i])
-				free(&c->delay_mt[i]);
+			if (c->delay_mt[i])
+				free(c->delay_mt[i]);
 		}
 		if (c->delay_mt)
 			free(c->delay_mt);
