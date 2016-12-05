@@ -128,8 +128,7 @@ static int variance_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 	int i, j;
 	struct ts_sample cur;
 	struct ts_sample_mt **cur_mt;
-	struct ts_sample samp_single; /* build this if only slot 0 */
-	struct ts_sample *samp = &samp_single;
+	struct ts_sample *samp = NULL;
 	short pen_down = 1;
 
 	/* Even if sometimes resulting in worse behaviour on capacitive touchscreens,
@@ -139,9 +138,15 @@ static int variance_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 	 * deliver data from the past, plus important present data to a user buffer.
 	 */
 
-	cur_mt = malloc(nr * sizeof(struct ts_sample_mt **));
-	if (!cur_mt)
+	samp = calloc(nr, sizeof(struct ts_sample));
+	if (!samp)
 		return -ENOMEM;
+
+	cur_mt = malloc(nr * sizeof(struct ts_sample_mt **));
+	if (!cur_mt) {
+		free(samp);
+		return -ENOMEM;
+	}
 
 	for (i = 0; i < 1; i++) {
 		cur_mt[i] = malloc(max_slots * sizeof(struct ts_sample_mt));
@@ -150,6 +155,7 @@ static int variance_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 				free(cur_mt[j]);
 
 			free(cur_mt);
+			free(samp);
 
 			return -ENOMEM;
 		}
@@ -161,7 +167,7 @@ static int variance_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 			var->flags &= ~VAR_SUBMITNOISE;
 		} else {
 			if (info->next->ops->read_mt(info->next, cur_mt, max_slots, 1) < 1)
-				return count;
+				goto out;
 
 			for (i = 1; i < max_slots; i++) {
 				if (cur_mt[0][i].valid == 1) {
@@ -215,7 +221,7 @@ static int variance_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 				/* Do we suspect the previous sample was a noise? */
 				if (var->flags & VAR_NOISEVALID) {
 					/* Two "noises": it's just a quick pen movement */
-					*(samp + count) = var->last = var->noise;
+					samp[count] = var->last = var->noise;
 					samp_mt[count][0].x = samp[count].x;
 					samp_mt[count][0].y = samp[count].y;
 					samp_mt[count][0].pressure = samp[count].pressure;
@@ -242,11 +248,11 @@ acceptsample:
 		fprintf(stderr,"VARIANCE----------------> %d %d %d\n",
 			var->last.x, var->last.y, var->last.pressure);
 #endif
-		*(samp + count) = var->last;
-		samp_mt[count][0].x = ((struct ts_sample *)(samp + count))->x;
-		samp_mt[count][0].y = ((struct ts_sample *)(samp + count))->y;
-		samp_mt[count][0].pressure = ((struct ts_sample *)(samp + count))->pressure;
-		samp_mt[count][0].tv = ((struct ts_sample *)(samp + count))->tv;
+		samp[count] = var->last;
+		samp_mt[count][0].x = samp[count].x;
+		samp_mt[count][0].y = samp[count].y;
+		samp_mt[count][0].pressure = samp[count].pressure;
+		samp_mt[count][0].tv = samp[count].tv;
 		samp_mt[count][0].valid = 1;
 		samp_mt[count][0].slot = cur_mt[0][0].slot;
 		samp_mt[count][0].tracking_id = cur_mt[0][0].tracking_id;
@@ -255,6 +261,7 @@ acceptsample:
 		var->last = cur;
 	}
 
+out:
 	for (i = 0; i < 1; i++) {
 		if (cur_mt[i])
 			free(cur_mt[i]);
@@ -262,6 +269,8 @@ acceptsample:
 
 	if (cur_mt)
 		free(cur_mt);
+
+	free(samp);
 
 	return count;
 }
