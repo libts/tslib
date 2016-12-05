@@ -50,10 +50,12 @@ static char *defaultconsoledevice = "/dev/tty";
 static char *fbdevice = NULL;
 static char *consoledevice = NULL;
 
+#define VTNAME_LEN 128
+
 int open_framebuffer(void)
 {
 	struct vt_stat vts;
-	char vtname[128];
+	char vtname[VTNAME_LEN];
 	int fd, nr;
 	unsigned y, addr;
 
@@ -64,6 +66,9 @@ int open_framebuffer(void)
 		consoledevice = defaultconsoledevice;
 
 	if (strcmp (consoledevice, "none") != 0) {
+		if (strlen(consoledevice) >= VTNAME_LEN)
+			return -1;
+
 		sprintf (vtname,"%s%d", consoledevice, 1);
         	fd = open (vtname, O_WRONLY);
         	if (fd < 0) {
