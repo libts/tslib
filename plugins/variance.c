@@ -213,7 +213,7 @@ static int variance_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 				/* Do we suspect the previous sample was a noise? */
 				if (var->flags & VAR_NOISEVALID) {
 					/* Two "noises": it's just a quick pen movement */
-					samp[count] = var->last = var->noise;
+					*(samp + count) = var->last = var->noise;
 					samp_mt[count][0].x = samp[count].x;
 					samp_mt[count][0].y = samp[count].y;
 					samp_mt[count][0].pressure = samp[count].pressure;
@@ -240,11 +240,11 @@ acceptsample:
 		fprintf(stderr,"VARIANCE----------------> %d %d %d\n",
 			var->last.x, var->last.y, var->last.pressure);
 #endif
-		samp[count] = var->last;
-		samp_mt[count][0].x = samp[count].x;
-		samp_mt[count][0].y = samp[count].y;
-		samp_mt[count][0].pressure = samp[count].pressure;
-		samp_mt[count][0].tv = samp[count].tv;
+		*(samp + count) = var->last;
+		samp_mt[count][0].x = ((struct ts_sample *)(samp + count))->x;
+		samp_mt[count][0].y = ((struct ts_sample *)(samp + count))->y;
+		samp_mt[count][0].pressure = ((struct ts_sample *)(samp + count))->pressure;
+		samp_mt[count][0].tv = ((struct ts_sample *)(samp + count))->tv;
 		samp_mt[count][0].valid = 1;
 		samp_mt[count][0].slot = cur_mt[0][0].slot;
 		samp_mt[count][0].tracking_id = cur_mt[0][0].tracking_id;
