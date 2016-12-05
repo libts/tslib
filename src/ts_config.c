@@ -52,6 +52,8 @@ int ts_config(struct tsdev *ts)
 
 	f = fopen(conffile, "r");
 	if (!f) {
+		free(conffile);
+
 		perror("Couldnt open tslib config file");
 		return -1;
 	}
@@ -111,6 +113,7 @@ int ts_config(struct tsdev *ts)
 	}
 
 	fclose(f);
+	free(conffile);
 
 	return ret;
 }
