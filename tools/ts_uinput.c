@@ -623,7 +623,7 @@ int main(int argc, char **argv)
 		if (!data.s_array[i]) {
 			fprintf(stderr, DEFAULT_UINPUT_NAME ": Error allocating memory\n");
 			for (j = 0; j <= i; j++)
-				free(&data.s_array[j]);
+				free(data.s_array[j]);
 			goto out;
 		}
 	}
