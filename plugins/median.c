@@ -206,10 +206,10 @@ static int median_read_mt(struct tslib_module_info *inf, struct ts_sample_mt **s
 
 		for (i = 0; i < max_slots; i++) {
 			c->delay_mt[i] = calloc(c->size, sizeof(struct ts_sample_mt));
-			if (!&c->delay_mt[i]) {
-				for (j = 0; j < i; j++) {
-					if(&c->delay_mt[j])
-						free(&c->delay_mt[j]);
+			if (!c->delay_mt[i]) {
+				for (j = 0; j <= i; j++) {
+					if(c->delay_mt[j])
+						free(c->delay_mt[j]);
 				}
 				if (c->delay_mt)
 					free(c->delay_mt);
