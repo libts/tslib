@@ -292,9 +292,6 @@ static int setup_uinput(struct data_t *data, int *max_slots)
 	}
 	for (i = 0; i < EV_MAX; i++) {
 		if (test_bit(i, bit[0])) {
-			if (!i)
-				continue;
-
 			if (ioctl(data->fd_input, EVIOCGBIT(i, KEY_MAX), bit[i]) < 0) {
 				perror("ioctl EVIOCGBIT");
 				goto err;
