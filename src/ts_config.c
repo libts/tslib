@@ -43,16 +43,24 @@ int ts_config(struct tsdev *ts)
 	FILE *f;
 	int line = 0;
 	int ret = 0;
+	short strdup_allocated = 0;
 
 	char *conffile;
 
 	if( (conffile = getenv("TSLIB_CONFFILE")) == NULL) {
 		conffile = strdup (TS_CONF);
+		if (conffile) {
+			strdup_allocated = 1;
+		} else {
+			perror("Couldn't find tslib config file");
+			return -1;
+		}
 	}
 
 	f = fopen(conffile, "r");
 	if (!f) {
-		free(conffile);
+		if (strdup_allocated)
+			free(conffile);
 
 		perror("Couldnt open tslib config file");
 		return -1;
@@ -113,7 +121,9 @@ int ts_config(struct tsdev *ts)
 	}
 
 	fclose(f);
-	free(conffile);
+
+	if (strdup_allocated)
+		free(conffile);
 
 	return ret;
 }
