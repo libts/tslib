@@ -631,9 +631,12 @@ int main(int argc, char **argv)
 		if (data.uinput_version > 3) {
 			char name[64];
 			int ret = ioctl(data.fd_uinput, UI_GET_SYSNAME(sizeof(name)), name);
-			if (ret >= 0)
+			if (ret >= 0) {
 				fprintf(stdout, "%s\n", name);
 				fflush(stdout);
+			} else {
+				perror("ioctl UI_GET_SYSNAME");
+			}
 		} else {
 			fprintf(stderr, DEFAULT_UINPUT_NAME ": See the kernel logs for the device number\n");
 		}
