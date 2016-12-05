@@ -103,16 +103,25 @@ static struct tslib_module_info *__ts_load_module_static(struct tsdev *ts, const
 	return info;
 }
 
+#define PLUGIN_DIR_LEN 1024
+
 static struct tslib_module_info *__ts_load_module_shared(struct tsdev *ts, const char *module, const char *params)
 {
 	tslib_module_init *init;
 	struct tslib_module_info *info;
-	char fn[1024];
+	char fn[PLUGIN_DIR_LEN];
 	void *handle;
 	char *plugin_directory = getenv("TSLIB_PLUGINDIR");
 
 	if (!plugin_directory)
 		plugin_directory = PLUGIN_DIR;
+
+	if (strlen(plugin_directory) >= PLUGIN_DIR_LEN) {
+#ifdef DEBUG
+		fprintf (stderr, "%s dlopen() failed: path too long\n", fn);
+#endif
+		return NULL;
+	}
 
 	snprintf(fn, sizeof fn, "%s/%s.so", plugin_directory, module);
 
