@@ -243,6 +243,12 @@ TSAPI struct tslib_module_info *linear_mod_init(__attribute__ ((unused)) struct 
 	if( (calfile = getenv("TSLIB_CALIBFILE")) == NULL) calfile = TS_POINTERCAL;
 	if (stat(calfile, &sbuf)==0) {
 		pcal_fd = fopen(calfile, "r");
+		if (!pcal_fd) {
+			free(lin);
+			perror("fopen");
+			return NULL;
+		}
+
 		for (index = 0; index < 7; index++)
 			if (fscanf(pcal_fd, "%d", &lin->a[index]) != 1) break;
 
