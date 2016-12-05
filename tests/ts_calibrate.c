@@ -255,7 +255,11 @@ int main()
 		              cal.a[1], cal.a[2], cal.a[0],
 		              cal.a[4], cal.a[5], cal.a[3], cal.a[6],
 		              xres, yres);
-		write (cal_fd, cal_buffer, len);
+		if (write (cal_fd, cal_buffer, len) == -1) {
+			perror("write");
+			close_framebuffer();
+			exit(1);
+		}
 		close (cal_fd);
                 i = 0;
 	} else {
