@@ -253,6 +253,14 @@ acceptsample:
 		var->last = cur;
 	}
 
+	for (i = 0; i < 1; i++) {
+		if (cur_mt[i])
+			free(cur_mt[i]);
+	}
+
+	if (cur_mt)
+		free(cur_mt);
+
 	return count;
 }
 
