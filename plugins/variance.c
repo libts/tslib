@@ -151,7 +151,7 @@ static int variance_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 	for (i = 0; i < 1; i++) {
 		cur_mt[i] = malloc(max_slots * sizeof(struct ts_sample_mt));
 		if (!cur_mt[i]) {
-			for (j = 0; j < i; j++)
+			for (j = 0; j <= i; j++)
 				free(cur_mt[j]);
 
 			free(cur_mt);

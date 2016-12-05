@@ -619,9 +619,9 @@ int main(int argc, char **argv)
 
 	for (i = 0; i < TS_READ_WHOLE_SAMPLES; i++) {
 		data.s_array[i] = malloc(data.slots * sizeof(struct ts_sample_mt));
-		if (!&data.s_array[i]) {
+		if (!data.s_array[i]) {
 			fprintf(stderr, DEFAULT_UINPUT_NAME ": Error allocating memory\n");
-			for (j = 0; j < i; j++)
+			for (j = 0; j <= i; j++)
 				free(&data.s_array[j]);
 			goto out;
 		}
