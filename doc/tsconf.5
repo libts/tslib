@@ -1,0 +1,308 @@
+.TH "TS.CONF" "5" "" "" "tslib"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+ts.conf \- Configuration file for tslib, controlling touch screens for embedded devices\&.
+.SH "DESCRIPTION"
+.PP
+The idea of tslib is to have a core library that provides standardised services, and a set of plugins to manage the conversion and filtering as needed\&.
+.PP
+The plugins for a particular touchscreen are loaded automatically by the library under the control of a static configuration file,
+/etc/ts\&.conf\&.
+/etc/ts\&.conf
+gives the library basic configuration information\&. Each line specifies one module, and the parameters for that module\&. The modules are loaded in order, with the first one processing the touchscreen data first\&. For example:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+  module_raw input
+  module variance delta=30
+  module dejitter delta=100
+  module linear
+   
+.fi
+.if n \{\
+.RE
+.\}
+.SH "ENVIRONMENT VARIABLES"
+.PP
+Latest versions of the Xorg tslib input driver use
+\fBhal\fR
+to configure the touchscreen within Xorg\&. Environment variables are only needed for the tslib commands\&.
+.PP
+\fBTSLIB_TSDEVICE\fR
+.RS 4
+If the default touchscreen device cannot be found, set the
+\fBTSLIB_TSDEVICE\fR
+environment variable to the touchscreen device to use\&.
+.sp
+Default:
+/dev/input/event0
+.RE
+.PP
+\fBTSLIB_CONSOLEDEVICE\fR
+.RS 4
+Tslib default console device\&.
+.sp
+Default:
+/dev/tty
+.RE
+.PP
+\fBTSLIB_CALIBFILE \fR
+.RS 4
+Stores calibration data obtained using
+ts_calibrate\&.
+.sp
+Default:
+/etc/pointercal
+.RE
+.PP
+\fBTSLIB_CONFFILE\fR
+.RS 4
+Set a different location for the
+ts\&.conf
+configuration file itself\&.
+.sp
+Default;
+/etc/ts\&.conf\&.
+.RE
+.PP
+\fBTSLIB_FBDEVICE\fR
+.RS 4
+Framebuffer device to use for the touchscreen support\&.
+.sp
+Default:
+/dev/fb0\&.
+.RE
+.PP
+\fBTSLIB_PLUGINDIR\fR
+.RS 4
+Plugin directory for tslib\&.
+.sp
+Default:
+/usr/lib/$triplet/ts0/
+where triplet is the MultiArch path, e\&.g\&. arm\-linux\-gnueabi\&.
+.RE
+.SH "MODULE PARAMETERS"
+.PP
+\fBvariance\fR
+.RS 4
+Tries to do it\*(Aqs best in order to filter out random noise coming from touchscreen ADC\*(Aqs\&. This is achieved by limiting the sample movement speed to some value (e\&.g\&. the pen is not supposed to move quicker than some threshold)\&.
+.sp
+This is a \*(Aqgreedy\*(Aq filter, e\&.g\&. it gives less samples on output than receives on input\&.
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBdelta\fR
+.sp
+Set the squared distance in touchscreen units between previous and current pen position (e\&.g\&. (X2\-X1)^2 + (Y2\-Y1)^2)\&. This defines the criteria for determining whenever two samples are \*(Aqnear\*(Aq or \*(Aqfar\*(Aq to each other\&.
+.sp
+If the distance between previous and current sample is \*(Aqfar\*(Aq, the sample is marked as \*(Aqpotential noise\*(Aq\&. This doesn\*(Aqt mean yet that it will be discarded; if the next reading will be close to it, this will be considered just a regular \*(Aqquick motion\*(Aq event, and it will sneak to the next layer\&. Also, if the sample after the \*(Aqpotential noise\*(Aq is \*(Aqfar\*(Aq from both previously discussed samples, this is also considered a \*(Aqquick motion\*(Aq event and the sample sneaks into the output stream\&.
+.RE
+.RE
+.PP
+\fBdejitter\fR
+.RS 4
+Removes jitter on the X and Y co\-ordinates\&. This is achieved by applying a weighted smoothing filter\&. The latest samples have most weight; earlier samples have less weight\&. This allows to achieve 1:1 input\->output rate\&.
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBdelta\fR
+.sp
+Squared distance between two samples ((X2\-X1)^2 + (Y2\-Y1)^2) that defines the \*(Aqquick motion\*(Aq threshold\&. If the pen moves quick, it is not feasible to smooth pen motion, besides quick motion is not precise anyway; so if quick motion is detected the module just discards the backlog and simply copies input to output\&.
+.RE
+.RE
+.PP
+\fBlinear\fR
+.RS 4
+Linear scaling module, primarily used for conversion of touch screen co\-ordinates to screen co\-ordinates\&.
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBxyswap\fR
+.sp
+Interchange the X and Y co\-ordinates \-\- no longer used or needed if the new linear calibration utility ts_calibrate is used\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBpressure_offset\fR
+.sp
+Offset applied to the pressure value.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBpressure_mul\fR
+.sp
+Factor to multiply the pressure value with.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBpressure_div\fR
+.sp
+Value to divide the pressure value by.
+
+.RE
+.RE
+.PP
+\fBpthres\fR
+.RS 4
+Pressure threshold filter. Given a release is always pressure 0 and a press is always >= 1, this discards samples below / above the specified pressure threshold.
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBpmin\fR
+.sp
+Minimum pressure value for a sample to be valid.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBpmax\fR
+.sp
+Maximum pressure value for a sample to be valid.
+
+.RE
+.RE
+.PP
+\fBdebounce\fR
+.RS 4
+Simple debounce mechanism that drops input events for the specified time after a touch gesture stopped.
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBdrop_threshold\fR
+.sp
+drop events up to this number of milliseconds after the last release event.
+
+.RE
+.RE
+.PP
+\fBskip\fR
+.RS 4
+Skip nhead samples after press and ntail samples before release. This should help if for the device the first or last samples are unreliable.
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBnhead\fR
+.sp
+Number of events to drop after pressure.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBntail\fR
+.sp
+Number of events to drop before release.
+
+.RE
+.RE
+.PP
+\fBmedian\fR
+.RS 4
+Similar to what the variance filter does, the median filter suppresses spikes in the gesture.
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBdepth\fR
+.sp
+Number of samples to apply the median filter to.
+.RE
+.RE
+.PP
+
+.SH "SEE ALSO"
+.BR ts_calibrate (1),
+.BR ts_test (1)

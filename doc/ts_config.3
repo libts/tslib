@@ -1,0 +1,29 @@
+.TH TS_CONFIG 3  "" "" "tslib"
+.SH NAME
+ts_config, ts_reconfig \- read tslib's configuration
+.SH SYNOPSIS
+.nf
+.B #include <tslib.h>
+.sp
+.BI "int ts_config(struct tsdev *" dev ");"
+.sp
+.BI "int ts_reconfig(struct tsdev *" dev ");"
+.sp
+.fi
+
+.SH DESCRIPTION
+.BR ts_config ()
+loads and initialises all modules configured in the tslib configuration file
+.BR TSLIB_CONFFILE
+, see tsconf (5).
+.BR ts_reconfig ()
+re-runs ts_config and updates the configuration if the configuration file has changed.
+
+.SH RETURN VALUE
+Zero is returned on success. A negative value is returned in case of an error.
+
+.SH SEE ALSO
+.BR ts_read (3),
+.BR ts_open (3),
+.BR ts_close (3),
+.BR tsconf (5)

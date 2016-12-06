@@ -1,0 +1,25 @@
+.TH TS_OPEN 3  "" "" "tslib"
+.SH NAME
+ts_open \- open a touch screen input device
+.SH SYNOPSIS
+.nf
+.B #include <tslib.h>
+.sp
+.BI "struct tsdev *ts_open(const char *" dev_name ", int " nonblock ");"
+.sp
+.fi
+
+.SH DESCRIPTION
+.BR ts_open ()
+allocates memory for a new touch screen device, opens and links the given input event device to it.
+
+.SH RETURN VALUE
+A pointer to the opened
+.BI "struct tsdev"
+is returned.
+
+.SH SEE ALSO
+.BR ts_close (3),
+.BR ts_read (3),
+.BR ts_config (3),
+.BR tsconf (5)

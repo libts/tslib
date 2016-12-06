@@ -1,0 +1,25 @@
+.TH TS_CLOSE 3  "" "" "tslib"
+.SH NAME
+ts_close \- close a touch screen input device
+.SH SYNOPSIS
+.nf
+.B #include <tslib.h>
+.sp
+.BI "int ts_close(struct tsdev *" dev ");"
+.sp
+.fi
+
+.SH DESCRIPTION
+.BR ts_close ()
+closes a touch screen input device opened by
+.BR ts_open ()
+, see ts_open (3)
+
+.SH RETURN VALUE
+Zero is returned on success. A negative value is returned in case of an error.
+
+.SH SEE ALSO
+.BR ts_open (3),
+.BR ts_read (3),
+.BR ts_config (3),
+.BR tsconf (5)
