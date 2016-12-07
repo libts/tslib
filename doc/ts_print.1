@@ -1,13 +1,4 @@
-'\" t
-.\"     Title: TS_TEST
-.\"    Author: Russell King
-.\" Generator: DocBook XSL Stylesheets v1.76.1 <http://docbook.sf.net/>
-.\"      Date: January 21, 2008
-.\"    Manual: tslib
-.\"    Source: Debian 1
-.\"  Language: English
-.\"
-.TH "TS_TEST" "1" "" "" "tslib"
+.TH "TS_PRINT" "1" "" "" "tslib"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -28,16 +19,25 @@
 .\" * MAIN CONTENT STARTS HERE *
 .\" -----------------------------------------------------------------
 .SH "NAME"
-ts_test \- A basic test routine for tslib\&.
+ts_print, ts_print_raw \- A very basic test routine for tslib\&.
 
 .SH SYNOPSIS
-.B ts_test
+.B ts_print
+.sp
+.B ts_print_raw
 
 .SH "DESCRIPTION"
 .PP
-ts_test is used to manually test \fBtslib\fR using ts_read(). It draws a crosshair and mode buttons to the framebuffer and lets you test the behaviour of input samples with your configured filters applied, see ts.conf (5). Since it uses ts_read(), it supports single touch only.
+ts_print simply reads tslib input samples and prints them to the console. With
+.BR ts_print
+, the configured filters are applied, see ts.conf (5). With
+.BR ts_print_raw
+, no filters are applied.
+.sp
+It supports single touch only.
 .SH "SEE ALSO"
 .PP
 tsconf (5),
+ts_test (1),
 ts_test_mt (1),
 ts_calibrate (1)
