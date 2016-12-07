@@ -1,0 +1,66 @@
+.TH "TS_TEST_MT" "1" "" "" "tslib"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+ts_test_mt \- A basic multitouch test program for tslib.
+
+.SH SYNOPSIS
+\fBts_test_mt\fR [OPTION]
+
+.SH "DESCRIPTION"
+.PP
+.BR ts_test_mt
+is used to test
+.BR tslib
+using
+.BR ts_read_mt()
+, see ts_read_mt (3). It can be used for single and multi touch devices and lets you test the input behaviour with tslib's filters applied. Two modes are offered by buttons on the display:
+.sp
+In
+.BR Drag
+mode, one crosshair for each concurrently made touch contact is drawn to the framebuffer display.
+.sp
+In
+.BR Draw
+mode, lines are drawed for each touch contact.
+
+.sp
+.sp
+\fB-v, --verbose\fR
+.sp
+.RS 4
+Print the input samples' values to the console.
+.RE
+
+.sp
+\fB-i, --idev\fR
+.sp
+.RS 4
+Explicitely choose the original input event device for tslib to use. Default: the environment variable \fBTSLIB_TSDEVICE\fR's value.
+.RE
+
+.RE
+
+.SH "SEE ALSO"
+.PP
+tsconf (5),
+ts_calibrate (1),
+ts_uinput (1),
+ts_test (1)
