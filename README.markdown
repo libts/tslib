@@ -103,7 +103,7 @@ TSLIB_FBDEVICE			Framebuffer device.
   filter instead.
 
 #### Parameters:
-* delta
+* `delta`
 
 	Set the squared distance in touchscreen units between previous and
 	current pen position (e.g. (X2-X1)^2 + (Y2-Y1)^2). This defines the
@@ -128,7 +128,7 @@ TSLIB_FBDEVICE			Framebuffer device.
   samples have less weight. This allows to achieve 1:1 input->output rate.
 
 #### Parameters:
-* delta
+* `delta`
 
 	Squared distance between two samples ((X2-X1)^2 + (Y2-Y1)^2) that
 	defines the 'quick motion' threshold. If the pen moves quick, it
@@ -144,18 +144,18 @@ TSLIB_FBDEVICE			Framebuffer device.
   co-ordinates to screen co-ordinates.
 
 #### Parameters:
-* xyswap
+* `xyswap`
 
 	interchange the X and Y co-ordinates -- no longer used or needed
 	if the new linear calibration utility ts_calibrate is used.
 
-* pressure_offset
+* `pressure_offset`
 
 	offset applied to the pressure value
-* pressure_mul
+* `pressure_mul`
 
 	factor to multiply the pressure value with
-* pressure_div
+* `pressure_div`
 
 	value to divide the pressure value by
 
@@ -168,10 +168,10 @@ TSLIB_FBDEVICE			Framebuffer device.
   pressure threshold.
 
 #### Parameters:
-* pmin
+* `pmin`
 
 	Minimum pressure value for a sample to be valid.
-* pmax
+* `pmax`
 
 	Maximum pressure value for a sample to be valid.
 
@@ -183,7 +183,7 @@ TSLIB_FBDEVICE			Framebuffer device.
   after a touch gesture stopped.
 
 #### Parameters:
-* drop_threshold
+* `drop_threshold`
 
 	drop events up to this number of milliseconds after the last
 	release event.
@@ -196,10 +196,10 @@ TSLIB_FBDEVICE			Framebuffer device.
   should help if for the device the first or last samples are unreliable.
 
 Parameters:
-* nhead
+* `nhead`
 
 	Number of events to drop after pressure
-* ntail
+* `ntail`
 
 	Number of events to drop before release
 
@@ -211,7 +211,7 @@ Parameters:
   spikes in the gesture. For some theory, see https://en.wikipedia.org/wiki/Median_filter
 
 Parameters:
-* depth
+* `depth`
 
 	Number of samples to apply the median filter to
 
