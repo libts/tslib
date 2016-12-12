@@ -237,9 +237,9 @@ static int ts_input_read(struct tslib_module_info *inf,
 					}
 					samp->tv = ev.time;
 		#ifdef DEBUG
-				fprintf(stderr, "RAW---------------------> %d %d %d %d.%d\n",
-						samp->x, samp->y, samp->pressure, samp->tv.tv_sec,
-						samp->tv.tv_usec);
+				fprintf(stderr, "RAW---------------------> %d %d %d %ld.%ld\n",
+						samp->x, samp->y, samp->pressure, (long)samp->tv.tv_sec,
+						(long)samp->tv.tv_usec);
 		#endif /* DEBUG */
 					samp++;
 					total++;
