@@ -1,0 +1,22 @@
+.TH "TS_FINDDEV" "1" "" "" "tslib"
+.SH "NAME"
+ts_finddev \- Discover touch screen devices\&.
+.SH SYNOPSIS
+.B ts_finddev
+.I device wait_seconds
+.SH "DESCRIPTION"
+.PP
+ts_finddev tests whether the device given as parameter is a touch screen device. Touch the screen after invoking ts_finddev.
+
+.B Return value
+is 0 if the given timeout
+.I wait_seconds
+expired without an input event, -1 if
+.I device
+is no touch screen device and 1 if it is.
+.SH "SEE ALSO"
+.PP
+ts.conf (5),
+ts_test (1),
+ts_test_mt (1),
+ts_calibrate (1)
