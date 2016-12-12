@@ -24,7 +24,7 @@ first.  For example:
 
 ```
   module_raw input
-  module variance delta=30
+  module median depth=3
   module dejitter delta=100
   module linear
 ```
@@ -35,8 +35,8 @@ With this configuration file, we end up with the following data flow
 through the library:
 
 ```
-  raw read --> variance --> dejitter --> linear --> application
-  module       module       module       module
+  raw read --> median  --> dejitter --> linear --> application
+  module       module      module       module
 ```
 
 You can re-order these modules as you wish, add more modules, or remove them
@@ -98,8 +98,9 @@ TSLIB_FBDEVICE			Framebuffer device.
   receives on input. It can cause problems on capacitive touchscreens that
   already apply such a filter.
 
-  There is no multitouch support for this filter (yet). ts_read_mt() will
-  only read one slot, when this filter is used.
+  There is **no** multitouch support for this filter (yet). `ts_read_mt()` will
+  only read one slot, when this filter is used. You can try using the median
+  filter instead.
 
 #### Parameters:
 * delta
