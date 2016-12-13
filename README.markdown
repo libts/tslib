@@ -5,7 +5,7 @@ Touchscreen access library
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/11027/badge.svg)](https://scan.coverity.com/projects/tslib)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/4d2b6d4f5cfd4e1e8902655846d79266)](https://www.codacy.com/app/martink/tslib?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=kergoth/tslib&amp;utm_campaign=Badge_Grade)
 
-tslib available in **[Buildroot](https://buildroot.org/)**. [Any help making it available](https://github.com/kergoth/tslib/issues/54) in **Debian** is welcome.
+tslib is available in **[Buildroot](https://buildroot.org/)**. [Any help making it available](https://github.com/kergoth/tslib/issues/54) in **Debian** is welcome.
 
 [![Github Downloads 1.3-rc2](https://img.shields.io/github/downloads/kergoth/tslib/1.3-rc2/total.svg)](https://github.com/kergoth/tslib/releases/tag/1.3-rc2)
 [![Github Downloads 1.2](https://img.shields.io/github/downloads/kergoth/tslib/1.2/total.svg)](https://github.com/kergoth/tslib/releases/tag/1.2)
@@ -47,13 +47,13 @@ have passed through the chain of filters and scaling conversions.  Another
 call is provided, `ts_read_raw()` which bypasses all the modules and reads the
 raw data directly from the device.
 
-There are a couple of programs in the tslib/tests directory which give example
+There are a couple of programs in the `tslib/tests` directory which give example
 usages.  They are by no means exhaustive, nor probably even good examples.
 They are basically the programs used to test this library.
 
 ## Use tslib via a normal input event device
 
-Instead of using tslib's API calls, you can use tslib/tools/ts_uinput which
+Instead of using tslib's API calls, you can use `tslib/tools/ts_uinput` which
 creates (via uinput) a new standard input event device you can use in your
 environment. The new device provides the filtered and calibrated values and
 should work with single- and multitouch devices.
@@ -63,7 +63,7 @@ should work with single- and multitouch devices.
 Similar to the mentioned `ts_read()`, `ts_read_mt()` reads one `struct ts_sample_mt`
 per slot (number of possible contacts) and desired number of samples. You have
 to provide slots*nr of them to hold the resulting values, see the multitouch
-programs in tslib/tests for examples; there is, of course, `ts_read_raw_mt()` too.
+programs in `tslib/tests` for examples; there is, of course, `ts_read_raw_mt()` too.
 
 `ts_read_mt()` aims to be a drop-in replacement for `ts_read()`, so you can use
 it for any single touch device too, providing space for one slot.
