@@ -5,11 +5,14 @@ Touchscreen access library
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/11027/badge.svg)](https://scan.coverity.com/projects/tslib)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/4d2b6d4f5cfd4e1e8902655846d79266)](https://www.codacy.com/app/martink/tslib?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=kergoth/tslib&amp;utm_campaign=Badge_Grade)
 
-tslib is available in **[Buildroot](https://buildroot.org/)**. [Any help making it available](https://github.com/kergoth/tslib/issues/54) in **Debian** is welcome.
-
-[![Github Downloads 1.3-rc2](https://img.shields.io/github/downloads/kergoth/tslib/1.3-rc2/total.svg)](https://github.com/kergoth/tslib/releases/tag/1.3-rc2)
 [![Github Downloads 1.2](https://img.shields.io/github/downloads/kergoth/tslib/1.2/total.svg)](https://github.com/kergoth/tslib/releases/tag/1.2)
 [![Github Downloads 1.1](https://img.shields.io/github/downloads/kergoth/tslib/1.1/total.svg)](https://github.com/kergoth/tslib/releases/tag/1.1)
+
+## Getting tslib
+
+Apart from direct availability here, tslib is currently maintained by the following distributors:
+
+* [Buildroot](https://buildroot.org/)
 
 ## General
 
