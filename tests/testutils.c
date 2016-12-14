@@ -148,5 +148,6 @@ void ts_flush (struct tsdev *ts)
 
 #define TS_BUFFER_MAX 32768
 	static char buffer [TS_BUFFER_MAX];
-	read (ts_fd (ts), buffer, TS_BUFFER_MAX);  
+	if (read (ts_fd (ts), buffer, TS_BUFFER_MAX) == -1)
+		fprintf(stderr, "ts_flush read error\n");
 }
