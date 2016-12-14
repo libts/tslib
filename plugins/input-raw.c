@@ -364,7 +364,7 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 	int pen_up = 0;
 
 	if (i->buf == NULL) {
-		i->buf = malloc(nr * sizeof(struct ts_sample_mt **));
+		i->buf = malloc(nr * sizeof(struct ts_sample_mt *));
 		if (!i->buf)
 			return -ENOMEM;
 

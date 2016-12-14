@@ -142,7 +142,7 @@ static int variance_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 	if (!samp)
 		return -ENOMEM;
 
-	cur_mt = malloc(nr * sizeof(struct ts_sample_mt **));
+	cur_mt = malloc(nr * sizeof(struct ts_sample_mt *));
 	if (!cur_mt) {
 		free(samp);
 		return -ENOMEM;

@@ -614,7 +614,7 @@ int main(int argc, char **argv)
 	if (!data.ev)
 		goto out;
 
-	data.s_array = calloc(TS_READ_WHOLE_SAMPLES, sizeof(struct ts_sample_mt **));
+	data.s_array = calloc(TS_READ_WHOLE_SAMPLES, sizeof(struct ts_sample_mt *));
 	if (!data.s_array)
 		goto out;
 

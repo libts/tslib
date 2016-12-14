@@ -202,7 +202,7 @@ static int median_read_mt(struct tslib_module_info *inf, struct ts_sample_mt **s
 			free(c->delay_mt);
 		}
 
-		c->delay_mt = malloc(max_slots * sizeof(struct ts_sample_mt **));
+		c->delay_mt = malloc(max_slots * sizeof(struct ts_sample_mt *));
 		if (!c->delay_mt)
 			return -ENOMEM;
 
