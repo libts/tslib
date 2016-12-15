@@ -130,7 +130,7 @@ static int skip_read_mt(struct tslib_module_info *info, struct ts_sample_mt **sa
 	struct ts_sample_mt **cur;
 	short pen_up = 0;
 
-	cur = malloc(sizeof(struct ts_sample_mt **));
+	cur = malloc(sizeof(struct ts_sample_mt *));
 	if (!cur)
 		return -ENOMEM;
 
