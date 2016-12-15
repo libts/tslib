@@ -209,7 +209,7 @@ static int dejitter_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 			djt->hist_mt = NULL;
 		}
 
-		djt->hist_mt = malloc(max_slots * sizeof(struct ts_hist **));
+		djt->hist_mt = malloc(max_slots * sizeof(struct ts_hist *));
 		if (!djt->hist_mt)
 			return -ENOMEM;
 

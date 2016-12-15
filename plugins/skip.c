@@ -144,7 +144,7 @@ static int skip_read_mt(struct tslib_module_info *info, struct ts_sample_mt **sa
 
 	if (skip->ntail) {
 		if (skip->slots < max_slots || skip->buf_mt == NULL) {
-			skip->buf_mt = malloc(skip->ntail * sizeof(struct ts_sample_mt **));
+			skip->buf_mt = malloc(skip->ntail * sizeof(struct ts_sample_mt *));
 			if (!skip->buf_mt) {
 				free(cur[0]);
 				free(cur);

@@ -160,7 +160,7 @@ int main(int argc, char **argv)
 	close(fd_input);
 	max_slots = slot.maximum + 1 - slot.minimum;
 
-	samp_mt = malloc(sizeof(struct ts_sample_mt **));
+	samp_mt = malloc(sizeof(struct ts_sample_mt *));
 	if (!samp_mt) {
 		ts_close(ts);
 		return -ENOMEM;
