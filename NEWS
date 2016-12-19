@@ -1,5 +1,6 @@
 
 ## tslib 1.3
+merge released this on TODO
 
 Most notable changes since 1.2 are:
 * user visible:
@@ -11,13 +12,13 @@ Most notable changes since 1.2 are:
     - new filter plugin: median filter
     - man pages
 
-* new user API:
+* user API:
     - ts_read_mt() and struct ts_sample_mt
     - ts_reconfig()
 
 * misc:
     - support for multitouch in input-raw and filter plugins
-    - security bugfixes (found by coverty)
+    - bugfixes (partly found by Coverity)
     - build system fixes
 
 
