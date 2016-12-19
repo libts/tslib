@@ -236,10 +236,13 @@ static int median_read_mt(struct tslib_module_info *inf, struct ts_sample_mt **s
 		for (j = 0; j < max_slots; j++) {
 			int sorted[c->size];
 			unsigned int usorted[c->size];
-			unsigned int cpress;
+			unsigned int cpress = 0;
 
 			if (samp[i][j].valid != 1)
 				continue;
+
+			memset(sorted, 0, c->size * sizeof(int));
+			memset(usorted, 0, c->size * sizeof(unsigned int));
 
 			cpress = samp[i][j].pressure;
 
