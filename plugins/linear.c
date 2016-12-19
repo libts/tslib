@@ -13,7 +13,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#include <sys/stat.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -213,7 +212,6 @@ TSAPI struct tslib_module_info *linear_mod_init(__attribute__ ((unused)) struct 
 {
 
 	struct tslib_linear *lin;
-	struct stat sbuf;
 	FILE *pcal_fd;
 	int index;
 	char *calfile;
@@ -241,29 +239,27 @@ TSAPI struct tslib_module_info *linear_mod_init(__attribute__ ((unused)) struct 
 	 * Check calibration file
 	 */
 	if( (calfile = getenv("TSLIB_CALIBFILE")) == NULL) calfile = TS_POINTERCAL;
-	if (stat(calfile, &sbuf)==0) {
-		pcal_fd = fopen(calfile, "r");
-		if (!pcal_fd) {
-			free(lin);
-			perror("fopen");
-			return NULL;
-		}
 
-		for (index = 0; index < 7; index++)
-			if (fscanf(pcal_fd, "%d", &lin->a[index]) != 1) break;
+	pcal_fd = fopen(calfile, "r");
+	if (!pcal_fd) {
+		free(lin);
+		perror("fopen");
+		return NULL;
+	}
 
-		if (!fscanf(pcal_fd, "%d %d", &lin->cal_res_x, &lin->cal_res_y))
-			fprintf(stderr, "LINEAR: Couldn't read resolution values\n");
+	for (index = 0; index < 7; index++)
+		if (fscanf(pcal_fd, "%d", &lin->a[index]) != 1) break;
+
+	if (!fscanf(pcal_fd, "%d %d", &lin->cal_res_x, &lin->cal_res_y))
+		fprintf(stderr, "LINEAR: Couldn't read resolution values\n");
 
 #ifdef DEBUG
-		printf("Linear calibration constants: ");
-		for(index=0;index<7;index++) printf("%d ",lin->a[index]);
-		printf("\n");
+	printf("Linear calibration constants: ");
+	for(index=0;index<7;index++) printf("%d ",lin->a[index]);
+	printf("\n");
 #endif /*DEBUG*/
-		fclose(pcal_fd);
-	}
-		
-		
+	fclose(pcal_fd);
+
 	/*
 	 * Parse the parameters.
 	 */
