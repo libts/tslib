@@ -13,10 +13,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+
+#ifdef __ANDROID__
+#include <fcntl.h>
+#else
 #include <sys/fcntl.h>
+#endif
 
 #include "tslib-private.h"
 

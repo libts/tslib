@@ -16,8 +16,13 @@
 #include <signal.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/fcntl.h>
 #include <sys/time.h>
+
+#ifdef __ANDROID__
+#include <fcntl.h>
+#else
+#include <sys/fcntl.h>
+#endif
 
 #include "tslib.h"
 

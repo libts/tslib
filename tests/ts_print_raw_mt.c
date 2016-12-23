@@ -8,14 +8,19 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/fcntl.h>
+#include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/time.h>
 #include <getopt.h>
-#include <linux/input.h>
 #include <errno.h>
 #include <unistd.h>
+
+#ifdef __FreeBSD__
+#include <dev/evdev/input.h>
+#else
+#include <linux/input.h>
+#endif
 
 #include "tslib.h"
 #include "testutils.h"

@@ -11,9 +11,6 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
-#include <linux/input.h>
-#include <linux/uinput.h>
-#include <linux/fb.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,6 +19,16 @@
 #include <unistd.h>
 #include <signal.h>
 #include <syslog.h>
+#ifdef __FreeBSD__
+#include <dev/evdev/input.h>
+#include <dev/evdev/uinput.h>
+#include <sys/types.h>
+#include <sys/fbio.h>
+#else
+#include <linux/input.h>
+#include <linux/uinput.h>
+#include <linux/fb.h>
+#endif
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"

@@ -20,9 +20,14 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
-#include <linux/input.h>
 #include <unistd.h>
 #include <getopt.h>
+
+#ifdef __FreeBSD__
+#include <dev/evdev/input.h>
+#else
+#include <linux/input.h>
+#endif
 
 #include "tslib.h"
 #include "fbutils.h"
