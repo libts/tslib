@@ -22,7 +22,11 @@ For tarballs `./configure && make && make install` applies, see the
 file for more details. For the sources run `./autogen.sh` first.
 
 #### Android/Linux
-([not yet](https://github.com/kergoth/tslib/issues/58) available)
+Extract tslib's tarball into `<base>/external/` of your
+Android sources and from `<base>` build the components you need
+like `make libts`, `make ts/plugins/input`, `make ts_calibrate`, ...,
+see the LOCAL_MODULE values in Android.mk or add them to
+PRODUCT_PACKAGES of your product makefile.
 
 ## What is tslib?
 
