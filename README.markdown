@@ -3,6 +3,7 @@
 Touchscreen access library
 
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/11027/badge.svg)](https://scan.coverity.com/projects/tslib)
+[![Github Downloads 1.3](https://img.shields.io/github/downloads/kergoth/tslib/1.3/total.svg)](https://github.com/kergoth/tslib/releases/tag/1.3)
 [![Github Downloads 1.2](https://img.shields.io/github/downloads/kergoth/tslib/1.2/total.svg)](https://github.com/kergoth/tslib/releases/tag/1.2)
 [![Github Downloads 1.1](https://img.shields.io/github/downloads/kergoth/tslib/1.1/total.svg)](https://github.com/kergoth/tslib/releases/tag/1.1)
 
