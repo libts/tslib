@@ -181,7 +181,7 @@ static int ts_galax_read (struct tslib_module_info *inf,
  		i->sane_fd = ts_galax_check_fd(i);
  		
  	if (i->sane_fd == -1){
- 		exit(0);
+		return 0;
 	}
  	while (total < nr) {
  		ret = read(ts->fd, &ev, sizeof(struct input_event));
