@@ -9,7 +9,7 @@ Touchscreen access library
 
 ## Getting tslib
 
-Apart from directly [building](##Building-tslib) it, tslib is currently
+Apart from directly [building](#building-tslib) it, tslib is currently
 maintained by the following distributors:
 
 * [Buildroot](https://buildroot.org/)
@@ -56,7 +56,8 @@ through the library:
 
 You can re-order these modules as you wish, add more modules, or remove them
 all together.  When you call `ts_read()` or run `ts_uinput -d` and read from
-the new input device (see below), the values you read are values that
+the new input device, see [below](#use-tslib-via-a-normal-input-event-device),
+the values you read are values that
 have passed through the chain of filters and scaling conversions.  Another
 call is provided, `ts_read_raw()` which bypasses all the modules and reads the
 raw data directly from the device.
