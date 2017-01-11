@@ -18,7 +18,7 @@ static void usage(char** argv)
 {
 	printf( "Usage: %s device_name wait_for_sec\n", argv[0] );
 	printf( "\tdevice_name  - tdevice to probe, example /dev/input/event0\n" );
-	printf( "\twait_for_sec - wait seconds for touch event, if 0 - dont wait!\n" );
+	printf( "\twait_for_sec - wait seconds for touch event, if 0 - don't wait!\n" );
 	printf( "\tReturn codes:\n" );
 	printf( "\t  0          - timeout expired without receiving event.\n" );
 	printf( "\t               But this maybe is TouchScreen.\n" );
