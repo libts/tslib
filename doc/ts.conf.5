@@ -86,9 +86,9 @@ where triplet is the MultiArch path, e\&.g\&. arm\-linux\-gnueabi\&.
 .PP
 \fBvariance\fR
 .RS 4
-Tries to do it\*(Aqs best in order to filter out random noise coming from touchscreen ADC\*(Aqs\&. This is achieved by limiting the sample movement speed to some value (e\&.g\&. the pen is not supposed to move quicker than some threshold)\&.
+Tries to do it's best in order to filter out random noise coming from touchscreen ADCs. This is achieved by limiting the sample movement speed to some value (e\&.g\&. the pen is not supposed to move quicker than some threshold)\&.
 .sp
-This is a \*(Aqgreedy\*(Aq filter, e\&.g\&. it gives less samples on output than receives on input\&.
+This is a greedy filter, e\&.g\&. it gives less samples on output than receives on input\&.
 .sp
 .RS 4
 .ie n \{\
@@ -100,9 +100,9 @@ This is a \*(Aqgreedy\*(Aq filter, e\&.g\&. it gives less samples on output than
 .\}
 \fBdelta\fR
 .sp
-Set the squared distance in touchscreen units between previous and current pen position (e\&.g\&. (X2\-X1)^2 + (Y2\-Y1)^2)\&. This defines the criteria for determining whenever two samples are \*(Aqnear\*(Aq or \*(Aqfar\*(Aq to each other\&.
+Set the squared distance in touchscreen units between previous and current pen position (e\&.g\&. (X2\-X1)^2 + (Y2\-Y1)^2)\&. This defines the criteria for determining whenever two samples are near or far to each other\&.
 .sp
-If the distance between previous and current sample is \*(Aqfar\*(Aq, the sample is marked as \*(Aqpotential noise\*(Aq\&. This doesn\*(Aqt mean yet that it will be discarded; if the next reading will be close to it, this will be considered just a regular \*(Aqquick motion\*(Aq event, and it will sneak to the next layer\&. Also, if the sample after the \*(Aqpotential noise\*(Aq is \*(Aqfar\*(Aq from both previously discussed samples, this is also considered a \*(Aqquick motion\*(Aq event and the sample sneaks into the output stream\&.
+If the distance between previous and current sample is far, the sample is marked as potential noise\&. This doesnt mean yet that it will be discarded; if the next reading will be close to it, this will be considered just a regular quick motion event, and it will sneak to the next layer\&. Also, if the sample after the potential noise is far from both previously discussed samples, this is also considered a quick motion event and the sample sneaks into the output stream\&.
 .RE
 .RE
 .PP
@@ -120,7 +120,7 @@ Removes jitter on the X and Y co\-ordinates\&. This is achieved by applying a we
 .\}
 \fBdelta\fR
 .sp
-Squared distance between two samples ((X2\-X1)^2 + (Y2\-Y1)^2) that defines the \*(Aqquick motion\*(Aq threshold\&. If the pen moves quick, it is not feasible to smooth pen motion, besides quick motion is not precise anyway; so if quick motion is detected the module just discards the backlog and simply copies input to output\&.
+Squared distance between two samples ((X2\-X1)^2 + (Y2\-Y1)^2) that defines the quick motion threshold\&. If the pen moves quick, it is not feasible to smooth pen motion, besides quick motion is not precise anyway; so if quick motion is detected the module just discards the backlog and simply copies input to output\&.
 .RE
 .RE
 .PP
