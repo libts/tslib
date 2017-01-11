@@ -111,22 +111,22 @@ int main(int argc, char **argv)
 
         fd_input = open(getenv("TSLIB_TSDEVICE"), O_RDWR);
         if (!fd_input)
-                return -1;
+                return \-1;
 
         ts = ts_open(getenv("TSLIB_TSDEVICE"), 0);
         if (!ts)
-                return -1;
+                return \-1;
 
         ts_config(ts);
 
         samp_mt = malloc(READ_SAMPLES * sizeof(struct ts_sample_mt **));
         if (!samp_mt)
-                return -1;
+                return \-1;
 
         for (i = 0; i < READ_SAMPLES; i++) {
                 samp_mt[i] = calloc(MAX_SLOTS, sizeof(struct ts_sample_mt));
                 if (!samp_mt[i])
-                        return -1;
+                        return \-1;
         }
 
         while(1) {
