@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT(tslib, 1.3, martin.kepplinger@ginzinger.com)
+AC_INIT(tslib, 1.4-rc1, martin.kepplinger@ginzinger.com)
 # AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE([dist-bzip2 dist-xz subdir-objects])
 AC_CONFIG_SRCDIR([src/ts_close.c])
@@ -110,9 +110,9 @@ AC_SUBST(TS_POINTERCAL)
 
 # Library versioning
 LT_CURRENT=1
-LT_REVISION=3
+LT_REVISION=4
 LT_AGE=1
-LT_RELEASE=1.3
+LT_RELEASE=1.4
 AC_SUBST(LT_RELEASE)
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
