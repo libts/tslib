@@ -9,15 +9,26 @@ Touchscreen access library
 
 ## Getting tslib
 
-Apart from direct availability here, tslib is currently maintained by the following distributors:
+Apart from directly [building](##Building-tslib) it, tslib is currently
+maintained by the following distributors:
 
 * [Buildroot](https://buildroot.org/)
 
-## General
+## Building tslib
+
+#### GNU/Linux
+For tarballs `./configure && make && make install` applies, see the
+[INSTALL](https://github.com/kergoth/tslib/blob/master/INSTALL)
+file for more details. For the sources run `./autogen.sh` first.
+
+#### Android/Linux
+([not yet](https://github.com/kergoth/tslib/issues/58) available)
+
+## What is tslib?
 
 The idea of tslib is to have a core library that provides standardised
-services, and a set of plugins to manage the conversion and filtering as
-needed.
+services, and a set of plugins to manage the conversion and filtering
+of touchscreen input data as needed.
 
 The plugins for a particular touchscreen are loaded automatically by the
 library under the control of a static configuration file, ts.conf.
@@ -44,7 +55,8 @@ through the library:
 ```
 
 You can re-order these modules as you wish, add more modules, or remove them
-all together.  When you call `ts_read()`, the values you read are values that
+all together.  When you call `ts_read()` or run `ts_uinput -d` and read from
+the new input device (see below), the values you read are values that
 have passed through the chain of filters and scaling conversions.  Another
 call is provided, `ts_read_raw()` which bypasses all the modules and reads the
 raw data directly from the device.
