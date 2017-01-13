@@ -648,7 +648,8 @@ int main(int argc, char **argv)
 		} else {
 			fprintf(stderr, DEFAULT_UINPUT_NAME ": See the kernel logs for the device number\n");
 		}
-		daemon(0, 0);
+		if (daemon(0, 0) == -1)
+			perror("error starting daemon");
 	}
 
 	while (1) {
