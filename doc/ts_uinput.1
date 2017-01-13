@@ -15,42 +15,42 @@ to be used in your environment.
 It uses ts_read_mt() and thus supports single and multi touch.
 .sp
 .sp
-\fB\-d, --daemonize\fR
+\fB\-d, \-\-daemonize\fR
 .sp
 .RS 4
 Start ts_uinput as a daemon and return. The sysfs' input device name of the newly created device is printed to stdout before returning.
 .RE
 
 .sp
-\fB\-v, --verbose\fR
+\fB\-v, \-\-verbose\fR
 .sp
 .RS 4
 Print debug information to stdout and stderr.
 .RE
 
 .sp
-\fB\-n, --name\fR
+\fB\-n, \-\-name\fR
 .sp
 .RS 4
 Set the name of the new input event device. Default: \fBts_uinput\fR.
 .RE
 
 .sp
-\fB\-i, --idev\fR
+\fB\-i, \-\-idev\fR
 .sp
 .RS 4
 Explicitly choose the original input event device for tslib to use. Default: the environment variable \fBTSLIB_TSDEVICE\fR's value.
 .RE
 
 .sp
-\fB\-f, --fbdev\fR
+\fB\-f, \-\-fbdev\fR
 .sp
 .RS 4
 Explicitly choose the framebuffer device to use. Default: the environment variable \fBTSLIB_FBDEVICE\fR's value.
 .RE
 
 .sp
-\fB\-s, --slots\fR
+\fB\-s, \-\-slots\fR
 .sp
 .RS 4
 Explicitly set the possible concurrent touch contacts supported. May be only needed if the original input device doesn't report it.
