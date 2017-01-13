@@ -287,7 +287,7 @@ static int setup_uinput(struct data_t *data, int *max_slots)
 	}
 
 	memset(&uidev, 0, sizeof(uidev));
-	snprintf(uidev.name, UINPUT_MAX_NAME_SIZE, data->uinput_name);
+	snprintf(uidev.name, UINPUT_MAX_NAME_SIZE, "%s", data->uinput_name);
 	uidev.id.bustype = BUS_VIRTUAL;
 
 	memset(bit, 0, sizeof(bit));
