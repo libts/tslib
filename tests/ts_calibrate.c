@@ -17,6 +17,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #ifdef __ANDROID__
 #include <fcntl.h>
