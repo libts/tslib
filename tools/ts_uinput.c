@@ -77,8 +77,7 @@ static void help(struct data_t *data)
 	printf("touch reports from tslib and replays them as touch events of protocol type B\n");
 	printf("on the virtual device.\n");
 	printf("\n");
-	printf("Usage: tslib_uinput -h\n");
-	printf("       tslib_uinput [-v] [-i <device>] [-f <device>] [-n <name>]\n");
+	printf("Usage: ts_uinput [-v] [-d] [-i <device>] [-f <device>] [-n <name>] [-s <slots>]\n");
 	printf("\n");
 	printf("  -h, --help          this help text\n");
 	printf("  -d, --daemonize     run in the background as a daemon\n");
