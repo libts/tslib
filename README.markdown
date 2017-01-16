@@ -66,6 +66,22 @@ There are a couple of programs in the `tslib/tests` directory which give example
 usages.  They are by no means exhaustive, nor probably even good examples.
 They are basically the programs used to test this library.
 
+#### Example use cases
+
+Years ago (or in part still for resistive touch screens) a use case for tslib to *enable*
+using the device would look like
+* use a hardware specific `module_raw` plugin (single touch only)
+* mainly use the `linear` filter plugin (and `ts_calibrate`)
+* use `ts_read()` (in the form of a plugin for Qt, X11, ...)
+
+While being fully backwards compatible, nowadays, for capacitive touch screens
+a use case to *optimize* the touch experience or work around hardware or driver
+bugs would be
+* use the `module_raw input` plugin for Linux drivers (and have multi touch)
+* use a combination of other [filter plugins](#module-parameters) to optimize the touch experience
+* have the `ts_uinput -d` daemon running and use it's
+[input device](#use-tslib-via-a-normal-input-event-device) in your environment
+
 ## Use tslib via a normal input event device
 
 Instead of using tslib's API calls, you can use `tslib/tools/ts_uinput` which
