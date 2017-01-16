@@ -142,7 +142,9 @@ TSLIB_FBDEVICE			Framebuffer device.
 #### Description:
   Removes jitter on the X and Y co-ordinates. This is achieved by applying a
   weighted smoothing filter. The latest samples have most weight; earlier
-  samples have less weight. This allows to achieve 1:1 input->output rate.
+  samples have less weight. This allows to achieve 1:1 input->output rate. See
+  [Wikipedia](https://en.wikipedia.org/wiki/Jitter#Mitigation) for some general
+  theory.
 
 #### Parameters:
 * `delta`
@@ -158,13 +160,14 @@ TSLIB_FBDEVICE			Framebuffer device.
 
 #### Description:
   Linear scaling module, primerily used for conversion of touch screen
-  co-ordinates to screen co-ordinates.
+  co-ordinates to screen co-ordinates. It applies the corrections as recorded
+  and saved by the `ts_calibrate` tool.
 
 #### Parameters:
 * `xyswap`
 
 	interchange the X and Y co-ordinates -- no longer used or needed
-	if the new linear calibration utility ts_calibrate is used.
+	if the linear calibration utility `ts_calibrate` is used.
 
 * `pressure_offset`
 
@@ -197,7 +200,8 @@ TSLIB_FBDEVICE			Framebuffer device.
 
 #### Description:
   Simple debounce mechanism that drops input events for the specified time
-  after a touch gesture stopped.
+  after a touch gesture stopped. [Wikipedia](https://en.wikipedia.org/wiki/Switch#Contact_bounce)
+  has more theory.
 
 #### Parameters:
 * `drop_threshold`
@@ -225,7 +229,7 @@ Parameters:
 
 #### Description:
   Similar to what the variance filter does, the median filter suppresses
-  spikes in the gesture. For some theory, see https://en.wikipedia.org/wiki/Median_filter
+  spikes in the gesture. For some theory, see [Wikipedia](https://en.wikipedia.org/wiki/Median_filter)
 
 Parameters:
 * `depth`
