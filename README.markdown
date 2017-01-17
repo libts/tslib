@@ -16,6 +16,9 @@ maintained by the following distributors:
 
 ## Building tslib
 
+* tslib 1.2 or older: runs on very old versions of Linux
+* tslib 1.3 or newer: runs on Linux 3.12 or newer
+
 #### GNU/Linux
 For tarballs `./configure && make && make install` applies, see the
 [INSTALL](https://github.com/kergoth/tslib/blob/master/INSTALL)
