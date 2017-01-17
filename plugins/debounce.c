@@ -47,7 +47,7 @@ static int debounce_read(struct tslib_module_info *info, struct ts_sample *samp,
 	int num = 0;
 	int i;
 	unsigned long long now;
-	long dt;
+	unsigned long dt;
 	__attribute__ ((unused)) enum { DOWN, MOVE, UP } mode;
 	int drop = 0;
 	int left;
@@ -58,7 +58,7 @@ static int debounce_read(struct tslib_module_info *info, struct ts_sample *samp,
 
 	for (s = samp, i = 0; i < ret; i++, s++) {
 		now = s->tv.tv_sec * 1e6 + s->tv.tv_usec;
-		dt = (long)(now - p->last_release) / 1000; /* ms */
+		dt = (unsigned long)(now - p->last_release) / 1000; /* ms */
 		mode = MOVE;
 
 		if (!s->pressure) {
@@ -71,7 +71,7 @@ static int debounce_read(struct tslib_module_info *info, struct ts_sample *samp,
 		p->last_pressure = s->pressure;
 
 		if (s->pressure) {
-			if (dt >= 0 && dt < p->drop_threshold)
+			if (dt < p->drop_threshold)
 				drop = 1;
 		}
 
@@ -103,7 +103,7 @@ static int debounce_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 	struct tslib_debounce *p = (struct tslib_debounce *)info;
 	int ret;
 	unsigned long long now;
-	long dt;
+	unsigned long dt;
 	__attribute__ ((unused)) enum { DOWN, MOVE, UP } mode[max_slots];
 	int drop = 0;
 	int nr;
@@ -145,7 +145,7 @@ static int debounce_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 				continue;
 
 			now = samp[nr][i].tv.tv_sec * 1e6 + samp[nr][i].tv.tv_usec;
-			dt = (long)(now - p->last_release_mt[i]) / 1000; /* ms */
+			dt = (unsigned long)(now - p->last_release_mt[i]) / 1000; /* ms */
 			mode[i] = MOVE;
 
 			if (!samp[nr][i].pressure) {
@@ -158,7 +158,7 @@ static int debounce_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 			p->last_pressure_mt[i] = samp[nr][i].pressure;
 
 			if (samp[nr][i].pressure) {
-				if (dt >= 0 && dt < p->drop_threshold)
+				if (dt < p->drop_threshold)
 					drop = 1;
 			}
 
