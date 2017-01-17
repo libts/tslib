@@ -2,7 +2,8 @@
 
 Most notable changes since 1.3 are:
 * man page updates and fixes
-* bugfixes
+* bugfixes all over the place
+* support for Android (experimental)
 
 
 ## tslib 1.3
