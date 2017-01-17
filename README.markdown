@@ -23,10 +23,10 @@ file for more details. For the sources run `./autogen.sh` first.
 
 #### Android/Linux
 Extract tslib's tarball into `<base>/external/` of your
-Android sources and from `<base>` build the components you need
-like `make libts`, `make ts/plugins/input`, `make ts_calibrate`, ...,
-see the LOCAL_MODULE values in Android.mk or add them to
-PRODUCT_PACKAGES of your product makefile.
+Android sources and build the components you need
+like `make libts`, `make ts/plugins/input`, `make ts_uinput`, ...,
+see LOCAL_MODULE in Android.mk.
+Refer to [Android's documentation](https://developer.android.com/ndk/guides/build.html) for the details.
 
 ## What is tslib?
 
