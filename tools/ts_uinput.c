@@ -446,12 +446,6 @@ static void cleanup(struct data_t *data)
 
 	if (data->uinput_name)
 		free(data->uinput_name);
-
-	if (data->input_name)
-		free(data->input_name);
-
-	if (data->fb_name)
-		free(data->fb_name);
 }
 
 int main(int argc, char **argv)
