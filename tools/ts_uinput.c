@@ -61,8 +61,6 @@
 # define ABS_CNT (ABS_MAX+1)
 #endif
 
-/* TODO user-option: read non-MT events off fd_input and send them in a seperate sync-frame */
-
 struct data_t {
 	int fd_uinput;
 	int fd_input;
