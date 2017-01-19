@@ -608,10 +608,18 @@ int main(int argc, char **argv)
 			printf(DEFAULT_UINPUT_NAME ": We use a " GREEN "multitouch" RESET " device\n");
 	}
 
-	if (ioctl(data.fd_uinput, UI_GET_VERSION, &data.uinput_version) < 0) {
-		perror("ioctl");
-		goto out;
+	/* works for version > 2 */
+	#ifdef UINPUT_VERSION
+	data.uinput_version = UINPUT_VERSION;
+	#endif
+
+	if (data.uinput_version > 4) {
+		if (ioctl(data.fd_uinput, UI_GET_VERSION, &data.uinput_version) < 0) {
+			perror("ioctl");
+			goto out;
+		}
 	}
+
 	if (data.verbose) {
 		printf(DEFAULT_UINPUT_NAME ": running uinput version %d\n", data.uinput_version);
 		if (data.uinput_version > 3) {
