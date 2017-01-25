@@ -17,7 +17,6 @@
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <linux/hidraw.h>
-#include <stdbool.h>
 #include <stdint.h>
 
 #include "config.h"
@@ -32,20 +31,20 @@ struct tslib_input {
 
 static int waveshare_read(struct tslib_module_info *inf, struct ts_sample *samp, int nr)
 {
-	static bool reopen = true;
+	static short reopen = 1;
 	struct stat devstat;
 	struct hidraw_devinfo info;
 	char name_buf[512];
 	int cnt;
-	bool found = false;
+	short found = 0;
 	struct tslib_input *i = (struct tslib_input *) inf;
 	struct tsdev *ts = inf->dev;
 	struct tsdev *ts_tmp;
 	char *buf;
 	int ret;
 
-	if (reopen == true) {
-		reopen = false;
+	if (reopen == 1) {
+		reopen = 0;
 
 		if (i->vendor > 0 && i->product > 0) {
 			fprintf(stderr, "waveshare: searching for device using hidraw....\n");
@@ -77,7 +76,7 @@ static int waveshare_read(struct tslib_module_info *inf, struct ts_sample *samp,
 
 					ts->fd = ts_tmp->fd;
 					free(ts_tmp);
-					found = true;
+					found = 1;
 					fprintf(stderr, "  correct device\n");
 					break;
 				}
@@ -85,7 +84,7 @@ static int waveshare_read(struct tslib_module_info *inf, struct ts_sample *samp,
 				ts_close(ts_tmp);
 			} /* for HIDRAW_MAX_DEVICES */
 
-			if (found == false)
+			if (found == 0)
 				return -1;
 		} /* vid/pid set */
 	} /* reopen */
