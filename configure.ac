@@ -113,6 +113,11 @@ AC_SUBST(TS_CONF)
 TS_POINTERCAL='${sysconfdir}/pointercal'
 AC_SUBST(TS_POINTERCAL)
 
+AC_MSG_CHECKING([whether to enable tools])
+AC_ARG_ENABLE([tools], AS_HELP_STRING([--disable-tools], [Disable tools (ts_uinput)]), [], [enable_tools=yes])
+AM_CONDITIONAL([ENABLE_TOOLS], [test "$enable_tools" = "yes"])
+AC_MSG_RESULT($enable_tools)
+
 # Library versioning
 LT_CURRENT=1
 LT_REVISION=4
