@@ -28,11 +28,10 @@
 int main(int argc, char **argv)
 {
 	struct tsdev *ts;
-	char *tsdevice = NULL;
+	const char *tsdevice = NULL;
 	struct ts_sample_mt **samp_mt = NULL;
 	struct input_absinfo slot;
 	unsigned short max_slots = 1;
-	int fd_input = 0;
 	int ret, i;
 
 	while (1) {
@@ -69,42 +68,24 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (!tsdevice) {
-		if (getenv("TSLIB_TSDEVICE")) {
-			tsdevice = getenv("TSLIB_TSDEVICE");
-		} else {
-			fprintf(stderr, RED "ts_print_raw_mt: no input device specified\n" RESET);
-			return -EINVAL;
-		}
-	}
-
-	fd_input = open(tsdevice, O_RDWR);
-	if (fd_input == -1) {
-		perror("open");
-		return errno;
-	}
-
-	ts = ts_open(tsdevice, 0);
+	ts = tsdevice ? ts_open(tsdevice, 0) : ts_find(0);
 	if (!ts) {
-		close(fd_input);
 		perror("ts_open");
 		return errno;
 	}
 
 	if (ts_config(ts)) {
-		close(fd_input);
 		ts_close(ts);
 		perror("ts_config");
 		return errno;
 	}
 
-	if (ioctl(fd_input, EVIOCGABS(ABS_MT_SLOT), &slot) < 0) {
+	if (ioctl(ts_fd(ts), EVIOCGABS(ABS_MT_SLOT), &slot) < 0) {
 		perror("ioctl EVIOGABS");
-		close(fd_input);
 		ts_close(ts);
 		return errno;
 	}
-	close(fd_input);
+
 	max_slots = slot.maximum + 1 - slot.minimum;
 
 	samp_mt = malloc(sizeof(struct ts_sample_mt *));

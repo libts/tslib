@@ -77,13 +77,12 @@ int main(int argc, char **argv)
 	unsigned int mode = 0;
 	unsigned int *mode_mt = NULL;
 	int quit_pressed = 0;
-	int fd_input = 0;
 	struct input_absinfo slot;
 	unsigned short max_slots = 1;
 	struct ts_sample_mt **samp_mt = NULL;
 	short verbose = 0;
 
-	char *tsdevice = NULL;
+	const char *tsdevice = NULL;
 
 	signal(SIGSEGV, sig);
 	signal(SIGINT, sig);
@@ -128,22 +127,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (!tsdevice) {
-		if (getenv("TSLIB_TSDEVICE")) {
-			tsdevice = getenv("TSLIB_TSDEVICE");
-		} else {
-			fprintf(stderr, RED "ts_test_mt: no input device specified\n" RESET);
-			goto out;
-		}
-	}
-
-	fd_input = open(tsdevice, O_RDWR);
-	if (fd_input == -1) {
-		perror("open");
-		goto out;
-	}
-
-	ts = ts_open(tsdevice, 0);
+	ts = tsdevice ? ts_open(tsdevice, 0) : ts_find(0);
 	if (!ts) {
 		perror("ts_open");
 		goto out;
@@ -156,13 +140,12 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	if (ioctl(fd_input, EVIOCGABS(ABS_MT_SLOT), &slot) < 0) {
+	if (ioctl(ts_fd(ts), EVIOCGABS(ABS_MT_SLOT), &slot) < 0) {
 		perror("ioctl EVIOGABS");
-		close(fd_input);
 		ts_close(ts);
 		return errno;
 	}
-	close(fd_input);
+
 	max_slots = slot.maximum + 1 - slot.minimum;
 
 	samp_mt = malloc(sizeof(struct ts_sample_mt *));
