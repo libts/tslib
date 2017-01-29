@@ -61,19 +61,13 @@ int main()
 	int x_ts, y_ts, x_incr, y_incr;
 	unsigned int x, y, xres_half, yres_half, x_new, y_new;
 	unsigned int i;
-	char *tsdevice=NULL;
 	FILE *output_fid;
 
 	signal(SIGSEGV, sig);
 	signal(SIGINT, sig);
 	signal(SIGTERM, sig);
 
-	if( (tsdevice = getenv("TSLIB_TSDEVICE")) != NULL ) {
-		ts = ts_open(tsdevice,0);
-	} else {
-		if (!(ts = ts_open("/dev/input/event0", 0)))
-			ts = ts_open("/dev/touchscreen/ucb1x00", 0);
-	}
+	ts = ts_find(0);
 
 	if (!ts) {
 		perror("ts_open");

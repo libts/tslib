@@ -18,15 +18,8 @@
 int main()
 {
 	struct tsdev *ts;
-	char *tsdevice=NULL;
 
-	if( (tsdevice = getenv("TSLIB_TSDEVICE")) != NULL ) {
-		ts = ts_open(tsdevice,0);
-	} else {
-		if (!(ts = ts_open("/dev/input/event0", 0)))
-			ts = ts_open("/dev/touchscreen/ucb1x00", 0);
-	}
-
+	ts = ts_find(0);
 	if (!ts) {
 		perror("ts_open");
 		exit(1);
