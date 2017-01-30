@@ -95,7 +95,9 @@ bugs would be
 Instead of using tslib's API calls, you can use `tslib/tools/ts_uinput` which
 creates (via uinput) a new standard input event device you can use in your
 environment. The new device provides the filtered and calibrated values and
-should work with single- and multitouch devices.
+should work with single- and multitouch devices. `ts_uinput_start.sh` starts
+`ts_uinput` as a daemon and creates a link named `/dev/input/ts_uinput` for
+convenience.
 
 ## Multitouch
 
