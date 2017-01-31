@@ -7,6 +7,9 @@
  *  Rewritten for the Linux input device API:
  *  Copyright (C) 2002 Nicolas Pitre
  *
+ *  Additions for the Linux multitouch API:
+ *  Copyright (C) 2016 Martin Kepplinger
+ *
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
