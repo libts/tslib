@@ -62,14 +62,9 @@ int main()
 	signal(SIGINT, sig);
 	signal(SIGTERM, sig);
 
-	ts = ts_find(0);
+	ts = ts_setup(NULL, 0);
 	if (!ts) {
 		perror("ts_open");
-		exit(1);
-	}
-
-	if (ts_config(ts)) {
-		perror("ts_config");
 		exit(1);
 	}
 

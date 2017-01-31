@@ -122,9 +122,9 @@ TSAPI int ts_load_module(struct tsdev *, const char *mod, const char *params);
 TSAPI struct tsdev *ts_open(const char *dev_name, int nonblock);
 
 /*
- * Find and open the touchscreen device.
+ * Find, open and configure the touchscreen device.
  */
-TSAPI struct tsdev *ts_find(int nonblock);
+TSAPI struct tsdev *ts_setup(const char *dev_name, int nonblock);
 
 /*
  * Return a scaled touchscreen sample.

@@ -127,18 +127,13 @@ int main(int argc, char **argv)
 		}
 	}
 
-	ts = tsdevice ? ts_open(tsdevice, 0) : ts_find(0);
+	ts = ts_setup(NULL, 0);
 	if (!ts) {
-		perror("ts_open");
+		perror("ts_setup");
 		goto out;
 	}
 	if (verbose)
 		printf("ts_test_mt: using input device " GREEN "%s" RESET "\n", tsdevice);
-
-	if (ts_config(ts)) {
-		perror("ts_config");
-		exit(1);
-	}
 
 	if (ioctl(ts_fd(ts), EVIOCGABS(ABS_MT_SLOT), &slot) < 0) {
 		perror("ioctl EVIOGABS");

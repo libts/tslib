@@ -1,0 +1,46 @@
+.TH TS_SETUP 3  "" "" "tslib"
+.SH NAME
+ts_setup \- find, open and configure a touch screen input device
+.SH SYNOPSIS
+.nf
+.B #include <tslib.h>
+.sp
+.BI "struct tsdev *ts_setup(const char *" dev_name ", int " nonblock ");"
+.sp
+.fi
+
+.SH DESCRIPTION
+.BR ts_setup ()
+will try find, open and configure touch screen device.
+On success it allocates memory for a new touch screen device, opens and links the given input event device to it
+and loads and initialises all modules configured in the tslib configuration file
+.BR TSLIB_CONFFILE.
+
+When \fBdev_name\fR is \fBNULL\fR
+.BR ts_setup ()
+will use device defined by \fBTSLIB_TSDEVICE\fR variable.
+
+When \fBTSLIB_TSDEVICE\fR is not defined
+.BR ts_setup ()
+will try to use following devices:
+.RS
+/dev/input/ts,
+.br
+/dev/input/touchscreen,
+.br
+/dev/input/event0,
+.br
+/dev/touchscreen/ucb1x00.
+.RE
+
+.SH RETURN VALUE
+A pointer to the opened
+.BI "struct tsdev"
+is returned.
+
+.SH SEE ALSO
+.BR ts_open (3),
+.BR ts_close (3),
+.BR ts_read (3),
+.BR ts_config (3),
+.BR ts.conf (5)
