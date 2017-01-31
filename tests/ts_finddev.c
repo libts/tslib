@@ -49,10 +49,8 @@ int main(int argc, char** argv)
 	if (waitsec < 0)
 		usage(argv);
 
-	ts = ts_open( tsdevice, 0 );
+	ts = ts_setup( tsdevice, 0 );
 	if (!ts)
-		return -1;
-	if (ts_config(ts))
 		return -1;
 
 	if (!waitsec) {

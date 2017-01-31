@@ -113,8 +113,10 @@ it for any single touch device too, providing space for one slot.
 
 ```
 TSLIB_TSDEVICE			TS device file name.
-				Default (non inputapi): /dev/touchscreen/ucb1x00
-				Default (inputapi): /dev/input/event0
+				Default (inputapi): 	/dev/input/ts
+							/dev/input/touchscreen
+							/dev/input/event0
+				Default (non inputapi):	/dev/touchscreen/ucb1x00
 TSLIB_CALIBFILE			Calibration file.
 				Default: ${sysconfdir}/pointercal
 TSLIB_CONFFILE			Config file.

@@ -68,15 +68,9 @@ int main(int argc, char **argv)
 		}
 	}
 
-	ts = tsdevice ? ts_open(tsdevice, 0) : ts_find(0);
+	ts = ts_setup(tsdevice, 0);
 	if (!ts) {
-		perror("ts_open");
-		return errno;
-	}
-
-	if (ts_config(ts)) {
-		ts_close(ts);
-		perror("ts_config");
+		perror("ts_setup");
 		return errno;
 	}
 
