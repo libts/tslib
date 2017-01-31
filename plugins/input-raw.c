@@ -50,6 +50,9 @@
 #ifndef KEY_CNT
 # define KEY_CNT (KEY_MAX+1)
 #endif
+#ifndef SYN_MAX /* < 3.12 kernel headers */
+# define SYN_MAX 0xf
+#endif
 #ifndef SYN_CNT
 # define SYN_CNT (SYN_MAX+1)
 #endif
