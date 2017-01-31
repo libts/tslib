@@ -501,7 +501,6 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 						i->buf[total][i->slot].tv = i->ev[it].time;
 						i->buf[total][i->slot].valid = 1;
 						break;
-					/* TODO transform tool_x/y too? */
 					case ABS_MT_TOOL_X:
 						i->buf[total][i->slot].tool_x = i->ev[it].value;
 						i->buf[total][i->slot].tv = i->ev[it].time;
