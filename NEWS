@@ -1,9 +1,12 @@
 ## tslib 1.4
 
 Most notable changes since 1.3 are:
-* man page updates and fixes
-* bugfixes all over the place
+* added default input device names (for example /dev/input/ts)
+* new API: ts_setup()
 * support for Android (experimental)
+* man page updates and fixes
+* compatibility fixes
+* bugfixes all over the place
 
 
 ## tslib 1.3
