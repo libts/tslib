@@ -119,9 +119,9 @@ AM_CONDITIONAL([ENABLE_TOOLS], [test "$enable_tools" = "yes"])
 AC_MSG_RESULT($enable_tools)
 
 # Library versioning
-LT_CURRENT=1
+LT_CURRENT=2
 LT_REVISION=4
-LT_AGE=1
+LT_AGE=2
 LT_RELEASE=1.4
 AC_SUBST(LT_RELEASE)
 AC_SUBST(LT_CURRENT)
