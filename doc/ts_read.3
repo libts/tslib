@@ -105,19 +105,12 @@ int main(int argc, char **argv)
 {
         struct tsdev *ts;
         struct ts_sample_mt **samp_mt = NULL;
-        int fd_input;
         int i, j;
         int ret;
 
-        fd_input = open(getenv("TSLIB_TSDEVICE"), O_RDWR);
-        if (!fd_input)
-                return \-1;
-
-        ts = ts_open(getenv("TSLIB_TSDEVICE"), 0);
+        ts = ts_setup(NULL, 0);
         if (!ts)
                 return \-1;
-
-        ts_config(ts);
 
         samp_mt = malloc(READ_SAMPLES * sizeof(struct ts_sample_mt **));
         if (!samp_mt)
@@ -147,6 +140,7 @@ int main(int argc, char **argv)
 }
 .fi
 .SH SEE ALSO
+.BR ts_setup (3),
 .BR ts_config (3),
 .BR ts_open (3),
 .BR ts_close (3),
