@@ -11,16 +11,16 @@ ts_setup \- find, open and configure a touch screen input device
 
 .SH DESCRIPTION
 .BR ts_setup ()
-will try find, open and configure touch screen device.
-On success it allocates memory for a new touch screen device, opens and links the given input event device to it
+will try to find, open and configure the touch screen device.
+On success it allocates memory for a new touch screen device, opens and links the input event device to it
 and loads and initialises all modules configured in the tslib configuration file
 .BR TSLIB_CONFFILE.
 
-When \fBdev_name\fR is \fBNULL\fR
+If \fBdev_name\fR is \fBNULL\fR
 .BR ts_setup ()
-will use device defined by \fBTSLIB_TSDEVICE\fR variable.
+will use the device defined by the \fBTSLIB_TSDEVICE\fR environment variable.
 
-When \fBTSLIB_TSDEVICE\fR is not defined
+If \fBTSLIB_TSDEVICE\fR is not defined
 .BR ts_setup ()
 will try to use following devices:
 .RS
@@ -28,7 +28,7 @@ will try to use following devices:
 .br
 /dev/input/touchscreen,
 .br
-/dev/input/event0,
+/dev/input/event0 or
 .br
 /dev/touchscreen/ucb1x00.
 .RE
