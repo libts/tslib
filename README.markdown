@@ -16,10 +16,6 @@ maintained by the following distributors:
 
 ## Building tslib
 
-for using a hardware plugin (module_raw) with *old kernels*, use
-`--disable-input` and `--disable-tools` for `./configure` and edit
-ts.conf accordingly.
-
 #### GNU/Linux
 For tarballs `./configure && make && make install` applies, see the
 [INSTALL](https://github.com/kergoth/tslib/blob/master/INSTALL)
