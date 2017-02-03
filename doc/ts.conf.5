@@ -102,7 +102,7 @@ This is a greedy filter, e\&.g\&. it gives less samples on output than receives 
 .sp
 Set the squared distance in touchscreen units between previous and current pen position (e\&.g\&. (X2\-X1)^2 + (Y2\-Y1)^2)\&. This defines the criteria for determining whenever two samples are near or far to each other\&.
 .sp
-If the distance between previous and current sample is far, the sample is marked as potential noise\&. This doesnt mean yet that it will be discarded; if the next reading will be close to it, this will be considered just a regular quick motion event, and it will sneak to the next layer\&. Also, if the sample after the potential noise is far from both previously discussed samples, this is also considered a quick motion event and the sample sneaks into the output stream\&.
+If the distance between previous and current sample is far, the sample is marked as potential noise\&. This doesn't mean yet that it will be discarded; if the next reading will be close to it, this will be considered just a regular quick motion event, and it will sneak to the next layer\&. Also, if the sample after the potential noise is far from both previously discussed samples, this is also considered a quick motion event and the sample sneaks into the output stream\&.
 .RE
 .RE
 .PP
