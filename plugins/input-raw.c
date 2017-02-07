@@ -57,7 +57,7 @@
 # define SYN_CNT (SYN_MAX+1)
 #endif
 
-#ifndef ABS_MT_POSITION_X
+#ifndef ABS_MT_POSITION_X /* < 2.6.30 kernel headers */
 # define ABS_MT_SLOT             0x2f    /* MT slot being modified */
 # define ABS_MT_TOUCH_MAJOR      0x30    /* Major axis of touching ellipse */
 # define ABS_MT_TOUCH_MINOR      0x31    /* Minor axis (omit if circular) */
@@ -69,8 +69,14 @@
 # define ABS_MT_TOOL_TYPE        0x37    /* Type of touching device */
 # define ABS_MT_BLOB_ID          0x38    /* Group a set of packets as a blob */
 # define ABS_MT_TRACKING_ID      0x39    /* Unique ID of initiated contact */
+#endif
+#ifndef ABS_MT_PRESSURE /* < 2.6.33 kernel headers */
 # define ABS_MT_PRESSURE         0x3a    /* Pressure on contact area */
+#endif
+#ifndef ABS_MT_DISTANCE /* < 2.6.38 kernel headers */
 # define ABS_MT_DISTANCE         0x3b    /* Contact hover distance */
+#endif
+#ifndef ABS_MT_TOOL_X /* < 3.6 kernel headers */
 # define ABS_MT_TOOL_X           0x3c    /* Center X tool position */
 # define ABS_MT_TOOL_Y           0x3d    /* Center Y tool position */
 #endif
