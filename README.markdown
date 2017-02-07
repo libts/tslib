@@ -10,6 +10,7 @@ Apart from directly [building](#building-tslib) it, tslib is currently
 maintained by the following distributors:
 
 * [Buildroot](https://buildroot.org/)
+* [Arch Linux](https://www.archlinux.org/)
 
 ## Building tslib
 
