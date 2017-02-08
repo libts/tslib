@@ -98,6 +98,7 @@ int main(int argc, char **argv)
 		ret = ts_read_raw_mt(ts, samp_mt, max_slots, 1);
 		if (ret < 0) {
 			perror("ts_read_raw_mt");
+			ts_close(ts);
 			exit(1);
 		}
 
@@ -117,4 +118,6 @@ int main(int argc, char **argv)
 			       samp_mt[0][i].pressure);
 		}
 	}
+
+	ts_close(ts);
 }

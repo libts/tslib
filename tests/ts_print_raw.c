@@ -33,6 +33,7 @@ int main()
 
 		if (ret < 0) {
 			perror("ts_read_raw");
+			ts_close(ts);
 			exit(1);
 		}
 
@@ -42,4 +43,6 @@ int main()
 		printf("%ld.%06ld: %6d %6d %6d\n", samp.tv.tv_sec, samp.tv.tv_usec, samp.x, samp.y, samp.pressure);
 
 	}
+
+	ts_close(ts);
 }

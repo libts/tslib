@@ -81,6 +81,7 @@ int main(int argc, char **argv)
 	unsigned short max_slots = 1;
 	struct ts_sample_mt **samp_mt = NULL;
 	short verbose = 0;
+	int fb_open = -1;
 
 	const char *tsdevice = NULL;
 
@@ -155,7 +156,8 @@ int main(int argc, char **argv)
 		return -ENOMEM;
 	}
 
-	if (open_framebuffer()) {
+	fb_open = open_framebuffer();
+	if (fb_open) {
 		close_framebuffer();
 		free(samp_mt[0]);
 		free(samp_mt);
@@ -289,7 +291,11 @@ int main(int argc, char **argv)
 	}
 
 out:
-	close_framebuffer();
+	if (fb_open)
+		close_framebuffer();
+
+	if (ts)
+		ts_close(ts);
 
 	if (samp_mt) {
 		if (samp_mt[0])

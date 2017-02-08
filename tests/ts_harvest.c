@@ -76,6 +76,7 @@ int main()
 
 	if (open_framebuffer()) {
 		close_framebuffer();
+		ts_close(ts);
 		exit(1);
 	}
 
@@ -182,5 +183,6 @@ int main()
 	getxy (ts, &x_ts, &y_ts); 
 	refresh_screen ();
 	close_framebuffer();
+	ts_close(ts);
 	return 0;
 }
