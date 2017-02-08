@@ -378,9 +378,9 @@ void line (int x1, int y1, int x2, int y2, unsigned colidx)
 void rect (int x1, int y1, int x2, int y2, unsigned colidx)
 {
 	line (x1, y1, x2, y1, colidx);
-	line (x2, y1, x2, y2, colidx);
+	line (x2, y1+1, x2, y2-1, colidx);
 	line (x2, y2, x1, y2, colidx);
-	line (x1, y2, x1, y1, colidx);
+	line (x1, y2-1, x1, y1+1, colidx);
 }
 
 void fillrect (int x1, int y1, int x2, int y2, unsigned colidx)
