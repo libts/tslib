@@ -152,7 +152,7 @@ int open_framebuffer(void)
 	bytes_per_pixel = (var.bits_per_pixel + 7) / 8;
 	transp_mask = ((1 << var.transp.length) - 1) <<
 		var.transp.offset; /* transp.length unlikely > 32 */
-	line_addr = malloc (sizeof (__u32) * var.yres_virtual);
+	line_addr = malloc (sizeof (line_addr) * var.yres_virtual);
 	addr = 0;
 	for (y = 0; y < var.yres_virtual; y++, addr += fix.line_length)
 		line_addr [y] = fbuffer + addr;
