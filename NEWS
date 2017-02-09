@@ -3,6 +3,8 @@
 Changes since 1.4 are:
 * fix ts_calibrate regression (creating the calibration file)
 * restore full backwards compatibility for all old kernel headers
+* 64 bit compatibility for test programs
+* bugfixes
 
 
 ## tslib 1.4
