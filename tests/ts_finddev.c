@@ -61,6 +61,7 @@ int main(int argc, char** argv)
 	signal( SIGALRM, alarm_handler );
 	alarm( waitsec );
 	ret = ts_read_raw(ts, &samp, 1 );
+	ts_close(ts);
 	if (ret)
 		return 1;
 

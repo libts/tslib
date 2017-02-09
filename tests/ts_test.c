@@ -70,6 +70,7 @@ int main()
 
 	if (open_framebuffer()) {
 		close_framebuffer();
+		ts_close(ts);
 		exit(1);
 	}
 
@@ -110,6 +111,7 @@ int main()
 		if (ret < 0) {
 			perror("ts_read");
 			close_framebuffer();
+			ts_close(ts);
 			exit(1);
 		}
 
@@ -146,6 +148,7 @@ int main()
 			break;
 	}
 	close_framebuffer();
+	ts_close(ts);
 
 	return 0;
 }

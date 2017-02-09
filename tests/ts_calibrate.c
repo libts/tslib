@@ -204,6 +204,7 @@ int main()
 
 	if (open_framebuffer()) {
 		close_framebuffer();
+		ts_close(ts);
 		exit(1);
 	}
 
@@ -244,6 +245,7 @@ int main()
 		if (cal_fd < 0) {
 			perror("open");
 			close_framebuffer();
+			ts_close(ts);
 			exit(1);
 		}
 
@@ -254,6 +256,7 @@ int main()
 		if (write (cal_fd, cal_buffer, len) == -1) {
 			perror("write");
 			close_framebuffer();
+			ts_close(ts);
 			exit(1);
 		}
 		close (cal_fd);
@@ -264,5 +267,6 @@ int main()
 	}
 
 	close_framebuffer();
+	ts_close(ts);
 	return i;
 }
