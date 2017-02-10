@@ -44,11 +44,17 @@
 #ifndef EV_CNT
 # define EV_CNT (EV_MAX+1)
 #endif
-#ifndef ABS_CNT
+#ifndef ABS_CNT /* < 2.6.24 kernel headers */
 # define ABS_CNT (ABS_MAX+1)
 #endif
 #ifndef KEY_CNT
 # define KEY_CNT (KEY_MAX+1)
+#endif
+#ifndef SYN_MT_REPORT /* < 2.6.30 kernel headers */
+# define SYN_MT_REPORT 2
+#endif
+#ifndef SYN_DROPPED /* < 2.6.39 kernel headers */
+# define SYN_DROPPED 3
 #endif
 #ifndef SYN_MAX /* < 3.12 kernel headers */
 # define SYN_MAX 0xf
