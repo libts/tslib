@@ -497,6 +497,11 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 						if (i->type_a && i->slot < (max_slots - 1))
 							i->slot++;
 						break;
+				#ifdef DEBUG
+					case SYN_DROPPED:
+						fprintf(stderr, "INPUT-RAW: SYN_DROPPED\n");
+						break;
+				#endif
 					}
 					break;
 				case EV_ABS:
