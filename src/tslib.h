@@ -3,6 +3,7 @@
 /*
  *  tslib/src/tslib.h
  *
+ *  Copyright (C) 2016 Martin Kepplinger <martink@posteo.de>
  *  Copyright (C) 2001 Russell King.
  *
  * This file is placed under the LGPL.
