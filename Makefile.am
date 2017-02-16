@@ -1,6 +1,7 @@
 #
 #  tslib/Makefile.am
 #
+#  Copyright (C) 2017 Martin Kepplinger <martink@posteo.de>
 #  Copyright (C) 2001 Russell King.
 #
 # This file is placed under the LGPL.  Please see the file
