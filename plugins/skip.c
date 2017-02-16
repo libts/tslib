@@ -1,12 +1,13 @@
 /*
  *  tslib/plugins/skip.c
  *
+ * (C) 2017 Martin Kepplinger <martin.kepplinger@ginzinger.com> (read_mt())
  * (C) 2008 by Openmoko, Inc.
  * Author: Nelson Castillo
- * Author: Martin Kepplinger (read_mt())
  *
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
+ *
  *
  * Skip filter for touchscreen values.
  *
