@@ -1,14 +1,14 @@
 /*
  *  tslib/plugins/input-raw.c
  *
- *  Original version:
- *  Copyright (C) 2001 Russell King.
+ *  Additions for the Linux multitouch API:
+ *  Copyright (C) 2016 Martin Kepplinger <martin.kepplinger@ginzinger.com>
  *
  *  Rewritten for the Linux input device API:
  *  Copyright (C) 2002 Nicolas Pitre
  *
- *  Additions for the Linux multitouch API:
- *  Copyright (C) 2016 Martin Kepplinger
+ *  Original version:
+ *  Copyright (C) 2001 Russell King.
  *
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
