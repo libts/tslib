@@ -1,6 +1,7 @@
 /*
  *  tslib/plugins/pthres.c
  *
+ *  Copyright (C) 2016 Martin Kepplinger <martin.kepplinger@ginzinger.com>
  *  Copyright (C) 2003 Texas Instruments, Inc.
  *
  *  Based on:

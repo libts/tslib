@@ -1,6 +1,7 @@
 /*
  *  tslib/plugins/median.c
  *
+ *  Copyright (C) 2016 Martin Kepplinger <martin.kepplinger@ginzinger.com>
  *  Copyright (C) 2009 Marel ehf
  *  Author Kári Davíðsson
  *

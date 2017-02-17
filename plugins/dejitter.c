@@ -1,6 +1,7 @@
 /*
  *  tslib/plugins/dejitter.c
  *
+ *  Copyright (C) 2016 Martin Kepplinger <martin.kepplinger@ginzinger.com>
  *  Copyright (C) 2001 Russell King.
  *
  * This file is placed under the LGPL.  Please see the file
