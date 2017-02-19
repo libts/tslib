@@ -97,7 +97,7 @@ int main(int argc, char **argv)
 	while (1) {
 		ret = ts_read_mt(ts, samp_mt, max_slots, 1);
 		if (ret < 0) {
-			perror("ts_read_raw_mt");
+			perror("ts_read_mt");
 			ts_close(ts);
 			exit(1);
 		}
