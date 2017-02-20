@@ -236,7 +236,7 @@ static int ts_input_read(struct tslib_module_info *inf,
 		i->last_fd = check_fd(i);
 
 	if (i->last_fd == -1)
-		return 0;
+		return -ENODEV;
 
 	if (i->no_pressure)
 		set_pressure(i);
@@ -419,7 +419,7 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 		i->last_fd = check_fd(i);
 
 	if (i->last_fd == -1)
-		return 0;
+		return -ENODEV;
 
 	if (i->no_pressure)
 		set_pressure(i);
