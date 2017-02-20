@@ -52,15 +52,6 @@
 #define UI_GET_SYSNAME(len)     _IOC(_IOC_READ, UINPUT_IOCTL_BASE, 44, len)
 #endif
 
-#define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
-#define BIT_MASK(nr)            (1UL << ((nr) % BITS_PER_LONG))
-#define BIT_WORD(nr)            ((nr) / BITS_PER_LONG)
-#define BITS_PER_BYTE           8
-#define BITS_TO_LONGS(nr)       DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
-#ifndef ABS_CNT
-# define ABS_CNT (ABS_MAX+1)
-#endif
-
 struct data_t {
 	int fd_uinput;
 	int fd_input;
@@ -399,9 +390,9 @@ static int process(struct data_t *data, struct ts_sample_mt **s_array, int max_s
 		}
 	} else if (samples_read < 0) {
 		if (data->verbose)
-			fprintf(stderr, RED DEFAULT_UINPUT_NAME ": ts_read failure\n" RESET);
+			fprintf(stderr, RED DEFAULT_UINPUT_NAME ": ts_read_mt failure.\n" RESET);
 
-		sleep(1);
+		return samples_read;
 	}
 
 	return 0;
@@ -448,7 +439,6 @@ static void cleanup(struct data_t *data)
 
 int main(int argc, char **argv)
 {
-	long absbit[BITS_TO_LONGS(ABS_CNT)];
 	struct data_t data = {
 		.fd_uinput = 0,
 		.fd_input = 0,
@@ -575,16 +565,6 @@ int main(int argc, char **argv)
 		perror("open");
 		goto out;
 	}
-
-	if ((ioctl(data.fd_input, EVIOCGBIT(EV_ABS, sizeof(absbit)), absbit)) < 0 ||
-	    !(absbit[BIT_WORD(ABS_X)] & BIT_MASK(ABS_X)) ||
-	    !(absbit[BIT_WORD(ABS_Y)] & BIT_MASK(ABS_Y))) {
-		if (!(absbit[BIT_WORD(ABS_MT_POSITION_X)] & BIT_MASK(ABS_MT_POSITION_X)) ||
-		    !(absbit[BIT_WORD(ABS_MT_POSITION_Y)] & BIT_MASK(ABS_MT_POSITION_Y))) {
-			fprintf(stderr, "ts_uinput: device is not a touchscreen (must support ABS_X/Y or ABS_MT_POSITION_X/Y events)\n");
-			goto out;
-		}
-        }
 
 	data.ts = ts_open(data.input_name, 0 /* blocking */);
 	if (!data.ts) {
