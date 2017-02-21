@@ -1,5 +1,5 @@
 /*
- * (C) 2010-2016 Ginzinger electronic systems GmbH, A-4952 Weng im Innkreis
+ * (C) 2017 Ginzinger electronic systems GmbH, A-4952 Weng im Innkreis
  *
  * Martin Kepplinger <martin.kepplinger@ginzinger.com>  2016-09-14
  * Melchior FRANZ <melchior.franz@ginzinger.com>  2015-09-30

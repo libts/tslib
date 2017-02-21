@@ -1,6 +1,8 @@
 /*
  *  tslib/tests/ts_print_mt.c
  *
+ *  Copyright (C) 2016 Martin Kepplinger
+ *
  * Just prints touchscreen events -- does not paint them on framebuffer
  *
  * This file is placed under the GPL.  Please see the file
