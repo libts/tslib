@@ -44,6 +44,7 @@ struct tslib_variance {
 #define VAR_LASTVALID		0x00000002
 #define VAR_NOISEVALID		0x00000004
 #define VAR_SUBMITNOISE		0x00000008
+	int slots;
 };
 
 static int sqr (int x)
@@ -162,6 +163,12 @@ static int variance_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 		}
 	}
 
+	if (var->slots < max_slots) {
+		/* TODO fix memory allocation - we only need allocation here */
+		printf("tslib: warning: multitouch not implemented for variance filter\n");
+		var->slots = max_slots;
+	}
+
 	while (count < nr) {
 		if (var->flags & VAR_SUBMITNOISE) {
 			cur = var->noise;
@@ -173,7 +180,7 @@ static int variance_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 			for (i = 1; i < max_slots; i++) {
 				if (cur_mt[0][i].valid == 1) {
 				#ifdef DEBUG
-					fprintf(stderr, "tslib: variance filter not implemented for multitouch\n");
+					fprintf(stderr, "VARIANCE: data dropped. multitouch not implemented.\n");
 				#endif
 					/* XXX Attention. You lose multitouch
 					 * using ts_read_mt() with the variance
@@ -334,6 +341,7 @@ TSAPI struct tslib_module_info *variance_mod_init(__attribute__ ((unused)) struc
 	var->delta = 30;
 	var->flags = 0;
 	var->last_pen_down = 1;
+	var->slots = 0;
 
 	if (tslib_parse_vars(&var->module, variance_vars, NR_VARS, params)) {
 		free(var);
