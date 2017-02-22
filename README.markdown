@@ -9,8 +9,8 @@ Touchscreen access library
 Apart from directly [building](#building-tslib) it, tslib is currently
 maintained by the following distributors:
 
-* [Buildroot](https://buildroot.org/)
-* [Arch Linux](https://www.archlinux.org/)
+* [Buildroot](https://buildroot.org/) - `BR2_PACKAGE_TSLIB=y`
+* [Arch Linux](https://www.archlinux.org/) - `pacman -S tslib`
 
 ## Building tslib
 
