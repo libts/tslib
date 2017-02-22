@@ -15,6 +15,21 @@ AC_SUBST(PACKAGE_DESCRIPTION)
 # Set our default flags variables
 TS_DEFAULT_FLAGS
 
+# Check for host os
+AC_CANONICAL_HOST
+build_linux=no
+build_freebsd=no
+case "${host_os}" in
+	linux*)
+		build_linux=yes
+		;;
+	freebsd*)
+		build_freebsd=yes
+		;;
+	*)
+		;;
+esac
+
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_CPP
@@ -78,7 +93,11 @@ TSLIB_CHECK_MODULE([dmc], [yes], [Enable building of dmc raw module (HP iPaq DMC
 TSLIB_CHECK_MODULE([input], [yes], [Enable building of generic input raw module (Linux /dev/input/eventN support)])
 TSLIB_CHECK_MODULE([touchkit], [yes], [Enable building of serial TouchKit raw module (Linux /dev/ttySX support)])
 TSLIB_CHECK_MODULE([galax], [yes], [Enable building of HID USB eGalax raw module (Linux /dev/hiddevN support)])
+if test "$build_linux" = "yes"; then
 TSLIB_CHECK_MODULE([waveshare], [yes], [Enable building of WaveShare raw module (Linux /dev/hidrawN support)])
+else
+TSLIB_CHECK_MODULE([waveshare], [no], [Enable building of WaveShare raw module (Linux /dev/hidrawN support)])
+fi
 
 
 AC_MSG_CHECKING([where to place modules])
