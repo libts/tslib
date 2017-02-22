@@ -29,6 +29,8 @@ case "${host_os}" in
 	*)
 		;;
 esac
+AM_CONDITIONAL([FREEBSD], [test "$build_freebsd" = "yes"])
+AM_CONDITIONAL([LINUX], [test "$build_linux" = "yes"])
 
 # Checks for programs.
 AC_PROG_CC
