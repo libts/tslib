@@ -19,12 +19,16 @@ For tarballs `./configure && make && make install` applies, see the
 [INSTALL](https://github.com/kergoth/tslib/blob/master/INSTALL)
 file for more details. For the sources run `./autogen.sh` first.
 
-#### Android/Linux
+#### Android/Linux (experimental)
 Extract tslib's tarball into `<base>/external/` of your
 Android sources and build the components you need
 like `make libts`, `make ts/plugins/input`, `make ts_uinput`, ...,
 see LOCAL_MODULE in Android.mk.
 Refer to [Android's documentation](https://developer.android.com/ndk/guides/build.html) for the details.
+
+#### FreeBSD (experimental)
+`./configure`, `make` and `make install`. Please note that there is
+no support for `ts_uinput` yet.
 
 ## What is tslib?
 
