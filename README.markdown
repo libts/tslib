@@ -49,7 +49,7 @@ This is just an example `/etc/ts.conf` file. Touch samples flow from top to bott
     module dejitter delta=100
     module linear
 
-see the [filter plugins page](https://github.com/kergoth/tslib/wiki/filter-modules) for available filters and their parameters.
+see the [below](#filter-modules) for available filters and their parameters.
 
 With this configuration file, we end up with the following data flow
 through the library:
@@ -244,9 +244,13 @@ The API is documented in [our man pages](https://github.com/kergoth/tslib/tree/m
 
 ### ABI - Application Binary Interface
 
-[Wikipedia](https://en.wikipedia.org/wiki/Application_binary_interface) background information.
+[Wikipedia](https://en.wikipedia.org/wiki/Application_binary_interface) has background information.
 
-TODO
+#### Soname versions
+Usually, and everytime until now, libts does not break the ABI and your application can continue using libts after upgrading. Specifically this is indicated by the libts library version's major number, which should always stay 0. According to our versioning scheme, the major number is incremented only if we break backwards compatibility. The second or third minor version will increase with releases.
+
+#### tslib package version
+Officially, a tslib tarball version number doesn't tell you anything about it's backwards compatibility.
 
 ### dependencies
 
