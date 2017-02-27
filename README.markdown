@@ -4,130 +4,87 @@ Touchscreen access library
 
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/11027/badge.svg)](https://scan.coverity.com/projects/tslib)
 
-## Getting tslib
 
-Apart from directly [building](#building-tslib) it, tslib is currently
-maintained by the following distributors:
+tslib is an abstraction layer for touchscreen events, as well as a filter stack for the manipulation of those events, see [instructions how to use tslib](https://github.com/kergoth/tslib/wiki/setup-and-configure-tslib).
 
+Here's a short introductory presentation:
+
+[![FOSDEM 2017 - tslib](https://fosdem.org/2017/support/promote/box.png)](https://video.fosdem.org/2017/H.2215/tslib.vp8.webm)
+
+## setup and configure tslib
+### install tslib
+tslib should be usable on various operating systems, including GNU/Linux, Freebsd or Android Linux. Apart from building the latest tarball release by `./configure`, `make` and `make install`, tslib is available from the following distributors and their package management:
+* [Arch Linux](https://www.archlinux.org/packages/?q=tslib) - `pacman -S tslib`
 * [Buildroot](https://buildroot.org/) - `BR2_PACKAGE_TSLIB=y`
-* [Arch Linux](https://www.archlinux.org/) - `pacman -S tslib`
+* (Debian: [Looking for a sponsor](https://mentors.debian.net/package/tslib) to include it)
 
-## Building tslib
+### set up environment variables
+    TSLIB_TSDEVICE          TS device file name.
+                            Default (inputapi):     /dev/input/ts
+                            /dev/input/touchscreen
+                            /dev/input/event0
+                            Default (non inputapi): /dev/touchscreen/ucb1x00
+    TSLIB_CALIBFILE         Calibration file.
+                            Default: ${sysconfdir}/pointercal
+    TSLIB_CONFFILE          Config file.
+                            Default: ${sysconfdir}/ts.conf
+    TSLIB_PLUGINDIR         Plugin directory.
+                            Default: ${datadir}/plugins
+    TSLIB_CONSOLEDEVICE     Console device.
+                            Default: /dev/tty
+    TSLIB_FBDEVICE          Framebuffer device.
+                            Default: /dev/fb0
 
-#### GNU/Linux
-For tarballs `./configure && make && make install` applies, see the
-[INSTALL](https://github.com/kergoth/tslib/blob/master/INSTALL)
-file for more details. For the sources run `./autogen.sh` first.
+* On Debian, `TSLIB_PLUGINDIR` probably should be `/usr/local/lib/ts`.
+* Find your `/dev/input/eventX` touchscreen's event file and either
+  - Symlink `ln -s /dev/input/eventX /dev/input/ts` or
+  - `export TSLIB_TSDEVICE /dev/input/eventX`
+* If you are not using `/dev/fb0`, be sure to set `TSLIB_FBDEVICE`
 
-#### Android/Linux (experimental)
-Extract tslib's tarball into `<base>/external/` of your
-Android sources and build the components you need
-like `make libts`, `make ts/plugins/input`, `make ts_uinput`, ...,
-see LOCAL_MODULE in Android.mk.
-Refer to [Android's documentation](https://developer.android.com/ndk/guides/build.html) for the details.
+### configure tslib
+This is just an example `/etc/ts.conf` file. Touch samples flow from top to bottom. Each line specifies one module and it's parameters. Modules are processed in order. Use _one_ module_raw that accesses your device, followed by any combination of filter modules.
 
-#### FreeBSD (experimental)
-`./configure`, `make` and `make install`. Please note that there is
-no support for `ts_uinput` yet.
+    module_raw input
+    module median depth=3
+    module dejitter delta=100
+    module linear
 
-## What is tslib?
-
-The idea of tslib is to have a core library that provides standardised
-services, and a set of plugins to manage the conversion and filtering
-of touchscreen input data as needed.
-
-The plugins for a particular touchscreen are loaded automatically by the
-library under the control of a static configuration file, ts.conf.
-ts.conf gives the library basic configuration information.  Each line
-specifies one module, and the parameters for that module.  The modules
-are loaded in order, with the first one processing the touchscreen data
-first.  For example:
-
-```
-  module_raw input
-  module median depth=3
-  module dejitter delta=100
-  module linear
-```
-
-These parameters are described below.
+see the [filter plugins page](https://github.com/kergoth/tslib/wiki/filter-modules) for available filters and their parameters.
 
 With this configuration file, we end up with the following data flow
 through the library:
 
-```
-  raw read --> median  --> dejitter --> linear --> application
-  module       module      module       module
-```
+    driver --> raw read --> median  --> dejitter --> linear --> application
+               module       module      module       module
 
-You can re-order these modules as you wish, add more modules, or remove them
-all together.  When you call `ts_read()` or run `ts_uinput -d` and read from
-the new input device, see [below](#use-tslib-via-a-normal-input-event-device),
-the values you read are values that
-have passed through the chain of filters and scaling conversions.  Another
-call is provided, `ts_read_raw()` which bypasses all the modules and reads the
-raw data directly from the device.
+### calibrate the touch screen
+Calibration is done by the `linear` plugin, which uses it's own config file `/etc/pointercal`. Don't edit this file manually. It is created by the `ts_calibrate` program:
 
-There are a couple of programs in the `tslib/tests` directory which give example
-usages.  They are by no means exhaustive, nor probably even good examples.
-They are basically the programs used to test this library.
+    # ts_calibrate
 
-#### Example use cases
+The calibration procedure simply requires you to touch the cross on screen, where is appears, as accurate as possible.
 
-Years ago (or in part still for resistive touch screens) a use case for tslib to *enable*
-using the device would look like
-* use a hardware specific `module_raw` plugin (single touch only)
-* mainly use the `linear` filter plugin (and `ts_calibrate`)
-* use `ts_read()` (in the form of a plugin for Qt, X11, ...)
+### test the filtered input behaviour
+You may quickly test the touch behaviour that results from the configured filters, using `ts_test_mt`:
 
-While being fully backwards compatible, nowadays, for capacitive touch screens
-a use case to *optimize* the touch experience or work around hardware or driver
-bugs would be
-* use the `module_raw input` plugin for Linux drivers (and have multi touch)
-* use a combination of other [filter plugins](#module-parameters) to optimize the touch experience
-* have the `ts_uinput -d` daemon running and use it's
-[input device](#use-tslib-via-a-normal-input-event-device) in your environment
+    # ts_test_mt
 
-## Use tslib via a normal input event device
+### use the filtered result in your system
+One way to provide your resulting input behaviour to your system, is to use tslib's userspace input driver `ts_uinput`:
 
-Instead of using tslib's API calls, you can use `tslib/tools/ts_uinput` which
-creates (via uinput) a new standard input event device you can use in your
-environment. The new device provides the filtered and calibrated values and
-should work with single- and multitouch devices. `ts_uinput_start.sh` starts
-`ts_uinput` as a daemon and creates a link named `/dev/input/ts_uinput` for
-convenience.
+    # ts_uinput -d
 
-## Multitouch
+`-d` make the program return and run as a daemon in the background. Inside of `/dev/input/` there now is a new input event device, which provides your configured input. You can even use a script like `tools/ts_uinput_start.sh` to start the ts_uinput daemon and create a defined `/dev/input/ts_uinput` symlink.
 
-Similar to the mentioned `ts_read()`, `ts_read_mt()` reads one `struct ts_sample_mt`
-per slot (number of possible contacts) and desired number of samples. You have
-to provide slots*nr of them to hold the resulting values, see the multitouch
-programs in `tslib/tests` for examples; there is, of course, `ts_read_raw_mt()` too.
+Remember to set your environment and configuration for ts_uinput, just like you did for ts_calibrate or ts_test_mt.
 
-`ts_read_mt()` aims to be a drop-in replacement for `ts_read()`, so you can use
-it for any single touch device too, providing space for one slot.
+Let's recap the data flow here:
 
-## Environment Variables
+    driver --> raw read --> filter --> (...)   --> ts_uinput  --> evdev read
+               module       module     module(s)   application    application
 
-```
-TSLIB_TSDEVICE			TS device file name.
-				Default (inputapi): 	/dev/input/ts
-							/dev/input/touchscreen
-							/dev/input/event0
-				Default (non inputapi):	/dev/touchscreen/ucb1x00
-TSLIB_CALIBFILE			Calibration file.
-				Default: ${sysconfdir}/pointercal
-TSLIB_CONFFILE			Config file.
-				Default: ${sysconfdir}/ts.conf
-TSLIB_PLUGINDIR			Plugin directory.
-				Default: ${datadir}/plugins
-TSLIB_CONSOLEDEVICE		Console device.
-				Default: /dev/tty
-TSLIB_FBDEVICE			Framebuffer device.
-				Default: /dev/fb0
-```
 
-## Module Parameters
+## filter modules
 
 ### module:	variance
 
@@ -263,15 +220,206 @@ Parameters:
 	Number of samples to apply the median filter to
 
 
-## Module Creation Notes
+***
 
-For those creating tslib modules, it is important to note a couple things with
-regard to handling of the ability for a user to request more than one ts event
-at a time.  The first thing to note is that the lower layers may send up less
-events than the user requested, because some events may be filtered out by
-intermediate layers. Next, your module should send up just as many events
-as the user requested in nr. If your module is one that consumes events,
-such as variance, then you loop on the read from the lower layers, and only
-send the events up when
+
+## libts - the library
+### the libts API
+Check out the [tests](https://github.com/kergoth/tslib/tree/master/tests) directory for examples how to use it.
+
+`ts_open()`  
+`ts_config()`  
+`ts_setup()`  
+`ts_close()`  
+`ts_reconfig()`  
+`ts_option()`  
+`ts_fd()`  
+`ts_load_module()`  
+`ts_read()`  
+`ts_read_raw()`  
+`ts_read_mt()`  
+`ts_reat_raw_mt()`  
+
+The API is documented in [our man pages](https://github.com/kergoth/tslib/tree/master/doc). Possibly there will be distributors who provide them online, like [Debian had done for tslib-1.0](https://manpages.debian.org/wheezy/libts-bin/index.html). As soon as there are up-to-date html pages hosted somewhere, we'll link the functions above to it.
+
+### ABI - Application Binary Interface
+
+[Wikipedia](https://en.wikipedia.org/wiki/Application_binary_interface) background information.
+
+TODO
+
+### dependencies
+
+* libc (with libdl if you build it dynamically linked)
+
+### related libraries
+
+* [libevdev](https://www.freedesktop.org/wiki/Software/libevdev/) - access wrapper for [event device](https://en.wikipedia.org/wiki/Evdev) access, uinput too ("Linux API")
+* [libinput](https://www.freedesktop.org/wiki/Software/libinput/) - handle input devices for Wayland (uses libevdev)
+* [xf86-input-evdev](https://cgit.freedesktop.org/xorg/driver/xf86-input-evdev/) - evdev plugin for X (uses libevdev)
+
+### libts users
+
+* [ts_uinput](https://github.com/kergoth/tslib/blob/master/tools/ts_uinput.c) - userspace event device driver for the tslib-filtered samples
+* [xf86-input-tslib](http://public.pengutronix.de/software/xf86-input-tslib/) - **outdated** direct tslib input plugin for X
+* [qtslib](https://github.com/qt/qtbase/tree/dev/src/platformsupport/input/tslib) - **outdated** Qt5 qtbase tslib plugin
+
+### using libts
+This is a complete example program, similar to `ts_print_mt.c`:
+
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <fcntl.h>
+    #include <sys/ioctl.h>
+    #include <sys/mman.h>
+    #include <sys/time.h>
+    #include <getopt.h>
+    #include <errno.h>
+    #include <unistd.h>
+
+    #ifdef __FreeBSD__
+    #include <dev/evdev/input.h>
+    #else
+    #include <linux/input.h>
+    #endif
+
+    #include "tslib.h"
+
+    int main(int argc, char **argv)
+    {
+        struct tsdev *ts;
+        char *tsdevice = NULL;
+        struct ts_sample_mt **samp_mt = NULL;
+        struct input_absinfo slot;
+        unsigned short max_slots = 1;
+        int ret, i;
+
+        ts = ts_setup(tsdevice, 0);
+        if (!ts) {
+                perror("ts_setup");
+                return errno;
+        }
+
+        if (ioctl(ts_fd(ts), EVIOCGABS(ABS_MT_SLOT), &slot) < 0) {
+                perror("ioctl EVIOGABS");
+                ts_close(ts);
+                return errno;
+        }
+
+        max_slots = slot.maximum + 1 - slot.minimum;
+
+        samp_mt = malloc(sizeof(struct ts_sample_mt *));
+        if (!samp_mt) {
+                ts_close(ts);
+                return -ENOMEM;
+        }
+        samp_mt[0] = calloc(max_slots, sizeof(struct ts_sample_mt));
+        if (!samp_mt[0]) {
+                free(samp_mt);
+                ts_close(ts);
+                return -ENOMEM;
+        }
+
+        while (1) {
+                ret = ts_read_mt(ts, samp_mt, max_slots, 1);
+                if (ret < 0) {
+                        perror("ts_read_mt");
+                        ts_close(ts);
+                        exit(1);
+                }
+
+                if (ret != 1)
+                        continue;
+
+                for (i = 0; i < max_slots; i++) {
+                        if (samp_mt[0][i].valid != 1)
+                                continue;
+
+                        printf("%ld.%06ld: (slot %d) %6d %6d %6d\n",
+                               samp_mt[0][i].tv.tv_sec,
+                               samp_mt[0][i].tv.tv_usec,
+                               samp_mt[0][i].slot,
+                               samp_mt[0][i].x,
+                               samp_mt[0][i].y,
+                               samp_mt[0][i].pressure);
+                }
+        }
+
+        ts_close(ts);
+    }
+
+
+
+### Symbols in Versions
+|Name | Introduced|
+| --- | --- |
+|`ts_close` | 1.0 |
+|`ts_config` | 1.0 |
+|`ts_reconfig` | 1.3 |
+|`ts_setup` | 1.4 |
+|`ts_error_fn` | 1.0 |
+|`ts_fd` | 1.0 |
+|`ts_load_module` | 1.0 |
+|`ts_open` | 1.0 |
+|`ts_option` | 1.1 |
+|`ts_read` | 1.0 |
+|`ts_read_mt` | 1.3 |
+|`ts_read_raw` | 1.0 |
+|`ts_read_raw_mt` | 1.3 |
+|`tslib_parse_vars` | 1.0 |
+
+
+***
+
+## tslib development
+### how to contribute
+Ideally you fork the project on github, make your changes and create a pull request. You can, however, send your patch to the current maintainer, [Martin Kepplinger](mailto:martink@posteo.de) too. We don't have a mailing list at the moment. Before you send changes, it would be awesome if you checked the following:
+* update the NEWS file's changelog if you added a feature
+* update or add man pages if applicable
+* update the README if applicable
+* add a line containing `Fixes #XX` in your git commit message; XX being the github issue's number if you fix an issue
+* update the wiki
+
+### module development notes
+For those creating tslib modules, it is important to note a couple things with regard to handling of the ability for a user to request more than one ts event at a time. The first thing to note is that the lower layers may send up less events than the user requested, because some events may be filtered out by intermediate layers. Next, your module should send up just as many events as the user requested in nr. If your module is one that consumes events, such as variance, then you loop on the read from the lower layers, and only send the events up when
+
 1. you have the number of events requested by the user, or
 2. one of the events from the lower layers was a pen release.
+
+### coding style
+We loosely tie to the [Linux coding style](https://www.kernel.org/doc/html/latest/process/coding-style.html)
+
+### release procedure
+A release can be done when either
+* an issue tagged as "improvement" is implemented, or
+* the previous release contains a user visible regression
+
+The procedure looks like this:
+
+1. update the NEWS file with the changelog
+* switch to a new release/<version> branch
+* update configure.ac versions
+  * `AC_INIT` - includes the tslib package version. generally we increment the minor version
+  * `LT_CURRENT` - increment **only if there are API changes** (additions / removals / changes)
+  * `LT_REVISION` - always increment. should match the minor version of the package version
+  * `LT_AGE` - increment **only if `LT_CURRENT` was incremented** and these **API changes are backwards compatible** (should always be the case, so it should match `LT_CURRENT`)
+  * `LT_RELEASE` - matches the `AC_INIT` package version
+
+3. update gitignore for autobuilt files
+* autobuild and add the files for the tarball to git
+* commit "add generated files for X.X release"
+* git tag -s X.X
+* git push origin release/X.X --tags
+* make dist
+* shas256sum <tarball> > <tarball>.sha256 for the 3 tarballs
+* create a github release off the signed tag
+* add the 6 files and the release notes
+* publish and inform distributors
+* celebrate!
+
+### specifications relevant to tslib
+
+#### evdev interface used by input-raw
+* [Wikipedia evdev](https://en.wikipedia.org/wiki/Evdev)
+* [Linux event codes documentation](https://www.kernel.org/doc/Documentation/input/event-codes.txt)
+* [Linux event codes definitions](https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/include/uapi/linux/input-event-codes.h)
