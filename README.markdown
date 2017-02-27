@@ -5,7 +5,7 @@ Touchscreen access library
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/11027/badge.svg)](https://scan.coverity.com/projects/tslib)
 
 
-tslib is an abstraction layer for touchscreen events, as well as a filter stack for the manipulation of those events, see [instructions how to use tslib](https://github.com/kergoth/tslib/wiki/setup-and-configure-tslib).
+tslib is an abstraction layer for touchscreen events, as well as a filter stack for the manipulation of those events.
 
 Here's a short introductory presentation:
 
@@ -419,7 +419,7 @@ The procedure looks like this:
 
 ### specifications relevant to tslib
 
-#### evdev interface used by input-raw
+#### evdev interface read by input-raw and offered by ts_uinput
 * [Wikipedia evdev](https://en.wikipedia.org/wiki/Evdev)
 * [Linux event codes documentation](https://www.kernel.org/doc/Documentation/input/event-codes.txt)
 * [Linux event codes definitions](https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/include/uapi/linux/input-event-codes.h)
