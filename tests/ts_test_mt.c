@@ -132,7 +132,7 @@ int main(int argc, char **argv)
 		perror("ts_setup");
 		return errno;
 	}
-	if (verbose)
+	if (verbose && tsdevice)
 		printf("ts_test_mt: using input device " GREEN "%s" RESET "\n", tsdevice);
 
 	if (ioctl(ts_fd(ts), EVIOCGABS(ABS_MT_SLOT), &slot) < 0) {
