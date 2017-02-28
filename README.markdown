@@ -11,6 +11,13 @@ Here's a short introductory presentation:
 
 [![FOSDEM 2017 - tslib](https://fosdem.org/2017/support/promote/box.png)](https://video.fosdem.org/2017/H.2215/tslib.vp8.webm)
 
+## table of contents
+* [setup and configure tslib](#setup-and-configure-tslib)
+* [filter modules](#filter-modules)
+* [libts - the library](#libts---the-library)
+* [tslib development](#tslib-development)
+
+
 ## setup and configure tslib
 ### install tslib
 tslib should be usable on various operating systems, including GNU/Linux, Freebsd or Android Linux. Apart from building the latest tarball release by `./configure`, `make` and `make install`, tslib is available from the following distributors and their package management:
