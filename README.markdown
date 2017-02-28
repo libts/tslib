@@ -1,7 +1,7 @@
 
 ### tslib - a filter stack for accessing and manipulating touchscreen events
 
-![logo](tslib_logo_wide.svg?raw=true)
+![logo](tslib_logo_wide.png?raw=true)
 
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/11027/badge.svg)](https://scan.coverity.com/projects/tslib)
 
