@@ -139,10 +139,14 @@ AC_ARG_ENABLE([tools], AS_HELP_STRING([--disable-tools], [Disable tools (ts_uinp
 AM_CONDITIONAL([ENABLE_TOOLS], [test "$enable_tools" = "yes"])
 AC_MSG_RESULT($enable_tools)
 
-# Library versioning
+# libts Library versioning
+# increment if the interface changed
 LT_CURRENT=2
+# increment if anything changed. set to 0 if current was incremented!
 LT_REVISION=6
+# increment if the interface change is backwards compatible (an addition). set to 0 if not.
 LT_AGE=2
+# package release number
 LT_RELEASE=1.6
 AC_SUBST(LT_RELEASE)
 AC_SUBST(LT_CURRENT)

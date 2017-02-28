@@ -405,10 +405,10 @@ The procedure looks like this:
 
 1. update the NEWS file with the changelog
 * switch to a new release/<version> branch
-* update configure.ac versions
+* update configure.ac libts library versions
   * `AC_INIT` - includes the tslib package version. generally we increment the minor version
   * `LT_CURRENT` - increment **only if there are API changes** (additions / removals / changes)
-  * `LT_REVISION` - always increment. should match the minor version of the package version
+  * `LT_REVISION` - increment if anything changed. but if `LT_CURRENT` was incremented, set to 0!
   * `LT_AGE` - increment **only if `LT_CURRENT` was incremented** and these **API changes are backwards compatible** (should always be the case, so it should match `LT_CURRENT`)
   * `LT_RELEASE` - matches the `AC_INIT` package version
 
