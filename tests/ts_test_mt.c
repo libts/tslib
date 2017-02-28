@@ -289,6 +289,7 @@ int main(int argc, char **argv)
 	}
 
 out:
+	fillrect(0, 0, xres - 1, yres - 1, 0);
 	close_framebuffer();
 
 	if (ts)

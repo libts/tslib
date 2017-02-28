@@ -266,6 +266,7 @@ int main()
 		i = -1;
 	}
 
+	fillrect(0, 0, xres - 1, yres - 1, 0);
 	close_framebuffer();
 	ts_close(ts);
 	return i;

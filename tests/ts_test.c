@@ -147,6 +147,7 @@ int main()
 		if (quit_pressed)
 			break;
 	}
+	fillrect(0, 0, xres - 1, yres - 1, 0);
 	close_framebuffer();
 	ts_close(ts);
 
