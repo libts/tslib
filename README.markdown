@@ -35,7 +35,7 @@ tslib should be usable on various operating systems, including GNU/Linux, Freebs
     TSLIB_FBDEVICE          Framebuffer device.
                             Default: /dev/fb0
 
-* On Debian, `TSLIB_PLUGINDIR` probably should be `/usr/local/lib/ts`.
+* On Debian, `TSLIB_PLUGINDIR` probably is for example `/usr/lib/x86_64-linux-gnu/ts0`.
 * Find your `/dev/input/eventX` touchscreen's event file and either
   - Symlink `ln -s /dev/input/eventX /dev/input/ts` or
   - `export TSLIB_TSDEVICE /dev/input/eventX`
