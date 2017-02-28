@@ -1,13 +1,10 @@
 # tslib
 
-Touchscreen access library
+a filter stack for accessing and manipulating touchscreen events
 
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/11027/badge.svg)](https://scan.coverity.com/projects/tslib)
 
-
-tslib is an abstraction layer for touchscreen events, as well as a filter stack for the manipulation of those events.
-
-Here's a short introductory presentation:
+tslib consists of the library libts and tools that help you calibrate and use it in your environment. Here's a short introductory presentation:
 
 [![FOSDEM 2017 - tslib](https://fosdem.org/2017/support/promote/box.png)](https://video.fosdem.org/2017/H.2215/tslib.vp8.webm)
 
