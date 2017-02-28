@@ -1,12 +1,11 @@
-# tslib
 
-a filter stack for accessing and manipulating touchscreen events
+### tslib - a filter stack for accessing and manipulating touchscreen events
+
+![logo](https://raw.githubusercontent.com/kergoth/tslib/tslib_logo_wide.svg)
 
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/11027/badge.svg)](https://scan.coverity.com/projects/tslib)
 
-tslib consists of the library libts and tools that help you calibrate and use it in your environment. Here's a short introductory presentation:
-
-[![FOSDEM 2017 - tslib](https://fosdem.org/2017/support/promote/box.png)](https://video.fosdem.org/2017/H.2215/tslib.vp8.webm)
+tslib consists of the library _libts_ and tools that help you _calibrate_ and _use it_ in your environment. There's a [short introductory presentation from 2017](https://fosdem.org/2017/schedule/event/tslib/).
 
 ## table of contents
 * [setup and configure tslib](#setup-and-configure-tslib)
