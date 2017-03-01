@@ -283,13 +283,13 @@ static int skip_fini(struct tslib_module_info *info)
 	if (skip->buf_mt)
 		free(skip->buf_mt);
 
-	free(info);
-
-	if (skip->cur_mt[0])
+	if (skip->cur_mt && skip->cur_mt[0])
 		free(skip->cur_mt[0]);
 
 	if (skip->cur_mt)
 		free(skip->cur_mt);
+
+	free(info);
 
         return 0;
 }
