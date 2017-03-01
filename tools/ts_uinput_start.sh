@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# This starts ts_uinput as a daemon and creates /dev/input/ts_uinput to use
+# as an evdev input device
+
 TS_UINPUT_SYSFS_NAME=$(ts_uinput -d)
 if [[ "${TS_UINPUT_SYSFS_NAME}" != *"input"* ]] ; then
 	echo "ts_uinput: failed to create uinput device"
