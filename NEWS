@@ -1,6 +1,7 @@
 ## tslib 1.6
 
 Changes since 1.5 are:
+* tools/ts_uinput_start.sh that creates /dev/input/ts_uinput
 * support for FreeBSD (experimental)
 * bugfixes and performance improvements
 
