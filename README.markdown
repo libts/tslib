@@ -19,7 +19,7 @@ tslib consists of the library _libts_ and tools that help you _calibrate_ and _u
 tslib should be usable on various operating systems, including GNU/Linux, Freebsd or Android Linux. Apart from building the latest tarball release by `./configure`, `make` and `make install`, tslib is available from the following distributors and their package management:
 * [Arch Linux](https://www.archlinux.org) and [Arch Linux ARM](https://archlinuxarm.org) - `pacman -S tslib`
 * [Buildroot](https://buildroot.org/) - `BR2_PACKAGE_TSLIB=y`
-* (Debian: [Looking for a sponsor](https://mentors.debian.net/package/tslib) to include it)
+* (Debian: [Looking for a sponsor](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=854693) to include it)
 
 ### set up environment variables
     TSLIB_TSDEVICE          TS device file name.
