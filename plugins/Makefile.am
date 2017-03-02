@@ -12,8 +12,7 @@ AM_CFLAGS		= -DTS_POINTERCAL=\"@TS_POINTERCAL@\" $(DEBUGFLAGS) $(LIBFLAGS) $(VIS
 LDADD			= -rpath $(PLUGIN_DIR)
 AM_CPPFLAGS		= -I$(top_srcdir)/src
   
-#LTVSN			= -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
-#			   -release $(LT_RELEASE)
+#LTVSN			= -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 LTVSN			= -avoid-version
 LIBS			=
 pluginexecdir		= $(PLUGIN_DIR)

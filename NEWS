@@ -1,6 +1,7 @@
 ## tslib 1.6
 
-Changes since 1.5 are:
+Changes since the last release:
+* ABI addition: libts.so.0 (ensuring backwards compatibility)
 * tools/ts_uinput_start.sh that creates /dev/input/ts_uinput
 * support for FreeBSD (experimental)
 * bugfixes and performance improvements

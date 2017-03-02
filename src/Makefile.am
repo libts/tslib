@@ -88,4 +88,4 @@ libts_la_SOURCES += $(top_srcdir)/plugins/waveshare-raw.c
 endif
 
 libts_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
-		   -release $(LT_RELEASE) -export-dynamic
+		   -export-dynamic

@@ -250,7 +250,13 @@ The API is documented in [our man pages](https://github.com/kergoth/tslib/tree/m
 [Wikipedia](https://en.wikipedia.org/wiki/Application_binary_interface) has background information.
 
 #### Soname versions
-Usually, and everytime until now, libts does not break the ABI and your application can continue using libts after upgrading. Specifically this is indicated by the libts library version's major number, which should always stay 0. According to our versioning scheme, the major number is incremented only if we break backwards compatibility. The second or third minor version will increase with releases.
+Usually, and every time until now, libts does not break the ABI and your application can continue using libts after upgrading. Specifically this is indicated by the libts library version's major number, which should always stay 0. According to our versioning scheme, the major number is incremented only if we break backwards compatibility. The second or third minor version will increase with releases. In the following example
+
+    libts.so -> libts.so.0.3.1
+    libts.so.0 -> libts.so.0.3.1
+    libts.so.0.3.1
+
+use `libts.so` for using tslib unconditionally and `libts.so.0` to make sure your current application never breaks.
 
 #### tslib package version
 Officially, a tslib tarball version number doesn't tell you anything about it's backwards compatibility.

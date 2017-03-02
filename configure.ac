@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT(tslib, 1.6-rc1, martin.kepplinger@ginzinger.com)
+AC_INIT(tslib, 1.6, martin.kepplinger@ginzinger.com)
 # AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE([dist-bzip2 dist-xz subdir-objects])
 AC_CONFIG_SRCDIR([src/ts_close.c])
@@ -141,14 +141,11 @@ AC_MSG_RESULT($enable_tools)
 
 # libts Library versioning
 # increment if the interface changed
-LT_CURRENT=2
+LT_CURRENT=3
 # increment if anything changed. set to 0 if current was incremented!
-LT_REVISION=6
+LT_REVISION=0
 # increment if the interface change is backwards compatible (an addition). set to 0 if not.
-LT_AGE=2
-# package release number
-LT_RELEASE=1.6
-AC_SUBST(LT_RELEASE)
+LT_AGE=3
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
@@ -160,6 +157,5 @@ AC_CONFIG_FILES([Makefile
                  tests/Makefile
                  tools/Makefile
                  doc/Makefile
-                 tslib.pc:tslib.pc.in
-                 tslib-$LT_RELEASE.pc:tslib.pc.in])
+                 tslib.pc:tslib.pc.in])
 AC_OUTPUT
