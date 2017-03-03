@@ -3,6 +3,7 @@
 Changes since the last release:
 * ABI addition: libts.so.0 (ensuring backwards compatibility)
 * tools/ts_uinput_start.sh that creates /dev/input/ts_uinput
+* improved documentation in README
 * support for FreeBSD (experimental)
 * bugfixes and performance improvements
 

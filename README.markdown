@@ -416,7 +416,6 @@ The procedure looks like this:
   * `LT_CURRENT` - increment **only if there are API changes** (additions / removals / changes)
   * `LT_REVISION` - increment if anything changed. but if `LT_CURRENT` was incremented, set to 0!
   * `LT_AGE` - increment **only if `LT_CURRENT` was incremented** and these **API changes are backwards compatible** (should always be the case, so it should match `LT_CURRENT`)
-  * `LT_RELEASE` - matches the `AC_INIT` package version
 
 3. update gitignore for autobuilt files
 * autobuild and add the files for the tarball to git
