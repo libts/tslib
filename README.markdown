@@ -410,22 +410,26 @@ A release can be done when either
 The procedure looks like this:
 
 1. update the NEWS file with the changelog
-* switch to a new release/<version> branch
 * update configure.ac libts library versions
   * `AC_INIT` - includes the tslib package version. generally we increment the minor version
   * `LT_CURRENT` - increment **only if there are API changes** (additions / removals / changes)
   * `LT_REVISION` - increment if anything changed. but if `LT_CURRENT` was incremented, set to 0!
   * `LT_AGE` - increment **only if `LT_CURRENT` was incremented** and these **API changes are backwards compatible** (should always be the case, so it should match `LT_CURRENT`)
 
-3. update gitignore for autobuilt files
-* autobuild and add the files for the tarball to git
+3. run coverity (or any static analysis) and fix new discovered issues
+* `make distcheck`
+* `./configure --disable-dependency-tracking && make distclean && ./autogen-clean.sh`
+* switch to a new release/<version> branch
+* update gitignore for autobuilt files
+* `./autogen.sh` and add generated files for the tarball to git
 * commit "add generated files for X.X release"
 * git tag -s X.X
 * git push origin release/X.X --tags
-* make dist
-* shas256sum <tarball> > <tarball>.sha256 for the 3 tarballs
+* `make dist`
+* `shas256sum tslib-X.X.tar.xz > tslib-X.X.tar.xz.sha256` for the 3 tarballs
+* `gpg -b -a tslib-X.X.tar.xz` for the 3 tarballs
 * create a github release off the signed tag
-* add the 6 files and the release notes
+* add the 9 files and the release notes from NEWS
 * publish and inform distributors
 * celebrate!
 
