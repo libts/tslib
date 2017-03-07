@@ -410,26 +410,19 @@ A release can be done when either
 The procedure looks like this:
 
 1. run coverity (or any static analysis) and fix new discovered issues
+* be sure to have a stable build system and your private gpg key set up
 * update the NEWS file with the changelog
 * update configure.ac libts library versions
-  * `AC_INIT` - includes the tslib package version. generally we increment the minor version
+  * `AC_INIT` - includes the tslib package version X.X. generally we increment the minor version
   * `LT_CURRENT` - increment **only if there are API changes** (additions / removals / changes)
   * `LT_REVISION` - increment if anything changed. but if `LT_CURRENT` was incremented, set to 0!
   * `LT_AGE` - increment **only if `LT_CURRENT` was incremented** and these **API changes are backwards compatible** (should always be the case, so it should match `LT_CURRENT`)
 
-3. `make distcheck`
-* `./configure --disable-dependency-tracking && make distclean && ./autogen-clean.sh`
-* create a new release/<version> branch
-* update gitignore for autobuilt files
-* `./autogen.sh` and add generated files for the tarball to git
-* commit "add generated files for X.X release"
-* `git tag -s X.X`
+5. create a new release/X.X branch remotely and switch to it locally
+* `./release -s -v X.X`
 * `git push origin release/X.X --tags`
-* `./configure && make dist`
-* `sha256sum tslib-X.X.tar.xz > tslib-X.X.tar.xz.sha256` for the 3 tarballs
-* `gpg -b -a tslib-X.X.tar.xz` for the 3 tarballs
 * create a github release off the signed tag
-* add the 9 files and the release notes from NEWS
+* add the 9 files (3 times: tarball, asc signature and sha256sum) and the release notes from NEWS
 * publish and inform distributors
 * celebrate!
 
