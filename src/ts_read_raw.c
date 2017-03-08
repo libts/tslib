@@ -27,7 +27,8 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 
 #ifdef DEBUG
 	for (i = 0; i < result; i++) {
-		fprintf(stderr,"TS_READ_RAW----> x = %d, y = %d, pressure = %d\n",
+		fprintf(stderr,
+			"TS_READ_RAW----> x = %d, y = %d, pressure = %d\n",
 			samp->x, samp->y, samp->pressure);
 
 		samp++;
@@ -36,7 +37,8 @@ int ts_read_raw(struct tsdev *ts, struct ts_sample *samp, int nr)
 	return result;
 }
 
-int ts_read_raw_mt(struct tsdev *ts, struct ts_sample_mt **samp, int slots, int nr)
+int ts_read_raw_mt(struct tsdev *ts, struct ts_sample_mt **samp, int slots,
+		   int nr)
 {
 #ifdef DEBUG
 	int i, j;
@@ -49,8 +51,10 @@ int ts_read_raw_mt(struct tsdev *ts, struct ts_sample_mt **samp, int slots, int 
 			if (samp[i][j].valid != 1)
 				continue;
 
-			fprintf(stderr,"TS_READ_RAW_MT----> slot %d: x = %d, y = %d, pressure = %d\n",
-				samp[i][j].slot, samp[i][j].x, samp[i][j].y, samp[i][j].pressure);
+			fprintf(stderr,
+				"TS_READ_RAW_MT----> slot %d: x = %d, y = %d, pressure = %d\n",
+				samp[i][j].slot, samp[i][j].x, samp[i][j].y,
+				samp[i][j].pressure);
 		}
 	}
 #endif
