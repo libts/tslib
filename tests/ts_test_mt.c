@@ -127,7 +127,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	ts = ts_setup(NULL, 0);
+	ts = ts_setup(tsdevice, 0);
 	if (!ts) {
 		perror("ts_setup");
 		return errno;
