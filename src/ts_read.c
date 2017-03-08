@@ -29,7 +29,7 @@ int ts_read(struct tsdev *ts, struct ts_sample *samp, int nr)
 	result = ts->list->ops->read(ts->list, samp, nr);
 #ifdef DEBUG
 	for (i = 0; i < result; i++) {
-		fprintf(stderr,"TS_READ----> x = %d, y = %d, pressure = %d\n",
+		fprintf(stderr, "TS_READ----> x = %d, y = %d, pressure = %d\n",
 			samp->x, samp->y, samp->pressure);
 
 		samp++;
@@ -39,7 +39,8 @@ int ts_read(struct tsdev *ts, struct ts_sample *samp, int nr)
 
 }
 
-int ts_read_mt(struct tsdev *ts, struct ts_sample_mt **samp, int max_slots, int nr)
+int ts_read_mt(struct tsdev *ts, struct ts_sample_mt **samp, int max_slots,
+	       int nr)
 {
 	int result;
 #ifdef DEBUG
@@ -53,8 +54,10 @@ int ts_read_mt(struct tsdev *ts, struct ts_sample_mt **samp, int max_slots, int 
 			if (samp[j][i].valid != 1)
 				continue;
 
-			fprintf(stderr,"TS_READ_MT----> slot %d: x = %d, y = %d, pressure = %d\n",
-				samp[j][i].slot, samp[j][i].x, samp[j][i].y, samp[j][i].pressure);
+			fprintf(stderr,
+				"TS_READ_MT----> slot %d: x = %d, y = %d, pressure = %d\n",
+				samp[j][i].slot, samp[j][i].x, samp[j][i].y,
+				samp[j][i].pressure);
 		}
 	}
 #endif
