@@ -1,11 +1,12 @@
 tslib THANKS file
 
-tslib has originally been written by Russel King. This it simply a list of
+tslib has originally been written by Russel King. This is simply a list of
 all authors found by git, using:
 
         git log --format='%aN <%aE>' | sort -u
 
-Please help me to keep the .mailmap file correct and this list up to date.
+Please help me to keep the .mailmap file correct and this list up to date
+and thanks for your conribution to tslib!
 
 Åke Forslund <ake.forslund@gmail.com>
 Baruch Siach <baruch@tkos.co.il>
