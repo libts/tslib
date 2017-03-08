@@ -1,0 +1,40 @@
+tslib THANKS file
+
+tslib has originally been written by Russel King. This it simply a list of
+all authors found by git, using:
+
+        git log --format='%aN <%aE>' | sort -u
+
+Please help me to keep the .mailmap file correct and this list up to date.
+
+Åke Forslund <ake.forslund@gmail.com>
+Baruch Siach <baruch@tkos.co.il>
+Christopher Larson <kergoth@gmail.com>
+Dirk Gerdes <dirk.gerdes@googlemail.com>
+Doug Brown <macg3@mac.com>
+Douglas Lowder <douglowder@mac.com>
+Florian Boor <florian@kernelconcepts.de>
+Forest Bond <forest.bond@rapidrollout.com>
+Frederik 'playya' Sdun <Frederik.Sdun@googlemail.com>
+Jean-Baptiste Théou <jean-baptiste.theou@vodalys.com>
+Josh Watts <jwatts@d3engineering.com>
+Marko Lindqvist <cazfi74@gmail.com>
+Martin Jansa <Martin.Jansa@gmail.com>
+Martin Kepplinger <martink@posteo.de>
+Michael Heimpold <michael.heimpold@s2000.tu-chemnitz.de>
+Michael Hennerich <michael.hennerich@analog.com>
+Mike Frysinger <vapier@gentoo.org>
+Nicolas Pitre <nico@fluxnic.net>
+Oleksandr Tymoshenko <gonzo@bluezbox.com>
+Oskari Rauta <oskari.rauta@gmail.com>
+Paulius Zaleckas <paulius.zaleckas@gmail.com>
+Peter Fink <pfink@christ-es.de>
+Peter Vicman <peter.vicman@gmail.com>
+Piotr Figlarek <piotr.figlarek@gmail.com>
+Rob Greger <robert.greger@otis.com>
+Russell King <rmk@arm.linux.org.uk>
+Sergei Poselenov <sposelenov@emcraft.com>
+Simon Busch <morphis@gravedo.de>
+Teresa Gamez <T.Gamez@phytec.de>
+Thomas Zimmermann <zimmermann@vdm-design.de>
+Wolfram Sang <w.sang@pengutronix.de>
