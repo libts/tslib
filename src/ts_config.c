@@ -21,7 +21,7 @@
 
 #include "tslib-private.h"
 
-/* Maximum line size is BUF_SIZE - 2 
+/* Maximum line size is BUF_SIZE - 2
  * -1 for fgets and -1 to test end of line
  */
 #define BUF_SIZE 512
@@ -32,9 +32,7 @@
 void discard_null_tokens(char **p, char **tokPtr)
 {
 	while (*p != NULL && **tokPtr == '\0')
-	{
 		*tokPtr = strsep(p, " \t");
-	}
 }
 
 int ts_config(struct tsdev *ts)
@@ -47,8 +45,8 @@ int ts_config(struct tsdev *ts)
 
 	char *conffile;
 
-	if( (conffile = getenv("TSLIB_CONFFILE")) == NULL) {
-		conffile = strdup (TS_CONF);
+	if ((conffile = getenv("TSLIB_CONFFILE")) == NULL) {
+		conffile = strdup(TS_CONF);
 		if (conffile) {
 			strdup_allocated = 1;
 		} else {
@@ -76,9 +74,8 @@ int ts_config(struct tsdev *ts)
 
 		/* Chomp */
 		e = strchr(p, '\n');
-		if (e) {
+		if (e)
 			*e = '\0';
-		}
 
 		/* Did we read a whole line? */
 		if (buf[BUF_SIZE - 2] != '\0') {
@@ -92,7 +89,7 @@ int ts_config(struct tsdev *ts)
 		/* Ignore comments or blank lines.
 		 * Note: strsep modifies p (see man strsep)
 		 */
-		if (p==NULL || *tok == '#')
+		if (p == NULL || *tok == '#')
 			continue;
 
 		/* Search for the option. */
@@ -100,13 +97,13 @@ int ts_config(struct tsdev *ts)
 			module_name = strsep(&p, " \t");
 			discard_null_tokens(&p, &module_name);
 			ret = ts_load_module(ts, module_name, p);
-		}
-		else if (strcasecmp(tok, "module_raw") == 0) {
+		} else if (strcasecmp(tok, "module_raw") == 0) {
 			module_name = strsep(&p, " \t");
 			discard_null_tokens(&p, &module_name);
 			ret = ts_load_module_raw(ts, module_name, p);
 		} else {
-			ts_error("%s: Unrecognised option %s:%d:%s\n", conffile, line, tok);
+			ts_error("%s: Unrecognised option %s:%d:%s\n",
+				 conffile, line, tok);
 			break;
 		}
 		if (ret != 0) {
@@ -136,7 +133,7 @@ int ts_reconfig(struct tsdev *ts)
 	int fd;
 
 	info = ts->list;
-	while(info) {
+	while (info) {
 		/* Save the "next" pointer now because info will be freed */
 		next = info->next;
 
