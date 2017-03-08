@@ -2,6 +2,7 @@
 
 Changes since last release:
 * added a release helper script to simplify the releasing process
+* add proper AUTHORS and THANKS files, as well as .mailmap
 * bugfixes
   - 6ea643e ts_test_mt: fix idev commandline option
 

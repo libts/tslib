@@ -1,4 +1,14 @@
+Authors of tslib
+See also the file THANKS
+
 Russell King <linux@arm.linux.org.uk>
+   original creator of tslib in 2001
+
 Douglas Lowder <dlowder@earthlink.net>
-Chris Larson <kergoth@handhelds.org>
-Martin Kepplinger <martin.kepplinger@ginzinger.com>
+   lead developer 2002 - 2005
+
+Christopher Larson <kergoth@gmail.com>
+   maintainer 2006 - 2016
+
+Martin Kepplinger <martink@posteo.de>
+   maintainer 2016 - present
