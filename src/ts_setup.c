@@ -29,7 +29,7 @@ struct tsdev *ts_setup(const char *dev_name, int nonblock)
 
 	dev_name = dev_name ? dev_name : getenv("TSLIB_TSDEVICE");
 
-	if (dev_name!= NULL) {
+	if (dev_name != NULL) {
 		ts = ts_open(dev_name, nonblock);
 	} else {
 		defname = &ts_name_default[0];
@@ -37,8 +37,8 @@ struct tsdev *ts_setup(const char *dev_name, int nonblock)
 			ts = ts_open(*defname, nonblock);
 			if (ts != NULL)
 				break;
-			else
-				++defname;
+
+			++defname;
 		}
 	}
 
