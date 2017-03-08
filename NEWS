@@ -1,3 +1,11 @@
+## tslib 1.7
+
+Changes since last release:
+* added a release helper script to simplify the releasing process
+* bugfixes
+  - 6ea643e ts_test_mt: fix idev commandline option
+
+
 ## tslib 1.6
 
 Changes since the last release:
@@ -6,15 +14,19 @@ Changes since the last release:
 * improved documentation in README
 * support for FreeBSD (experimental)
 * bugfixes and performance improvements
+  - 3b01897 skip: fix order of memory freeing in finish routine
+  - 9ed4eca skip: avoid unnecessary malloc during operation
+  - f9202cc median: fix memory cleanup
+  - 69444b9 input-raw: improve input definitions backwards compatibility
 
 
 ## tslib 1.5
 
 Changes since 1.4 are:
-* fix ts_calibrate regression (creating the calibration file)
 * restore full backwards compatibility for all old kernel headers
 * 64 bit compatibility for test programs
 * bugfixes
+  - 3f99a83 Revert "plugins: linear: fix config file access"
 
 
 ## tslib 1.4
