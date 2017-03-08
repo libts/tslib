@@ -59,7 +59,7 @@ struct data_t {
 	char *uinput_name;
 	char *input_name;
 	char *fb_name;
-        struct tsdev *ts;
+	struct tsdev *ts;
 	unsigned short verbose;
 	struct input_event *ev;
 	struct ts_sample_mt **s_array;
@@ -91,14 +91,17 @@ static void help(struct data_t *data)
 }
 
 #define MAX_CODES_PER_SLOT 20
-static int send_touch_events(struct data_t *data, struct ts_sample_mt **s, int nr, int max_slots)
+static int send_touch_events(struct data_t *data, struct ts_sample_mt **s,
+			     int nr, int max_slots)
 {
 	int i;
 	int j;
 	int c = 0;
 
 	for (j = 0; j < nr; j++) {
-		memset(data->ev, 0, sizeof(struct input_event) * MAX_CODES_PER_SLOT * max_slots);
+		memset(data->ev,
+		       0,
+		       sizeof(struct input_event) * MAX_CODES_PER_SLOT * max_slots);
 
 		for (i = 0; i < max_slots; i++) {
 			if (s[j][i].pen_down == 1 || s[j][i].pen_down == 0) {
@@ -109,7 +112,7 @@ static int send_touch_events(struct data_t *data, struct ts_sample_mt **s, int n
 				c++;
 			}
 
-			if(s[j][i].valid != 1)
+			if (s[j][i].valid != 1)
 				continue;
 
 			data->ev[c].time = s[j][i].tv;
@@ -119,8 +122,8 @@ static int send_touch_events(struct data_t *data, struct ts_sample_mt **s, int n
 			c++;
 
 			/*
-			 * This simply supports legacy input events when only one
-			 * finger is used.
+			 * This simply supports legacy input events when only
+			 * one finger is used.
 			 * XXX We should track slot 0, and if it is gone
 			 * we should use slot 1 and so on.
 			 */
@@ -244,7 +247,9 @@ static int send_touch_events(struct data_t *data, struct ts_sample_mt **s, int n
 			data->ev[c].value = 0;
 
 
-			if (write(data->fd_uinput, data->ev, sizeof(struct input_event) * (c + 1)) < 0) {
+			if (write(data->fd_uinput,
+				  data->ev,
+				  sizeof(struct input_event) * (c + 1)) < 0) {
 				perror("write");
 				return errno;
 			}
@@ -296,7 +301,9 @@ static int setup_uinput(struct data_t *data, int *max_slots)
 	}
 	for (i = 0; i < EV_MAX; i++) {
 		if (test_bit(i, bit[0])) {
-			if (ioctl(data->fd_input, EVIOCGBIT(i, KEY_MAX), bit[i]) < 0) {
+			if (ioctl(data->fd_input,
+				  EVIOCGBIT(i, KEY_MAX),
+				  bit[i]) < 0) {
 				perror("ioctl EVIOCGBIT");
 				goto err;
 			}
@@ -304,12 +311,16 @@ static int setup_uinput(struct data_t *data, int *max_slots)
 			for (j = 0; j < KEY_MAX; j++) {
 				if (test_bit(j, bit[i])) {
 					if (i == EV_ABS) {
-						if (ioctl(data->fd_input, EVIOCGABS(j), &absinfo) < 0) {
+						if (ioctl(data->fd_input,
+							  EVIOCGABS(j),
+							  &absinfo) < 0) {
 							perror("ioctl EVIOCGABS");
 							goto err;
 						}
 
-						if (ioctl(data->fd_uinput, UI_SET_ABSBIT, j) < 0) {
+						if (ioctl(data->fd_uinput,
+							  UI_SET_ABSBIT,
+							  j) < 0) {
 							perror("ioctl UI_SET_ABSBIT");
 							goto err;
 						}
@@ -364,7 +375,8 @@ err:
 	return errno;
 }
 
-static int process(struct data_t *data, struct ts_sample_mt **s_array, int max_slots, int nr)
+static int process(struct data_t *data, struct ts_sample_mt **s_array,
+		   int max_slots, int nr)
 {
 	int samples_read;
 	int i, j;
@@ -378,19 +390,25 @@ static int process(struct data_t *data, struct ts_sample_mt **s_array, int max_s
 
 		if (data->verbose) {
 			for (j = 0; j < nr; j++) {
-				printf(BLUE DEFAULT_UINPUT_NAME ": sample %d:  x\ty\tslot\ttracking_id\n" RESET, j);
+				printf(BLUE DEFAULT_UINPUT_NAME
+				       ": sample %d:  x\ty\tslot\ttracking_id\n"
+				       RESET, j);
 				for (i = 0; i < max_slots; i++) {
 					if (s_array[j][i].valid == 1) {
-						printf(DEFAULT_UINPUT_NAME ": \t%d\t%d\t%d\t%d\n",
-						       s_array[j][i].x, s_array[j][i].y,
-						       s_array[j][i].slot, s_array[j][i].tracking_id);
+						printf(DEFAULT_UINPUT_NAME
+						       ": \t%d\t%d\t%d\t%d\n",
+						       s_array[j][i].x,
+						       s_array[j][i].y,
+						       s_array[j][i].slot,
+						       s_array[j][i].tracking_id);
 					}
 				}
 			}
 		}
 	} else if (samples_read < 0) {
 		if (data->verbose)
-			fprintf(stderr, RED DEFAULT_UINPUT_NAME ": ts_read_mt failure.\n" RESET);
+			fprintf(stderr, RED DEFAULT_UINPUT_NAME
+				": ts_read_mt failure.\n" RESET);
 
 		return samples_read;
 	}
@@ -468,7 +486,8 @@ int main(int argc, char **argv)
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "dhn:f:i:vs:", long_options, &option_index);
+		int c = getopt_long(argc, argv, "dhn:f:i:vs:", long_options,
+				    &option_index);
 
 		if (c == -1)
 			break;
@@ -509,6 +528,7 @@ int main(int argc, char **argv)
 
 		if (errno) {
 			char *str = "option ?";
+
 			str[7] = c & 0xff;
 			perror(str);
 		}
@@ -536,7 +556,9 @@ int main(int argc, char **argv)
 		if (getenv("TSLIB_FBDEVICE")) {
 			data.fb_name = getenv("TSLIB_FBDEVICE");
 		} else {
-			fprintf(stderr, RED DEFAULT_UINPUT_NAME ": no framebuffer device specified" RESET "\n");
+			fprintf(stderr, RED DEFAULT_UINPUT_NAME
+				": no framebuffer device specified"
+				RESET "\n");
 			goto out;
 		}
 	}
@@ -548,14 +570,16 @@ int main(int argc, char **argv)
 	}
 
 	if (data.verbose)
-		printf(DEFAULT_UINPUT_NAME ": using framebuffer device " GREEN "%s" RESET "\n",
-			getenv("TSLIB_FBDEVICE"));
+		printf(DEFAULT_UINPUT_NAME ": using framebuffer device "
+		       GREEN "%s" RESET "\n",
+		       getenv("TSLIB_FBDEVICE"));
 
 	if (!data.input_name) {
 		if (getenv("TSLIB_TSDEVICE")) {
 			data.input_name = getenv("TSLIB_TSDEVICE");
 		} else {
-			fprintf(stderr, RED DEFAULT_UINPUT_NAME ": no input device specified" RESET "\n");
+			fprintf(stderr, RED DEFAULT_UINPUT_NAME
+				": no input device specified" RESET "\n");
 			goto out;
 		}
 	}
@@ -573,7 +597,8 @@ int main(int argc, char **argv)
 	}
 
 	if (data.verbose)
-		printf(DEFAULT_UINPUT_NAME ": using input device " GREEN "%s" RESET "\n",
+		printf(DEFAULT_UINPUT_NAME
+		       ": using input device " GREEN "%s" RESET "\n",
 		       data.input_name);
 
 	if (setup_uinput(&data, &data.slots) < 0) {
@@ -581,9 +606,13 @@ int main(int argc, char **argv)
 		goto out;
 	} else {
 		if (data.verbose && data.slots == 1)
-			printf(DEFAULT_UINPUT_NAME ": We don't use a multitouch device\n");
+			printf(DEFAULT_UINPUT_NAME
+			       ": We don't use a multitouch device\n");
 		else if (data.verbose && data.slots > 1)
-			printf(DEFAULT_UINPUT_NAME ": We use a " GREEN "multitouch" RESET " device\n");
+			printf(DEFAULT_UINPUT_NAME
+			       ": We use a "
+			       GREEN "multitouch" RESET
+			       " device\n");
 	}
 
 	/* works for version > 2 */
@@ -592,43 +621,50 @@ int main(int argc, char **argv)
 	#endif
 
 	if (data.uinput_version > 4) {
-		if (ioctl(data.fd_uinput, UI_GET_VERSION, &data.uinput_version) < 0) {
+		if (ioctl(data.fd_uinput,
+			  UI_GET_VERSION,
+			  &data.uinput_version) < 0) {
 			perror("ioctl");
 			goto out;
 		}
 	}
 
 	if (data.verbose) {
-		printf(DEFAULT_UINPUT_NAME ": running uinput version %d\n", data.uinput_version);
+		printf(DEFAULT_UINPUT_NAME ": running uinput version %d\n",
+		       data.uinput_version);
 		if (data.uinput_version > 3) {
 			char name[64];
-			int ret = ioctl(data.fd_uinput, UI_GET_SYSNAME(sizeof(name)), name);
+			int ret = ioctl(data.fd_uinput,
+					UI_GET_SYSNAME(sizeof(name)),
+					name);
 			if (ret >= 0)
-				printf("created virtual input device %s\n", name);
+				printf("created virtual input device %s\n",
+				       name);
 		} else {
 			fprintf(stderr, DEFAULT_UINPUT_NAME
-				": See the kernel logs for the created virtual device's number\n");
+				": See the kernel log for the device number\n");
 		}
 	}
 
-
-        if (ts_config(data.ts)) {
-                perror("ts_config");
-                goto out;
-        }
+	if (ts_config(data.ts)) {
+		perror("ts_config");
+		goto out;
+	}
 
 	data.ev = malloc(sizeof(struct input_event) * MAX_CODES_PER_SLOT * data.slots);
 	if (!data.ev)
 		goto out;
 
-	data.s_array = calloc(TS_READ_WHOLE_SAMPLES, sizeof(struct ts_sample_mt *));
+	data.s_array = calloc(TS_READ_WHOLE_SAMPLES,
+			      sizeof(struct ts_sample_mt *));
 	if (!data.s_array)
 		goto out;
 
 	for (i = 0; i < TS_READ_WHOLE_SAMPLES; i++) {
 		data.s_array[i] = malloc(data.slots * sizeof(struct ts_sample_mt));
 		if (!data.s_array[i]) {
-			fprintf(stderr, DEFAULT_UINPUT_NAME ": Error allocating memory\n");
+			fprintf(stderr, DEFAULT_UINPUT_NAME
+				": Error allocating memory\n");
 			for (j = 0; j <= i; j++)
 				free(data.s_array[j]);
 			goto out;
@@ -638,7 +674,9 @@ int main(int argc, char **argv)
 	if (run_daemon) {
 		if (data.uinput_version > 3) {
 			char name[64];
-			int ret = ioctl(data.fd_uinput, UI_GET_SYSNAME(sizeof(name)), name);
+			int ret = ioctl(data.fd_uinput,
+					UI_GET_SYSNAME(sizeof(name)),
+					name);
 			if (ret >= 0) {
 				fprintf(stdout, "%s\n", name);
 				fflush(stdout);
@@ -646,19 +684,21 @@ int main(int argc, char **argv)
 				perror("ioctl UI_GET_SYSNAME");
 			}
 		} else {
-			fprintf(stderr, DEFAULT_UINPUT_NAME ": See the kernel logs for the device number\n");
+			fprintf(stderr, DEFAULT_UINPUT_NAME
+			": See the kernel log for the device number\n");
 		}
 		if (daemon(0, 0) == -1)
 			perror("error starting daemon");
 	}
 
 	while (1) {
-		if (process(&data, data.s_array, data.slots, TS_READ_WHOLE_SAMPLES))
+		if (process(&data, data.s_array, data.slots,
+			    TS_READ_WHOLE_SAMPLES))
 			goto out;
 	}
 
 out:
 	cleanup(&data);
 
-        return errno;
+	return errno;
 }
