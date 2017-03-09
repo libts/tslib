@@ -32,7 +32,8 @@ int dmc_init_device(struct tsdev *dev)
 	char buf[1];
 
 	/* flags from the old xorg driver.
-	 * I have no idea what all of these mean but it works (tm). */
+	 * I have no idea what all of these mean but it works (tm).
+	 */
 	tcgetattr(fd, &t);
 	t.c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL|IXON|IXOFF);
 
@@ -43,8 +44,8 @@ int dmc_init_device(struct tsdev *dev)
 	t.c_cflag &= ~(CSIZE|PARENB|CSTOPB);
 	t.c_cflag |= CS8|CLOCAL;
 
-	cfsetispeed (&t, B9600);
-	cfsetospeed (&t, B9600);
+	cfsetispeed(&t, B9600);
+	cfsetospeed(&t, B9600);
 
 	t.c_cc[VMIN] = 3;
 	t.c_cc[VTIME] = 1;
@@ -64,9 +65,10 @@ int dmc_init_device(struct tsdev *dev)
 		perror("dmc read");
 		goto fail;
 	}
-	if (buf[0] != 0x6) {
-		fprintf(stderr, "dmc: got wrong return value. The touchscreen may not work.\n");
-	}
+	if (buf[0] != 0x6)
+		fprintf(stderr,
+			"dmc: got wrong return value. The touchscreen may not work.\n");
+
 	if (write(fd, "\x31", 1) != 1) {
 		perror("dmc write");
 		goto fail;
@@ -77,9 +79,10 @@ fail:
 	return EINVAL;
 }
 
-static int dmc_read(struct tslib_module_info *inf, struct ts_sample *samp, int nr)
+static int dmc_read(struct tslib_module_info *inf, struct ts_sample *samp,
+		    int nr)
 {
-	struct tslib_dmc *dmc = (struct tslib_dmc*)inf;
+	struct tslib_dmc *dmc = (struct tslib_dmc *)inf;
 	struct tsdev *ts = inf->dev;
 	uint8_t buf[5];
 	int ret;
@@ -95,8 +98,7 @@ static int dmc_read(struct tslib_module_info *inf, struct ts_sample *samp, int n
 			samp->x = dmc->current_x;
 			samp->y = dmc->current_y;
 			samp->pressure = 0;
-		}
-		else if (buf[0] == 0x11) {
+		} else if (buf[0] == 0x11) {
 			/* read coords */
 			if ((ret = read(ts->fd, buf, 4)) != 4) {
 				/* must have 4 bytes */
@@ -106,20 +108,21 @@ static int dmc_read(struct tslib_module_info *inf, struct ts_sample *samp, int n
 			samp->x = dmc->current_x = (int)((buf[0] << 8) + buf[1]);
 			samp->y = dmc->current_y = (int)((buf[2] << 8) + buf[3]);
 			samp->pressure = 100;
-		}
-		else
+		} else {
 			continue;
+		}
 #ifdef DEBUG
-		fprintf(stderr,"RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
+		fprintf(stderr,
+			"RAW---------------------------> %d %d %d\n",
+			samp->x, samp->y, samp->pressure);
 #endif /*DEBUG*/
-		gettimeofday(&samp->tv,NULL);
+		gettimeofday(&samp->tv, NULL);
 		++samp;
 	}
 	return i;
 }
 
-static const struct tslib_ops dmc_ops =
-{
+static const struct tslib_ops dmc_ops = {
 	.read	= dmc_read,
 };
 
@@ -136,5 +139,5 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev,
 		return NULL;
 
 	m->module.ops = &dmc_ops;
-	return (struct tslib_module_info*)m;
+	return (struct tslib_module_info *)m;
 }
