@@ -53,8 +53,9 @@ int dmc_init_device(struct tsdev *dev)
 	tcsetattr(fd, TCSANOW, &t);
 
 	if (write(fd, "\x55", 1) != 1) {
-		fprintf(stderr, "dmc: failed to write. Check permissions of the device!\n");
-		return EINVAL;
+		fprintf(stderr,
+			"dmc: failed to write. Check permissions of the device!\n");
+		return -EINVAL;
 	}
 	sleep(1);
 	if (write(fd, "\x05\x40", 2) != 2) {
@@ -75,8 +76,9 @@ int dmc_init_device(struct tsdev *dev)
 	}
 	return 0;
 fail:
-	fprintf(stderr, "dmc: selected device is not a touchscreen I understand\n");
-	return EINVAL;
+	fprintf(stderr,
+		"dmc: selected device is not a touchscreen I understand\n");
+	return -EINVAL;
 }
 
 static int dmc_read(struct tslib_module_info *inf, struct ts_sample *samp,
