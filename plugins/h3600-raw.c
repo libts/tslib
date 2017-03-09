@@ -12,7 +12,8 @@ struct h3600_ts_event { /* Used in the Compaq IPAQ */
 	unsigned short pad;
 };
 
-static int h3600_read(struct tslib_module_info *inf, struct ts_sample *samp, int nr)
+static int h3600_read(struct tslib_module_info *inf, struct ts_sample *samp,
+		      int nr)
 {
 	struct tsdev *ts = inf->dev;
 	struct h3600_ts_event *h3600_evt;
@@ -21,16 +22,17 @@ static int h3600_read(struct tslib_module_info *inf, struct ts_sample *samp, int
 
 	h3600_evt = alloca(sizeof(*h3600_evt) * nr);
 	ret = read(ts->fd, h3600_evt, sizeof(*h3600_evt) * nr);
-	if(ret > 0) {
+	if (ret > 0) {
 		nr_read = ret / sizeof(*h3600_evt);
-		while(ret >= (int)sizeof(*h3600_evt)) {
+		while (ret >= (int)sizeof(*h3600_evt)) {
 			samp->x = h3600_evt->x;
 			samp->y = h3600_evt->y;
 			samp->pressure = h3600_evt->pressure;
 #ifdef DEBUG
-        fprintf(stderr,"RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
+	fprintf(stderr, "RAW---------------------------> %d %d %d\n",
+		samp->x, samp->y, samp->pressure);
 #endif /*DEBUG*/
-			gettimeofday(&samp->tv,NULL);
+			gettimeofday(&samp->tv, NULL);
 			samp++;
 			h3600_evt++;
 			ret -= sizeof(*h3600_evt);
@@ -43,8 +45,7 @@ static int h3600_read(struct tslib_module_info *inf, struct ts_sample *samp, int
 	return ret;
 }
 
-static const struct tslib_ops h3600_ops =
-{
+static const struct tslib_ops h3600_ops = {
 	.read	= h3600_read,
 };
 
