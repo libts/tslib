@@ -27,7 +27,7 @@
  *
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
-*/
+ */
 
 enum {
 	PACKET_SIZE = 5,
@@ -62,10 +62,14 @@ static int touchkit_read(struct tslib_module_info *inf, struct ts_sample *samp,
 			 __attribute__ ((unused)) int nr)
 {
 	static int initDone = 0;
-	static unsigned char buffer[BUFFER_SIZE];	/* enough space for 2 "normal" packets */
+	/* enough space for 2 "normal" packets */
+	static unsigned char buffer[BUFFER_SIZE];
 	static int pos = 0;
-
+	int ret;
 	struct tsdev *ts = inf->dev;
+	int p;
+	int total = 0;
+	int q;
 
 	if (initDone == 0) {
 		initDone = touchkit_init(ts->fd);
@@ -73,7 +77,7 @@ static int touchkit_read(struct tslib_module_info *inf, struct ts_sample *samp,
 			return -1;
 	}
 	/* read some new bytes (enough for 1 normal packet) */
-	int ret = read(ts->fd, buffer + pos, PACKET_SIZE);
+	ret = read(ts->fd, buffer + pos, PACKET_SIZE);
 	if (ret <= 0)
 		return -1;
 
@@ -82,18 +86,17 @@ static int touchkit_read(struct tslib_module_info *inf, struct ts_sample *samp,
 		return 0;
 
 	/* find start */
-	int p;
-	int total = 0;
 	for (p = 0; p < pos; ++p)
 		if (IsStart(buffer[p])) {
 			/* we have enough data for a packet ? */
 			if (p + PACKET_SIZE > pos) {
 				if (p > 0) {
-                                        /*
-					 * we have found a start >0, it means we have garbage
-					 * at beginning of buffer
-					 * so let's shift data to ignore this garbage
-                                         */
+					/*
+					 * we have found a start >0, it means
+					 * we have garbage at beginning of
+					 * buffer so let's shift data to ignore
+					 * this garbage
+					 */
 					memcpy(buffer, buffer + p, pos - p);
 					pos -= p;
 				}
@@ -103,7 +106,6 @@ static int touchkit_read(struct tslib_module_info *inf, struct ts_sample *samp,
 			unsigned char *data = buffer + p;
 
 			/* check if all bytes are ok (no 'start' embedded) */
-			int q;
 			for (q = 1; q < PACKET_SIZE; ++q)
 				if (IsStart(buffer[p + q]))
 					break;
