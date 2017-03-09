@@ -22,16 +22,17 @@ static int arctic2_read(struct tslib_module_info *inf, struct ts_sample *samp, i
 
 	arctic2_evt = alloca(sizeof(*arctic2_evt) * nr);
 	ret = read(ts->fd, arctic2_evt, sizeof(*arctic2_evt) * nr);
-	if(ret > 0) {
+	if (ret > 0) {
 		nr_read = ret / sizeof(*arctic2_evt);
-		while(ret >= (int)sizeof(*arctic2_evt)) {
+		while (ret >= (int)sizeof(*arctic2_evt)) {
 			samp->x = (short)arctic2_evt->x;
 			samp->y = (short)arctic2_evt->y;
 			samp->pressure = arctic2_evt->pressure;
 #ifdef DEBUG
-        fprintf(stderr,"RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
+	fprintf(stderr, "RAW---------------------------> %d %d %d\n",
+		samp->x, samp->y, samp->pressure);
 #endif /*DEBUG*/
-			gettimeofday(&samp->tv,NULL);
+			gettimeofday(&samp->tv, NULL);
 			samp++;
 			arctic2_evt++;
 			ret -= sizeof(*arctic2_evt);
@@ -44,8 +45,7 @@ static int arctic2_read(struct tslib_module_info *inf, struct ts_sample *samp, i
 	return ret;
 }
 
-static const struct tslib_ops arctic2_ops =
-{
+static const struct tslib_ops arctic2_ops = {
 	.read	= arctic2_read,
 };
 
