@@ -21,14 +21,15 @@ static int corgi_read(struct tslib_module_info *inf, struct ts_sample *samp, int
 
 	corgi_evt = alloca(sizeof(*corgi_evt) * nr);
 	ret = read(ts->fd, corgi_evt, sizeof(*corgi_evt) * nr);
-	if(ret > 0) {
+	if (ret > 0) {
 		nr_read  = ret / sizeof(*corgi_evt);
-		while(ret >= (int)sizeof(*corgi_evt)) {
+		while (ret >= (int)sizeof(*corgi_evt)) {
 			samp->x = corgi_evt->x;
 			samp->y = corgi_evt->y;
 			samp->pressure = corgi_evt->pressure;
 #ifdef DEBUG
-        fprintf(stderr,"RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
+	fprintf(stderr, "RAW---------------------------> %d %d %d\n",
+		samp->x, samp->y, samp->pressure);
 #endif /*DEBUG*/
 			samp->tv.tv_usec = (corgi_evt->millisecs % 1000) * 1000;
 			samp->tv.tv_sec = corgi_evt->millisecs / 1000;
@@ -43,8 +44,7 @@ static int corgi_read(struct tslib_module_info *inf, struct ts_sample *samp, int
 	return ret;
 }
 
-static const struct tslib_ops corgi_ops =
-{
+static const struct tslib_ops corgi_ops = {
 	.read	= corgi_read,
 };
 
