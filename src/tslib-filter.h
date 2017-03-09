@@ -26,8 +26,10 @@ struct tslib_vars {
 };
 
 struct tslib_ops {
-	int (*read)(struct tslib_module_info *inf, struct ts_sample *samp, int nr);
-	int (*read_mt)(struct tslib_module_info *inf, struct ts_sample_mt **samp, int max_slots, int nr);
+	int (*read)(struct tslib_module_info *inf, struct ts_sample *samp,
+		    int nr);
+	int (*read_mt)(struct tslib_module_info *inf,
+		       struct ts_sample_mt **samp, int max_slots, int nr);
 	int (*fini)(struct tslib_module_info *inf);
 };
 
@@ -38,7 +40,8 @@ struct tslib_module_info {
 	const struct tslib_ops *ops;
 };
 
-typedef struct tslib_module_info *(*tslib_module_init)(struct tsdev *dev, const char *params);
+typedef struct tslib_module_info *(*tslib_module_init)(struct tsdev *dev,
+						       const char *params);
 #define TSLIB_MODULE_INIT(f) TSAPI tslib_module_init mod_init = &f
 
 TSAPI extern int tslib_parse_vars(struct tslib_module_info *,

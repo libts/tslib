@@ -20,9 +20,11 @@ extern "C" {
 struct tsdev {
 	int fd;
 	struct tslib_module_info *list;
-	struct tslib_module_info *list_raw; /* points to position in 'list' where raw reads
-					       come from.  default is the position of the
-					       ts_read_raw module. */
+	/* points to position in 'list' where raw reads
+	 * come from.  default is the position of the
+	 * ts_read_raw module.
+	 */
+	struct tslib_module_info *list_raw;
 	unsigned int res_x;
 	unsigned int res_y;
 	int rotation;

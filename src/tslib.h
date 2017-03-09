@@ -48,8 +48,9 @@ struct ts_sample {
 };
 
 struct ts_sample_mt {
-	/* most recent ABS_MT_* event codes.
-	 * see linux/input.h for descriptions */
+	/* ABS_MT_* event codes. linux/include/uapi/linux/input-event-codes.h
+	 * has the definitions.
+	 */
 	int		x;
 	int		y;
 	unsigned int	pressure;
@@ -73,7 +74,8 @@ struct ts_sample_mt {
 	short		pen_down;
 
 	/* valid is set to 1 if this sample
-	 * contains new data; set to 0 otherwise */
+	 * contains new data; set to 0 otherwise
+	 */
 	short		valid;
 };
 
