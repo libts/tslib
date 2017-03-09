@@ -62,20 +62,18 @@
 	const typeof( ((type*)0)->member ) *__mptr = (ptr); \
 	(type *)( (char *)__mptr - offsetof(type, member)); })
 
-struct cy8mrln_palmpre_input
-{  
+struct cy8mrln_palmpre_input {
 	uint16_t	n_r;
 	uint16_t	field[H_FIELDS * V_FIELDS];
 	uint16_t	ffff;			/* always 0xffff */
 	uint8_t		seq_nr1;		/* incremented if seq_nr0 == scanrate */
 	uint16_t	seq_nr2;		/* incremeted if seq_nr1 == 255 */
-	uint8_t		unknown[4]; 
+	uint8_t		unknown[4];
 	uint8_t		seq_nr0;		/* incremented [0:scanrate] */
 	uint8_t		null;		   /* NULL byte */
-}__attribute__((packed));
+} __attribute__((packed));
 
-struct tslib_cy8mrln_palmpre 
-{
+struct tslib_cy8mrln_palmpre {
 	struct tslib_module_info	module;
 	uint16_t			references[H_FIELDS * V_FIELDS];
 	int				scanrate;
@@ -92,61 +90,66 @@ struct tslib_cy8mrln_palmpre
 	int				sensor_delta_x;
 	int				sensor_delta_y;
 	int				last_n_valid_samples;
-	struct ts_sample*		last_valid_samples;
-	int 			discard_frames;
-	int 			old_scanrate;
+	struct ts_sample *		last_valid_samples;
+	int 				discard_frames;
+	int 				old_scanrate;
 };
 
-static int cy8mrln_palmpre_set_scanrate (struct tslib_cy8mrln_palmpre* info, int rate);
-static int cy8mrln_palmpre_set_verbose (struct tslib_cy8mrln_palmpre* info, int v);
-static int cy8mrln_palmpre_set_sleepmode (struct tslib_cy8mrln_palmpre* info, int mode);
-static int cy8mrln_palmpre_set_wot_scanrate (struct tslib_cy8mrln_palmpre* info, int rate);
-static int cy8mrln_palmpre_set_wot_threshold (struct tslib_cy8mrln_palmpre* info, int v);
-static int cy8mrln_palmpre_set_timestamp_mode (struct tslib_cy8mrln_palmpre* info, int v);
-static int cy8mrln_palmpre_set_gesture_height (struct tslib_cy8mrln_palmpre* info, int h);
-static int cy8mrln_palmpre_set_noise (struct tslib_cy8mrln_palmpre* info, int n);
-static int cy8mrln_palmpre_set_pressure (struct tslib_cy8mrln_palmpre* info, int p);
-static int cy8mrln_palmpre_set_sensor_offset_x (struct tslib_cy8mrln_palmpre* info, int n);
-static int cy8mrln_palmpre_set_sensor_offset_y (struct tslib_cy8mrln_palmpre* info, int n);
-static int cy8mrln_palmpre_set_sensor_delta_x (struct tslib_cy8mrln_palmpre* info, int n);
-static int cy8mrln_palmpre_set_sensor_delta_y (struct tslib_cy8mrln_palmpre* info, int n);
-static int parse_scanrate (struct tslib_module_info *info, char *str, void *data);
-static int parse_verbose (struct tslib_module_info *info, char *str, void *data);
-static int parse_wot_scanrate (struct tslib_module_info *info, char *str, void *data);
-static int parse_wot_threshold (struct tslib_module_info *info, char *str, void *data);
-static int parse_sleepmode (struct tslib_module_info *info, char *str, void *data);
-static int parse_timestamp_mode (struct tslib_module_info *info, char *str, void *data);
-static int parse_gesture_height (struct tslib_module_info *info, char *str, void *data);
-static int parse_noise (struct tslib_module_info *info, char *str, void *data);
-static int parse_pressure (struct tslib_module_info *info, char *str, void *data);
+static int cy8mrln_palmpre_set_scanrate(struct tslib_cy8mrln_palmpre *info, int rate);
+static int cy8mrln_palmpre_set_verbose(struct tslib_cy8mrln_palmpre *info, int v);
+static int cy8mrln_palmpre_set_sleepmode(struct tslib_cy8mrln_palmpre *info, int mode);
+static int cy8mrln_palmpre_set_wot_scanrate(struct tslib_cy8mrln_palmpre *info, int rate);
+static int cy8mrln_palmpre_set_wot_threshold(struct tslib_cy8mrln_palmpre *info, int v);
+static int cy8mrln_palmpre_set_timestamp_mode(struct tslib_cy8mrln_palmpre *info, int v);
+static int cy8mrln_palmpre_set_gesture_height(struct tslib_cy8mrln_palmpre *info, int h);
+static int cy8mrln_palmpre_set_noise(struct tslib_cy8mrln_palmpre *info, int n);
+static int cy8mrln_palmpre_set_pressure(struct tslib_cy8mrln_palmpre *info, int p);
+static int cy8mrln_palmpre_set_sensor_offset_x(struct tslib_cy8mrln_palmpre *info, int n);
+static int cy8mrln_palmpre_set_sensor_offset_y(struct tslib_cy8mrln_palmpre *info, int n);
+static int cy8mrln_palmpre_set_sensor_delta_x(struct tslib_cy8mrln_palmpre *info, int n);
+static int cy8mrln_palmpre_set_sensor_delta_y(struct tslib_cy8mrln_palmpre *info, int n);
+static int parse_scanrate(struct tslib_module_info *info, char *str, void *data);
+static int parse_verbose(struct tslib_module_info *info, char *str, void *data);
+static int parse_wot_scanrate(struct tslib_module_info *info, char *str, void *data);
+static int parse_wot_threshold(struct tslib_module_info *info, char *str, void *data);
+static int parse_sleepmode(struct tslib_module_info *info, char *str, void *data);
+static int parse_timestamp_mode(struct tslib_module_info *info, char *str, void *data);
+static int parse_gesture_height(struct tslib_module_info *info, char *str, void *data);
+static int parse_noise(struct tslib_module_info *info, char *str, void *data);
+static int parse_pressure(struct tslib_module_info *info, char *str, void *data);
 static int parse_sensor_offset_x(struct tslib_module_info *info, char *str, void *data);
 static int parse_sensor_offset_y(struct tslib_module_info *info, char *str, void *data);
 static int parse_sensor_delta_x(struct tslib_module_info *info, char *str, void *data);
 static int parse_sensor_delta_y(struct tslib_module_info *info, char *str, void *data);
-static int cy8mrln_palmpre_update_references (uint16_t references[H_FIELDS * V_FIELDS], uint16_t field[H_FIELDS * V_FIELDS]);
-static void cy8mrln_palmpre_interpolate (struct tslib_cy8mrln_palmpre* info, uint16_t field[H_FIELDS * V_FIELDS], int x, int y, struct ts_sample *out);
-static int cy8mrln_palmpre_fini (struct tslib_module_info *info);
-static int cy8mrln_palmpre_read (struct tslib_module_info *info, struct ts_sample *samp, int nr);
-TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init (struct tsdev *dev, const char *params);
+static int cy8mrln_palmpre_update_references(uint16_t references[H_FIELDS * V_FIELDS],
+					     uint16_t field[H_FIELDS * V_FIELDS]);
+static void cy8mrln_palmpre_interpolate(struct tslib_cy8mrln_palmpre *info,
+					uint16_t field[H_FIELDS * V_FIELDS],
+					int x, int y, struct ts_sample *out);
+static int cy8mrln_palmpre_fini(struct tslib_module_info *info);
+static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample *samp, int nr);
+TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init(struct tsdev *dev, const char *params);
 
-static int cy8mrln_palmpre_set_scanrate(struct tslib_cy8mrln_palmpre* info, int rate)
+static int cy8mrln_palmpre_set_scanrate(struct tslib_cy8mrln_palmpre *info, int rate)
 {
-	if (info == NULL || info->module.dev == NULL || ioctl(info->module.dev->fd,CY8MRLN_IOCTL_SET_SCANRATE,&rate) < 0)
+	if (info == NULL || info->module.dev == NULL ||
+	    ioctl(info->module.dev->fd, CY8MRLN_IOCTL_SET_SCANRATE, &rate) < 0)
 		goto error;
-		
+
 	info->scanrate = rate;
 	return 0;
-	
+
 error:
 	printf("TSLIB: cy8mrln_palmpre: ERROR: could not set scanrate value\n");
 	return -1;
 }
 
-static int cy8mrln_palmpre_set_verbose(struct tslib_cy8mrln_palmpre* info, int v)
+static int cy8mrln_palmpre_set_verbose(struct tslib_cy8mrln_palmpre *info, int v)
 {
-	if (info == NULL || info->module.dev == NULL || ioctl(info->module.dev->fd,CY8MRLN_IOCTL_SET_VERBOSE_MODE,&v) < 0)
+	if (info == NULL || info->module.dev == NULL ||
+	    ioctl(info->module.dev->fd, CY8MRLN_IOCTL_SET_VERBOSE_MODE, &v) < 0)
 		goto error;
-	
+
 	info->verbose = v;
 	return 0;
 
@@ -155,22 +158,24 @@ error:
 	return -1;
 }
 
-static int cy8mrln_palmpre_set_sleepmode(struct tslib_cy8mrln_palmpre* info, int mode)
+static int cy8mrln_palmpre_set_sleepmode(struct tslib_cy8mrln_palmpre *info, int mode)
 {
-	if (info == NULL || info->module.dev == NULL || ioctl(info->module.dev->fd,CY8MRLN_IOCTL_SET_SLEEPMODE,&mode) < 0)
+	if (info == NULL || info->module.dev == NULL ||
+	    ioctl(info->module.dev->fd, CY8MRLN_IOCTL_SET_SLEEPMODE, &mode) < 0)
 		goto error;
 
 	info->sleepmode = mode;
 	return 0;
-	
+
 error:
 	printf("TSLIB: cy8mrln_palmpre: ERROR: could not set sleepmode value\n");
 	return -1;
 }
 
-static int cy8mrln_palmpre_set_wot_scanrate(struct tslib_cy8mrln_palmpre* info, int rate)
+static int cy8mrln_palmpre_set_wot_scanrate(struct tslib_cy8mrln_palmpre *info, int rate)
 {
-	if (info == NULL || info->module.dev == NULL || ioctl(info->module.dev->fd,CY8MRLN_IOCTL_SET_WOT_SCANRATE,&rate) < 0)
+	if (info == NULL || info->module.dev == NULL ||
+	    ioctl(info->module.dev->fd, CY8MRLN_IOCTL_SET_WOT_SCANRATE, &rate) < 0)
 		goto error;
 
 	info->wot_scanrate = rate;
@@ -181,37 +186,39 @@ error:
 	return -1;
 }
 
-static int cy8mrln_palmpre_set_wot_threshold(struct tslib_cy8mrln_palmpre* info, int v)
+static int cy8mrln_palmpre_set_wot_threshold(struct tslib_cy8mrln_palmpre *info, int v)
 {
-	if (info == NULL || info->module.dev == NULL) 
+	if (info == NULL || info->module.dev == NULL)
 		goto error;
-	if(v < WOT_THRESHOLD_MIN || v > WOT_THRESHOLD_MAX)
+	if (v < WOT_THRESHOLD_MIN || v > WOT_THRESHOLD_MAX)
 		goto error;
-	if(ioctl(info->module.dev->fd,CY8MRLN_IOCTL_SET_WOT_THRESHOLD,&v) < 0)
+	if (ioctl(info->module.dev->fd, CY8MRLN_IOCTL_SET_WOT_THRESHOLD, &v) < 0)
 		goto error;
-		
+
 	info->wot_threshold = v;
 	return 0;
-	
+
 error:
 	printf("TSLIB: cy8mrln_palmpre: ERROR: could not set wot treshhold value\n");
 	return -1;
 }
 
-static int cy8mrln_palmpre_set_timestamp_mode(struct tslib_cy8mrln_palmpre* info, int v)
+static int cy8mrln_palmpre_set_timestamp_mode(struct tslib_cy8mrln_palmpre *info, int v)
 {
 	v = v ? 1 : 0;
-	if(info == NULL || info->module.dev == NULL || ioctl(info->module.dev->fd,CY8MRLN_IOCTL_SET_TIMESTAMP_MODE,&v) < 0)
-	     goto error;
+	if (info == NULL || info->module.dev == NULL ||
+	    ioctl(info->module.dev->fd, CY8MRLN_IOCTL_SET_TIMESTAMP_MODE, &v) < 0)
+		goto error;
+
 	info->timestamp_mode = v;
 	return 0;
-	
+
 error:
 	printf("TSLIB: cy8mrln_palmpre: ERROR: could not set timestamp value\n");
 	return -1;
 }
 
-static int cy8mrln_palmpre_set_gesture_height (struct tslib_cy8mrln_palmpre* info, int h)
+static int cy8mrln_palmpre_set_gesture_height(struct tslib_cy8mrln_palmpre *info, int h)
 {
 	if (info == NULL) {
 		printf("TSLIB: cy8mrln_palmpre: ERROR: could not set gesture_height value\n");
@@ -223,7 +230,7 @@ static int cy8mrln_palmpre_set_gesture_height (struct tslib_cy8mrln_palmpre* inf
 	return 0;
 }
 
-static int cy8mrln_palmpre_set_noise (struct tslib_cy8mrln_palmpre* info, int n)
+static int cy8mrln_palmpre_set_noise(struct tslib_cy8mrln_palmpre *info, int n)
 {
 	if (info == NULL) {
 		printf("TSLIB: cy8mrln_palmpre: ERROR: could not set noise value\n");
@@ -235,7 +242,7 @@ static int cy8mrln_palmpre_set_noise (struct tslib_cy8mrln_palmpre* info, int n)
 	return 0;
 }
 
-static int cy8mrln_palmpre_set_pressure (struct tslib_cy8mrln_palmpre* info, int p)
+static int cy8mrln_palmpre_set_pressure(struct tslib_cy8mrln_palmpre *info, int p)
 {
 	if (info == NULL) {
 		printf("TSLIB: cy8mrln_palmpre: ERROR: could not set default_pressure value\n");
@@ -247,7 +254,7 @@ static int cy8mrln_palmpre_set_pressure (struct tslib_cy8mrln_palmpre* info, int
 	return 0;
 }
 
-static int cy8mrln_palmpre_set_sensor_offset_x (struct tslib_cy8mrln_palmpre* info, int n)
+static int cy8mrln_palmpre_set_sensor_offset_x(struct tslib_cy8mrln_palmpre *info, int n)
 {
 	if (info == NULL)
 		return -1;
@@ -255,25 +262,25 @@ static int cy8mrln_palmpre_set_sensor_offset_x (struct tslib_cy8mrln_palmpre* in
 #ifdef DEBUG
 	printf("sensor_offset_x: %i\n", n);
 #endif
-	
+
 	info->sensor_offset_x = n;
 	return 0;
 }
 
-static int cy8mrln_palmpre_set_sensor_offset_y (struct tslib_cy8mrln_palmpre* info, int n)
+static int cy8mrln_palmpre_set_sensor_offset_y(struct tslib_cy8mrln_palmpre *info, int n)
 {
 	if (info == NULL)
 		return -1;
 
-#ifdef DEBUG 
+#ifdef DEBUG
 	printf("sensor_offset_y: %i\n", n);
 #endif
-	
+
 	info->sensor_offset_y = n;
 	return 0;
 }
 
-static int cy8mrln_palmpre_set_sensor_delta_x (struct tslib_cy8mrln_palmpre* info, int n)
+static int cy8mrln_palmpre_set_sensor_delta_x(struct tslib_cy8mrln_palmpre *info, int n)
 {
 	if (info == NULL)
 		return -1;
@@ -286,7 +293,7 @@ static int cy8mrln_palmpre_set_sensor_delta_x (struct tslib_cy8mrln_palmpre* inf
 	return 0;
 }
 
-static int cy8mrln_palmpre_set_sensor_delta_y (struct tslib_cy8mrln_palmpre* info, int n)
+static int cy8mrln_palmpre_set_sensor_delta_y(struct tslib_cy8mrln_palmpre *info, int n)
 {
 	if (info == NULL)
 		return -1;
@@ -305,7 +312,7 @@ static int parse_scanrate(struct tslib_module_info *info, char *str, void *data)
 	struct tslib_cy8mrln_palmpre *i = container_of(info, struct tslib_cy8mrln_palmpre, module);
 	unsigned long rate = strtoul(str, NULL, 0);
 
-	if(rate == ULONG_MAX && errno == ERANGE)
+	if (rate == ULONG_MAX && errno == ERANGE)
 		return -1;
 
 	return cy8mrln_palmpre_set_scanrate(i, rate);
@@ -317,7 +324,7 @@ static int parse_verbose(struct tslib_module_info *info, char *str, void *data)
 	struct tslib_cy8mrln_palmpre *i = container_of(info, struct tslib_cy8mrln_palmpre, module);
 	unsigned long v = strtoul(str, NULL, 0);
 
-	if(v == ULONG_MAX && errno == ERANGE)
+	if (v == ULONG_MAX && errno == ERANGE)
 		return -1;
 
 	return cy8mrln_palmpre_set_verbose(i, v);
@@ -353,10 +360,10 @@ static int parse_sleepmode(struct tslib_module_info *info, char *str, void *data
 static int parse_timestamp_mode(struct tslib_module_info *info, char *str, void *data)
 {
 	(void)data;
-	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
+	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre *) info;
 	unsigned long sleep = strtoul(str, NULL, 0);
 
-	if(sleep == ULONG_MAX && errno == ERANGE)
+	if (sleep == ULONG_MAX && errno == ERANGE)
 		return -1;
 
 	return cy8mrln_palmpre_set_sleepmode(i, sleep);
@@ -365,10 +372,10 @@ static int parse_timestamp_mode(struct tslib_module_info *info, char *str, void 
 static int parse_gesture_height(struct tslib_module_info *info, char *str, void *data)
 {
 	(void)data;
-	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
+	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre *) info;
 	unsigned long gesture_height = strtoul (str, NULL, 0);
 
-	if(gesture_height == ULONG_MAX && errno == ERANGE)
+	if (gesture_height == ULONG_MAX && errno == ERANGE)
 		return -1;
 
 	return cy8mrln_palmpre_set_gesture_height (i, gesture_height);
@@ -377,10 +384,10 @@ static int parse_gesture_height(struct tslib_module_info *info, char *str, void 
 static int parse_noise(struct tslib_module_info *info, char *str, void *data)
 {
 	(void)data;
-	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
+	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre *) info;
 	unsigned long noise = strtoul (str, NULL, 0);
 
-	if(noise == ULONG_MAX && errno == ERANGE)
+	if (noise == ULONG_MAX && errno == ERANGE)
 		return -1;
 
 	return cy8mrln_palmpre_set_noise (i, noise);
@@ -389,10 +396,10 @@ static int parse_noise(struct tslib_module_info *info, char *str, void *data)
 static int parse_pressure(struct tslib_module_info *info, char *str, void *data)
 {
 	(void)data;
-	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
+	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre *) info;
 	unsigned long pressure = strtoul (str, NULL, 0);
 
-	if(pressure == ULONG_MAX && errno == ERANGE)
+	if (pressure == ULONG_MAX && errno == ERANGE)
 		return -1;
 
 	return cy8mrln_palmpre_set_pressure (i, pressure);
@@ -401,10 +408,10 @@ static int parse_pressure(struct tslib_module_info *info, char *str, void *data)
 static int parse_sensor_offset_x(struct tslib_module_info *info, char *str, void *data)
 {
 	(void)data;
-	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
+	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre *) info;
 	unsigned long x = strtoul (str, NULL, 0);
 
-	if(x == ULONG_MAX && errno == ERANGE)
+	if (x == ULONG_MAX && errno == ERANGE)
 		return -1;
 
 	return cy8mrln_palmpre_set_sensor_offset_x (i, x);
@@ -413,10 +420,10 @@ static int parse_sensor_offset_x(struct tslib_module_info *info, char *str, void
 static int parse_sensor_offset_y(struct tslib_module_info *info, char *str, void *data)
 {
 	(void)data;
-	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
+	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre *) info;
 	unsigned long y = strtoul (str, NULL, 0);
 
-	if(y == ULONG_MAX && errno == ERANGE)
+	if (y == ULONG_MAX && errno == ERANGE)
 		return -1;
 
 	return cy8mrln_palmpre_set_sensor_offset_y (i, y);
@@ -425,10 +432,10 @@ static int parse_sensor_offset_y(struct tslib_module_info *info, char *str, void
 static int parse_sensor_delta_x(struct tslib_module_info *info, char *str, void *data)
 {
 	(void)data;
-	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
+	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre *) info;
 	unsigned long x = strtoul (str, NULL, 0);
 
-	if(x == ULONG_MAX && errno == ERANGE)
+	if (x == ULONG_MAX && errno == ERANGE)
 		return -1;
 
 	return cy8mrln_palmpre_set_sensor_delta_x (i, x);
@@ -437,10 +444,10 @@ static int parse_sensor_delta_x(struct tslib_module_info *info, char *str, void 
 static int parse_sensor_delta_y(struct tslib_module_info *info, char *str, void *data)
 {
 	(void)data;
-	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre*) info;
+	struct tslib_cy8mrln_palmpre *i = (struct tslib_cy8mrln_palmpre *) info;
 	unsigned long y = strtoul (str, NULL, 0);
 
-	if(y == ULONG_MAX && errno == ERANGE)
+	if (y == ULONG_MAX && errno == ERANGE)
 		return -1;
 
 	return cy8mrln_palmpre_set_sensor_delta_y (i, y);
@@ -449,12 +456,14 @@ static int parse_sensor_delta_y(struct tslib_module_info *info, char *str, void 
 #define NR_VARS (sizeof(cy8mrln_palmpre_vars) / sizeof(cy8mrln_palmpre_vars[0]))
 
 /*
-*     y1
-* x1 (xy) x3
-*     y3
-*/
+ *     y1
+ * x1 (xy) x3
+ *     y3
+ */
 
-static void cy8mrln_palmpre_interpolate(struct tslib_cy8mrln_palmpre* info, uint16_t field[H_FIELDS * V_FIELDS], int x, int y, struct ts_sample *out)
+static void cy8mrln_palmpre_interpolate(struct tslib_cy8mrln_palmpre *info,
+					uint16_t field[H_FIELDS * V_FIELDS],
+					int x, int y, struct ts_sample *out)
 {
 	float fx, fy;
 	int tmpxy, tmpx1, tmpx3, tmpy1, tmpy3;
@@ -504,12 +513,12 @@ static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample
 	uint16_t tmp_value;
 	int ret, valid_samples = 0;
 	struct ts_sample *p = samp;
-	
+
 	/* initalize all samples with proper values */
 	memset(p, '\0', nr * sizeof (*p));
-	
+
 	cy8mrln_info = container_of(info, struct tslib_cy8mrln_palmpre, module);
-	
+
 	ret = read(ts->fd, &cy8mrln_evt, sizeof(cy8mrln_evt));
 	if (ret > 0) {
 		if (cy8mrln_palmpre_update_references (cy8mrln_info->references, cy8mrln_evt.field)) {
@@ -537,14 +546,14 @@ static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample
 		if (cy8mrln_info->discard_frames) {
 #ifdef DEBUG
 			fprintf (stderr, "cy8mrln_palmpre: discarded frames %i\n", cy8mrln_info->discard_frames);
-			for (y = 0; y < V_FIELDS; y ++) {
+			for (y = 0; y < V_FIELDS; y++) {
 				for (x = 0; x < H_FIELDS; x++) {
 					fprintf (stderr, "%3i", cy8mrln_evt.field[field_nr(x, y)]);
 				}
 				fprintf (stderr, "\n");
 			}
 #endif
-			cy8mrln_info->discard_frames --;
+			cy8mrln_info->discard_frames--;
 			/* discard frame */
 			return 0;
 		}
@@ -552,7 +561,7 @@ static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample
 		max_x = 0;
 		max_y = 0;
 		max_value = 0;
-		for (y = 0; y < V_FIELDS; y ++) {
+		for (y = 0; y < V_FIELDS; y++) {
 			for (x = 0; x < H_FIELDS; x++) {
 				tmp_value = cy8mrln_evt.field[field_nr(x, y)];
 
@@ -569,7 +578,7 @@ static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample
 		if (max_value > cy8mrln_info->noise) {
 			cy8mrln_palmpre_interpolate(cy8mrln_info, cy8mrln_evt.field, max_x, max_y, &samp[valid_samples]);
 			samp->pressure = max_value;
-			gettimeofday(&samp->tv,NULL);
+			gettimeofday(&samp->tv, NULL);
 			valid_samples++;
 			if (cy8mrln_info->last_valid_samples == NULL) {
 				cy8mrln_info->last_valid_samples = malloc (sizeof (struct ts_sample) * valid_samples);
@@ -605,7 +614,7 @@ static int cy8mrln_palmpre_update_references(uint16_t references[H_FIELDS * V_FI
 {
 	int x, y;
 
-	for (y = 0; y < V_FIELDS; y ++) {
+	for (y = 0; y < V_FIELDS; y++) {
 		for (x = 0; x < H_FIELDS; x++) {
 			if (field[y * H_FIELDS + x] < MIN_VALUE || field[y * H_FIELDS + x] > MAX_VALUE) {
 #ifdef DEBUG
@@ -615,10 +624,10 @@ static int cy8mrln_palmpre_update_references(uint16_t references[H_FIELDS * V_FI
 			}
 
 			if (field[y * H_FIELDS + x] > references[y * H_FIELDS + x]) {
-				references [y * H_FIELDS + x] = field [y * H_FIELDS + x];
-				field [y * H_FIELDS + x] = 0;
+				references[y * H_FIELDS + x] = field[y * H_FIELDS + x];
+				field[y * H_FIELDS + x] = 0;
 			} else {
-				field [y * H_FIELDS + x] = references [y * H_FIELDS + x] - field [y * H_FIELDS + x];
+				field[y * H_FIELDS + x] = references[y * H_FIELDS + x] - field[y * H_FIELDS + x];
 			}
 		}
 	}
@@ -634,13 +643,12 @@ static int cy8mrln_palmpre_fini(struct tslib_module_info *info)
 	}
 	free (i);
 #ifdef DEBUG
-	fprintf (stderr, "finishing cy8mrln_palmpre");
+	fprintf(stderr, "finishing cy8mrln_palmpre");
 #endif
 	return 0;
 }
 
-static const struct tslib_vars cy8mrln_palmpre_vars[] =
-{
+static const struct tslib_vars cy8mrln_palmpre_vars[] = {
 	{ "scanrate",			NULL, parse_scanrate},
 	{ "verbose",			NULL, parse_verbose},
 	{ "wot_scanrate",		NULL, parse_wot_scanrate},
@@ -656,8 +664,7 @@ static const struct tslib_vars cy8mrln_palmpre_vars[] =
 	{ "sensor_delta_y",		NULL, parse_sensor_delta_y},
 };
 
-static const struct tslib_ops cy8mrln_palmpre_ops = 
-{
+static const struct tslib_ops cy8mrln_palmpre_ops = {
 	.read = cy8mrln_palmpre_read,
 	.fini = cy8mrln_palmpre_fini,
 };
@@ -667,13 +674,13 @@ TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init(struct tsdev *dev, cons
 	struct tslib_cy8mrln_palmpre *info;
 	struct cy8mrln_palmpre_input input;
 	int ret = 0;
-	
+
 	info = malloc(sizeof(struct tslib_cy8mrln_palmpre));
-	if(info == NULL)
-	     return NULL;
+	if (info == NULL)
+		return NULL;
 	info->module.ops = &cy8mrln_palmpre_ops;
-        /* required to set the default valuse */
-        info->module.dev = dev;
+	/* required to set the default valuse */
+	info->module.dev = dev;
 	info->last_valid_samples = NULL;
 	info->last_n_valid_samples = 0;
 
@@ -703,8 +710,8 @@ TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init(struct tsdev *dev, cons
 	 * later use */
 	do {
 		ret = read(dev->fd, &input, sizeof(input));
-	}
-	while (ret <= 0);
+	} while (ret <= 0);
+
 	memcpy(info->references, input.field, H_FIELDS * V_FIELDS * sizeof(uint16_t));
 
 	return &(info->module);
