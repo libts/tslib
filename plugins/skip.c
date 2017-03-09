@@ -58,7 +58,8 @@ static void reset_skip(struct tslib_skip *s)
 	s->sent = 0;
 }
 
-static int skip_read(struct tslib_module_info *info, struct ts_sample *samp, int nr)
+static int skip_read(struct tslib_module_info *info, struct ts_sample *samp,
+		     int nr)
 {
 	struct tslib_skip *skip = (struct tslib_skip *)info;
 	int nread = 0;
@@ -124,7 +125,8 @@ static int skip_read(struct tslib_module_info *info, struct ts_sample *samp, int
 	return nread;
 }
 
-static int skip_read_mt(struct tslib_module_info *info, struct ts_sample_mt **samp, int max_slots, int nr)
+static int skip_read_mt(struct tslib_module_info *info,
+			struct ts_sample_mt **samp, int max_slots, int nr)
 {
 	struct tslib_skip *skip = (struct tslib_skip *)info;
 	int nread = 0;
@@ -143,7 +145,8 @@ static int skip_read_mt(struct tslib_module_info *info, struct ts_sample_mt **sa
 		if (!skip->cur_mt)
 			return -ENOMEM;
 
-		skip->cur_mt[0] = calloc(max_slots, sizeof(struct ts_sample_mt));
+		skip->cur_mt[0] = calloc(max_slots,
+					 sizeof(struct ts_sample_mt));
 		if (!skip->cur_mt[0]) {
 			if (skip->cur_mt)
 				free(skip->cur_mt);
@@ -164,7 +167,8 @@ static int skip_read_mt(struct tslib_module_info *info, struct ts_sample_mt **sa
 				}
 			}
 
-			skip->buf_mt = malloc(skip->ntail * sizeof(struct ts_sample_mt *));
+			skip->buf_mt = malloc(skip->ntail *
+					      sizeof(struct ts_sample_mt *));
 			if (!skip->buf_mt) {
 				free(skip->cur_mt[0]);
 				free(skip->cur_mt);
@@ -172,8 +176,9 @@ static int skip_read_mt(struct tslib_module_info *info, struct ts_sample_mt **sa
 			}
 
 			for (i = 0; i < skip->ntail; i++) {
-				skip->buf_mt[i] = calloc(max_slots, sizeof(struct ts_sample_mt));
-				if (!skip->buf_mt[i]){
+				skip->buf_mt[i] = calloc(max_slots,
+							 sizeof(struct ts_sample_mt));
+				if (!skip->buf_mt[i]) {
 					for (j = 0; j < i; j++)
 						free(skip->buf_mt[j]);
 					free(skip->buf_mt);
@@ -186,18 +191,24 @@ static int skip_read_mt(struct tslib_module_info *info, struct ts_sample_mt **sa
 			skip->slots = max_slots;
 		}
 	}
-	for (i = 0; i < skip->ntail; i++)
-		memset(skip->buf_mt[i], 0, max_slots * sizeof(struct ts_sample_mt));
+	for (i = 0; i < skip->ntail; i++) {
+		memset(skip->buf_mt[i],
+		       0,
+		       max_slots * sizeof(struct ts_sample_mt));
+	}
 
 	while (nread < nr) {
-		if (info->next->ops->read_mt(info->next, skip->cur_mt, max_slots, 1) < 1)
+		if (info->next->ops->read_mt(info->next, skip->cur_mt,
+					     max_slots, 1) < 1) {
 			return nread;
+		}
 
 		/* skip the first N samples */
 		if (skip->N < skip->nhead) {
 			skip->N++;
 			for (i = 0; i < max_slots; i++) {
-				if (skip->cur_mt[0][i].valid == 1 && skip->cur_mt[0][i].pen_down == 0)
+				if (skip->cur_mt[0][i].valid == 1 &&
+				    skip->cur_mt[0][i].pen_down == 0)
 					reset_skip(skip);
 			}
 			continue;
@@ -205,19 +216,24 @@ static int skip_read_mt(struct tslib_module_info *info, struct ts_sample_mt **sa
 
 		/* We didn't send DOWN -- Ignore UP */
 		for (i = 0; i < max_slots; i++) {
-			if (skip->cur_mt[0][i].valid == 1 && skip->cur_mt[0][i].pen_down == 0 && skip->sent == 0) {
-			      reset_skip(skip);
-			      continue;
+			if (skip->cur_mt[0][i].valid == 1 &&
+			    skip->cur_mt[0][i].pen_down == 0 &&
+			    skip->sent == 0) {
+				reset_skip(skip);
+				continue;
 			}
 		}
 
 		/* Just accept the sample if ntail is zero */
 		if (skip->ntail == 0) {
-			memcpy(samp[nread], skip->cur_mt[0], max_slots * sizeof(struct ts_sample_mt));
+			memcpy(samp[nread],
+			       skip->cur_mt[0],
+			       max_slots * sizeof(struct ts_sample_mt));
 			nread++;
 			skip->sent = 1;
 			for (i = 0; i < max_slots; i++) {
-				if (skip->cur_mt[0][i].valid == 1 && skip->cur_mt[0][i].pen_down == 0)
+				if (skip->cur_mt[0][i].valid == 1 &&
+				    skip->cur_mt[0][i].pen_down == 0)
 					reset_skip(skip);
 			}
 			continue;
@@ -225,18 +241,21 @@ static int skip_read_mt(struct tslib_module_info *info, struct ts_sample_mt **sa
 
 		/* ntail > 0,  Queue current point if we need to */
 		if (skip->sent == 0 && skip->M < skip->ntail) {
-			memcpy(skip->buf_mt[skip->M], skip->cur_mt[0], max_slots * sizeof(struct ts_sample_mt));
+			memcpy(skip->buf_mt[skip->M],
+			       skip->cur_mt[0],
+			       max_slots * sizeof(struct ts_sample_mt));
 			skip->M++;
 			continue;
 		}
 
 		/* queue full, accept one, queue one */
 
-		if (skip->M >= skip->ntail) {
+		if (skip->M >= skip->ntail)
 			skip->M = 0;
-		}
 
-		memcpy(samp[nread], skip->buf_mt[skip->M], max_slots * sizeof(struct ts_sample_mt));
+		memcpy(samp[nread],
+		       skip->buf_mt[skip->M],
+		       max_slots * sizeof(struct ts_sample_mt));
 		nread++;
 
 #ifdef DEBUG
@@ -244,7 +263,8 @@ static int skip_read_mt(struct tslib_module_info *info, struct ts_sample_mt **sa
 			if (skip->buf_mt[skip->M][i].valid == 1) {
 				fprintf(stderr, "SKIP: -> (Slot %d: X:%d Y:%d) btn_touch:%d\n",
 					skip->buf_mt[skip->M][i].slot,
-					skip->buf_mt[skip->M][i].x, skip->buf_mt[skip->M][i].y,
+					skip->buf_mt[skip->M][i].x,
+					skip->buf_mt[skip->M][i].y,
 					skip->buf_mt[skip->M][i].pen_down);
 			}
 		}
@@ -252,13 +272,16 @@ static int skip_read_mt(struct tslib_module_info *info, struct ts_sample_mt **sa
 
 
 		for (i = 0; i < max_slots; i++) {
-			if (skip->cur_mt[0][i].valid == 1 && skip->cur_mt[0][i].pen_down == 0) {
+			if (skip->cur_mt[0][i].valid == 1 &&
+			    skip->cur_mt[0][i].pen_down == 0) {
 				reset_skip(skip);
 				pen_up = 1;
 			}
 		}
 		if (pen_up == 1) {
-			memcpy(skip->buf_mt[skip->M], skip->cur_mt[0], max_slots * sizeof(struct ts_sample_mt));
+			memcpy(skip->buf_mt[skip->M],
+			       skip->cur_mt[0],
+			       max_slots * sizeof(struct ts_sample_mt));
 			skip->M++;
 			skip->sent = 1;
 		}
@@ -291,11 +314,10 @@ static int skip_fini(struct tslib_module_info *info)
 
 	free(info);
 
-        return 0;
+	return 0;
 }
 
-static const struct tslib_ops skip_ops =
-{
+static const struct tslib_ops skip_ops = {
 	.read		= skip_read,
 	.read_mt	= skip_read_mt,
 	.fini		= skip_fini,
@@ -329,8 +351,7 @@ static int skip_opt(struct tslib_module_info *inf, char *str, void *data)
 	return 0;
 }
 
-static const struct tslib_vars skip_vars[] =
-{
+static const struct tslib_vars skip_vars[] = {
 	{ "nhead",      (void *)1, skip_opt },
 	{ "ntail",      (void *)2, skip_opt },
 };
