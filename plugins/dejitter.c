@@ -49,8 +49,7 @@
  * SUM(weight) = power-of-two. Also we must know how to approximate
  * measurements when we have less than NR_SAMPHISTLEN samples.
  */
-static const unsigned char weight [NR_SAMPHISTLEN - 1][NR_SAMPHISTLEN + 1] =
-{
+static const unsigned char weight[NR_SAMPHISTLEN - 1][NR_SAMPHISTLEN + 1] = {
 	/* The last element is pow2(SUM(0..3)) */
 	{ 5, 3, 0, 0, 3 },	/* When we have 2 samples ... */
 	{ 8, 5, 3, 0, 4 },	/* When we have 3 samples ... */
@@ -75,39 +74,40 @@ struct tslib_dejitter {
 	int slots;
 };
 
-static int sqr (int x)
+static int sqr(int x)
 {
 	return x * x;
 }
 
-static void average (struct tslib_dejitter *djt, struct ts_sample *samp)
+static void average(struct tslib_dejitter *djt, struct ts_sample *samp)
 {
 	const unsigned char *w;
 	int sn = djt->head;
 	int i, x = 0, y = 0;
 	unsigned int p = 0;
 
-        w = weight [djt->nr - 2];
+	w = weight[djt->nr - 2];
 
 	for (i = 0; i < djt->nr; i++) {
-		x += djt->hist [sn].x * w [i];
-		y += djt->hist [sn].y * w [i];
-		p += djt->hist [sn].p * w [i];
+		x += djt->hist[sn].x * w[i];
+		y += djt->hist[sn].y * w[i];
+		p += djt->hist[sn].p * w[i];
 		sn = (sn - 1) & (NR_SAMPHISTLEN - 1);
 	}
 
-	samp->x = x >> w [NR_SAMPHISTLEN];
-	samp->y = y >> w [NR_SAMPHISTLEN];
-	samp->pressure = p >> w [NR_SAMPHISTLEN];
+	samp->x = x >> w[NR_SAMPHISTLEN];
+	samp->y = y >> w[NR_SAMPHISTLEN];
+	samp->pressure = p >> w[NR_SAMPHISTLEN];
 #ifdef DEBUG
-	fprintf(stderr,"DEJITTER----------------> %d %d %d\n",
+	fprintf(stderr, "DEJITTER----------------> %d %d %d\n",
 		samp->x, samp->y, samp->pressure);
 #endif
 }
 
-static int dejitter_read(struct tslib_module_info *info, struct ts_sample *samp, int nr)
+static int dejitter_read(struct tslib_module_info *info, struct ts_sample *samp,
+			 int nr)
 {
-        struct tslib_dejitter *djt = (struct tslib_dejitter *)info;
+	struct tslib_dejitter *djt = (struct tslib_dejitter *)info;
 	struct ts_sample *s;
 	int count = 0, ret;
 
@@ -119,19 +119,21 @@ static int dejitter_read(struct tslib_module_info *info, struct ts_sample *samp,
 			 * forget all history events.
 			 */
 			djt->nr = 0;
-			samp [count++] = *s;
-                        continue;
+			samp[count++] = *s;
+			continue;
 		}
 
-                /* If the pen moves too fast, reset the backlog. */
+		/* If the pen moves too fast, reset the backlog. */
 		if (djt->nr) {
 			int prev = (djt->head - 1) & (NR_SAMPHISTLEN - 1);
-			if (sqr (s->x - djt->hist [prev].x) +
-			    sqr (s->y - djt->hist [prev].y) > djt->delta) {
+
+			if (sqr(s->x - djt->hist[prev].x) +
+			    sqr(s->y - djt->hist[prev].y) > djt->delta) {
 #ifdef DEBUG
-				fprintf (stderr, "DEJITTER: pen movement exceeds threshold\n");
+				fprintf(stderr,
+					"DEJITTER: pen movement exceeds threshold\n");
 #endif
-                                djt->nr = 0;
+				djt->nr = 0;
 			}
 		}
 
@@ -145,10 +147,10 @@ static int dejitter_read(struct tslib_module_info *info, struct ts_sample *samp,
 		 * we can't average it (no history yet).
 		 */
 		if (djt->nr == 1)
-			samp [count] = *s;
+			samp[count] = *s;
 		else {
-			average (djt, samp + count);
-			samp [count].tv = s->tv;
+			average(djt, samp + count);
+			samp[count].tv = s->tv;
 		}
 		count++;
 
@@ -165,27 +167,29 @@ static void average_mt(struct tslib_dejitter *djt, struct ts_sample_mt **samp, i
 	int i, x = 0, y = 0;
 	unsigned int p = 0;
 
-        w = weight [djt->nr_mt[slot] - 2];
+	w = weight[djt->nr_mt[slot] - 2];
 
 	for (i = 0; i < djt->nr_mt[slot]; i++) {
-		x += djt->hist_mt[slot][sn].x * w [i];
-		y += djt->hist_mt[slot][sn].y * w [i];
-		p += djt->hist_mt[slot][sn].p * w [i];
+		x += djt->hist_mt[slot][sn].x * w[i];
+		y += djt->hist_mt[slot][sn].y * w[i];
+		p += djt->hist_mt[slot][sn].p * w[i];
 		sn = (sn - 1) & (NR_SAMPHISTLEN - 1);
 	}
 
-	samp[nr][slot].x = x >> w [NR_SAMPHISTLEN];
-	samp[nr][slot].y = y >> w [NR_SAMPHISTLEN];
-	samp[nr][slot].pressure = p >> w [NR_SAMPHISTLEN];
+	samp[nr][slot].x = x >> w[NR_SAMPHISTLEN];
+	samp[nr][slot].y = y >> w[NR_SAMPHISTLEN];
+	samp[nr][slot].pressure = p >> w[NR_SAMPHISTLEN];
 #ifdef DEBUG
-	fprintf(stderr,"DEJITTER----------------> %d %d %d\n",
-		samp[nr][slot].x, samp[nr][slot].y, samp[nr][slot].pressure);
+	fprintf(stderr, "DEJITTER----------------> %d %d %d\n",
+		samp[nr][slot].x, samp[nr][slot].y,
+		samp[nr][slot].pressure);
 #endif
 }
 
-static int dejitter_read_mt(struct tslib_module_info *info, struct ts_sample_mt **samp, int max_slots, int nr)
+static int dejitter_read_mt(struct tslib_module_info *info,
+			    struct ts_sample_mt **samp, int max_slots, int nr)
 {
-        struct tslib_dejitter *djt = (struct tslib_dejitter *)info;
+	struct tslib_dejitter *djt = (struct tslib_dejitter *)info;
 	int ret;
 	int i, j;
 
@@ -195,9 +199,10 @@ static int dejitter_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 
 #ifdef DEBUG
 	if (ret == 0)
-		fprintf (stderr, "DEJITTER: couldn't read data\n");
+		fprintf(stderr, "DEJITTER: couldn't read data\n");
 
-	printf("DEJITTER: read %d samples (mem: %d nr x %d slots)\n", ret, nr, max_slots);
+	printf("DEJITTER: read %d samples (mem: %d nr x %d slots)\n",
+	       ret, nr, max_slots);
 #endif
 
 	if (djt->hist_mt == NULL || max_slots > djt->slots) {
@@ -268,7 +273,8 @@ static int dejitter_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 				if (sqr(samp[j][i].x - djt->hist_mt[i][prev].x) +
 				    sqr(samp[j][i].y - djt->hist_mt[i][prev].y) > djt->delta) {
 	#ifdef DEBUG
-					fprintf (stderr, "DEJITTER: pen movement exceeds threshold\n");
+					fprintf(stderr,
+						"DEJITTER: pen movement exceeds threshold\n");
 	#endif
 					djt->nr_mt[i] = 0;
 				}
@@ -283,9 +289,8 @@ static int dejitter_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 			/* We'll pass through the very first sample since
 			 * we can't average it (no history yet).
 			 */
-			if (djt->nr_mt[i] > 1) {
+			if (djt->nr_mt[i] > 1)
 				average_mt(djt, samp, j, i);
-			}
 
 			djt->head_mt[i] = (djt->head_mt[i] + 1) & (NR_SAMPHISTLEN - 1);
 		}
@@ -296,7 +301,7 @@ static int dejitter_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 
 static int dejitter_fini(struct tslib_module_info *info)
 {
-        struct tslib_dejitter *djt = (struct tslib_dejitter *)info;
+	struct tslib_dejitter *djt = (struct tslib_dejitter *)info;
 	int i;
 
 	for (i = 0; i < djt->slots; i++) {
@@ -318,8 +323,7 @@ static int dejitter_fini(struct tslib_module_info *info)
 	return 0;
 }
 
-static const struct tslib_ops dejitter_ops =
-{
+static const struct tslib_ops dejitter_ops = {
 	.read		= dejitter_read,
 	.read_mt	= dejitter_read_mt,
 	.fini		= dejitter_fini,
@@ -348,8 +352,7 @@ static int dejitter_limit(struct tslib_module_info *inf, char *str, void *data)
 	return 0;
 }
 
-static const struct tslib_vars dejitter_vars[] =
-{
+static const struct tslib_vars dejitter_vars[] = {
 	{ "delta",	(void *)1, dejitter_limit },
 };
 
@@ -368,17 +371,17 @@ TSAPI struct tslib_module_info *dejitter_mod_init(__attribute__ ((unused)) struc
 	djt->module.ops = &dejitter_ops;
 
 	djt->delta = 100;
-        djt->head = 0;
-        djt->hist_mt = NULL;
-        djt->nr_mt = NULL;
-        djt->head_mt = NULL;
-        djt->slots = 0;
+	djt->head = 0;
+	djt->hist_mt = NULL;
+	djt->nr_mt = NULL;
+	djt->head_mt = NULL;
+	djt->slots = 0;
 
 	if (tslib_parse_vars(&djt->module, dejitter_vars, NR_VARS, params)) {
 		free(djt);
 		return NULL;
 	}
-	djt->delta = sqr (djt->delta);
+	djt->delta = sqr(djt->delta);
 
 	return &djt->module;
 }
