@@ -5,6 +5,7 @@ Changes since last release:
 * add proper AUTHORS and THANKS files, as well as .mailmap
 * bugfixes
   - 6ea643e ts_test_mt: fix idev commandline option
+  - 9617c7d dmc-raw: fix errno return code to be negative
 
 
 ## tslib 1.6
