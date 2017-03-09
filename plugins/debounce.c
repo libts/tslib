@@ -192,8 +192,7 @@ static int debounce_fini(struct tslib_module_info *info)
 	return 0;
 }
 
-static const struct tslib_ops debounce_ops =
-{
+static const struct tslib_ops debounce_ops = {
 	.read = debounce_read,
 	.read_mt = debounce_read_mt,
 	.fini = debounce_fini,
@@ -222,8 +221,7 @@ static int read_debounce_vars(struct tslib_module_info *inf, char *str, void *da
 }
 
 
-static const struct tslib_vars debounce_vars[] =
-{
+static const struct tslib_vars debounce_vars[] = {
 	{ "drop_threshold", (void *)0, read_debounce_vars }, /* ms */
 };
 
