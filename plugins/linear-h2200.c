@@ -24,7 +24,7 @@
 #include "tslib-filter.h"
 
 struct tslib_linear_h2200 {
-        struct tslib_module_info module;
+	struct tslib_module_info module;
 };
 
 /*
@@ -49,14 +49,15 @@ struct tslib_linear_h2200 {
 
 */
 
-#define M20(x,y) ((long)(((long long)x * (long long)y) >> 20))
-#define M32(x,y) ((long)(((long long)x * (long long)y) >> 32))
+#define M20(x, y) ((long)(((long long)x * (long long)y) >> 20))
+#define M32(x, y) ((long)(((long long)x * (long long)y) >> 32))
 
 static int
-linear_h2200_read(struct tslib_module_info *info, struct ts_sample *samp, int nr)
+linear_h2200_read(struct tslib_module_info *info, struct ts_sample *samp,
+		  int nr)
 {
 	int ret;
-        long x, y, new_x, new_y;
+	long x, y, new_x, new_y;
 
 	ret = info->next->ops->read(info->next, samp, nr);
 	if (ret >= 0) {
@@ -78,16 +79,16 @@ linear_h2200_read(struct tslib_module_info *info, struct ts_sample *samp, int nr
 			  we can't reuse x^2, y^2 and x*y
 			*/
 
-			new_x = 14708834 + M20(1009971,x) + M20(-18416,y) +
-				M20(M32(129310,x),y) + M20(M32(76687,x),x) +
-				M20(M32(5340,y),y);
+			new_x = 14708834 + M20(1009971, x) + M20(-18416, y) +
+				M20(M32(129310, x), y) + M20(M32(76687, x), x) +
+				M20(M32(5340, y), y);
 
-			new_y = -10920238 + M20(129836,x) + M20(951939,y) +
-				M20(M32(-947740,x),y) + M20(M32(22599,x),x) +
-				M20(M32(735087,y),y);
+			new_y = -10920238 + M20(129836, x) + M20(951939, y) +
+				M20(M32(-947740, x), y) + M20(M32(22599, x), x) +
+				M20(M32(735087, y), y);
 
-			samp->x = (int) (new_x >> 20);    
-			samp->y = (int) (new_y >> 20);    
+			samp->x = (int) (new_x >> 20);
+			samp->y = (int) (new_y >> 20);
 		}
 	}
 
@@ -100,8 +101,7 @@ static int linear_h2200_fini(struct tslib_module_info *info)
 	return 0;
 }
 
-static const struct tslib_ops linear_h2200_ops =
-{
+static const struct tslib_ops linear_h2200_ops = {
 	.read	= linear_h2200_read,
 	.fini	= linear_h2200_fini,
 };
