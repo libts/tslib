@@ -16,16 +16,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/time.h>
-
-#ifdef __ANDROID__
 #include <fcntl.h>
-#else
-#include <sys/fcntl.h>
-#endif
 
 #include <linux/vt.h>
 #include <linux/kd.h>
