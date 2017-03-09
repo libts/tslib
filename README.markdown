@@ -411,19 +411,21 @@ The procedure looks like this:
 
 1. run coverity (or any static analysis) and fix new discovered issues
 * be sure to have a stable build system and your private gpg key set up
-* update the NEWS file with the changelog
+* update the NEWS file with the changelog and bugfixes
+* update the THANKS file
 * update configure.ac libts library versions
   * `AC_INIT` - includes the tslib package version X.X. generally we increment the minor version
   * `LT_CURRENT` - increment **only if there are API changes** (additions / removals / changes)
   * `LT_REVISION` - increment if anything changed. but if `LT_CURRENT` was incremented, set to 0!
   * `LT_AGE` - increment **only if `LT_CURRENT` was incremented** and these **API changes are backwards compatible** (should always be the case, so it should match `LT_CURRENT`)
 
-5. create a new release/X.X branch remotely and switch to it locally
+6. create a new release/X.X branch remotely and switch to it locally
 * `./release -s -v X.X`
 * `git push origin release/X.X --tags`
-* create a github release off the signed tag
-* add the 9 files (3 times: tarball, asc signature and sha256sum) and the release notes from NEWS
-* publish and inform distributors
+* create a github release off the signed tag by adding
+  * release notes from the NEWS file
+  * 3 times: tarball, asc signature and sha256sum
+10. publish and inform distributors
 * celebrate!
 
 ### specifications relevant to tslib
