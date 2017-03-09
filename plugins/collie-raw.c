@@ -21,14 +21,15 @@ static int collie_read(struct tslib_module_info *inf, struct ts_sample *samp, in
 
 	collie_evt = alloca(sizeof(*collie_evt) * nr);
 	ret = read(ts->fd, collie_evt, sizeof(*collie_evt) * nr);
-	if(ret > 0) {
+	if (ret > 0) {
 		nr_read = ret / sizeof(*collie_evt);
-		while(ret >= (int)sizeof(*collie_evt)) {
+		while (ret >= (int)sizeof(*collie_evt)) {
 			samp->x = collie_evt->x;
 			samp->y = collie_evt->y;
 			samp->pressure = collie_evt->pressure;
 #ifdef DEBUG
-        fprintf(stderr,"RAW---------------------------> %d %d %d\n",samp->x,samp->y,samp->pressure);
+	fprintf(stderr, "RAW---------------------------> %d %d %d\n",
+		samp->x, samp->y, samp->pressure);
 #endif /*DEBUG*/
 			samp->tv.tv_usec = (collie_evt->millisecs % 1000) * 1000;
 			samp->tv.tv_sec = collie_evt->millisecs / 1000;
@@ -44,8 +45,7 @@ static int collie_read(struct tslib_module_info *inf, struct ts_sample *samp, in
 	return ret;
 }
 
-static const struct tslib_ops collie_ops =
-{
+static const struct tslib_ops collie_ops = {
 	.read	= collie_read,
 };
 
