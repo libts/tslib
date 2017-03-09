@@ -1,7 +1,8 @@
 /*
  * tslib driver for WaveShare touchscreens
  * Copyright (C) 2015 Peter Vicman
- * inspiration from derekhe: https://github.com/derekhe/wavesahre-7inch-touchscreen-driver
+ * inspiration from derekhe:
+ * https://github.com/derekhe/wavesahre-7inch-touchscreen-driver
  *
  * This file is placed under the LGPL.  Please see the file COPYING for more
  * details.
@@ -29,7 +30,8 @@ struct tslib_input {
 	int len;
 };
 
-static int waveshare_read(struct tslib_module_info *inf, struct ts_sample *samp, int nr)
+static int waveshare_read(struct tslib_module_info *inf, struct ts_sample *samp,
+			  int nr)
 {
 	static short reopen = 1;
 	struct stat devstat;
@@ -47,10 +49,13 @@ static int waveshare_read(struct tslib_module_info *inf, struct ts_sample *samp,
 		reopen = 0;
 
 		if (i->vendor > 0 && i->product > 0) {
-			fprintf(stderr, "waveshare: searching for device using hidraw....\n");
-			for (cnt=0; cnt<HIDRAW_MAX_DEVICES; cnt++) {
-				snprintf(name_buf, sizeof(buf), "/dev/hidraw%d", cnt);
-				fprintf(stderr, "waveshare: device: %s\n", name_buf);
+			fprintf(stderr,
+				"waveshare: searching for device using hidraw...\n");
+			for (cnt = 0; cnt < HIDRAW_MAX_DEVICES; cnt++) {
+				snprintf(name_buf, sizeof(buf),
+					 "/dev/hidraw%d", cnt);
+				fprintf(stderr,
+					"waveshare: device: %s\n", name_buf);
 				ret = stat(name_buf, &devstat);
 				if (ret < 0)
 					continue;
@@ -68,9 +73,12 @@ static int waveshare_read(struct tslib_module_info *inf, struct ts_sample *samp,
 
 				info.vendor &= 0xFFFF;
 				info.product &= 0xFFFF;
-				fprintf(stderr, "  vid=%04X, pid=%04X\n", info.vendor, info.product);
+				fprintf(stderr,
+					"  vid=%04X, pid=%04X\n",
+					info.vendor, info.product);
 
-				if (i->vendor == info.vendor && i->product == info.product) {
+				if (i->vendor == info.vendor &&
+				    i->product == info.product) {
 					if (ts->fd > 0)
 					close(ts->fd);
 
@@ -92,22 +100,27 @@ static int waveshare_read(struct tslib_module_info *inf, struct ts_sample *samp,
 	buf = alloca(i->len * nr);
 
 	ret = read(ts->fd, buf, i->len * nr);
-	if(ret > 0) {
-		while(ret >= (int) i->len) {
-			/*
-			  0000271: aa01 00e4 0139 bb01 01e0 0320 01e0 0320 01e0 0320 01e0 0320 cc  .....9..... ... ... ... .
+	if (ret > 0) {
+		while (ret >= (int) i->len) {
+	/*
+	  0000271: aa01 00e4 0139 bb01 01e0 0320 01e0 0320 01e0 0320 01e0 0320 cc  .....9..... ... ... ... .
 
-			  "aa" is start of the command, "01" means clicked while "00" means unclicked.
-			  "00e4" and "0139" is the X,Y position (HEX).
-			  "bb" is start of multi-touch, and the following bytes are the position of each point.
-			 */
+	  "aa" is start of the command,
+	  "01" means clicked, while
+	  "00" means unclicked.
+	  "00e4" and "0139" is the X,Y position (HEX).
+	  "bb" is start of multi-touch,
+	  and the following bytes are the position of each point.
+	 */
 			samp->pressure = buf[1] & 0xff;
 			samp->x = ((buf[2] & 0xff) << 8) | (buf[3] & 0xff);
 			samp->y = ((buf[4] & 0xff) << 8) | (buf[5] & 0xff);
 			gettimeofday(&samp->tv, NULL);
 		#ifdef DEBUG
-			fprintf(stderr, "waveshare raw: %d %d %d\n", samp->x, samp->y, samp->pressure);
-			fprintf(stderr, "%x %x %x %x %x %x\n", buf[0], buf[1], buf[2], buf[3], buf[4], buf[5]);
+			fprintf(stderr, "waveshare raw: %d %d %d\n",
+				samp->x, samp->y, samp->pressure);
+			fprintf(stderr, "%x %x %x %x %x %x\n",
+				buf[0], buf[1], buf[2], buf[3], buf[4], buf[5]);
 		#endif
 			samp++;
 			buf += i->len;
@@ -135,7 +148,8 @@ static int parse_vid_pid(struct tslib_module_info *inf, char *str, void *data)
 	i->vendor = strtol(&str[0], NULL, 16);
 	i->product = strtol(&str[5], NULL, 16);
 #ifdef DEBUG
-	fprintf(stderr, "waveshare vid:pid - %04X:%04X\n", i->vendor, i->product);
+	fprintf(stderr, "waveshare vid:pid - %04X:%04X\n",
+		i->vendor, i->product);
 #endif /*DEBUG*/
 	return 0;
 }
@@ -170,7 +184,8 @@ static const struct tslib_vars raw_vars[] = {
 
 #define NR_VARS (sizeof(raw_vars) / sizeof(raw_vars[0]))
 
-TSAPI struct tslib_module_info *waveshare_mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *waveshare_mod_init(struct tsdev *dev,
+						   const char *params)
 {
 	struct tslib_input *i;
 
