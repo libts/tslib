@@ -19,12 +19,7 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-
-#ifdef __ANDROID__
 #include <fcntl.h>
-#else
-#include <sys/fcntl.h>
-#endif
 
 #include "tslib.h"
 
