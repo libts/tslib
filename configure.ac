@@ -19,6 +19,7 @@ TS_DEFAULT_FLAGS
 AC_CANONICAL_HOST
 build_linux=no
 build_freebsd=no
+build_haiku=no
 case "${host_os}" in
 	linux*)
 		build_linux=yes
@@ -26,11 +27,15 @@ case "${host_os}" in
 	freebsd*)
 		build_freebsd=yes
 		;;
+	*haiku*)
+		build_haiku=yes
+		;;
 	*)
 		;;
 esac
-AM_CONDITIONAL([FREEBSD], [test "$build_freebsd" = "yes"])
 AM_CONDITIONAL([LINUX], [test "$build_linux" = "yes"])
+AM_CONDITIONAL([FREEBSD], [test "$build_freebsd" = "yes"])
+AM_CONDITIONAL([HAIKU], [test "$build_haiku" = "yes"])
 
 # Checks for programs.
 AC_PROG_CC
