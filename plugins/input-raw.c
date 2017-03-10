@@ -457,7 +457,6 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 				  i->ev,
 				  sizeof(struct input_event) * NUM_EVENTS_READ);
 			if (rd < (int) sizeof(struct input_event)) {
-				perror("tslib: error reading input event");
 				total = -1;
 				break;
 			}
