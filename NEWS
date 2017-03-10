@@ -1,12 +1,14 @@
 ## tslib 1.7
 
 Changes since last release:
+* fix ts_read_mt() in non-blocking mode
 * basic support for the Haiku OS
 * added a release helper script to simplify the releasing process
 * add proper AUTHORS and THANKS files, as well as .mailmap
 * bugfixes
   - 6ea643e ts_test_mt: fix idev commandline option
   - 9617c7d dmc-raw: fix errno return code to be negative
+  - dc2fdaf input-raw: remove errror message on each negative return from read()
 
 
 ## tslib 1.6
