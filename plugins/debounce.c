@@ -76,7 +76,7 @@ static int debounce_read(struct tslib_module_info *info, struct ts_sample *samp,
 		}
 
 #ifdef DEBUG
-		fprintf(stderr, "\033[%smtslib/debounce:\033[m  press=%u  x=%d  y=%d  dt=%ld%s\n",
+		fprintf(stderr, "\033[%smDEBOUNCE:\033[m  press=%u  x=%d  y=%d  dt=%ld%s\n",
 				mode == DOWN ? "92" : mode == MOVE ? "32" : "93",
 				s->pressure, s->x, s->y, dt,
 				drop ? "  \033[31mdropped\033[m" : "");
@@ -163,7 +163,7 @@ static int debounce_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 			}
 
 	#ifdef DEBUG
-			fprintf(stderr, "\033[%smtslib/debounce:\033[m  press=%u  x=%d  y=%d  dt=%ld%s\n",
+			fprintf(stderr, "\033[%smDEBOUNCE:\033[m  press=%u  x=%d  y=%d  dt=%ld%s\n",
 					mode[i] == DOWN ? "92" : mode[i] == MOVE ? "32" : "93",
 					samp[nr][i].pressure, samp[nr][i].x, samp[nr][i].y, dt,
 					drop ? "  \033[31mdropped\033[m" : "");
