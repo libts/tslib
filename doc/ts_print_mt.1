@@ -1,25 +1,37 @@
 .TH "TS_PRINT_MT" "1" "" "" "tslib"
 .SH "NAME"
-ts_print_mt, ts_print_raw_mt \- A very basic multitouch test routine for tslib\&.
+ts_print_mt \- A very basic multitouch test routine for tslib\&.
 
 .SH SYNOPSIS
 .B ts_print_mt [OPTION]
-.sp
-.B ts_print_raw_mt [OPTION]
 
 .SH "DESCRIPTION"
 .PP
-ts_print_mt simply reads tslib multitouch input samples and prints them to the console. With
-.BR ts_print_mt
-, the configured filters are applied, see ts.conf (5). With
-.BR ts_print_raw_mt
-, no filters are applied.
+ts_print_mt simply reads tslib multitouch input samples and prints them to the console.
 .sp
 .sp
 \fB\-i, \-\-idev\fR
 .sp
 .RS 4
 Explicitly choose the original input event device for tslib to use. Default: the environment variable \fBTSLIB_TSDEVICE\fR's value.
+.RE
+.sp
+\fB\-r, \-\-raw\fR
+.sp
+.RS 4
+Don't use the filters. This uses ts_read_raw_mt() instead of ts_read_mt(). This replaces the ts_print_raw_mt program.
+.RE
+.sp
+\fB\-n, \-\-non\-blocking\fR
+.sp
+.RS 4
+Opens the input device in non-blocking mode and indefinitely prints the error codes while no samples are received.
+.RE
+.sp
+\fB\-s, \-\-samples\fR
+.sp
+.RS 4
+Number of samples tslib should read before returning.
 .RE
 .sp
 \fB\-h, \-\-help\fR

@@ -247,23 +247,6 @@ LOCAL_MODULE_TAGS := optional
 include $(BUILD_EXECUTABLE)
 
 
-# ts_print_raw_mt
-include $(CLEAR_VARS)
-
-LOCAL_SRC_FILES := tests/testutils.c \
-	tests/ts_print_raw_mt.c
-
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/src/
-
-LOCAL_SHARED_LIBRARIES := libdl \
-                        libts
-
-LOCAL_MODULE := ts_print_raw_mt
-LOCAL_MODULE_TAGS := optional
-
-include $(BUILD_EXECUTABLE)
-
-
 # ts_uinput
 include $(CLEAR_VARS)
 

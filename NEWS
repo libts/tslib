@@ -4,6 +4,7 @@ Changes since last release:
 * ts_read_mt() now consistently returns errno set by read() when using
   module_raw input
 * extended ts_print_mt to test more of our API
+* ts_print_mt --raw replaces the ts_print_raw_mt program
 * basic support for the Haiku OS
 * added a release helper script to simplify the releasing process
 * add proper AUTHORS and THANKS files, as well as .mailmap
