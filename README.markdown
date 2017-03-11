@@ -362,6 +362,19 @@ This is a complete example program, similar to `ts_print_mt.c`:
     }
 
 
+If you know how many slots your device can handle, you could avoid malloc:
+
+    struct ts_sample_mt TouchScreenSamples[SAMPLES][SLOTS];
+
+    struct ts_sample_mt (*pTouchScreenSamples)[SLOTS] = TouchScreenSamples;
+    struct ts_sample_mt *ts_samp[SAMPLES];
+    for (i = 0; i < SAMPLES; i++)
+            ts_samp[i] = pTouchScreenSamples[i];
+
+and call `ts_read_mt()` like so
+
+    ts_read_mt(ts, ts_samp, SLOTS, SAMPLES);
+
 
 ### Symbols in Versions
 |Name | Introduced|
