@@ -132,6 +132,7 @@ static int skip_read_mt(struct tslib_module_info *info,
 	int nread = 0;
 	int i, j;
 	short pen_up = 0;
+	int ret = 0;
 
 	if (skip->cur_mt == NULL || max_slots > skip->slots) {
 		if (skip->cur_mt) {
@@ -198,10 +199,12 @@ static int skip_read_mt(struct tslib_module_info *info,
 	}
 
 	while (nread < nr) {
-		if (info->next->ops->read_mt(info->next, skip->cur_mt,
-					     max_slots, 1) < 1) {
+		ret = info->next->ops->read_mt(info->next, skip->cur_mt,
+					       max_slots, 1);
+		if (ret < 0)
+			return ret;
+		else if (ret == 0)
 			return nread;
-		}
 
 		/* skip the first N samples */
 		if (skip->N < skip->nhead) {
