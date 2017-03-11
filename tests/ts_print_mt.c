@@ -29,7 +29,7 @@
 
 void usage(char **argv)
 {
-	printf("Usage: %s [-s samples] [-i <device>]\n", argv[0]);
+	printf("Usage: %s [--non-blocking] [-s samples] [-i <device>]\n", argv[0]);
 }
 
 int main(int argc, char **argv)
@@ -41,16 +41,18 @@ int main(int argc, char **argv)
 	unsigned short max_slots = 1;
 	int ret, i, j;
 	int read_samples = 1;
+	short non_blocking = 0;
 
 	while (1) {
 		const struct option long_options[] = {
 			{ "help",         no_argument,       0, 'h' },
 			{ "idev",         required_argument, 0, 'i' },
 			{ "samples",      required_argument, 0, 's' },
+			{ "non-blocking", no_argument,       0, 'n' },
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "hi:s:", long_options, &option_index);
+		int c = getopt_long(argc, argv, "hi:s:n", long_options, &option_index);
 
 		errno = 0;
 		if (c == -1)
@@ -63,6 +65,10 @@ int main(int argc, char **argv)
 
 		case 'i':
 			tsdevice = optarg;
+			break;
+
+		case 'n':
+			non_blocking = 1;
 			break;
 
 		case 's':
@@ -85,7 +91,11 @@ int main(int argc, char **argv)
 		}
 	}
 
-	ts = ts_setup(tsdevice, 0);
+	if (non_blocking)
+		ts = ts_setup(tsdevice, 1);
+	else
+		ts = ts_setup(tsdevice, 0);
+
 	if (!ts) {
 		perror("ts_setup");
 		return errno;
@@ -116,6 +126,11 @@ int main(int argc, char **argv)
 	while (1) {
 		ret = ts_read_mt(ts, samp_mt, max_slots, read_samples);
 		if (ret < 0) {
+			if (non_blocking) {
+				printf("ts_print_mt: read returns %d\n", ret);
+				continue;
+			}
+
 			perror("ts_read_mt");
 			ts_close(ts);
 			exit(1);
