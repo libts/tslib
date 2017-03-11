@@ -27,6 +27,11 @@
 #include "tslib.h"
 #include "testutils.h"
 
+void usage(char **argv)
+{
+	printf("Usage: %s [-s samples] [-i <device>]\n", argv[0]);
+}
+
 int main(int argc, char **argv)
 {
 	struct tsdev *ts;
@@ -34,16 +39,18 @@ int main(int argc, char **argv)
 	struct ts_sample_mt **samp_mt = NULL;
 	struct input_absinfo slot;
 	unsigned short max_slots = 1;
-	int ret, i;
+	int ret, i, j;
+	int read_samples = 1;
 
 	while (1) {
 		const struct option long_options[] = {
 			{ "help",         no_argument,       0, 'h' },
 			{ "idev",         required_argument, 0, 'i' },
+			{ "samples",      required_argument, 0, 's' },
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "hi:", long_options, &option_index);
+		int c = getopt_long(argc, argv, "hi:s:", long_options, &option_index);
 
 		errno = 0;
 		if (c == -1)
@@ -51,15 +58,23 @@ int main(int argc, char **argv)
 
 		switch (c) {
 		case 'h':
-			printf("Usage: %s [-i <device>]\n", argv[0]);
+			usage(argv);
 			return 0;
 
 		case 'i':
 			tsdevice = optarg;
 			break;
 
+		case 's':
+			read_samples = atoi(optarg);
+			if (read_samples <= 0) {
+				usage(argv);
+				return 0;
+			}
+			break;
+
 		default:
-			printf("Usage: %s [-i <device>]\n", argv[0]);
+			usage(argv);
 			break;
 		}
 
@@ -84,40 +99,46 @@ int main(int argc, char **argv)
 
 	max_slots = slot.maximum + 1 - slot.minimum;
 
-	samp_mt = malloc(sizeof(struct ts_sample_mt *));
+	samp_mt = malloc(read_samples * sizeof(struct ts_sample_mt *));
 	if (!samp_mt) {
 		ts_close(ts);
 		return -ENOMEM;
 	}
-	samp_mt[0] = calloc(max_slots, sizeof(struct ts_sample_mt));
-	if (!samp_mt[0]) {
-		free(samp_mt);
-		ts_close(ts);
-		return -ENOMEM;
+	for (i = 0; i < read_samples; i++) {
+		samp_mt[i] = calloc(max_slots, sizeof(struct ts_sample_mt));
+		if (!samp_mt[i]) {
+			free(samp_mt);
+			ts_close(ts);
+			return -ENOMEM;
+		}
 	}
 
 	while (1) {
-		ret = ts_read_mt(ts, samp_mt, max_slots, 1);
+		ret = ts_read_mt(ts, samp_mt, max_slots, read_samples);
 		if (ret < 0) {
 			perror("ts_read_mt");
 			ts_close(ts);
 			exit(1);
 		}
 
-		if (ret != 1)
+		if (ret != read_samples) {
+			printf("ts_print_mt: read less samples than requested\n");
 			continue;
+		}
 
-		for (i = 0; i < max_slots; i++) {
-			if (samp_mt[0][i].valid != 1)
-				continue;
+		for (j = 0; j < ret; j++) {
+			for (i = 0; i < max_slots; i++) {
+				if (samp_mt[j][i].valid != 1)
+					continue;
 
-			printf(YELLOW "%ld.%06ld:" RESET " (slot %d) %6d %6d %6d\n",
-			       samp_mt[0][i].tv.tv_sec,
-			       samp_mt[0][i].tv.tv_usec,
-			       samp_mt[0][i].slot,
-			       samp_mt[0][i].x,
-			       samp_mt[0][i].y,
-			       samp_mt[0][i].pressure);
+				printf(YELLOW "%ld.%06ld:" RESET " (slot %d) %6d %6d %6d\n",
+				       samp_mt[j][i].tv.tv_sec,
+				       samp_mt[j][i].tv.tv_usec,
+				       samp_mt[j][i].slot,
+				       samp_mt[j][i].x,
+				       samp_mt[j][i].y,
+				       samp_mt[j][i].pressure);
+			}
 		}
 	}
 
