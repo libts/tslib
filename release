@@ -89,7 +89,7 @@ if [ "$sign" -gt 0 ] ; then
        git tag -s ${version}
 fi
 
-./configure && make dist
+./configure && make distcheck
 sha256sum tslib-${version}.tar.xz > tslib-${version}.tar.xz.sha256
 sha256sum tslib-${version}.tar.gz > tslib-${version}.tar.gz.sha256
 sha256sum tslib-${version}.tar.bz2 > tslib-${version}.tar.bz2.sha256
