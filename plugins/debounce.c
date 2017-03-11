@@ -249,11 +249,6 @@ TSAPI struct tslib_module_info *debounce_mod_init(__attribute__ ((unused)) struc
 		return NULL;
 	}
 
-#ifdef DEBUG
-	fprintf(stderr, "tslib/debounce: drop_threshold=%u\n",
-				p->drop_threshold);
-#endif
-
 	return &p->module;
 }
 
