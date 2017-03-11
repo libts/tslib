@@ -95,12 +95,8 @@ static int linear_read_mt(struct tslib_module_info *info,
 	int nr;
 
 	ret = info->next->ops->read_mt(info->next, samp, max_slots, nr_samples);
-	if (ret < 0) {
-	#ifdef DEBUG
-		fprintf(stderr, "linear: couldn't read a sample\n");
-	#endif /*DEBUG*/
+	if (ret < 0)
 		return ret;
-	}
 
 	for (nr = 0; nr < ret; nr++) {
 	#ifdef DEBUG
