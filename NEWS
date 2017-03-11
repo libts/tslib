@@ -1,7 +1,8 @@
 ## tslib 1.7
 
 Changes since last release:
-* fix ts_read_mt() in non-blocking mode
+* ts_read_mt() now consistently returns errno set by read() when using
+  module_raw input
 * extended ts_print_mt to test more of our API
 * basic support for the Haiku OS
 * added a release helper script to simplify the releasing process
