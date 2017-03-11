@@ -456,7 +456,10 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 			rd = read(ts->fd,
 				  i->ev,
 				  sizeof(struct input_event) * NUM_EVENTS_READ);
-			if (rd < (int) sizeof(struct input_event)) {
+			if (rd == -1) {
+				total = errno * -1;
+				break;
+			} else if (rd < (int) sizeof(struct input_event)) {
 				total = -1;
 				break;
 			}
