@@ -147,6 +147,7 @@ static int variance_read_mt(struct tslib_module_info *info,
 	struct ts_sample_mt **cur_mt;
 	struct ts_sample *samp = NULL;
 	short pen_down = 1;
+	int ret;
 
 	samp = calloc(nr, sizeof(struct ts_sample));
 	if (!samp)
@@ -182,8 +183,12 @@ static int variance_read_mt(struct tslib_module_info *info,
 			cur = var->noise;
 			var->flags &= ~VAR_SUBMITNOISE;
 		} else {
-			if (info->next->ops->read_mt(info->next, cur_mt,
-						     max_slots, 1) < 1) {
+			ret = info->next->ops->read_mt(info->next, cur_mt,
+						       max_slots, 1);
+			if (ret < 0) {
+				count = ret;
+				goto out;
+			} else if (ret == 0) {
 				goto out;
 			}
 
