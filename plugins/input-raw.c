@@ -628,12 +628,13 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 						break;
 					case ABS_MT_SLOT:
 						if (i->ev[it].value < 0 || i->ev[it].value >= max_slots) {
-							fprintf(stderr, "tslib: slot out of range\n");
-							return -EINVAL;
+							fprintf(stderr, "tslib: warning: slot out of range. data corrupted!\n");
+							i->slot = max_slots - 1;
+						} else {
+							i->slot = i->ev[it].value;
+							i->buf[total][i->slot].slot = i->ev[it].value;
+							i->buf[total][i->slot].valid = 1;
 						}
-						i->slot = i->ev[it].value;
-						i->buf[total][i->slot].slot = i->ev[it].value;
-						i->buf[total][i->slot].valid = 1;
 						break;
 					}
 					break;
