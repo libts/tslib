@@ -417,7 +417,15 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 	int j, k;
 	int pen_up = 0;
 
-	if (i->buf == NULL) {
+	if (i->buf == NULL || i->max_slots < max_slots || i->nr < nr) {
+		if (i->buf) {
+			for (j = 0; j < i->nr; j++) {
+				if (i->buf[j])
+					free(i->buf[j]);
+			}
+			free(i->buf);
+		}
+
 		i->buf = malloc(nr * sizeof(struct ts_sample_mt *));
 		if (!i->buf)
 			return -ENOMEM;
