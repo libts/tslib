@@ -273,13 +273,13 @@ static int median_read_mt(struct tslib_module_info *inf,
 			printsamples_mt("MEDIAN: X Before", sorted, c->size, j);
 			qsort(&sorted[0], c->size, sizeof(sorted[0]), comp_int);
 			samp[i][j].x = sorted[c->size / 2];
-			printsamples_mt("MEDIAN: X After", sorted, c->size, j);
+			printsamples_mt("MEDIAN: X After ", sorted, c->size, j);
 
 			PREPARESAMPLE_MT(sorted, c, y, j);
 			printsamples_mt("MEDIAN: Y Before", sorted, c->size, j);
 			qsort(&sorted[0], c->size, sizeof(sorted[0]), comp_int);
 			samp[i][j].y = sorted[c->size / 2];
-			printsamples_mt("MEDIAN: Y After", sorted, c->size, j);
+			printsamples_mt("MEDIAN: Y After ", sorted, c->size, j);
 
 			PREPARESAMPLE_MT(usorted, c, pressure, j);
 			printsamples_mt("MEDIAN: Pressure Before",
@@ -287,7 +287,7 @@ static int median_read_mt(struct tslib_module_info *inf,
 			qsort(&usorted[0], c->size, sizeof(usorted[0]),
 			      comp_uint);
 			samp[i][j].pressure = usorted[c->size / 2];
-			printsamples_mt("MEDIAN: Pressure After",
+			printsamples_mt("MEDIAN: Pressure After ",
 					(int *)usorted, c->size, j);
 
 			printsample_mt("MEDIAN: ", &samp[i][j]);
