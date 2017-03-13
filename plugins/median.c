@@ -299,7 +299,7 @@ static int median_read_mt(struct tslib_module_info *inf,
 				 */
 				memset(c->delay_mt[j],
 				       0,
-				       sizeof(struct ts_sample) * c->size);
+				       sizeof(struct ts_sample_mt) * c->size);
 				c->withsamples_mt[j] = 0;
 			#ifdef DEBUG
 				printf("MEDIAN: Pen Up\n");
