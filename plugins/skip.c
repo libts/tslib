@@ -166,6 +166,7 @@ static int skip_read_mt(struct tslib_module_info *info,
 					if (skip->buf_mt[i])
 						free(skip->buf_mt[i]);
 				}
+				free(skip->buf_mt);
 			}
 
 			skip->buf_mt = malloc(skip->ntail *
@@ -301,13 +302,15 @@ static int skip_fini(struct tslib_module_info *info)
 	if (skip->buf)
 		free(skip->buf);
 
-	for (i = 0; i < skip->ntail; i++) {
-		if (skip->buf_mt[i])
-			free(skip->buf_mt[i]);
+	if (skip->buf_mt) {
+		for (i = 0; i < skip->ntail; i++) {
+			if (skip->buf_mt[i])
+				free(skip->buf_mt[i]);
+		}
+		free(skip->buf_mt);
 	}
 
 	if (skip->buf_mt)
-		free(skip->buf_mt);
 
 	if (skip->cur_mt && skip->cur_mt[0])
 		free(skip->cur_mt[0]);
@@ -315,7 +318,8 @@ static int skip_fini(struct tslib_module_info *info)
 	if (skip->cur_mt)
 		free(skip->cur_mt);
 
-	free(info);
+	if (info)
+		free(info);
 
 	return 0;
 }
