@@ -478,7 +478,7 @@ The procedure looks like this:
   * `LT_AGE` - increment **only if `LT_CURRENT` was incremented** and these **API changes are backwards compatible** (should always be the case, so it should match `LT_CURRENT`)
 
 6. create a new release/X.X branch remotely and switch to it locally
-* `./release -s -v X.X`
+* `./release -v X.X`
 * `git push origin release/X.X --tags`
 * create a github release off the signed tag by adding
   * release notes from the NEWS file
