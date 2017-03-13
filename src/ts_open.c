@@ -28,8 +28,11 @@ struct tsdev *ts_open(const char *name, int nonblock)
 	struct tsdev *ts;
 	int flags = O_RDWR;
 
-	if (nonblock)
+	if (nonblock) {
+	#ifndef WIN32
 		flags |= O_NONBLOCK;
+	#endif
+	}
 
 	ts = malloc(sizeof(struct tsdev));
 	if (ts) {
@@ -41,7 +44,11 @@ struct tsdev *ts_open(const char *name, int nonblock)
 		 * It will do for most drivers
 		 */
 		if (ts->fd == -1 && errno == EACCES) {
+		#ifndef WIN32
 			flags = nonblock ? (O_RDONLY | O_NONBLOCK) : O_RDONLY;
+		#else
+			flags = O_RDONLY;
+		#endif
 			ts->fd = open(name, flags);
 		}
 		if (ts->fd == -1)

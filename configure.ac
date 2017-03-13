@@ -20,6 +20,7 @@ AC_CANONICAL_HOST
 build_linux=no
 build_freebsd=no
 build_haiku=no
+build_windows=no
 case "${host_os}" in
 	linux*)
 		build_linux=yes
@@ -30,12 +31,16 @@ case "${host_os}" in
 	*haiku*)
 		build_haiku=yes
 		;;
+	mingw*)
+		build_windows=yes
+		;;
 	*)
 		;;
 esac
 AM_CONDITIONAL([LINUX], [test "$build_linux" = "yes"])
 AM_CONDITIONAL([FREEBSD], [test "$build_freebsd" = "yes"])
 AM_CONDITIONAL([HAIKU], [test "$build_haiku" = "yes"])
+AM_CONDITIONAL([WINDOWS], [test "$build_windows" = "yes"])
 
 # Checks for programs.
 AC_PROG_CC

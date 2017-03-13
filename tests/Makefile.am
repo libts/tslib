@@ -14,8 +14,11 @@ AM_CPPFLAGS		= -I$(top_srcdir)/src
 if HAIKU
 bin_PROGRAMS		= ts_print ts_print_raw ts_finddev
 else
+if WINDOWS
+bin_PROGRAMS		= ts_print ts_print_raw ts_finddev
+endif # WINDOWS
 bin_PROGRAMS		= ts_test ts_test_mt ts_calibrate ts_print ts_print_mt ts_print_raw ts_harvest ts_finddev
-endif
+endif # HAIKU
 
 ts_test_SOURCES		= ts_test.c testutils.c testutils.h fbutils.h font_8x8.c font_8x16.c font.h
 ts_test_LDADD		= $(top_builddir)/src/libts.la
