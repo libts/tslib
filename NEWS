@@ -13,6 +13,8 @@ Changes since last release:
   - 9617c7d dmc-raw: fix errno return code to be negative
   - dc2fdaf input-raw: remove errror message on each negative return from read()
   - 75b5f40 input-raw: return read() errno on error.
+  - de5e261 skip: fix buffer memory freeing
+  - da5477e median: fix ts_read_mt() pen down event
 
 
 ## tslib 1.6
