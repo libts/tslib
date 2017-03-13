@@ -143,7 +143,7 @@ static int median_read(struct tslib_module_info *inf, struct ts_sample *samp,
 			      sizeof(sorted[0]),
 			      comp_int);
 			s->x = sorted[c->size / 2];
-			printsamples("MEDIAN: X After", sorted, c->size);
+			printsamples("MEDIAN: X After ", sorted, c->size);
 
 			PREPARESAMPLE(sorted, c, y);
 			printsamples("MEDIAN: Y Before", sorted, c->size);
@@ -151,7 +151,7 @@ static int median_read(struct tslib_module_info *inf, struct ts_sample *samp,
 			      sizeof(sorted[0]),
 			      comp_int);
 			s->y = sorted[c->size / 2];
-			printsamples("MEDIAN: Y After", sorted, c->size);
+			printsamples("MEDIAN: Y After ", sorted, c->size);
 
 			PREPARESAMPLE(usorted, c, pressure);
 			printsamples("MEDIAN: Pressure Before",
@@ -160,7 +160,7 @@ static int median_read(struct tslib_module_info *inf, struct ts_sample *samp,
 			      sizeof(usorted[0]),
 			      comp_uint);
 			s->pressure = usorted[c->size / 2];
-			printsamples("MEDIAN: Pressure After",
+			printsamples("MEDIAN: Pressure After ",
 				     (int *)usorted, c->size);
 
 			printsample("", s);
@@ -206,7 +206,7 @@ static int median_read_mt(struct tslib_module_info *inf,
 	if (ret == 0)
 		fprintf(stderr, "MEDIAN: couldn't read data\n");
 
-	printf("MEDIAN: read %d samples (mem: %d nr x %d slots)\n",
+	printf("MEDIAN:   read %d samples (mem: %d nr x %d slots)\n",
 	       ret, nr, max_slots);
 #endif
 

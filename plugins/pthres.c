@@ -148,7 +148,7 @@ static int pthres_read_mt(struct tslib_module_info *info,
 		return ret;
 
 #ifdef DEBUG
-	printf("PTHRES: read %d samples (mem: %d nr x %d slots\n",
+	printf("PTHRES:   read %d samples (mem: %d nr x %d slots)\n",
 	       ret, nr_samples, max_slots);
 #endif
 

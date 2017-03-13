@@ -265,7 +265,7 @@ static int skip_read_mt(struct tslib_module_info *info,
 #ifdef DEBUG
 		for (i = 0; i < max_slots; i++) {
 			if (skip->buf_mt[skip->M][i].valid == 1) {
-				fprintf(stderr, "SKIP: -> (Slot %d: X:%d Y:%d) btn_touch:%d\n",
+				fprintf(stderr, "SKIP: (Slot %d) X:%4d Y:%4d btn_touch:%d\n",
 					skip->buf_mt[skip->M][i].slot,
 					skip->buf_mt[skip->M][i].x,
 					skip->buf_mt[skip->M][i].y,

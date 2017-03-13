@@ -477,7 +477,7 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 
 			for (it = 0; it < rd / sizeof(struct input_event); it++) {
 			#ifdef DEBUG
-				printf("INPUT-RAW: read type %d  code %d  value %d\n",
+				printf("INPUT-RAW: read type %d  code %3d  value %4d\n",
 				       i->ev[it].type, i->ev[it].code,
 				       i->ev[it].value);
 			#endif
