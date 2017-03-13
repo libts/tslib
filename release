@@ -12,11 +12,10 @@
 # WARNING: This script is very dangerous! It may delete any untracked files.
 
 have_version=0
-sign=0
 
 usage()
 {
-        echo "Usage: $0 [-s] -v version"
+        echo "Usage: $0 -v version"
 }
 
 args=$(getopt -o v:s -- "$@")
@@ -33,16 +32,12 @@ do
                 have_version=1
                 shift
                 ;;
-        -s)
-                sign=1
-                shift
-                ;;
         --)
                 shift
                 break
                 ;;
         *)
-                perr "Invalid option: $1"
+                echo "Invalid option: $1"
                 usage
                 exit 1
                 ;;
@@ -85,18 +80,14 @@ mv release.gitignore .gitignore
 git add .
 git commit -m "add generated files for ${version}"
 
-if [ "$sign" -gt 0 ] ; then
-       git tag -s ${version}
-fi
+git tag -s ${version}
 
 ./configure && make distcheck
 sha256sum tslib-${version}.tar.xz > tslib-${version}.tar.xz.sha256
 sha256sum tslib-${version}.tar.gz > tslib-${version}.tar.gz.sha256
 sha256sum tslib-${version}.tar.bz2 > tslib-${version}.tar.bz2.sha256
 
-if [ "$sign" -gt 0 ] ; then
-       gpg -b -a tslib-${version}.tar.xz
-       gpg -b -a tslib-${version}.tar.gz
-       gpg -b -a tslib-${version}.tar.bz2
-fi
+gpg -b -a tslib-${version}.tar.xz
+gpg -b -a tslib-${version}.tar.gz
+gpg -b -a tslib-${version}.tar.bz2
 
