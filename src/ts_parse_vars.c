@@ -18,6 +18,10 @@
 
 #include "tslib-private.h"
 
+#ifdef WIN32
+#include "ts_strsep.h"
+#endif
+
 #define BUF_SIZE 1024
 
 char s_holder[BUF_SIZE];
@@ -36,7 +40,11 @@ int tslib_parse_vars(struct tslib_module_info *mod,
 	s_holder[BUF_SIZE - 1] = '\0';
 
 	s = s_holder;
+#ifndef WIN32
 	while ((p = strsep(&s, " \t")) != NULL && ret == 0) {
+#else
+	while ((p = ts_strsep(&s, " \t")) != NULL && ret == 0) {
+#endif
 		const struct tslib_vars *v;
 		char *eq;
 
