@@ -1,3 +1,9 @@
+## tslib 1.8
+
+tslib 1.8 is backwards compatible. Changes since last release include:
+* experimental support for building on Windows (using MSYS2)
+
+
 ## tslib 1.7
 
 Changes since last release:

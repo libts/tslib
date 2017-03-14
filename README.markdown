@@ -13,12 +13,14 @@ _use it_ in your environment. There's a [short introductory presentation from 20
 * [filter modules](#filter-modules)
 * [libts - the library](#libts---the-library)
 * [tslib development](#tslib-development)
+* [building tslib](#building-tslib)
 
 
 ## setup and configure tslib
 ### install tslib
 tslib should be usable on various operating systems, including GNU/Linux,
-Freebsd or Android/Linux. Apart from building the latest tarball release by
+Freebsd or Android/Linux. See [building tslib](#building-tslib) for details.
+Apart from building the latest tarball release, running
 `./configure`, `make` and `make install`, tslib is available from the following
 distributors and their package management:
 * [Arch Linux](https://www.archlinux.org) and [Arch Linux ARM](https://archlinuxarm.org) - `pacman -S tslib`
@@ -492,3 +494,50 @@ The procedure looks like this:
 * [Wikipedia evdev](https://en.wikipedia.org/wiki/Evdev)
 * [Linux event codes documentation](https://www.kernel.org/doc/Documentation/input/event-codes.txt)
 * [Linux event codes definitions](https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/include/uapi/linux/input-event-codes.h)
+
+## building tslib
+
+tslib is primarily developed for Linux. However you should be able to run
+`./configure && make` on a large variety of operating systems.
+You won't (yet) get the same experience for all systems though:
+
+#### libts and filter plugins (`module`s)
+
+This is the hardware independent core part: _libts and all filter modules_ as
+_shared libraries_, build on the following operating systems.
+
+* **GNU / Linux**
+* **Android / Linux**
+* **FreeBSD**
+* **Haiku**
+* **Windows**
+* Mac OS X (?)
+* Hurd (?)
+
+#### input plugins (`module_raw`)
+
+This makes the thing usable in the read world because it accesses your device.
+See the [configure.ac](https://github.com/kergoth/tslib/blob/master/configure.ac)
+file for the currently possible configuration for your platform.
+
+* GNU / Linux - all
+* Android / Linux - all
+* FreeBSD - almost all
+* Haiku - some
+* Windows - non yet
+
+Writing your own plugin is quite easy, in case an existing one doesn't fit.
+
+#### test program and tools
+
+* GNU / Linux - all
+* Android / Linux - all (?)
+* FreeBSD - all (?)
+* Haiku - ts_print, ts_print_raw, ts_finddev
+* Windows - ts_print.exe, ts_print_raw.exe
+
+help porting missing programs!
+
+#### libts user plugin
+This can be _any third party program_, using tslib's API. For Linux, we include
+`ts_uinput`, but Qt, X11 or anything else can use tslib's API.
