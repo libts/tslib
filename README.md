@@ -11,7 +11,7 @@ _use it_ in your environment. There's a [short introductory presentation from 20
 ## table of contents
 * [setup and configure tslib](#setup-and-configure-tslib)
 * [filter modules](#filter-modules)
-* [libts - the library](#libts---the-library)
+* [the libts library](#the-libts-library)
 * [building tslib](#building-tslib)
 
 
@@ -243,7 +243,7 @@ Parameters:
 ***
 
 
-## libts - the library
+## the libts library
 ### the libts API
 Check out the [tests](https://github.com/kergoth/tslib/tree/master/tests)
 directory for examples how to use it.
