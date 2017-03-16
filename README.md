@@ -245,8 +245,7 @@ Parameters:
 
 ## the libts library
 ### the libts API
-Check out the [tests](https://github.com/kergoth/tslib/tree/master/tests)
-directory for examples how to use it.
+Check out our tests directory for examples how to use it.
 
 `ts_open()`  
 `ts_config()`  
@@ -261,7 +260,7 @@ directory for examples how to use it.
 `ts_read_mt()`  
 `ts_reat_raw_mt()`  
 
-The API is documented in [our man pages](https://github.com/kergoth/tslib/tree/master/doc).
+The API is documented in our man pages in the doc directory.
 Possibly there will be distributors who provide them online, like
 [Debian had done for tslib-1.0](https://manpages.debian.org/wheezy/libts-bin/index.html).
 As soon as there are up-to-date html pages hosted somewhere, we'll link the
@@ -305,7 +304,7 @@ backwards compatibility.
 
 ### libts users
 
-* [ts_uinput](https://github.com/kergoth/tslib/blob/master/tools/ts_uinput.c) - userspace event device driver for the tslib-filtered samples
+* ts_uinput - userspace event device driver for the tslib-filtered samples. part of tslib (tools/ts_uinput.c)
 * [xf86-input-tslib](http://public.pengutronix.de/software/xf86-input-tslib/) - **outdated** direct tslib input plugin for X
 * [qtslib](https://github.com/qt/qtbase/tree/dev/src/platformsupport/input/tslib) - **outdated** Qt5 qtbase tslib plugin
 
@@ -451,8 +450,8 @@ _shared libraries_, build on the following operating systems.
 #### input plugins (`module_raw`)
 
 This makes the thing usable in the read world because it accesses your device.
-See the [configure.ac](https://github.com/kergoth/tslib/blob/master/configure.ac)
-file for the currently possible configuration for your platform.
+See our configure.ac file for the currently possible configuration for your
+platform.
 
 * GNU / Linux - all
 * Android / Linux - all
