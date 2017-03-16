@@ -460,19 +460,23 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 	if (i->using_syn) {
 		while (total < nr) {
 			memset(i->ev, 0, sizeof(i->ev));
-
 			rd = read(ts->fd,
 				  i->ev,
 				  sizeof(struct input_event) * NUM_EVENTS_READ);
 			if (rd == -1) {
-				if (errno > 0)
-					total = errno * -1;
-				else
-					total = errno;
-				break;
+				if (total == 0) {
+					if (errno > 0)
+						return errno * -1;
+					else
+						return errno;
+				} else {
+					return total;
+				}
 			} else if (rd < (int) sizeof(struct input_event)) {
-				total = -1;
-				break;
+				if (total == 0)
+					return -1;
+				else
+					return total;
 			}
 
 			for (it = 0; it < rd / sizeof(struct input_event); it++) {
@@ -639,9 +643,7 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 					}
 					break;
 				}
-				if (total == nr)
-					break;
-			}
+			} /* just NUM_EVENTS_READ. it's simply 1 */
 		}
 		ret = total;
 	} else {

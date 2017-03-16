@@ -146,17 +146,13 @@ int main(int argc, char **argv)
 			exit(1);
 		}
 
-		if (ret != read_samples) {
-			printf("ts_print_mt: read less samples than requested\n");
-			continue;
-		}
-
 		for (j = 0; j < ret; j++) {
 			for (i = 0; i < max_slots; i++) {
 				if (samp_mt[j][i].valid != 1)
 					continue;
 
-				printf(YELLOW "%ld.%06ld:" RESET " (slot %d) %6d %6d %6d\n",
+				printf(YELLOW "sample %d - %ld.%06ld -" RESET " (slot %d) %6d %6d %6d\n",
+				       j,
 				       samp_mt[j][i].tv.tv_sec,
 				       samp_mt[j][i].tv.tv_usec,
 				       samp_mt[j][i].slot,
