@@ -6,8 +6,6 @@
 # you should have received as part of this distribution.
 
 # Script to build release-archives with. This requires a checkout from git.
-# If you really do a release, be sure to be on a newly created release/X.X
-# branch.
 
 # WARNING: This script is very dangerous! It may delete any untracked files.
 
@@ -63,26 +61,23 @@ else
        exit 1
 fi
 
-# Check that we are on a release branch
+# Check that we are on master
 branch=$(git rev-parse --abbrev-ref HEAD)
 echo "we are on branch $branch"
 
-if [ ! "${branch}" = "release/${version}" ] ; then
-	echo "you don't seem to be on the release branch"
+if [ ! "${branch}" = "master" ] ; then
+	echo "you don't seem to be on the master branch"
 	exit 1
 fi
 
 ./autogen.sh && ./configure && make distcheck
 ./configure --disable-dependency-tracking && make distclean && ./autogen-clean.sh
 git clean -d -f
-mv release.gitignore .gitignore
-./autogen.sh
-git add .
-git commit -m "add generated files for ${version}"
 
+git commit -m "tslib ${version}"
 git tag -s ${version}
 
-./configure && make distcheck
+./autogen.sh && ./configure && make distcheck
 sha256sum tslib-${version}.tar.xz > tslib-${version}.tar.xz.sha256
 sha256sum tslib-${version}.tar.gz > tslib-${version}.tar.gz.sha256
 sha256sum tslib-${version}.tar.bz2 > tslib-${version}.tar.bz2.sha256

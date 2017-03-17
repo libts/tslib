@@ -43,10 +43,26 @@ or distributing tslib, make sure you comply with the licenses. And please make
 sure you have the right to the code you are contributing yourself. There is no
 other copyright aggreement. You retain your copyright to your code.
 
+### branching model
+The short version is: there really is none. But what is important is that
+our master branch is __not__ to be considered stable! A stable state will always
+be tagged (and released as tarballs).
+
+And please simply ignore the release/X.X branches! They are old.
+
+For larger features that aren't in any useful state, there are feature branches
+with random names.
+
+Smaller changes can always be done on master and therefore, the master branch
+can always be merged into feature branches, while they are in development.
+
+When a feature branch's work is stable enough, it is simply merged into master.
+We always use `git merge -no-ff`.
+
 ### release procedure
 A release can be done when either
-* an issue tagged as "improvement" is implemented, or
-* the previous release contains a user visible regression
+* the NEWS file fills up or
+* the previous release contains a visible regression
 
 The procedure looks like this:
 
@@ -60,15 +76,18 @@ The procedure looks like this:
   * `LT_REVISION` - increment if anything changed. but if `LT_CURRENT` was incremented, set to 0!
   * `LT_AGE` - increment **only if `LT_CURRENT` was incremented** and these **API changes are backwards compatible** (should always be the case, so it should match `LT_CURRENT`)
 
-* create a new release/X.X branch remotely and switch to it locally
-* `./release -v X.X`
-* `git push origin release/X.X --tags`
+* do __not__ commit the version change! run `./release -v X.X`
+* `git push origin master --tags`
 * create a github release off the signed tag by adding
   * release notes from the NEWS file
   * 3 times: tarball, asc signature and sha256sum files
 * publish and inform distributors
 * when the backup [gitlab repository](https://gitlab.com/tslib/tslib) pulled the release tag in, add the tarballs and release notes there.
 * celebrate!
+
+sidenote: up until 1.7 we kept the habit of adding generated files to a release
+branch that is never used again. Those branches exist. We can't do anything
+about it. We won't create new ones anymore though!
 
 ### specifications relevant to tslib
 
