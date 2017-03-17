@@ -259,7 +259,7 @@ galax_la_LIBADD = $(top_builddir)/src/libts.la
 touchkit_la_SOURCES	= touchkit-raw.c
 touchkit_la_LDFLAGS	= -module $(LTVSN)
 
-cy8mrln_palmpre_la_SOURCES = cy8mrln-palmpre.c
+cy8mrln_palmpre_la_SOURCES = cy8mrln-palmpre.c cy8mrln.h
 cy8mrln_palmpre_la_LDFLAGS = -module $(LTVSN)
 
 waveshare_la_SOURCES	= waveshare-raw.c
