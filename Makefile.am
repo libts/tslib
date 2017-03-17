@@ -10,7 +10,7 @@
 #
 
 SUBDIRS		= etc src plugins tests tools doc
-EXTRA_DIST	= autogen.sh README.markdown m4/external
+EXTRA_DIST	= autogen.sh README.md m4/external
 AM_DISTCHECK_CONFIGURE_FLAGS = --disable-dependency-tracking
 DISTCLEANFILES = $(PACKAGE).pc
 
