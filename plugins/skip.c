@@ -131,7 +131,6 @@ static int skip_read_mt(struct tslib_module_info *info,
 	struct tslib_skip *skip = (struct tslib_skip *)info;
 	int nread = 0;
 	int i, j;
-	short pen_up = 0;
 	int ret = 0;
 
 	if (skip->cur_mt == NULL || max_slots > skip->slots) {
@@ -212,7 +211,7 @@ static int skip_read_mt(struct tslib_module_info *info,
 			skip->N++;
 			for (i = 0; i < max_slots; i++) {
 				if (skip->cur_mt[0][i].valid == 1 &&
-				    skip->cur_mt[0][i].pen_down == 0)
+				    skip->cur_mt[0][i].pressure == 0)
 					reset_skip(skip);
 			}
 			continue;
@@ -221,7 +220,7 @@ static int skip_read_mt(struct tslib_module_info *info,
 		/* We didn't send DOWN -- Ignore UP */
 		for (i = 0; i < max_slots; i++) {
 			if (skip->cur_mt[0][i].valid == 1 &&
-			    skip->cur_mt[0][i].pen_down == 0 &&
+			    skip->cur_mt[0][i].pressure == 0 &&
 			    skip->sent == 0) {
 				reset_skip(skip);
 				continue;
@@ -237,7 +236,7 @@ static int skip_read_mt(struct tslib_module_info *info,
 			skip->sent = 1;
 			for (i = 0; i < max_slots; i++) {
 				if (skip->cur_mt[0][i].valid == 1 &&
-				    skip->cur_mt[0][i].pen_down == 0)
+				    skip->cur_mt[0][i].pressure == 0)
 					reset_skip(skip);
 			}
 			continue;
@@ -265,10 +264,11 @@ static int skip_read_mt(struct tslib_module_info *info,
 #ifdef DEBUG
 		for (i = 0; i < max_slots; i++) {
 			if (skip->buf_mt[skip->M][i].valid == 1) {
-				fprintf(stderr, "SKIP: (Slot %d) X:%4d Y:%4d btn_touch:%d\n",
+				fprintf(stderr, "SKIP: (Slot %d) X:%4d Y:%4d pressure:%d btn_touch:%d\n",
 					skip->buf_mt[skip->M][i].slot,
 					skip->buf_mt[skip->M][i].x,
 					skip->buf_mt[skip->M][i].y,
+					skip->buf_mt[skip->M][i].pressure,
 					skip->buf_mt[skip->M][i].pen_down);
 			}
 		}
@@ -277,17 +277,11 @@ static int skip_read_mt(struct tslib_module_info *info,
 
 		for (i = 0; i < max_slots; i++) {
 			if (skip->cur_mt[0][i].valid == 1 &&
-			    skip->cur_mt[0][i].pen_down == 0) {
+			    skip->cur_mt[0][i].pressure == 0) {
 				reset_skip(skip);
-				pen_up = 1;
+			} else {
+				skip->buf_mt[skip->M][i] = skip->cur_mt[0][i];
 			}
-		}
-		if (pen_up == 1) {
-			memcpy(skip->buf_mt[skip->M],
-			       skip->cur_mt[0],
-			       max_slots * sizeof(struct ts_sample_mt));
-			skip->M++;
-			skip->sent = 1;
 		}
 	}
 
