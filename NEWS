@@ -2,6 +2,10 @@
 
 tslib 1.8 is backwards compatible. Changes since last release include:
 * experimental support for building on Windows (using MSYS2)
+* fixed ts_read_mt() in non-blocking operation when trying to read more than
+  1 sample, see bugfixes
+* bugfixes
+  - 388d3da input-raw: ts_read_mt: fix returning actually read samples
 
 
 ## tslib 1.7

@@ -84,7 +84,9 @@ and
 do the same thing without tslib's filters applied.
 
 .SH RETURN VALUE
-The number of actually read samples is returned. On failure, a negative error number is returned.
+The number of actually read samples is returned. Especially when opened in non-blocking mode, see
+.BR ts_setup()
+, that can be less than requested in the call. On failure, a negative error number is returned.
 
 .SH EXAMPLE
 The following program continuously reads tslib multitouch input samples
