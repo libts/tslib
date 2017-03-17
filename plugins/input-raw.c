@@ -529,6 +529,12 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 						if (i->type_a)
 							i->slot = 0;
 
+					#ifdef DEBUG
+						fprintf(stderr,
+							"INPUT-RAW: time %ld.%ld\n",
+							(long)samp[j][k].tv.tv_sec,
+							(long)samp[j][k].tv.tv_usec);
+					#endif
 						total++;
 						break;
 					case SYN_MT_REPORT:
