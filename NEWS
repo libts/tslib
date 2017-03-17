@@ -6,6 +6,7 @@ tslib 1.8 is backwards compatible. Changes since last release include:
   1 sample, see bugfixes
 * bugfixes
   - 388d3da input-raw: ts_read_mt: fix returning actually read samples
+  - c7f0966 debounce: use signed time values
 
 
 ## tslib 1.7
