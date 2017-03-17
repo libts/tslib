@@ -481,9 +481,10 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 
 			for (it = 0; it < rd / sizeof(struct input_event); it++) {
 			#ifdef DEBUG
-				printf("INPUT-RAW: read type %d  code %3d  value %4d\n",
+				printf("INPUT-RAW: read type %d  code %3d  value %4d  time %ld.%ld\n",
 				       i->ev[it].type, i->ev[it].code,
-				       i->ev[it].value);
+				       i->ev[it].value, (long)i->ev[it].time.tv_sec,
+				       (long)i->ev[it].time.tv_usec);
 			#endif
 				switch (i->ev[it].type) {
 				case EV_KEY:
@@ -529,12 +530,6 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 						if (i->type_a)
 							i->slot = 0;
 
-					#ifdef DEBUG
-						fprintf(stderr,
-							"INPUT-RAW: time %ld.%ld\n",
-							(long)samp[j][k].tv.tv_sec,
-							(long)samp[j][k].tv.tv_usec);
-					#endif
 						total++;
 						break;
 					case SYN_MT_REPORT:
@@ -649,6 +644,8 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 					}
 					break;
 				}
+				if (total == ret)
+					break;
 			} /* just NUM_EVENTS_READ. it's simply 1 */
 		}
 		ret = total;
