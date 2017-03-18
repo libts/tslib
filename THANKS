@@ -39,10 +39,17 @@ Thomas Zimmermann <zimmermann@vdm-design.de>
 Wolfram Sang <w.sang@pengutronix.de>
 
 Not everything had been done the clean git way, so there are more people
-who helped out. At least we know of the following:
+who helped writing tslib. At least we know of the following:
 
 Melchior Franz <melchior.franz@ginzinger.com>
 Kári Davíðsson
 Nelson Castillo
+
+There are also a number of people reporting bugs, test and help improving
+tslib not just by writing code. This list is not complete:
+
+Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
+Philipp Eichinger <philipp.eichinger@ginzinger.com>
+Clay D. Montgomery
 
 	Thanks for your contribution to tslib!
