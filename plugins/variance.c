@@ -45,6 +45,9 @@ struct tslib_variance {
 #define VAR_NOISEVALID		0x00000004
 #define VAR_SUBMITNOISE		0x00000008
 	int slots;
+	int nr;
+	struct ts_sample_mt **cur_mt;
+	struct ts_sample *samp;
 };
 
 static int sqr(int x)
@@ -144,38 +147,46 @@ static int variance_read_mt(struct tslib_module_info *info,
 	int count = 0, dist;
 	int i, j;
 	struct ts_sample cur;
-	struct ts_sample_mt **cur_mt;
-	struct ts_sample *samp = NULL;
 	short pen_down = 1;
 	int ret;
 
-	samp = calloc(nr, sizeof(struct ts_sample));
-	if (!samp)
-		return -ENOMEM;
-
-	cur_mt = malloc(nr * sizeof(struct ts_sample_mt *));
-	if (!cur_mt) {
-		free(samp);
-		return -ENOMEM;
-	}
-
-	for (i = 0; i < 1; i++) {
-		cur_mt[i] = malloc(max_slots * sizeof(struct ts_sample_mt));
-		if (!cur_mt[i]) {
-			for (j = 0; j <= i; j++)
-				free(cur_mt[j]);
-
-			free(cur_mt);
-			free(samp);
-
+	if (var->samp == NULL) {
+		var->samp = calloc(nr, sizeof(struct ts_sample));
+		if (!var->samp)
 			return -ENOMEM;
-		}
+	} else {
+		if (nr == var->nr)
+			memset(var->samp, 0, nr * sizeof(struct ts_sample));
 	}
 
-	if (var->slots < max_slots) {
-		/* TODO fix memory allocation - we only need allocation here */
-		printf("tslib: warning: multitouch not implemented for variance filter\n");
+	if (var->cur_mt == NULL || max_slots > var->slots || nr > var->nr) {
+		printf("tslib: WARNING: no multitouch using VARIANCE filter\n");
+		if (var->cur_mt) {
+			for (i = 0; i < var->nr; i++) {
+				if (var->cur_mt[i])
+					free(var->cur_mt[i]);
+			}
+			free(var->cur_mt);
+		}
+
+		var->cur_mt = malloc(nr * sizeof(struct ts_sample_mt *));
+		if (!var->cur_mt)
+			return -ENOMEM;
+
+		for (i = 0; i < nr; i++) {
+			var->cur_mt[i] = malloc(max_slots * sizeof(struct ts_sample_mt));
+			if (!var->cur_mt[i]) {
+				for (j = 0; j <= i; j++)
+					free(var->cur_mt[j]);
+
+				free(var->cur_mt);
+				free(var->samp);
+				return -ENOMEM;
+			}
+		}
+
 		var->slots = max_slots;
+		var->nr = nr;
 	}
 
 	while (count < nr) {
@@ -183,7 +194,7 @@ static int variance_read_mt(struct tslib_module_info *info,
 			cur = var->noise;
 			var->flags &= ~VAR_SUBMITNOISE;
 		} else {
-			ret = info->next->ops->read_mt(info->next, cur_mt,
+			ret = info->next->ops->read_mt(info->next, var->cur_mt,
 						       max_slots, 1);
 			if (ret < 0) {
 				count = ret;
@@ -193,7 +204,7 @@ static int variance_read_mt(struct tslib_module_info *info,
 			}
 
 			for (i = 1; i < max_slots; i++) {
-				if (cur_mt[0][i].valid == 1) {
+				if (var->cur_mt[0][i].valid == 1) {
 				#ifdef DEBUG
 					fprintf(stderr,
 						"VARIANCE: MT data dropped.\n");
@@ -202,16 +213,16 @@ static int variance_read_mt(struct tslib_module_info *info,
 					 * using ts_read_mt() with the variance
 					 * filter
 					 */
-					cur_mt[0][i].valid = 0;
+					var->cur_mt[0][i].valid = 0;
 				}
 			}
-			if (cur_mt[0][0].valid != 1)
+			if (var->cur_mt[0][0].valid != 1)
 				continue;
 
-			cur.x = cur_mt[0][0].x;
-			cur.y = cur_mt[0][0].y;
-			cur.pressure = cur_mt[0][0].pressure;
-			cur.tv = cur_mt[0][0].tv;
+			cur.x = var->cur_mt[0][0].x;
+			cur.y = var->cur_mt[0][0].y;
+			cur.pressure = var->cur_mt[0][0].pressure;
+			cur.tv = var->cur_mt[0][0].tv;
 		}
 
 		if (cur.pressure == 0) {
@@ -253,14 +264,14 @@ static int variance_read_mt(struct tslib_module_info *info,
 					/* Two "noises": it's just a quick pen
 					 * movement
 					 */
-					samp[count] = var->last = var->noise;
-					samp_mt[count][0].x = samp[count].x;
-					samp_mt[count][0].y = samp[count].y;
-					samp_mt[count][0].pressure = samp[count].pressure;
-					samp_mt[count][0].tv = samp[count].tv;
+					var->samp[count] = var->last = var->noise;
+					samp_mt[count][0].x = var->samp[count].x;
+					samp_mt[count][0].y = var->samp[count].y;
+					samp_mt[count][0].pressure = var->samp[count].pressure;
+					samp_mt[count][0].tv = var->samp[count].tv;
 					samp_mt[count][0].valid = 1;
-					samp_mt[count][0].slot = cur_mt[0][0].slot;
-					samp_mt[count][0].tracking_id = cur_mt[0][0].tracking_id;
+					samp_mt[count][0].slot = var->cur_mt[0][0].slot;
+					samp_mt[count][0].tracking_id = var->cur_mt[0][0].tracking_id;
 					samp_mt[count][0].pen_down = pen_down;
 					count++;
 					var->flags = (var->flags &
@@ -283,35 +294,38 @@ acceptsample:
 		fprintf(stderr, "VARIANCE----------------> %d %d %d\n",
 			var->last.x, var->last.y, var->last.pressure);
 #endif
-		samp[count] = var->last;
-		samp_mt[count][0].x = samp[count].x;
-		samp_mt[count][0].y = samp[count].y;
-		samp_mt[count][0].pressure = samp[count].pressure;
-		samp_mt[count][0].tv = samp[count].tv;
+		var->samp[count] = var->last;
+		samp_mt[count][0].x = var->samp[count].x;
+		samp_mt[count][0].y = var->samp[count].y;
+		samp_mt[count][0].pressure = var->samp[count].pressure;
+		samp_mt[count][0].tv = var->samp[count].tv;
 		samp_mt[count][0].valid = 1;
-		samp_mt[count][0].slot = cur_mt[0][0].slot;
-		samp_mt[count][0].tracking_id = cur_mt[0][0].tracking_id;
+		samp_mt[count][0].slot = var->cur_mt[0][0].slot;
+		samp_mt[count][0].tracking_id = var->cur_mt[0][0].tracking_id;
 		samp_mt[count][0].pen_down = var->last_pen_down;
 		count++;
 		var->last = cur;
 	}
 
 out:
-	for (i = 0; i < 1; i++) {
-		if (cur_mt[i])
-			free(cur_mt[i]);
-	}
-
-	if (cur_mt)
-		free(cur_mt);
-
-	free(samp);
-
 	return count;
 }
 
 static int variance_fini(struct tslib_module_info *info)
 {
+	struct tslib_variance *var = (struct tslib_variance *)info;
+	int i;
+
+	if (var->cur_mt) {
+		for (i = 0; i < var->nr; i++) {
+			if (var->cur_mt[i])
+				free(var->cur_mt[i]);
+		}
+		free(var->cur_mt);
+	}
+	if (var->samp)
+		free(var->samp);
+
 	free(info);
 
 	return 0;
@@ -367,6 +381,9 @@ TSAPI struct tslib_module_info *variance_mod_init(__attribute__ ((unused)) struc
 	var->flags = 0;
 	var->last_pen_down = 1;
 	var->slots = 0;
+	var->cur_mt = NULL;
+	var->nr = 0;
+	var->samp = NULL;
 
 	if (tslib_parse_vars(&var->module, variance_vars, NR_VARS, params)) {
 		free(var);
