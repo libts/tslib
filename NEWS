@@ -4,9 +4,12 @@ tslib 1.8 is backwards compatible. Changes since last release include:
 * experimental support for building on Windows (using MSYS2)
 * fixed ts_read_mt() in non-blocking operation when trying to read more than
   1 sample, see bugfixes
+* added workaround for strangely behaving eGalax model 210 devices, see bugfixes
 * bugfixes
   - 388d3da input-raw: ts_read_mt: fix returning actually read samples
   - c7f0966 debounce: use signed time values
+  - 9a9b0c9 pthres: read_mt: fix internal pressure state handling
+  - fa10e4c galax: version 210: use ABS_MT_DISTANCE to find pressure 0
 
 
 ## tslib 1.7
