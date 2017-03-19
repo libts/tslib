@@ -27,7 +27,7 @@
 #include "tslib.h"
 #include "testutils.h"
 
-void usage(char **argv)
+static void usage(char **argv)
 {
 	printf("Usage: %s [--raw] [--non-blocking] [-s samples] [-i <device>]\n", argv[0]);
 }
