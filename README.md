@@ -60,7 +60,8 @@ by any combination of filter modules.
     module dejitter delta=100
     module linear
 
-see the [below](#filter-modules) for available filters and their parameters.
+see the [section below](#filter-modules) for available filters and their
+parameters.
 
 With this configuration file, we end up with the following data flow
 through the library:

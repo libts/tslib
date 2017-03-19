@@ -67,6 +67,7 @@ A release can be done when either
 The procedure looks like this:
 
 * run coverity (or any static analysis) and fix new discovered issues
+* at least `./autogen.sh && ./configure && make` on all supported operating systems
 * be sure to have a stable build system and your private gpg key set up
 * update the NEWS file with the changelog and bugfixes
 * update the THANKS file
@@ -104,7 +105,7 @@ is the main upstream repository users download from. The
 maintainer of course must have access to it, at least for committing and
 creating releases. When becoming a new maintainer, ask Christopher Larson, who
 holds the "kergoth" github account, to give you access.
-* the tslib.org project page. It is currently registered at
+* the [tslib.org](http://tslib.org) project page. It is currently registered at
 [easyname](https://www.easyname.com) and consists of one index.html and one
 css file only. They are simply hosted at easyname's included webspace.
 This project site must include links to *all parts* of the tslib project.
