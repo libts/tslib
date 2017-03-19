@@ -231,6 +231,13 @@ static int ts_galax_read(struct tslib_module_info *inf,
 				case ABS_X: i->current_x = ev.value; break;
 				case ABS_Y: i->current_y = ev.value; break;
 				case ABS_PRESSURE: i->current_p = ev.value; break;
+				case ABS_MT_DISTANCE:
+					if (ev.value > 0)
+						i->current_p = 0;
+					else
+						i->current_p = 255;
+
+					break;
 				}
 			} else if (i->model_version == VERSION_0100) {
 				switch (ev.code) {
