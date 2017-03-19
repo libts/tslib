@@ -47,6 +47,10 @@
 # define KEY_CNT (KEY_MAX+1)
 #endif
 
+#ifndef ABS_MT_DISTANCE /* < 2.6.38 kernel headers */
+# define ABS_MT_DISTANCE         0x3b    /* Contact hover distance */
+#endif
+
 #include "tslib-private.h"
 
 #define GRAB_EVENTS_WANTED  1
