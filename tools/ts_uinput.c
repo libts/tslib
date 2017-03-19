@@ -476,13 +476,13 @@ int main(int argc, char **argv)
 
 	while (1) {
 		const struct option long_options[] = {
-			{ "help",         no_argument,       0, 'h' },
-			{ "name",         required_argument, 0, 'n' },
-			{ "verbose",      no_argument,       0, 'v' },
-			{ "daemonize",    no_argument,       0, 'd' },
-			{ "idev",         required_argument, 0, 'i' },
-			{ "fbdev",        required_argument, 0, 'f' },
-			{ "slots",        required_argument, 0, 's' },
+			{ "help",         no_argument,       NULL, 'h' },
+			{ "name",         required_argument, NULL, 'n' },
+			{ "verbose",      no_argument,       NULL, 'v' },
+			{ "daemonize",    no_argument,       NULL, 'd' },
+			{ "idev",         required_argument, NULL, 'i' },
+			{ "fbdev",        required_argument, NULL, 'f' },
+			{ "slots",        required_argument, NULL, 's' },
 		};
 
 		int option_index = 0;
