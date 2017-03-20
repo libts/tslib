@@ -21,6 +21,10 @@
 
 #include "tslib-private.h"
 
+#ifdef DEBUG
+#include <stdio.h>
+#endif
+
 extern struct tslib_module_info __ts_raw;
 
 #ifdef DEBUG
