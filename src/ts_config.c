@@ -32,7 +32,7 @@
 /* Discard any empty tokens
  * Note: strsep modifies p (see man strsep)
  */
-void discard_null_tokens(char **p, char **tokPtr)
+static void discard_null_tokens(char **p, char **tokPtr)
 {
 	while (*p != NULL && **tokPtr == '\0') {
 	#ifndef WIN32
