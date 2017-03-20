@@ -21,7 +21,7 @@
 #include "testutils.h"
 
 /* [inactive] border fill text [active] border fill text */
-int button_palette [6] =
+static int button_palette [6] =
 {
         1, 4, 2,
         1, 5, 0
