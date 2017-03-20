@@ -23,10 +23,40 @@
 
 extern struct tslib_module_info __ts_raw;
 
+#ifdef DEBUG
+/* verify we use the correct OS specific code at runtime.
+ * If we use it, test it here!
+ */
+static void print_host_os(void)
+{
+#if defined (__linux__)
+	printf("Host OS: Linux\n");
+#elif defined (__FreeBSD__)
+	printf("Host OS: FreeBSD\n");
+#elif defined (__OpenBSD__)
+	printf("Host OS: OpenBSD\n");
+#elif defined (WIN32)
+	printf("Host OS: Windows\n");
+#elif defined (__HAIKU__)
+	printf("Host OS: Haiku\n");
+#elif defined (__BEOS__)
+	printf("Host OS: BeOS\n");
+#elif defined (__APPLE__)
+	printf("Host OS: Darwin\n");
+#else
+	printf("Host OS: unknown\n");
+#endif
+}
+#endif /* DEBUG */
+
 struct tsdev *ts_open(const char *name, int nonblock)
 {
 	struct tsdev *ts;
 	int flags = O_RDWR;
+
+#ifdef DEBUG
+	print_host_os();
+#endif
 
 	if (nonblock) {
 	#ifndef WIN32

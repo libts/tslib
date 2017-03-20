@@ -28,7 +28,7 @@ case "${host_os}" in
 	freebsd*)
 		build_freebsd=yes
 		;;
-	*haiku*)
+	beos*|*haiku*)
 		build_haiku=yes
 		;;
 	mingw*)
