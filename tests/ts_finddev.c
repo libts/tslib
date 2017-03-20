@@ -27,9 +27,11 @@ static void usage(char **argv)
 	exit(-1);
 }
 
-static void alarm_handler()
+static void alarm_handler(int sig)
 {
 	/* time is expired */
+	printf("signal %d caught\n", sig);
+
 	exit(0);
 }
 
