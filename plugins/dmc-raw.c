@@ -134,7 +134,7 @@ TSAPI struct tslib_module_info *mod_init(struct tsdev *dev,
 	struct tslib_dmc *m;
 
 	if (dmc_init_device(dev) != 0)
-		return 0;
+		return NULL;
 
 	m = calloc(1, sizeof(struct tslib_dmc));
 	if (m == NULL)
