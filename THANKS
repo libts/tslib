@@ -44,6 +44,7 @@ who helped writing tslib. At least we know of the following:
 Melchior Franz <melchior.franz@ginzinger.com>
 Kári Davíðsson
 Nelson Castillo
+Neil Whelchel <neil@goautomation.biz>
 
 There are also a number of people reporting bugs, test and help improving
 tslib not just by writing code. This list is not complete:
@@ -51,6 +52,5 @@ tslib not just by writing code. This list is not complete:
 Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
 Philipp Eichinger <philipp.eichinger@ginzinger.com>
 Clay D. Montgomery
-Neil Whelchel
 
 	Thanks for your contribution to tslib!
