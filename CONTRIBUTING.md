@@ -1,4 +1,17 @@
 ## tslib development
+### reporting bugs
+When describing a problem, please always tell us the following:
+* your architecture and operating system
+* the version of tslib you are using
+* the ts.conf configuration that causes the problem for you
+
+If tslib can't use your touchscreen device, either by not starting at all or
+by behaving strangely, at least on Linux and BSD it is always helpful if you
+provide the output of the `evtest` program, selecting your original input
+device. `evtest` is most likely available as a package in your OS environment.
+You can always build it from [upstream](https://cgit.freedesktop.org/evtest)
+though.
+
 ### what to contribute
 We collect all non-trivial thoughts about improving tslib, as well as bugreports
 [in our issue tracker](https://github.com/kergoth/tslib/issues). There's a lot
