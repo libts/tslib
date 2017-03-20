@@ -199,7 +199,7 @@ void put_cross(int x, int y, unsigned colidx)
 #endif
 }
 
-void put_char(int x, int y, int c, int colidx)
+static void put_char(int x, int y, int c, int colidx)
 {
 	int i,j,bits;
 
