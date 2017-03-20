@@ -46,7 +46,7 @@ static void sig(int sig)
 	exit(1);
 }
 
-int perform_calibration(calibration *cal)
+static int perform_calibration(calibration *cal)
 {
 	int j;
 	float n, x, y, x2, y2, xy, z, zx, zy;
