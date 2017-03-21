@@ -9,8 +9,6 @@
  *
  * Basic multitouch test program for touchscreen library.
  */
-#include "config.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -65,6 +63,8 @@ static void refresh_screen()
 
 static void help()
 {
+	printf("tslib " PACKAGE_VERSION "\n");
+	printf("\n");
 	printf("Usage: ts_test_mt [-v] [-i <device>]\n");
 }
 

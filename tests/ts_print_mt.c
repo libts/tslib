@@ -29,6 +29,8 @@
 
 static void usage(char **argv)
 {
+	printf("tslib " PACKAGE_VERSION "\n");
+	printf("\n");
 	printf("Usage: %s [--raw] [--non-blocking] [-s samples] [-i <device>]\n", argv[0]);
 }
 

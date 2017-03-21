@@ -9,8 +9,6 @@
  *
  * Basic test program for touchscreen library.
  */
-#include "config.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>

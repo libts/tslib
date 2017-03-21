@@ -10,8 +10,6 @@
  * Program to harvest hundreds of raw touchscreen coordinates
  * Useful for linearizing non linear touchscreens as found in the h2200 device
  */
-#include "config.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>

@@ -13,9 +13,12 @@
 #include <unistd.h>
 
 #include "tslib.h"
+#include "testutils.h"
 
 static void usage(char **argv)
 {
+	printf("tslib " PACKAGE_VERSION "\n");
+	printf("\n");
 	printf("Usage: %s device_name wait_for_sec\n", argv[0]);
 	printf("\tdevice_name  - tdevice to probe, example /dev/input/event0\n");
 	printf("\twait_for_sec - wait seconds for touch event, if 0 - don't wait!\n");
