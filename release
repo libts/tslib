@@ -74,8 +74,8 @@ fi
 ./configure --disable-dependency-tracking && make distclean && ./autogen-clean.sh
 git clean -d -f
 
-git commit -m "tslib ${version}"
-git tag -s ${version}
+git commit -a -m "tslib ${version}"
+git tag -s ${version} -m "tslib ${version}"
 
 ./autogen.sh && ./configure && make distcheck
 sha256sum tslib-${version}.tar.xz > tslib-${version}.tar.xz.sha256
