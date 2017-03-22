@@ -158,9 +158,8 @@ static int ts_verify_read_1(struct ts_verify *data, int nr,
 		ret = ts_read(data->ts, samp, nr);
 	else
 		ret = ts_read_raw(data->ts, samp, nr);
-	if (ret < 0) {
-		perror("ts_read");
-	}
+
+	ts_close(data->ts);
 
 	return ret;
 }
@@ -216,7 +215,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	/* data, samples, nonblocking, raw */
+	/* ts_read() paramters(data, samples, nonblocking, raw) */
 	ret = ts_verify_read_mt_1(&data, 1, 0, 0);
 	if (ret == 1) {
 		printf("TEST ts_read_mt (blocking) 1       ......   " GREEN "PASS" RESET "\n");
@@ -271,8 +270,18 @@ int main(int argc, char **argv)
 		printf("TEST ts_read    (blocking) 5       ......   " RED "FAIL" RESET "\n");
 	}
 
+	/* yeah that's lame but that's pretty much the only way it's used out there. it's deprecated anyways  */
+	while (1) {
+		ret = ts_verify_read_1(&data, 1, 1, 0);
+		if (ret == 1) {
+			printf("TEST ts_read    (nonblocking) 1    ......   " GREEN "PASS" RESET "\n");
+			break;
+		}
+	}
 
 
+
+	/* the same with the raw calls */
 	ret = ts_verify_read_mt_1(&data, 1, 0, 1);
 	if (ret == 1) {
 		printf("TEST ts_read_raw_mt (blocking) 1   ......   " GREEN "PASS" RESET "\n");
@@ -325,6 +334,14 @@ int main(int argc, char **argv)
 		printf("TEST ts_read_raw(blocking) 5       ......   " GREEN "PASS" RESET "\n");
 	} else {
 		printf("TEST ts_read_raw(blocking) 5       ......   " RED "FAIL" RESET "\n");
+	}
+
+	while (1) {
+		ret = ts_verify_read_1(&data, 1, 1, 1);
+		if (ret == 1) {
+			printf("TEST ts_read_raw(nonblocking) 1    ......   " GREEN "PASS" RESET "\n");
+			break;
+		}
 	}
 
 	return 0;
