@@ -30,6 +30,7 @@
 struct ts_verify {
 	struct tsdev *ts;
 	char *tsdevice;
+	unsigned short verbose;
 
 	struct ts_sample_mt **samp_mt;
 	unsigned short slots;
@@ -68,7 +69,8 @@ static int ts_verify_alloc_mt(struct ts_verify *data, int nr, short nonblocking)
 		return -ENOMEM;
 	}
 	for (i = 0; i < nr; i++) {
-		data->samp_mt[i] = calloc(data->slots, sizeof(struct ts_sample_mt));
+		data->samp_mt[i] = calloc(data->slots,
+					  sizeof(struct ts_sample_mt));
 		if (!data->samp_mt[i]) {
 			for (j = 0; j < i; j++)
 				free(data->samp_mt[j]);
@@ -97,22 +99,27 @@ static void ts_verify_free_mt(struct ts_verify *data)
 	ts_close(data->ts);
 }
 
-/* TEST ts_read_mt - blocking 1 */
-static int ts_verify_read_blocking_1(struct ts_verify *data, int nr)
+/* TEST ts_read_mt 1 */
+static int ts_verify_read_mt_1(struct ts_verify *data, int nr,
+				     int nonblocking, int raw)
 {
 	int i, j;
 	int ret;
-	short valid_found = 0;
 
-	/* allocate NOT nonblocking */
-	ret = ts_verify_alloc_mt(data, nr, 0);
+	ret = ts_verify_alloc_mt(data, nr, nonblocking);
 	if (ret < 0)
 		return ret;
 
-	ret = ts_read_mt(data->ts, data->samp_mt, data->slots, nr);
-	if (ret < 0) {
+	if (raw == 0)
+		ret = ts_read_mt(data->ts, data->samp_mt, data->slots, nr);
+	else
+		ret = ts_read_raw_mt(data->ts, data->samp_mt, data->slots, nr);
+	if (ret == -EAGAIN) {
+		ts_verify_free_mt(data);
+		return ret;
+	} else if (ret < 0) {
 		perror("ts_read_mt");
-		ts_close(data->ts);
+		ts_verify_free_mt(data);
 		return ret;
 	}
 
@@ -121,14 +128,41 @@ static int ts_verify_read_blocking_1(struct ts_verify *data, int nr)
 			if (data->samp_mt[j][i].valid != 1)
 				continue;
 
-			valid_found = 1;
+			if (data->samp_mt[j][i].pressure > 255) {
+				ret = -1;
+				if (data->verbose)
+					printf("pressure out of bounds\n");
+			}
+			/* TODO check xy bounds when fbdev and not raw*/
 		}
 	}
 
-	if (valid_found == 1)
-		return ret;
+	ts_verify_free_mt(data);
+
+	return ret;
+}
+
+static int ts_verify_read_1(struct ts_verify *data, int nr,
+			    int nonblocking, int raw)
+{
+	struct ts_sample samp[nr];
+	int ret;
+
+	data->ts = ts_setup(data->tsdevice, nonblocking);
+	if (!data->ts) {
+		perror("ts_setup");
+		return errno;
+	}
+
+	if (raw == 0)
+		ret = ts_read(data->ts, samp, nr);
 	else
-		return -1;
+		ret = ts_read_raw(data->ts, samp, nr);
+	if (ret < 0) {
+		perror("ts_read");
+	}
+
+	return ret;
 }
 
 int main(int argc, char **argv)
@@ -139,16 +173,19 @@ int main(int argc, char **argv)
 		.tsdevice = NULL,
 		.slots = 1,
 		.samp_mt = NULL,
+		.verbose = 0,
 	};
 
 	while (1) {
 		const struct option long_options[] = {
 			{ "help",         no_argument,       NULL, 'h' },
 			{ "idev",         required_argument, NULL, 'i' },
+			{ "verbose",      no_argument,       NULL, 'v' },
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "hi:s:nr", long_options, &option_index);
+		int c = getopt_long(argc, argv, "hi:v", long_options,
+				    &option_index);
 
 		errno = 0;
 		if (c == -1)
@@ -163,6 +200,10 @@ int main(int argc, char **argv)
 			data.tsdevice = optarg;
 			break;
 
+		case 'v':
+			data.verbose = 1;
+			break;
+
 		default:
 			usage(argv);
 			break;
@@ -175,18 +216,115 @@ int main(int argc, char **argv)
 		}
 	}
 
-	ret = ts_verify_read_blocking_1(&data, 1);
+	/* data, samples, nonblocking, raw */
+	ret = ts_verify_read_mt_1(&data, 1, 0, 0);
 	if (ret == 1) {
-		printf("TEST ts_read_mt (blocking) 1     ......   " GREEN "PASS" RESET "\n");
+		printf("TEST ts_read_mt (blocking) 1       ......   " GREEN "PASS" RESET "\n");
 	} else {
-		printf("TEST ts_read_mt (blocking) 1     ......   " RED "FAIL" RESET "\n");
+		printf("TEST ts_read_mt (blocking) 1       ......   " RED "FAIL" RESET "\n");
 	}
 
-	ret = ts_verify_read_blocking_1(&data, 5);
+	ret = ts_verify_read_mt_1(&data, 5, 0, 0);
 	if (ret == 5) {
-		printf("TEST ts_read_mt (blocking) 5     ......   " GREEN "PASS" RESET "\n");
+		printf("TEST ts_read_mt (blocking) 5       ......   " GREEN "PASS" RESET "\n");
 	} else {
-		printf("TEST ts_read_mt (blocking) 5     ......   " RED "FAIL" RESET "\n");
+		printf("TEST ts_read_mt (blocking) 5       ......   " RED "FAIL" RESET "\n");
+	}
+
+	while(1) {
+		ret = ts_verify_read_mt_1(&data, 1, 1, 0);
+		if (ret == -EAGAIN) {
+			continue;
+		} else if (ret == 1) {
+			printf("TEST ts_read_mt (nonblocking) 1    ......   " GREEN "PASS" RESET "\n");
+			break;
+		} else {
+			printf("TEST ts_read_mt (nonblocking) 1    ......   " RED "FAIL" RESET "\n");
+			break;
+		}
+	}
+
+	while(1) {
+		ret = ts_verify_read_mt_1(&data, 5, 1, 0);
+		if (ret == -EAGAIN) {
+			continue;
+		} else if (ret > 0 && ret <= 5) {
+			printf("TEST ts_read_mt (nonblocking) 5    ......   " GREEN "PASS" RESET "\n");
+			break;
+		} else {
+			printf("TEST ts_read_mt (nonblocking) 5    ......   " RED "FAIL" RESET "\n");
+			break;
+		}
+	}
+
+	ret = ts_verify_read_1(&data, 1, 0, 0);
+	if (ret == 1) {
+		printf("TEST ts_read    (blocking) 1       ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_read    (blocking) 1       ......   " RED "FAIL" RESET "\n");
+	}
+
+	ret = ts_verify_read_1(&data, 5, 0, 0);
+	if (ret == 1) {
+		printf("TEST ts_read    (blocking) 5       ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_read    (blocking) 5       ......   " RED "FAIL" RESET "\n");
+	}
+
+
+
+	ret = ts_verify_read_mt_1(&data, 1, 0, 1);
+	if (ret == 1) {
+		printf("TEST ts_read_raw_mt (blocking) 1   ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_read_raw_mt (blocking) 1   ......   " RED "FAIL" RESET "\n");
+	}
+
+	ret = ts_verify_read_mt_1(&data, 5, 0, 1);
+	if (ret == 5) {
+		printf("TEST ts_read_raw_mt (blocking) 5   ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_read_raw_mt (blocking) 5   ......   " RED "FAIL" RESET "\n");
+	}
+
+	while(1) {
+		ret = ts_verify_read_mt_1(&data, 1, 1, 1);
+		if (ret == -EAGAIN) {
+			continue;
+		} else if (ret == 1) {
+			printf("TEST ts_read_raw_mt (nonblocking) 1......   " GREEN "PASS" RESET "\n");
+			break;
+		} else {
+			printf("TEST ts_read_raw_mt (nonblocking) 1......   " RED "FAIL" RESET "\n");
+			break;
+		}
+	}
+
+	while(1) {
+		ret = ts_verify_read_mt_1(&data, 5, 1, 1);
+		if (ret == -EAGAIN) {
+			continue;
+		} else if (ret > 0 && ret <= 5) {
+			printf("TEST ts_read_raw_mt (nonblocking) 5......   " GREEN "PASS" RESET "\n");
+			break;
+		} else {
+			printf("TEST ts_read_raw_mt (nonblocking) 5......   " RED "FAIL" RESET "\n");
+			break;
+		}
+	}
+
+	ret = ts_verify_read_1(&data, 1, 0, 1);
+	if (ret == 1) {
+		printf("TEST ts_read_raw(blocking) 1       ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_read_raw(blocking) 1       ......   " RED "FAIL" RESET "\n");
+	}
+
+	ret = ts_verify_read_1(&data, 5, 0, 1);
+	if (ret == 1) {
+		printf("TEST ts_read_raw(blocking) 5       ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_read_raw(blocking) 5       ......   " RED "FAIL" RESET "\n");
 	}
 
 	return 0;
