@@ -18,7 +18,7 @@
 
 #include "tslib-private.h"
 
-#ifdef WIN32
+#if defined (WIN32) || (__HAIKU__)
 #include "ts_strsep.h"
 #endif
 
@@ -40,10 +40,10 @@ int tslib_parse_vars(struct tslib_module_info *mod,
 	s_holder[BUF_SIZE - 1] = '\0';
 
 	s = s_holder;
-#ifndef WIN32
-	while ((p = strsep(&s, " \t")) != NULL && ret == 0) {
-#else
+#if defined (WIN32) || (__HAIKU__)
 	while ((p = ts_strsep(&s, " \t")) != NULL && ret == 0) {
+#else
+	while ((p = strsep(&s, " \t")) != NULL && ret == 0) {
 #endif
 		const struct tslib_vars *v;
 		char *eq;
