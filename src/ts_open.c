@@ -39,13 +39,15 @@ static void print_host_os(void)
 	printf("Host OS: FreeBSD\n");
 #elif defined (__OpenBSD__)
 	printf("Host OS: OpenBSD\n");
-#elif defined (WIN32)
-	printf("Host OS: Windows\n");
+#elif defined (__GNU__) && defined (__MACH__)
+	printf("Host OS: Hurd\n");
 #elif defined (__HAIKU__)
 	printf("Host OS: Haiku\n");
 #elif defined (__BEOS__)
 	printf("Host OS: BeOS\n");
-#elif defined (__APPLE__)
+#elif defined (WIN32)
+	printf("Host OS: Windows\n");
+#elif defined (__APPLE__) && defined (__MACH__)
 	printf("Host OS: Darwin\n");
 #else
 	printf("Host OS: unknown\n");
