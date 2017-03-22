@@ -89,10 +89,18 @@
 
 #include "tslib-private.h"
 
+#define DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
+#define BIT(nr)                 (1UL << (nr))
+#define BIT_MASK(nr)            (1UL << ((nr) % BITS_PER_LONG))
+#define BIT_WORD(nr)            ((nr) / BITS_PER_LONG)
+#define BITS_PER_BYTE           8
+#define BITS_PER_LONG           (sizeof(long) * BITS_PER_BYTE)
+#define BITS_TO_LONGS(nr)       DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
+
 #define GRAB_EVENTS_WANTED	1
 #define GRAB_EVENTS_ACTIVE	2
 
-#define NUM_EVENTS_READ 1
+#define NUM_EVENTS_READ 1 /* internal. independent from the user call */
 
 struct tslib_input {
 	struct tslib_module_info module;
@@ -115,15 +123,76 @@ struct tslib_input {
 	int	last_fd;
 	short	no_pressure;
 	short	type_a;
+
+	unsigned int	special_device; /* broken device we work around, see below */
 };
 
-#define DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
-#define BIT(nr)                 (1UL << (nr))
-#define BIT_MASK(nr)            (1UL << ((nr) % BITS_PER_LONG))
-#define BIT_WORD(nr)            ((nr) / BITS_PER_LONG)
-#define BITS_PER_BYTE           8
-#define BITS_PER_LONG           (sizeof(long) * BITS_PER_BYTE)
-#define BITS_TO_LONGS(nr)       DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
+#ifndef BUS_USB
+#define BUS_USB 0x03
+#endif
+
+/* List of VIDs we use special cases for */
+#define USB_VID_EGALAX 0x0EEF
+
+/* List of actual devices we enumerate. For the device selection,
+ * see get_special_device()
+ */
+#define EGALAX_VERSION_112 1
+#define EGALAX_VERSION_210 2
+
+static int get_special_device(struct tslib_input *i)
+{
+	struct input_id id;
+	struct tsdev *ts = i->module.dev;
+
+	if ((ioctl(ts->fd, EVIOCGID, &id) < 0)) {
+		fprintf(stderr, "tslib: warning, can't read device id\n");
+		return -1;
+	}
+
+#ifdef DEBUG
+	printf("tslib input device: vendor 0x%X product 0x%X version 0x%X on bus 0x%X\n",
+	       id.vendor, id.product, id.version, id.bustype);
+#endif
+
+	/* only special usb devices so far, see the list above.
+	 * so if not usb, we are done. */
+	if (id.bustype != BUS_USB)
+		return 0;
+
+	switch(id.vendor) {
+	case USB_VID_EGALAX:
+		switch(id.product) {
+		case 0x0001:
+		/* taken from galax-raw. is this correct? */
+		case 0x7200:
+		case 0x7201:
+			/* please note that any workarounds that don't
+			 * apply to only a specific VERSION of one product,
+			 * but to the product ID, should *really* be handled
+			 * in the kernel! They have quirks over there.
+			 */
+			switch(id.version) {
+			case 0x0112:
+				i->special_device = EGALAX_VERSION_112;
+				break;
+			case 0x0210:
+				i->special_device = EGALAX_VERSION_210;
+				break;
+			default:
+				break;
+			}
+			break;
+		default:
+			break;
+		}
+		break;
+	default:
+		break;
+	}
+
+	return 0;
+}
 
 static void set_pressure(struct tslib_input *i)
 {
@@ -179,6 +248,9 @@ static int check_fd(struct tslib_input *i)
 			return -1;
 		}
 	}
+
+	/* read device info and set special device nr */
+	get_special_device(i);
 
 	/* Since some touchscreens (eg. infrared) physically can't measure pressure,
 	 * the input system doesn't report it on those. Tslib relies on pressure, thus
@@ -295,22 +367,54 @@ static int ts_input_read(struct tslib_module_info *inf,
 				}
 				break;
 			case EV_ABS:
-				switch (ev.code) {
-				case ABS_X:
-					i->current_x = ev.value;
-					break;
-				case ABS_Y:
-					i->current_y = ev.value;
-					break;
-				case ABS_MT_POSITION_X:
-					i->current_x = ev.value;
-					break;
-				case ABS_MT_POSITION_Y:
-					i->current_y = ev.value;
-					break;
-				case ABS_PRESSURE:
-					i->current_p = ev.value;
-					break;
+				if (i->special_device == EGALAX_VERSION_112) {
+					switch (ev.code) {
+					case ABS_X+2:
+						i->current_x = ev.value;
+						break;
+					case ABS_Y+2:
+						i->current_y = ev.value;
+						break;
+					case ABS_PRESSURE:
+						i->current_p = ev.value;
+						break;
+					}
+				} else if (i->special_device == EGALAX_VERSION_210) {
+					switch (ev.code) {
+					case ABS_X:
+						i->current_x = ev.value;
+						break;
+					case ABS_Y:
+						i->current_y = ev.value;
+						break;
+					case ABS_PRESSURE:
+						i->current_p = ev.value;
+						break;
+					case ABS_MT_DISTANCE:
+						if (ev.value > 0)
+							i->current_p = 0;
+						else
+							i->current_p = 255;
+						break;
+					}
+				} else {
+					switch (ev.code) {
+					case ABS_X:
+						i->current_x = ev.value;
+						break;
+					case ABS_Y:
+						i->current_y = ev.value;
+						break;
+					case ABS_MT_POSITION_X:
+						i->current_x = ev.value;
+						break;
+					case ABS_MT_POSITION_Y:
+						i->current_y = ev.value;
+						break;
+					case ABS_PRESSURE:
+						i->current_p = ev.value;
+						break;
+					}
 				}
 				break;
 			}
@@ -598,6 +702,14 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 						i->buf[total][i->slot].distance = i->ev[it].value;
 						i->buf[total][i->slot].tv = i->ev[it].time;
 						i->buf[total][i->slot].valid = 1;
+
+						if (i->special_device == EGALAX_VERSION_210) {
+							if (i->ev[it].value > 0)
+								i->buf[total][i->slot].pressure = 0;
+							else
+								i->buf[total][i->slot].pressure = 255;
+						}
+
 						break;
 					case ABS_MT_BLOB_ID:
 						i->buf[total][i->slot].blob_id = i->ev[it].value;
@@ -638,6 +750,28 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 						} else {
 							i->slot = i->ev[it].value;
 							i->buf[total][i->slot].slot = i->ev[it].value;
+							i->buf[total][i->slot].valid = 1;
+						}
+						break;
+					case ABS_Z:
+						if (i->special_device == EGALAX_VERSION_112) {
+							/* this is ABS_X+2 wrongly used as ABS_X here */
+							if (i->mt && i->buf[total][i->slot].valid == 1)
+								break;
+
+							i->buf[total][i->slot].x = i->ev[it].value;
+							i->buf[total][i->slot].tv = i->ev[it].time;
+							i->buf[total][i->slot].valid = 1;
+						}
+						break;
+					case ABS_RX:
+						if (i->special_device == EGALAX_VERSION_112) {
+							/* this is ABS_Y+2 wrongly used as ABS_Y here */
+							if (i->mt && i->buf[total][i->slot].valid == 1)
+								break;
+
+							i->buf[total][i->slot].y = i->ev[it].value;
+							i->buf[total][i->slot].tv = i->ev[it].time;
 							i->buf[total][i->slot].valid = 1;
 						}
 						break;
@@ -820,6 +954,7 @@ TSAPI struct tslib_module_info *input_mod_init(__attribute__ ((unused)) struct t
 	i->no_pressure = 0;
 	i->last_fd = -2;
 	i->type_a = 0;
+	i->special_device = 0;
 
 	if (tslib_parse_vars(&i->module, raw_vars, NR_VARS, params)) {
 		free(i);
