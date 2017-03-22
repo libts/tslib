@@ -1,0 +1,28 @@
+.TH "TS_VERIFY" "1" "" "" "tslib"
+.SH "NAME"
+ts_verify \- A basic test routine for tslib's API\&.
+
+.SH SYNOPSIS
+.B ts_print_mt [OPTION]
+
+.SH "DESCRIPTION"
+.PP
+ts_verify runs through tslib's API and prints test results.
+.sp
+.sp
+\fB\-i, \-\-idev\fR
+.sp
+.RS 4
+Explicitly choose the original input event device for tslib to use. Default: the environment variable \fBTSLIB_TSDEVICE\fR's value.
+.sp
+\fB\-h, \-\-help\fR
+.RS 4
+Print usage help and exit.
+.RE
+.sp
+.SH "SEE ALSO"
+.PP
+ts.conf (5),
+ts_test (1),
+ts_test_mt (1),
+ts_calibrate (1)
