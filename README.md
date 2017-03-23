@@ -1,9 +1,9 @@
 
-### tslib - a filter stack for accessing and manipulating touchscreen events
 
-![logo](tslib_logo_wide.png?raw=true)
-
+![logo](website/tslib_logo_web.jpg?raw=true)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/11027/badge.svg)](https://scan.coverity.com/projects/tslib)
+
+# C library for filtering touchscreen events
 
 tslib consists of the library _libts_ and tools that help you _calibrate_ and
 _use it_ in your environment. There's a [short introductory presentation from 2017](https://fosdem.org/2017/schedule/event/tslib/).
