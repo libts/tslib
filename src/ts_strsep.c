@@ -1,3 +1,9 @@
+/*
+ *  tslib/src/ts_strsep.c
+ *
+ * This file is placed under the LGPL.  Please see the file
+ * COPYING for more details.
+ */
 #include "ts_strsep.h"
 
 char* ts_strsep(char** stringp, const char* delim)

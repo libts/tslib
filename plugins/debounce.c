@@ -1,7 +1,7 @@
 /*
  *  tslib/plugins/debounce.c
  *
- *  Copyright (C) 2016 Martin Kepplinger <martin.kepplinger@ginzinger.com>
+ *  Copyright (C) 2017 Martin Kepplinger <martin.kepplinger@ginzinger.com>
  *  Copyright (C) 2013 Melchior FRANZ <melchior.franz@ginzinger.com>
  *
  * This file is placed under the LGPL.  Please see the file

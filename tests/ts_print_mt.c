@@ -1,12 +1,25 @@
 /*
  *  tslib/tests/ts_print_mt.c
  *
- *  Copyright (C) 2016 Martin Kepplinger
+ *  Copyright (C) 2017 Martin Kepplinger
+ *
+ * This file is part of tslib.
+ *
+ * ts_print_mt is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ts_print_mt is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ts_print_mt.  If not, see <http://www.gnu.org/licenses/>.
+ *
  *
  * Just prints touchscreen events -- does not paint them on framebuffer
- *
- * This file is placed under the GPL.  Please see the file
- * COPYING for more details.
  */
 #include <stdio.h>
 #include <stdlib.h>
