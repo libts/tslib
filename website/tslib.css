@@ -1,0 +1,27 @@
+BODY {
+  background-color: white; 
+  font-family: arial, helvetica, ariel, sans-serif;
+  color: black;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: #4040ff;
+}
+
+a:hover {
+  text-decoration: none;
+  color: #ffffff;
+  background-color: #000000;
+}
+
+.contents {
+  padding-top: 0px;
+  margin-top: 0px;
+  max-width: 40em;
+  margin-left: auto;
+  margin-right: auto;
+}

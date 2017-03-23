@@ -119,8 +119,7 @@ maintainer of course must have access to it, at least for committing and
 creating releases. When becoming a new maintainer, ask Christopher Larson, who
 holds the "kergoth" github account, to give you access.
 * the [tslib.org](http://tslib.org) project page. It is currently registered at
-[easyname](https://www.easyname.com) and consists of one index.html and one
-css file only. They are simply hosted at easyname's included webspace.
+[easyname](https://www.easyname.com) and is maintained in the website directory.
 This project site must include links to *all parts* of the tslib project.
 That's this list right here. When becoming a new maintainer, preferrably make
 an account at easyname and the old maintainer will transfer the domain to you.
