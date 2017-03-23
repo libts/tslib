@@ -461,10 +461,10 @@ _shared libraries_, build on the following operating systems.
 * **GNU / Linux**
 * **Android / Linux**
 * **FreeBSD**
+* **GNU / Hurd**
 * **Haiku**
 * **Windows**
 * Mac OS X (?)
-* Hurd (?)
 
 #### input plugins (`module_raw`)
 
@@ -475,6 +475,7 @@ platform.
 * GNU / Linux - all
 * Android / Linux - all
 * FreeBSD - almost all
+* GNU / Hurd - some
 * Haiku - some
 * Windows - non yet
 
@@ -485,6 +486,7 @@ Writing your own plugin is quite easy, in case an existing one doesn't fit.
 * GNU / Linux - all
 * Android / Linux - all (?)
 * FreeBSD - all (?)
+* GNU / Hurd - ts_print, ts_print_raw, ts_finddev
 * Haiku - ts_print, ts_print_raw, ts_finddev
 * Windows - ts_print.exe, ts_print_raw.exe
 
