@@ -6,6 +6,6 @@
 AC_DEFUN([TS_DEFAULT_FLAGS],
 [
   if test x"$CFLAGS" = "x"; then
-    CFLAGS="-O2 -Wall -W"
+    CFLAGS="-O2 -Wall -Wextra -D_FORTIFY_SOURCE=1 -fstack-protector-strong"
   fi
 ]) # TS_DEFAULT_FLAGS
