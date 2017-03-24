@@ -205,6 +205,95 @@ static int ts_verify_read_1(struct ts_verify *data, int nr,
 	return ret;
 }
 
+static int ts_reconfig_1(struct ts_verify *data)
+{
+	int ret = 0;
+
+	data->ts = ts_setup(data->tsdevice, 0);
+	if (!data->ts) {
+		perror("ts_setup");
+		return errno;
+	}
+
+	ret = ts_reconfig(data->ts);
+	if (data->verbose)
+		printf("ts_reconfig ret: %d\n", ret);
+
+	ts_close(data->ts);
+
+	return ret;
+}
+
+static int ts_load_module_1(struct ts_verify *data)
+{
+	int ret = 0;
+
+	data->ts = ts_setup(data->tsdevice, 0);
+	if (!data->ts) {
+		perror("ts_setup");
+		return errno;
+	}
+
+	ret = ts_load_module(data->ts, "median", "depth=7");
+
+	ts_close(data->ts);
+
+	return ret;
+}
+
+static int ts_load_module_2(struct ts_verify *data)
+{
+	int ret = 0;
+
+	data->ts = ts_setup(data->tsdevice, 0);
+	if (!data->ts) {
+		perror("ts_setup");
+		return errno;
+	}
+
+	ret = ts_load_module(data->ts, "median", "asdf");
+
+	ts_close(data->ts);
+
+	return ret;
+}
+
+static int ts_load_module_3(struct ts_verify *data)
+{
+	int ret = 0;
+
+	data->ts = ts_setup(data->tsdevice, 0);
+	if (!data->ts) {
+		perror("ts_setup");
+		return errno;
+	}
+
+	ret = ts_load_module(data->ts, "median", "depth=9");
+	ret = ts_load_module(data->ts, "median", "depth=5");
+	ret = ts_load_module(data->ts, "median", "depth=8");
+
+	ts_close(data->ts);
+
+	return ret;
+}
+
+static int ts_load_module_4_inv(struct ts_verify *data)
+{
+	int ret = 0;
+
+	data->ts = ts_setup(data->tsdevice, 0);
+	if (!data->ts) {
+		perror("ts_setup");
+		return errno;
+	}
+
+	ret = ts_load_module(data->ts, "asdf", "asdf");
+
+	ts_close(data->ts);
+
+	return ret;
+}
+
 int main(int argc, char **argv)
 {
 	int ret;
@@ -354,6 +443,43 @@ int main(int argc, char **argv)
 	ret = ts_verify_read_1(&data, 1, 1, 1);
 	if (ret == 1) {
 		printf("TEST ts_read_raw(nonblocking) 1    ......   " GREEN "PASS" RESET "\n");
+	}
+
+
+
+	ret = ts_reconfig_1(&data);
+	if (ret == 0) {
+		printf("TEST ts_reconfig (1)               ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_reconfig (1)               ......   " RED "FAIL" RESET "\n");
+	}
+
+	ret = ts_load_module_1(&data);
+	if (ret == 0) {
+		printf("TEST ts_load_module (1)            ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_load_module (1)            ......   " RED "FAIL" RESET "\n");
+	}
+
+	ret = ts_load_module_2(&data);
+	if (ret == 0) {
+		printf("TEST ts_load_module (2)            ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_load_module (2)            ......   " RED "FAIL" RESET "\n");
+	}
+
+	ret = ts_load_module_3(&data);
+	if (ret == 0) {
+		printf("TEST ts_load_module (3)            ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_load_module (3)            ......   " RED "FAIL" RESET "\n");
+	}
+
+	ret = ts_load_module_4_inv(&data);
+	if (ret == 0) {
+		printf("TEST ts_load_module (4)            ......   " RED "FAIL" RESET "\n");
+	} else {
+		printf("TEST ts_load_module (4)            ......   " GREEN "PASS" RESET "\n");
 	}
 
 	return 0;
