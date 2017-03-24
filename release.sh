@@ -70,6 +70,19 @@ if [ ! "${branch}" = "master" ] ; then
 	exit 1
 fi
 
+if git diff-index --quiet HEAD --; then
+	# no changes
+	echo "there are no uncommitted changes (version bump)"
+	exit 1
+fi
+echo "======================================================"
+echo "    are you fine with the following version bump?"
+echo "======================================================"
+git diff
+echo "======================================================"
+read -p "           Press enter to continue"
+echo "======================================================"
+
 ./autogen.sh && ./configure && make distcheck
 ./configure --disable-dependency-tracking && make distclean && ./autogen-clean.sh
 git clean -d -f
