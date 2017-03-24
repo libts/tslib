@@ -519,7 +519,7 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 	unsigned int it;
 	int rd;
 	int j, k;
-	int pen_up = 0;
+	uint8_t pen_up = 0;
 
 	if (i->buf == NULL || i->max_slots < max_slots || i->nr < nr) {
 		if (i->buf) {
