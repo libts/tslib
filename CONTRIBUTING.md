@@ -1,5 +1,9 @@
 ## tslib development
 ### reporting bugs
+You are free to report bugs using Github issues or the
+[mailing list](http://lists.infradead.org/mailman/listinfo/tslib). For general
+questions, discussions or thoughts, we'd prefer the list though.
+
 When describing a problem, please always tell us the following:
 * your architecture and operating system
 * the version of tslib you are using
@@ -131,4 +135,6 @@ move development over to gitlab, it's not easy to have distributors and users
 follow you. So this is currently a backup only. Martin Kepplinger currently
 holds the "tslib" gitlab user-account and will hand it over to the new
 maintainer.
-* (not yet) a mainling list. As soon as set up, it must be documented here.
+* the [mainling list](http://lists.infradead.org/mailman/listinfo/tslib) at
+infradead.org. It's pretty self-explanatory and shouldn't look unfamiliar to
+you.

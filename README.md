@@ -9,6 +9,13 @@
 tslib consists of the library _libts_ and tools that help you _calibrate_ and
 _use it_ in your environment. There's a [short introductory presentation from 2017](https://fosdem.org/2017/schedule/event/tslib/).
 
+## contact
+If you have problems, questions, ideas or suggestions, please contact us by
+posting to [our mailing list](http://lists.infradead.org/mailman/listinfo/tslib).
+
+## website
+Visit the [tslib website](http://tslib.org) for an overview of the project.
+
 ## table of contents
 * [setup and configure tslib](#setup-and-configure-tslib)
 * [filter modules](#filter-modules)
