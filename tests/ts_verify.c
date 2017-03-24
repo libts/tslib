@@ -54,7 +54,7 @@ static void usage(char **argv)
 {
 	printf("tslib " PACKAGE_VERSION "\n");
 	printf("\n");
-	printf("Usage: %s [-i <device>]\n", argv[0]);
+	printf("Usage: %s [--idev <device>] [--verbose]\n", argv[0]);
 }
 
 static int ts_verify_alloc_mt(struct ts_verify *data, int nr, short nonblocking)

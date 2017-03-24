@@ -4,6 +4,7 @@ tslib 1.9 is backwards compatible. Changes since last release include:
 * experimental support for GNU / Hurd
 * `module_raw galax` is deprecated. Users should switch to `module_raw input`
 * multitouch for (at least) eGalax 210 (`module_raw input` and `ts_read_mt()`)
+* new tests/ts_verify API test program
 
 
 ## tslib 1.8
