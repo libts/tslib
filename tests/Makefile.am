@@ -18,7 +18,7 @@ if WINDOWS
 bin_PROGRAMS		= ts_print ts_print_raw
 endif
 if LINUX
-bin_PROGRAMS		= ts_test ts_test_mt ts_calibrate ts_print ts_print_mt ts_print_raw ts_harvest ts_finddev
+bin_PROGRAMS		= ts_test ts_test_mt ts_calibrate ts_print ts_print_mt ts_print_raw ts_harvest ts_finddev ts_verify
 endif
 if FREEBSD
 bin_PROGRAMS		= ts_test ts_test_mt ts_calibrate ts_print ts_print_mt ts_print_raw ts_harvest ts_finddev
@@ -48,6 +48,9 @@ ts_print_LDADD		= $(top_builddir)/src/libts.la
 
 ts_print_mt_SOURCES	= ts_print_mt.c
 ts_print_mt_LDADD	= $(top_builddir)/src/libts.la
+
+ts_verify_SOURCES	= ts_verify.c
+ts_verify_LDADD		= $(top_builddir)/src/libts.la
 
 ts_print_raw_SOURCES	= ts_print_raw.c
 ts_print_raw_LDADD	= $(top_builddir)/src/libts.la

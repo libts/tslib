@@ -37,6 +37,7 @@ tests/ts_test
 tools/ts_uinput
 tests/ts_finddev
 tests/ts_test_mt
+tests/ts_verify
 compile
 *.exe
 
