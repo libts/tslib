@@ -27,7 +27,7 @@ following:
 * update or add man pages if applicable
 * update the README if applicable
 * add a line containing `Fixes #XX` in your git commit message; XX being the github issue's number if you fix an issue
-* update the wiki
+* run `tests/ts_verify` before and after your changes and make sure behaviour doesn't change. Update ts_verify if applicable.
 
 ### module development notes
 For those creating tslib modules, it is important to note a couple things with
