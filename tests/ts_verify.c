@@ -49,8 +49,12 @@ struct ts_verify {
 	struct ts_sample_mt **samp_mt;
 	unsigned short slots;
 	unsigned short nr;
+	uint16_t read_mt_run_count;
 	uint16_t read_mt_fail_count;
+	uint16_t read_run_count;
 	uint16_t read_fail_count;
+	uint16_t iteration;
+	uint16_t nr_of_iterations;
 };
 
 static void usage(char **argv)
@@ -115,6 +119,60 @@ static void ts_verify_free_mt(struct ts_verify *data)
 	ts_close(data->ts);
 }
 
+static int ts_verify_filter_iteration(struct ts_verify *data)
+{
+	int32_t ret = 0;
+
+	if (data->verbose)
+		printf(YELLOW "    filters: ");
+
+	switch(data->iteration) {
+	case 1:
+		ret = ts_load_module(data->ts, "median", "depth=7");
+		if (ret < 0)
+			return ret;
+
+		if (data->verbose)
+			printf("median ");
+	case 2:
+		ret = ts_load_module(data->ts, "pthres", "pmin=20");
+		if (ret < 0)
+			return ret;
+
+		if (data->verbose)
+			printf("pthres ");
+	case 3:
+		ret = ts_load_module(data->ts, "debounce", "drop_threshold=40");
+		if (ret < 0)
+			return ret;
+
+		if (data->verbose)
+			printf("debounce ");
+	case 4:
+		ret = ts_load_module(data->ts, "dejitter", "delta=100");
+		if (ret < 0)
+			return ret;
+
+		if (data->verbose)
+			printf("dejitter ");
+	case 5:
+		ret = ts_load_module(data->ts, "linear", "");
+		if (ret < 0)
+			return ret;
+
+		if (data->verbose)
+			printf("linear ");
+
+		break;
+	}
+	if (data->verbose)
+		printf("\n" RESET);
+
+	ret = ts_reconfig(data->ts);
+
+	return ret;
+}
+
 /* TEST ts_read_mt 1 */
 static int ts_verify_read_mt_1(struct ts_verify *data, int nr,
 				     int nonblocking, int raw)
@@ -124,6 +182,10 @@ static int ts_verify_read_mt_1(struct ts_verify *data, int nr,
 	int count = 0;
 
 	ret = ts_verify_alloc_mt(data, nr, nonblocking);
+	if (ret < 0)
+		return ret;
+
+	ret = ts_verify_filter_iteration(data);
 	if (ret < 0)
 		return ret;
 
@@ -145,7 +207,6 @@ static int ts_verify_read_mt_1(struct ts_verify *data, int nr,
 					continue;
 
 				if (data->samp_mt[j][i].pressure > 255) {
-					ret = -1;
 					if (data->verbose)
 						printf("pressure out of bounds\n");
 				}
@@ -195,6 +256,10 @@ static int ts_verify_read_1(struct ts_verify *data, int nr,
 		perror("ts_setup");
 		return errno;
 	}
+
+	ret = ts_verify_filter_iteration(data);
+	if (ret < 0)
+		return ret;
 
 	/* blocking */
 	if (nonblocking != 1) {
@@ -314,8 +379,11 @@ void run_tests(struct ts_verify *data)
 {
 	int32_t ret;
 
+	printf("===================== test run %d =====================\n", data->iteration);
+
 	/* ts_read() paramters(data, samples, nonblocking, raw) */
 	ret = ts_verify_read_mt_1(data, 1, 0, 0);
+	data->read_mt_run_count++;
 	if (ret == 1) {
 		printf("TEST ts_read_mt (blocking) 1       ......   " GREEN "PASS" RESET "\n");
 	} else {
@@ -324,6 +392,7 @@ void run_tests(struct ts_verify *data)
 	}
 
 	ret = ts_verify_read_mt_1(data, 5, 0, 0);
+	data->read_mt_run_count++;
 	if (ret == 5) {
 		printf("TEST ts_read_mt (blocking) 5       ......   " GREEN "PASS" RESET "\n");
 	} else {
@@ -332,6 +401,7 @@ void run_tests(struct ts_verify *data)
 	}
 
 	ret = ts_verify_read_mt_1(data, 1, 1, 0);
+	data->read_mt_run_count++;
 	if (ret == 1) {
 		printf("TEST ts_read_mt (nonblocking) 1    ......   " GREEN "PASS" RESET "\n");
 	} else {
@@ -340,6 +410,7 @@ void run_tests(struct ts_verify *data)
 	}
 
 	ret = ts_verify_read_mt_1(data, 5, 1, 0);
+	data->read_mt_run_count++;
 	if (ret == 5) {
 		printf("TEST ts_read_mt (nonblocking) 5    ......   " GREEN "PASS" RESET "\n");
 	} else {
@@ -348,6 +419,7 @@ void run_tests(struct ts_verify *data)
 	}
 
 	ret = ts_verify_read_1(data, 1, 0, 0);
+	data->read_run_count++;
 	if (ret == 1) {
 		printf("TEST ts_read    (blocking) 1       ......   " GREEN "PASS" RESET "\n");
 	} else {
@@ -356,6 +428,7 @@ void run_tests(struct ts_verify *data)
 	}
 
 	ret = ts_verify_read_1(data, 5, 0, 0);
+	data->read_run_count++;
 	if (ret == 5) {
 		printf("TEST ts_read    (blocking) 5       ......   " GREEN "PASS" RESET "\n");
 	} else {
@@ -364,6 +437,7 @@ void run_tests(struct ts_verify *data)
 	}
 
 	ret = ts_verify_read_1(data, 1, 1, 0);
+	data->read_run_count++;
 	if (ret == 1) {
 		printf("TEST ts_read    (nonblocking) 1    ......   " GREEN "PASS" RESET "\n");
 	} else {
@@ -375,6 +449,7 @@ void run_tests(struct ts_verify *data)
 
 	/* the same with the raw calls */
 	ret = ts_verify_read_mt_1(data, 1, 0, 1);
+	data->read_mt_run_count++;
 	if (ret == 1) {
 		printf("TEST ts_read_raw_mt (blocking) 1   ......   " GREEN "PASS" RESET "\n");
 	} else {
@@ -383,6 +458,7 @@ void run_tests(struct ts_verify *data)
 	}
 
 	ret = ts_verify_read_mt_1(data, 5, 0, 1);
+	data->read_mt_run_count++;
 	if (ret == 5) {
 		printf("TEST ts_read_raw_mt (blocking) 5   ......   " GREEN "PASS" RESET "\n");
 	} else {
@@ -391,6 +467,7 @@ void run_tests(struct ts_verify *data)
 	}
 
 	ret = ts_verify_read_mt_1(data, 1, 1, 1);
+	data->read_mt_run_count++;
 	if (ret == 1) {
 		printf("TEST ts_read_raw_mt (nonblocking) 1......   " GREEN "PASS" RESET "\n");
 	} else {
@@ -399,6 +476,7 @@ void run_tests(struct ts_verify *data)
 	}
 
 	ret = ts_verify_read_mt_1(data, 5, 1, 1);
+	data->read_mt_run_count++;
 	if (ret == 5) {
 		printf("TEST ts_read_raw_mt (nonblocking) 5......   " GREEN "PASS" RESET "\n");
 	} else {
@@ -407,6 +485,7 @@ void run_tests(struct ts_verify *data)
 	}
 
 	ret = ts_verify_read_1(data, 1, 0, 1);
+	data->read_run_count++;
 	if (ret == 1) {
 		printf("TEST ts_read_raw(blocking) 1       ......   " GREEN "PASS" RESET "\n");
 	} else {
@@ -415,6 +494,7 @@ void run_tests(struct ts_verify *data)
 	}
 
 	ret = ts_verify_read_1(data, 5, 0, 1);
+	data->read_run_count++;
 	if (ret == 1) {
 		printf("TEST ts_read_raw(blocking) 5       ......   " GREEN "PASS" RESET "\n");
 	} else {
@@ -423,6 +503,7 @@ void run_tests(struct ts_verify *data)
 	}
 
 	ret = ts_verify_read_1(data, 1, 1, 1);
+	data->read_run_count++;
 	if (ret == 1) {
 		printf("TEST ts_read_raw(nonblocking) 1    ......   " GREEN "PASS" RESET "\n");
 	}
@@ -464,6 +545,7 @@ void run_tests(struct ts_verify *data)
 		printf("TEST ts_load_module (4)            ......   " GREEN "PASS" RESET "\n");
 	}
 
+	data->iteration++;
 }
 
 int main(int argc, char **argv)
@@ -476,7 +558,12 @@ int main(int argc, char **argv)
 		.verbose = 0,
 		.read_fail_count = 0,	
 		.read_mt_fail_count = 0,
+		.read_run_count = 0,
+		.read_mt_run_count = 0,
+		.iteration = 0,
+		.nr_of_iterations = 6,
 	};
+	uint8_t i;
 
 	while (1) {
 		const struct option long_options[] = {
@@ -518,11 +605,13 @@ int main(int argc, char **argv)
 		}
 	}
 
-	run_tests(&data);
+	for (i = 0; i < data.nr_of_iterations; i++)
+		run_tests(&data);
+
 
 	printf("------------------------------------------------------\n");
-	printf("read_mt FAILs: %d\n", data.read_mt_fail_count);
-	printf("read    FAILs: %d\n", data.read_fail_count);
+	printf("read_mt FAILs: %3d of %3d\n", data.read_mt_fail_count, data.read_mt_run_count);
+	printf("read    FAILs: %3d of %3d\n", data.read_fail_count, data.read_run_count);
 	printf("------------------------------------------------------\n");
 
 	return 0;
