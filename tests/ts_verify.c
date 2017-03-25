@@ -41,10 +41,13 @@
 #include "tslib.h"
 #include "testutils.h"
 
+#define CONFFILE "ts_verify_ts.conf"
+
 struct ts_verify {
 	struct tsdev *ts;
 	char *tsdevice;
 	unsigned short verbose;
+	FILE *tsconf;
 
 	struct ts_sample_mt **samp_mt;
 	unsigned short slots;
@@ -119,60 +122,6 @@ static void ts_verify_free_mt(struct ts_verify *data)
 	ts_close(data->ts);
 }
 
-static int ts_verify_filter_iteration(struct ts_verify *data)
-{
-	int32_t ret = 0;
-
-	if (data->verbose)
-		printf(YELLOW "    filters: ");
-
-	switch(data->iteration) {
-	case 1:
-		ret = ts_load_module(data->ts, "median", "depth=7");
-		if (ret < 0)
-			return ret;
-
-		if (data->verbose)
-			printf("median ");
-	case 2:
-		ret = ts_load_module(data->ts, "pthres", "pmin=20");
-		if (ret < 0)
-			return ret;
-
-		if (data->verbose)
-			printf("pthres ");
-	case 3:
-		ret = ts_load_module(data->ts, "debounce", "drop_threshold=40");
-		if (ret < 0)
-			return ret;
-
-		if (data->verbose)
-			printf("debounce ");
-	case 4:
-		ret = ts_load_module(data->ts, "dejitter", "delta=100");
-		if (ret < 0)
-			return ret;
-
-		if (data->verbose)
-			printf("dejitter ");
-	case 5:
-		ret = ts_load_module(data->ts, "linear", "");
-		if (ret < 0)
-			return ret;
-
-		if (data->verbose)
-			printf("linear ");
-
-		break;
-	}
-	if (data->verbose)
-		printf("\n" RESET);
-
-	ret = ts_reconfig(data->ts);
-
-	return ret;
-}
-
 /* TEST ts_read_mt 1 */
 static int ts_verify_read_mt_1(struct ts_verify *data, int nr,
 				     int nonblocking, int raw)
@@ -182,10 +131,6 @@ static int ts_verify_read_mt_1(struct ts_verify *data, int nr,
 	int count = 0;
 
 	ret = ts_verify_alloc_mt(data, nr, nonblocking);
-	if (ret < 0)
-		return ret;
-
-	ret = ts_verify_filter_iteration(data);
 	if (ret < 0)
 		return ret;
 
@@ -256,10 +201,6 @@ static int ts_verify_read_1(struct ts_verify *data, int nr,
 		perror("ts_setup");
 		return errno;
 	}
-
-	ret = ts_verify_filter_iteration(data);
-	if (ret < 0)
-		return ret;
 
 	/* blocking */
 	if (nonblocking != 1) {
@@ -562,8 +503,8 @@ int main(int argc, char **argv)
 		.read_mt_run_count = 0,
 		.iteration = 0,
 		.nr_of_iterations = 6,
+		.tsconf = NULL,
 	};
-	uint8_t i;
 
 	while (1) {
 		const struct option long_options[] = {
@@ -605,13 +546,53 @@ int main(int argc, char **argv)
 		}
 	}
 
-	for (i = 0; i < data.nr_of_iterations; i++)
-		run_tests(&data);
+	unlink(CONFFILE);
+	data.tsconf = fopen(CONFFILE,"a+");
+	fprintf(data.tsconf, "module_raw input\n");
+	fclose(data.tsconf);
 
+	if (setenv("TSLIB_CONFFILE", CONFFILE, 1) == -1)
+		return errno;
+
+
+	run_tests(&data);
+
+	data.tsconf = fopen(CONFFILE,"a+");
+	fprintf(data.tsconf, "module pthres pmin=20\n");
+	fclose(data.tsconf);
+
+	run_tests(&data);
+
+	data.tsconf = fopen(CONFFILE,"a+");
+	fprintf(data.tsconf, "module debounce drop_threshold=40\n");
+	fclose(data.tsconf);
+
+	run_tests(&data);
+
+	data.tsconf = fopen(CONFFILE,"a+");
+	fprintf(data.tsconf, "module median depth=7\n");
+	fclose(data.tsconf);
+
+	run_tests(&data);
+
+	data.tsconf = fopen(CONFFILE,"a+");
+	fprintf(data.tsconf, "module dejitter delta=100\n");
+	fclose(data.tsconf);
+
+	run_tests(&data);
+
+	data.tsconf = fopen(CONFFILE,"a+");
+	fprintf(data.tsconf, "module linear\n");
+	fclose(data.tsconf);
+
+	run_tests(&data);
+
+
+	unlink(CONFFILE);
 
 	printf("------------------------------------------------------\n");
 	printf("read_mt FAILs: %3d of %3d\n", data.read_mt_fail_count, data.read_mt_run_count);
-	printf("read    FAILs: %3d of %3d\n", data.read_fail_count, data.read_run_count);
+	printf("read    FAILs: %3d of %3d (WONTFIX)\n", data.read_fail_count, data.read_run_count);
 	printf("------------------------------------------------------\n");
 
 	return 0;
