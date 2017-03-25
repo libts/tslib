@@ -17,21 +17,21 @@ You can always build it from [upstream](https://cgit.freedesktop.org/evtest)
 though.
 
 ### what to contribute
-We collect all non-trivial thoughts about improving tslib, as well as bugreports
+We collect ideas about improving tslib
 [in our issue tracker](https://github.com/kergoth/tslib/issues). There's a lot
 that could be done, for any operating system you might work on.
 
 ### how to contribute
-Ideally you fork the project on github, make your changes and create a pull
-request. You can, however, send your patch to the current maintainer,
-[Martin Kepplinger](mailto:martink@posteo.de) too. We don't have a mailing list
-at the moment. Before you send changes, it would be awesome if you checked the
+Ideally you send your patches to our
+[mailing list](http://lists.infradead.org/mailman/listinfo/tslib). OVer there
+they are discussed and picked up.
+You can also fork the project on github, make your changes and create a pull
+request. Before you send changes, it would be awesome if you checked the
 following:
 * update the NEWS file's changelog if you added a feature
 * update or add man pages if applicable
 * update the README if applicable
-* add a line containing `Fixes #XX` in your git commit message; XX being the github issue's number if you fix an issue
-* run `tests/ts_verify` before and after your changes and make sure behaviour doesn't change. Update ts_verify if applicable.
+* possibly add a line containing `Fixes #XX` in your git commit message; XX being the github issue's number
 
 ### module development notes
 For those creating tslib modules, it is important to note a couple things with
@@ -50,6 +50,9 @@ In your implementation of `read_mt()` you must first call the next module's
 `read_mt()` and in case of a negative return value, return that error code.
 Otherwise of course return the actual number of samples you provide after your
 processing.
+
+In case of a filter module, add it to ts_verify and make sure test runs for
+read_mt at least all pass.
 
 ### coding style
 We loosely tie to the [Linux coding style](https://www.kernel.org/doc/html/latest/process/coding-style.html)
