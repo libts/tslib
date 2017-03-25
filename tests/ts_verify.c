@@ -23,6 +23,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
@@ -48,6 +49,8 @@ struct ts_verify {
 	struct ts_sample_mt **samp_mt;
 	unsigned short slots;
 	unsigned short nr;
+	uint16_t read_mt_fail_count;
+	uint16_t read_fail_count;
 };
 
 static void usage(char **argv)
@@ -307,15 +310,172 @@ static int ts_load_module_4_inv(struct ts_verify *data)
 	return ret;
 }
 
+void run_tests(struct ts_verify *data)
+{
+	int32_t ret;
+
+	/* ts_read() paramters(data, samples, nonblocking, raw) */
+	ret = ts_verify_read_mt_1(data, 1, 0, 0);
+	if (ret == 1) {
+		printf("TEST ts_read_mt (blocking) 1       ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_read_mt (blocking) 1       ......   " RED "FAIL" RESET "\n");
+		data->read_mt_fail_count++;
+	}
+
+	ret = ts_verify_read_mt_1(data, 5, 0, 0);
+	if (ret == 5) {
+		printf("TEST ts_read_mt (blocking) 5       ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_read_mt (blocking) 5       ......   " RED "FAIL" RESET "\n");
+		data->read_mt_fail_count++;
+	}
+
+	ret = ts_verify_read_mt_1(data, 1, 1, 0);
+	if (ret == 1) {
+		printf("TEST ts_read_mt (nonblocking) 1    ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_read_mt (nonblocking) 1    ......   " RED "FAIL" RESET "\n");
+		data->read_mt_fail_count++;
+	}
+
+	ret = ts_verify_read_mt_1(data, 5, 1, 0);
+	if (ret == 5) {
+		printf("TEST ts_read_mt (nonblocking) 5    ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_read_mt (nonblocking) 5    ......   " RED "FAIL" RESET "\n");
+		data->read_mt_fail_count++;
+	}
+
+	ret = ts_verify_read_1(data, 1, 0, 0);
+	if (ret == 1) {
+		printf("TEST ts_read    (blocking) 1       ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_read    (blocking) 1       ......   " RED "FAIL" RESET "\n");
+		data->read_fail_count++;
+	}
+
+	ret = ts_verify_read_1(data, 5, 0, 0);
+	if (ret == 5) {
+		printf("TEST ts_read    (blocking) 5       ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_read    (blocking) 5       ......   " RED "FAIL" RESET "\n");
+		data->read_fail_count++;
+	}
+
+	ret = ts_verify_read_1(data, 1, 1, 0);
+	if (ret == 1) {
+		printf("TEST ts_read    (nonblocking) 1    ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_read    (nonblocking) 1    ......   " RED "FAIL" RESET "\n");
+		data->read_fail_count++;
+	}
+
+
+
+	/* the same with the raw calls */
+	ret = ts_verify_read_mt_1(data, 1, 0, 1);
+	if (ret == 1) {
+		printf("TEST ts_read_raw_mt (blocking) 1   ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_read_raw_mt (blocking) 1   ......   " RED "FAIL" RESET "\n");
+		data->read_mt_fail_count++;
+	}
+
+	ret = ts_verify_read_mt_1(data, 5, 0, 1);
+	if (ret == 5) {
+		printf("TEST ts_read_raw_mt (blocking) 5   ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_read_raw_mt (blocking) 5   ......   " RED "FAIL" RESET "\n");
+		data->read_mt_fail_count++;
+	}
+
+	ret = ts_verify_read_mt_1(data, 1, 1, 1);
+	if (ret == 1) {
+		printf("TEST ts_read_raw_mt (nonblocking) 1......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_read_raw_mt (nonblocking) 1......   " RED "FAIL" RESET "\n");
+		data->read_mt_fail_count++;
+	}
+
+	ret = ts_verify_read_mt_1(data, 5, 1, 1);
+	if (ret == 5) {
+		printf("TEST ts_read_raw_mt (nonblocking) 5......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_read_raw_mt (nonblocking) 5......   " RED "FAIL" RESET "\n");
+		data->read_mt_fail_count++;
+	}
+
+	ret = ts_verify_read_1(data, 1, 0, 1);
+	if (ret == 1) {
+		printf("TEST ts_read_raw(blocking) 1       ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_read_raw(blocking) 1       ......   " RED "FAIL" RESET "\n");
+		data->read_fail_count++;
+	}
+
+	ret = ts_verify_read_1(data, 5, 0, 1);
+	if (ret == 1) {
+		printf("TEST ts_read_raw(blocking) 5       ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_read_raw(blocking) 5       ......   " RED "FAIL" RESET "\n");
+		data->read_fail_count++;
+	}
+
+	ret = ts_verify_read_1(data, 1, 1, 1);
+	if (ret == 1) {
+		printf("TEST ts_read_raw(nonblocking) 1    ......   " GREEN "PASS" RESET "\n");
+	}
+
+
+
+	ret = ts_reconfig_1(data);
+	if (ret == 0) {
+		printf("TEST ts_reconfig (1)               ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_reconfig (1)               ......   " RED "FAIL" RESET "\n");
+	}
+
+	ret = ts_load_module_1(data);
+	if (ret == 0) {
+		printf("TEST ts_load_module (1)            ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_load_module (1)            ......   " RED "FAIL" RESET "\n");
+	}
+
+	ret = ts_load_module_2(data);
+	if (ret == 0) {
+		printf("TEST ts_load_module (2)            ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_load_module (2)            ......   " RED "FAIL" RESET "\n");
+	}
+
+	ret = ts_load_module_3(data);
+	if (ret == 0) {
+		printf("TEST ts_load_module (3)            ......   " GREEN "PASS" RESET "\n");
+	} else {
+		printf("TEST ts_load_module (3)            ......   " RED "FAIL" RESET "\n");
+	}
+
+	ret = ts_load_module_4_inv(data);
+	if (ret == 0) {
+		printf("TEST ts_load_module (4)            ......   " RED "FAIL" RESET "\n");
+	} else {
+		printf("TEST ts_load_module (4)            ......   " GREEN "PASS" RESET "\n");
+	}
+
+}
+
 int main(int argc, char **argv)
 {
-	int ret;
 	struct ts_verify data = {
 		.ts = NULL,
 		.tsdevice = NULL,
 		.slots = 1,
 		.samp_mt = NULL,
 		.verbose = 0,
+		.read_fail_count = 0,	
+		.read_mt_fail_count = 0,
 	};
 
 	while (1) {
@@ -358,142 +518,12 @@ int main(int argc, char **argv)
 		}
 	}
 
-	/* ts_read() paramters(data, samples, nonblocking, raw) */
-	ret = ts_verify_read_mt_1(&data, 1, 0, 0);
-	if (ret == 1) {
-		printf("TEST ts_read_mt (blocking) 1       ......   " GREEN "PASS" RESET "\n");
-	} else {
-		printf("TEST ts_read_mt (blocking) 1       ......   " RED "FAIL" RESET "\n");
-	}
+	run_tests(&data);
 
-	ret = ts_verify_read_mt_1(&data, 5, 0, 0);
-	if (ret == 5) {
-		printf("TEST ts_read_mt (blocking) 5       ......   " GREEN "PASS" RESET "\n");
-	} else {
-		printf("TEST ts_read_mt (blocking) 5       ......   " RED "FAIL" RESET "\n");
-	}
-
-	ret = ts_verify_read_mt_1(&data, 1, 1, 0);
-	if (ret == 1) {
-		printf("TEST ts_read_mt (nonblocking) 1    ......   " GREEN "PASS" RESET "\n");
-	} else {
-		printf("TEST ts_read_mt (nonblocking) 1    ......   " RED "FAIL" RESET "\n");
-	}
-
-	ret = ts_verify_read_mt_1(&data, 5, 1, 0);
-	if (ret == 5) {
-		printf("TEST ts_read_mt (nonblocking) 5    ......   " GREEN "PASS" RESET "\n");
-	} else {
-		printf("TEST ts_read_mt (nonblocking) 5    ......   " RED "FAIL" RESET "\n");
-	}
-
-	ret = ts_verify_read_1(&data, 1, 0, 0);
-	if (ret == 1) {
-		printf("TEST ts_read    (blocking) 1       ......   " GREEN "PASS" RESET "\n");
-	} else {
-		printf("TEST ts_read    (blocking) 1       ......   " RED "FAIL" RESET "\n");
-	}
-
-	ret = ts_verify_read_1(&data, 5, 0, 0);
-	if (ret == 5) {
-		printf("TEST ts_read    (blocking) 5       ......   " GREEN "PASS" RESET "\n");
-	} else {
-		printf("TEST ts_read    (blocking) 5       ......   " RED "FAIL" RESET "\n");
-	}
-
-	ret = ts_verify_read_1(&data, 1, 1, 0);
-	if (ret == 1) {
-		printf("TEST ts_read    (nonblocking) 1    ......   " GREEN "PASS" RESET "\n");
-	} else {
-		printf("TEST ts_read    (nonblocking) 1    ......   " RED "FAIL" RESET "\n");
-	}
-
-
-
-	/* the same with the raw calls */
-	ret = ts_verify_read_mt_1(&data, 1, 0, 1);
-	if (ret == 1) {
-		printf("TEST ts_read_raw_mt (blocking) 1   ......   " GREEN "PASS" RESET "\n");
-	} else {
-		printf("TEST ts_read_raw_mt (blocking) 1   ......   " RED "FAIL" RESET "\n");
-	}
-
-	ret = ts_verify_read_mt_1(&data, 5, 0, 1);
-	if (ret == 5) {
-		printf("TEST ts_read_raw_mt (blocking) 5   ......   " GREEN "PASS" RESET "\n");
-	} else {
-		printf("TEST ts_read_raw_mt (blocking) 5   ......   " RED "FAIL" RESET "\n");
-	}
-
-	ret = ts_verify_read_mt_1(&data, 1, 1, 1);
-	if (ret == 1) {
-		printf("TEST ts_read_raw_mt (nonblocking) 1......   " GREEN "PASS" RESET "\n");
-	} else {
-		printf("TEST ts_read_raw_mt (nonblocking) 1......   " RED "FAIL" RESET "\n");
-	}
-
-	ret = ts_verify_read_mt_1(&data, 5, 1, 1);
-	if (ret == 5) {
-		printf("TEST ts_read_raw_mt (nonblocking) 5......   " GREEN "PASS" RESET "\n");
-	} else {
-		printf("TEST ts_read_raw_mt (nonblocking) 5......   " RED "FAIL" RESET "\n");
-	}
-
-	ret = ts_verify_read_1(&data, 1, 0, 1);
-	if (ret == 1) {
-		printf("TEST ts_read_raw(blocking) 1       ......   " GREEN "PASS" RESET "\n");
-	} else {
-		printf("TEST ts_read_raw(blocking) 1       ......   " RED "FAIL" RESET "\n");
-	}
-
-	ret = ts_verify_read_1(&data, 5, 0, 1);
-	if (ret == 1) {
-		printf("TEST ts_read_raw(blocking) 5       ......   " GREEN "PASS" RESET "\n");
-	} else {
-		printf("TEST ts_read_raw(blocking) 5       ......   " RED "FAIL" RESET "\n");
-	}
-
-	ret = ts_verify_read_1(&data, 1, 1, 1);
-	if (ret == 1) {
-		printf("TEST ts_read_raw(nonblocking) 1    ......   " GREEN "PASS" RESET "\n");
-	}
-
-
-
-	ret = ts_reconfig_1(&data);
-	if (ret == 0) {
-		printf("TEST ts_reconfig (1)               ......   " GREEN "PASS" RESET "\n");
-	} else {
-		printf("TEST ts_reconfig (1)               ......   " RED "FAIL" RESET "\n");
-	}
-
-	ret = ts_load_module_1(&data);
-	if (ret == 0) {
-		printf("TEST ts_load_module (1)            ......   " GREEN "PASS" RESET "\n");
-	} else {
-		printf("TEST ts_load_module (1)            ......   " RED "FAIL" RESET "\n");
-	}
-
-	ret = ts_load_module_2(&data);
-	if (ret == 0) {
-		printf("TEST ts_load_module (2)            ......   " GREEN "PASS" RESET "\n");
-	} else {
-		printf("TEST ts_load_module (2)            ......   " RED "FAIL" RESET "\n");
-	}
-
-	ret = ts_load_module_3(&data);
-	if (ret == 0) {
-		printf("TEST ts_load_module (3)            ......   " GREEN "PASS" RESET "\n");
-	} else {
-		printf("TEST ts_load_module (3)            ......   " RED "FAIL" RESET "\n");
-	}
-
-	ret = ts_load_module_4_inv(&data);
-	if (ret == 0) {
-		printf("TEST ts_load_module (4)            ......   " RED "FAIL" RESET "\n");
-	} else {
-		printf("TEST ts_load_module (4)            ......   " GREEN "PASS" RESET "\n");
-	}
+	printf("------------------------------------------------------\n");
+	printf("read_mt FAILs: %d\n", data.read_mt_fail_count);
+	printf("read    FAILs: %d\n", data.read_fail_count);
+	printf("------------------------------------------------------\n");
 
 	return 0;
 }
