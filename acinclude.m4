@@ -6,6 +6,6 @@
 AC_DEFUN([TS_DEFAULT_FLAGS],
 [
   if test x"$CFLAGS" = "x"; then
-    CFLAGS="-O2 -Wall -W"
+    CFLAGS="-O2 -Wall -W -fPIC"
   fi
 ]) # TS_DEFAULT_FLAGS
