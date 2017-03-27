@@ -481,38 +481,50 @@ int main(int argc, char **argv)
 		return errno;
 
 
+	printf("======================================================\n");
+	printf("input_raw\n");
+
 	run_tests(&data);
 
 	data.tsconf = fopen(CONFFILE,"a+");
 	fprintf(data.tsconf, "module pthres pmin=20\n");
 	fclose(data.tsconf);
+	printf("======================================================\n");
+	printf("input_raw -> pthres\n");
 
 	run_tests(&data);
 
 	data.tsconf = fopen(CONFFILE,"a+");
 	fprintf(data.tsconf, "module debounce drop_threshold=40\n");
 	fclose(data.tsconf);
+	printf("======================================================\n");
+	printf("input_raw -> pthres -> debounce\n");
 
 	run_tests(&data);
 
 	data.tsconf = fopen(CONFFILE,"a+");
 	fprintf(data.tsconf, "module median depth=7\n");
 	fclose(data.tsconf);
+	printf("======================================================\n");
+	printf("input_raw -> pthres -> debounce -> median\n");
 
 	run_tests(&data);
 
 	data.tsconf = fopen(CONFFILE,"a+");
 	fprintf(data.tsconf, "module dejitter delta=100\n");
 	fclose(data.tsconf);
+	printf("======================================================\n");
+	printf("input_raw -> pthres -> debounce -> median -> dejitter\n");
 
 	run_tests(&data);
 
 	data.tsconf = fopen(CONFFILE,"a+");
 	fprintf(data.tsconf, "module linear\n");
 	fclose(data.tsconf);
+	printf("======================================================\n");
+	printf("input_raw -> pthres -> debounce -> median -> dejitter -> linear\n");
 
 	run_tests(&data);
-
 
 	unlink(CONFFILE);
 
