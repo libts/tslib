@@ -494,8 +494,8 @@ Writing your own plugin is quite easy, in case an existing one doesn't fit.
 * GNU / Linux - all
 * Android / Linux - all (?)
 * FreeBSD - all (?)
-* GNU / Hurd - ts_print, ts_print_raw, ts_finddev
-* Haiku - ts_print, ts_print_raw, ts_finddev
+* GNU / Hurd - ts_print_mt, ts_print, ts_print_raw, ts_finddev
+* Haiku - ts_print_mt, ts_print, ts_print_raw, ts_finddev
 * Windows - ts_print.exe, ts_print_raw.exe
 
 help porting missing programs!
