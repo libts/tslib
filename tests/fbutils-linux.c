@@ -386,10 +386,26 @@ void fillrect (int x1, int y1, int x2, int y2, unsigned colidx)
 	/* Clipping and sanity checking */
 	if (x1 > x2) { tmp = x1; x1 = x2; x2 = tmp; }
 	if (y1 > y2) { tmp = y1; y1 = y2; y2 = tmp; }
-	if (x1 < 0) x1 = 0; if ((__u32)x1 >= xres) x1 = xres - 1;
-	if (x2 < 0) x2 = 0; if ((__u32)x2 >= xres) x2 = xres - 1;
-	if (y1 < 0) y1 = 0; if ((__u32)y1 >= yres) y1 = yres - 1;
-	if (y2 < 0) y2 = 0; if ((__u32)y2 >= yres) y2 = yres - 1;
+
+	if (x1 < 0)
+		x1 = 0;
+	if ((__u32)x1 >= xres)
+		x1 = xres - 1;
+
+	if (x2 < 0)
+		x2 = 0;
+	if ((__u32)x2 >= xres)
+		x2 = xres - 1;
+
+	if (y1 < 0)
+		y1 = 0;
+	if ((__u32)y1 >= yres)
+		y1 = yres - 1;
+
+	if (y2 < 0)
+		y2 = 0;
+	if ((__u32)y2 >= yres)
+		y2 = yres - 1;
 
 	if ((x1 > x2) || (y1 > y2))
 		return;
