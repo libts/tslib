@@ -31,10 +31,16 @@
 #include <errno.h>
 #include <unistd.h>
 
-#ifdef __FreeBSD__
+#if defined (__FreeBSD__)
+
 #include <dev/evdev/input.h>
-#else
+#define TS_HAVE_EVDEV
+
+#elif defined (__linux__)
+
 #include <linux/input.h>
+#define TS_HAVE_EVDEV
+
 #endif
 
 #include "tslib.h"
@@ -52,7 +58,9 @@ int main(int argc, char **argv)
 	struct tsdev *ts;
 	char *tsdevice = NULL;
 	struct ts_sample_mt **samp_mt = NULL;
+#ifdef TS_HAVE_EVDEV
 	struct input_absinfo slot;
+#endif
 	unsigned short max_slots = 1;
 	int ret, i, j;
 	int read_samples = 1;
@@ -122,6 +130,7 @@ int main(int argc, char **argv)
 		return errno;
 	}
 
+#ifdef TS_HAVE_EVDEV
 	if (ioctl(ts_fd(ts), EVIOCGABS(ABS_MT_SLOT), &slot) < 0) {
 		perror("ioctl EVIOGABS");
 		ts_close(ts);
@@ -129,6 +138,10 @@ int main(int argc, char **argv)
 	}
 
 	max_slots = slot.maximum + 1 - slot.minimum;
+#else
+	/* random maximum in case we don't know */
+	max_slots = 11;
+#endif
 
 	samp_mt = malloc(read_samples * sizeof(struct ts_sample_mt *));
 	if (!samp_mt) {
