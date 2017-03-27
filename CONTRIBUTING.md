@@ -23,7 +23,7 @@ that could be done, for any operating system you might work on.
 
 ### how to contribute
 Ideally you send your patches to our
-[mailing list](http://lists.infradead.org/mailman/listinfo/tslib). OVer there
+[mailing list](http://lists.infradead.org/mailman/listinfo/tslib). Over there
 they are discussed and picked up.
 You can also fork the project on github, make your changes and create a pull
 request. Before you send changes, it would be awesome if you checked the
