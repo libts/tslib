@@ -246,59 +246,6 @@ static int ts_reconfig_1(struct ts_verify *data)
 	return ret;
 }
 
-static int ts_load_module_1(struct ts_verify *data)
-{
-	int ret = 0;
-
-	data->ts = ts_setup(data->tsdevice, 0);
-	if (!data->ts) {
-		perror("ts_setup");
-		return errno;
-	}
-
-	ret = ts_load_module(data->ts, "median", "depth=7");
-
-	ts_close(data->ts);
-
-	return ret;
-}
-
-static int ts_load_module_2(struct ts_verify *data)
-{
-	int ret = 0;
-
-	data->ts = ts_setup(data->tsdevice, 0);
-	if (!data->ts) {
-		perror("ts_setup");
-		return errno;
-	}
-
-	ret = ts_load_module(data->ts, "median", "asdf");
-
-	ts_close(data->ts);
-
-	return ret;
-}
-
-static int ts_load_module_3(struct ts_verify *data)
-{
-	int ret = 0;
-
-	data->ts = ts_setup(data->tsdevice, 0);
-	if (!data->ts) {
-		perror("ts_setup");
-		return errno;
-	}
-
-	ret = ts_load_module(data->ts, "median", "depth=9");
-	ret = ts_load_module(data->ts, "median", "depth=5");
-	ret = ts_load_module(data->ts, "median", "depth=8");
-
-	ts_close(data->ts);
-
-	return ret;
-}
-
 static int ts_load_module_4_inv(struct ts_verify *data)
 {
 	int ret = 0;
@@ -456,27 +403,6 @@ void run_tests(struct ts_verify *data)
 		printf("TEST ts_reconfig (1)               ......   " GREEN "PASS" RESET "\n");
 	} else {
 		printf("TEST ts_reconfig (1)               ......   " RED "FAIL" RESET "\n");
-	}
-
-	ret = ts_load_module_1(data);
-	if (ret == 0) {
-		printf("TEST ts_load_module (1)            ......   " GREEN "PASS" RESET "\n");
-	} else {
-		printf("TEST ts_load_module (1)            ......   " RED "FAIL" RESET "\n");
-	}
-
-	ret = ts_load_module_2(data);
-	if (ret == 0) {
-		printf("TEST ts_load_module (2)            ......   " GREEN "PASS" RESET "\n");
-	} else {
-		printf("TEST ts_load_module (2)            ......   " RED "FAIL" RESET "\n");
-	}
-
-	ret = ts_load_module_3(data);
-	if (ret == 0) {
-		printf("TEST ts_load_module (3)            ......   " GREEN "PASS" RESET "\n");
-	} else {
-		printf("TEST ts_load_module (3)            ......   " RED "FAIL" RESET "\n");
 	}
 
 	ret = ts_load_module_4_inv(data);
