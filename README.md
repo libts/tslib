@@ -291,20 +291,21 @@ Parameters:
 ***
 The following example setup
 
-           |--------|      |-----|      |--------------|
-    x ---> | median | ---->| IIR | ---> |              | ---> x'
-           |--------|    ->|-----|      |    screen    |
-                        |               |  transform   |
-                        |               | (calibrate)  |
-           |--------|   |  |-----|      |              |
-    y ---> | median | ---->| IIR | ---> |              | ---> y'
-           |--------|   |->|-----|      |--------------|
+           |--------|       |-----|      |--------------|
+    x ---> | median | ----> | IIR | ---> |              | ---> x'
+           |--------|    -> |-----|      |    screen    |
+                        |                |  transform   |
+                        |                | (calibrate)  |
+           |--------|   |   |-----|      |              |
+    y ---> | median | ----> | IIR | ---> |              | ---> y'
+           |--------|   |-> |-----|      |--------------|
+                        |
                         |
                  |----------|
-    p ---------> | debounce | ------------------------------> p'
+    p ---------> | debounce | -------------------------------> p'
                  |----------|
 
-would be acchieved by the following ts.conf:
+would be achieved by the following ts.conf:
 
     module_raw input
     module debounce drop_threshold=40
