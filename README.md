@@ -544,7 +544,7 @@ Writing your own plugin is quite easy, in case an existing one doesn't fit.
 * FreeBSD - all (?)
 * GNU / Hurd - ts_print_mt, ts_print, ts_print_raw, ts_finddev
 * Haiku - ts_print_mt, ts_print, ts_print_raw, ts_finddev
-* Windows - ts_print.exe, ts_print_raw.exe
+* Windows - ts_print.exe, ts_print_raw.exe ts_print_mt.exe
 
 help porting missing programs!
 
