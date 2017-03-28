@@ -46,6 +46,10 @@
 #include "tslib.h"
 #include "testutils.h"
 
+#ifndef ABS_MT_SLOT /* < 2.6.36 kernel headers */
+# define ABS_MT_SLOT             0x2f    /* MT slot being modified */
+#endif
+
 static void usage(char **argv)
 {
 	printf("tslib " PACKAGE_VERSION "\n");
