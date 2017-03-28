@@ -63,8 +63,10 @@
 # define SYN_CNT (SYN_MAX+1)
 #endif
 
-#ifndef ABS_MT_POSITION_X /* < 2.6.30 kernel headers */
+#ifndef ABS_MT_SLOT /* < 2.6.36 kernel headers */
 # define ABS_MT_SLOT             0x2f    /* MT slot being modified */
+#endif
+#ifndef ABS_MT_POSITION_X /* < 2.6.30 kernel headers */
 # define ABS_MT_TOUCH_MAJOR      0x30    /* Major axis of touching ellipse */
 # define ABS_MT_TOUCH_MINOR      0x31    /* Minor axis (omit if circular) */
 # define ABS_MT_WIDTH_MAJOR      0x32    /* Major axis of approaching ellipse */
