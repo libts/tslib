@@ -33,15 +33,25 @@
 #include <unistd.h>
 #include <getopt.h>
 
-#ifdef __FreeBSD__
+#if defined (__FreeBSD__)
+
 #include <dev/evdev/input.h>
-#else
+#define TS_HAVE_EVDEV
+
+#elif defined (__linux__)
+
 #include <linux/input.h>
+#define TS_HAVE_EVDEV
+
 #endif
 
 #include "tslib.h"
 #include "fbutils.h"
 #include "testutils.h"
+
+#ifndef ABS_MT_SLOT /* < 2.6.36 kernel headers */
+# define ABS_MT_SLOT             0x2f    /* MT slot being modified */
+#endif
 
 static int palette[] =
 {
@@ -89,7 +99,9 @@ int main(int argc, char **argv)
 	unsigned int mode = 0;
 	unsigned int *mode_mt = NULL;
 	int quit_pressed = 0;
+#ifdef TS_HAVE_EVDEV
 	struct input_absinfo slot;
+#endif
 	unsigned short max_slots = 1;
 	struct ts_sample_mt **samp_mt = NULL;
 	short verbose = 0;
@@ -146,7 +158,7 @@ int main(int argc, char **argv)
 	}
 	if (verbose && tsdevice)
 		printf("ts_test_mt: using input device " GREEN "%s" RESET "\n", tsdevice);
-
+#ifdef TS_HAVE_EVDEV
 	if (ioctl(ts_fd(ts), EVIOCGABS(ABS_MT_SLOT), &slot) < 0) {
 		perror("ioctl EVIOGABS");
 		ts_close(ts);
@@ -154,6 +166,10 @@ int main(int argc, char **argv)
 	}
 
 	max_slots = slot.maximum + 1 - slot.minimum;
+#else
+	/* random maximum in case don't know */
+	max_slots = 11;
+#endif
 
 	samp_mt = malloc(sizeof(struct ts_sample_mt *));
 	if (!samp_mt) {
