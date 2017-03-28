@@ -24,7 +24,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
-#include <sys/mman.h>
 #include <sys/time.h>
 #include <getopt.h>
 #include <errno.h>
