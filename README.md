@@ -289,6 +289,32 @@ Parameters:
 
 
 ***
+The following example setup
+
+           |--------|      |-----|      |--------------|
+    x ---> | median | ---->| IIR | ---> |              | ---> x'
+           |--------|    ->|-----|      |    screen    |
+                        |               |  transform   |
+                        |               | (calibrate)  |
+           |--------|   |  |-----|      |              |
+    y ---> | median | ---->| IIR | ---> |              | ---> y'
+           |--------|   |->|-----|      |--------------|
+                        |
+                 |----------|
+    p ---------> | debounce | ------------------------------> p'
+                 |----------|
+
+would be acchieved by the following ts.conf:
+
+    module_raw input
+    module debounce drop_threshold=40
+    module median depth=5
+    module iir N=6 D=10
+    module linear
+
+while you are free to play with the parameter values.
+
+***
 
 
 ## the libts library
