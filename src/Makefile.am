@@ -86,6 +86,10 @@ if ENABLE_STATIC_SKIP_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/skip.c
 endif
 
+if ENABLE_STATIC_IIR_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/iir.c
+endif
+
 if ENABLE_STATIC_WAVESHARE_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/waveshare-raw.c
 endif

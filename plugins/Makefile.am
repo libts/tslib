@@ -59,6 +59,12 @@ else
 SKIP_MODULE =
 endif
 
+if ENABLE_IIR_MODULE
+IIR_MODULE = iir.la
+else
+IIR_MODULE =
+endif
+
 if ENABLE_UCB1X00_MODULE
 UCB1X00_MODULE = ucb1x00.la
 else
@@ -152,6 +158,7 @@ pluginexec_LTLIBRARIES = \
 	$(PTHRES_MODULE) \
 	$(DEBOUNCE_MODULE) \
 	$(SKIP_MODULE) \
+	$(IIR_MODULE) \
 	$(UCB1X00_MODULE) \
 	$(CORGI_MODULE) \
 	$(COLLIE_MODULE) \
@@ -222,6 +229,13 @@ if WINDOWS
 linear_h2200_la_LDFLAGS	+= -no-undefined
 endif
 linear_h2200_la_LIBADD	= $(top_builddir)/src/libts.la
+
+iir_la_SOURCES		= iir.c
+iir_la_LDFLAGS		= -module $(LTVSN)
+if WINDOWS
+iir_la_LDFLAGS		+= -no-undefined
+endif
+iir_la_LIBADD		= $(top_builddir)/src/libts.la
 
 # hw access
 corgi_la_SOURCES	= corgi-raw.c

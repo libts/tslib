@@ -77,6 +77,9 @@ static const struct {
 #ifdef TSLIB_STATIC_SKIP_MODULE
 	{ "skip", skip_mod_init },
 #endif
+#ifdef TSLIB_STATIC_IIR_MODULE
+	{ "iir", iir_mod_init },
+#endif
 };
 
 #define countof(arr) (sizeof(arr) / sizeof((arr)[0]))

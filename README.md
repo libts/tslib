@@ -182,6 +182,27 @@ Parameters:
 	Maximum pressure value for a sample to be valid.
 
 
+### module: iir
+
+#### Description:
+  Infinite impulse response filter. Similar to dejitter, this is a smoothing
+  filter to remove low-level noise. There is a trade-off between noise removal
+  (smoothing) and responsiveness. The parameters N and D specify the level of
+  smoothing in the form of a fraction (N/D).
+
+  [Wikipedia](https://en.wikipedia.org/wiki/Infinite_impulse_response) has some
+  general theory.
+
+
+Parameters:
+* `N`
+
+	numerator of the smoothing fraction
+* `D`
+
+	denominator of the smoothing fraction
+
+
 ### module: dejitter
 
 #### Description:

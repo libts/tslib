@@ -97,6 +97,7 @@ TSLIB_CHECK_MODULE([median], [yes], [Enable building of median filter])
 TSLIB_CHECK_MODULE([pthres], [yes], [Enable building of pthres filter])
 TSLIB_CHECK_MODULE([debounce], [yes], [Enable building of debounce filter])
 TSLIB_CHECK_MODULE([skip], [yes], [Enable building of skip filter])
+TSLIB_CHECK_MODULE([iir], [yes], [Enable building of IIR filter])
 
 # hardware access modules
 if test "$build_linux" = "yes"; then
