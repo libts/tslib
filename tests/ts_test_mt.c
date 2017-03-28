@@ -29,7 +29,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <sys/ioctl.h>
 #include <unistd.h>
 #include <getopt.h>
 
@@ -43,6 +42,10 @@
 #include <linux/input.h>
 #define TS_HAVE_EVDEV
 
+#endif
+
+#ifdef TS_HAVE_EVDEV
+#include <sys/ioctl.h>
 #endif
 
 #include "tslib.h"
