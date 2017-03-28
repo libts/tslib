@@ -24,7 +24,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
-#include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/time.h>
 #include <getopt.h>
@@ -41,6 +40,10 @@
 #include <linux/input.h>
 #define TS_HAVE_EVDEV
 
+#endif
+
+#ifdef TS_HAVE_EVDEV
+#include <sys/ioctl.h>
 #endif
 
 #include "tslib.h"
