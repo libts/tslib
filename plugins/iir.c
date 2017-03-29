@@ -52,6 +52,13 @@ struct tslib_iir {
 	uint8_t *last_active_mt; /* for finding pen-down */
 };
 
+static void iir_filter(struct tslib_module_info *info, int32_t *new,
+		       int32_t *save) {
+	struct tslib_iir *iir = (struct tslib_iir *)info;
+
+	*save = (iir->N * *save + (iir->D - iir->N) * *new + iir->D / 2) / iir->D;
+}
+
 /* legacy read interface */
 static int iir_read(struct tslib_module_info *info, struct ts_sample *samp,
 		    int nr)
@@ -77,13 +84,13 @@ static int iir_read(struct tslib_module_info *info, struct ts_sample *samp,
 			continue;
 		}
 
-		iir->s = (iir->N * iir->s + (iir->D - iir->N) * samp->x + iir->D / 2) / iir->D;
+		iir_filter(info, &samp->x, &iir->s);
 	#ifdef DEBUG
 		printf("IIR: X: %d -> %d\n", samp->x, iir->s);
 	#endif
 		samp->x = iir->s;
 
-		iir->t = (iir->N * iir->t + (iir->D - iir->N) * samp->y + iir->D / 2) / iir->D;
+		iir_filter(info, &samp->y, &iir->t);
 	#ifdef DEBUG
 		printf("IIR: Y: %d -> %d\n", samp->y, iir->t);
 	#endif
@@ -146,20 +153,14 @@ static int iir_read_mt(struct tslib_module_info *info,
 				continue;
 			}
 
-			iir->s_mt[j] = (iir->N * iir->s_mt[j] +
-					(iir->D - iir->N) * samp[i][j].x +
-					iir->D / 2)
-				       / iir->D;
+			iir_filter(info, &samp[i][j].x, &iir->s_mt[j]);
 		#ifdef DEBUG
 			printf("IIR: (slot %d) X: %d -> %d\n",
 			       j, samp[i][j].x, iir->s_mt[j]);
 		#endif
 			samp[i][j].x = iir->s_mt[j];
 
-			iir->t_mt[j] = (iir->N * iir->t_mt[j] +
-					(iir->D - iir->N) * samp[i][j].y +
-					iir->D / 2)
-				       / iir->D;
+			iir_filter(info, &samp[i][j].y, &iir->t_mt[j]);
 		#ifdef DEBUG
 			printf("IIR: (slot %d) Y: %d -> %d\n",
 			       j, samp[i][j].y, iir->t_mt[j]);
@@ -180,6 +181,9 @@ static int iir_fini(struct tslib_module_info *info)
 
 	if (iir->t_mt)
 		free(iir->t_mt);
+
+	if (iir->last_active_mt)
+		free(iir->last_active_mt);
 
 	free(info);
 
