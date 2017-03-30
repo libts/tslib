@@ -21,7 +21,8 @@
  *
  *
  * ts_uinput daemon to generate (single- and multitouch) input events
- * taken from tslib multitouch samples.
+ * taken from tslib multitouch samples. It's a userspace evdev driver
+ * and thus Linux specific.
  */
 
 #include <errno.h>
@@ -66,6 +67,32 @@
 
 #ifndef UI_GET_SYSNAME
 #define UI_GET_SYSNAME(len)     _IOC(_IOC_READ, UINPUT_IOCTL_BASE, 44, len)
+#endif
+
+#ifndef ABS_MT_SLOT /* < 2.6.36 kernel headers */
+# define ABS_MT_SLOT             0x2f    /* MT slot being modified */
+#endif
+#ifndef ABS_MT_POSITION_X /* < 2.6.30 kernel headers */
+# define ABS_MT_TOUCH_MAJOR      0x30    /* Major axis of touching ellipse */
+# define ABS_MT_TOUCH_MINOR      0x31    /* Minor axis (omit if circular) */
+# define ABS_MT_WIDTH_MAJOR      0x32    /* Major axis of approaching ellipse */
+# define ABS_MT_WIDTH_MINOR      0x33    /* Minor axis (omit if circular) */
+# define ABS_MT_ORIENTATION      0x34    /* Ellipse orientation */
+# define ABS_MT_POSITION_X       0x35    /* Center X touch position */
+# define ABS_MT_POSITION_Y       0x36    /* Center Y touch position */
+# define ABS_MT_TOOL_TYPE        0x37    /* Type of touching device */
+# define ABS_MT_BLOB_ID          0x38    /* Group a set of packets as a blob */
+# define ABS_MT_TRACKING_ID      0x39    /* Unique ID of initiated contact */
+#endif
+#ifndef ABS_MT_PRESSURE /* < 2.6.33 kernel headers */
+# define ABS_MT_PRESSURE         0x3a    /* Pressure on contact area */
+#endif
+#ifndef ABS_MT_DISTANCE /* < 2.6.38 kernel headers */
+# define ABS_MT_DISTANCE         0x3b    /* Contact hover distance */
+#endif
+#ifndef ABS_MT_TOOL_X /* < 3.6 kernel headers */
+# define ABS_MT_TOOL_X           0x3c    /* Center X tool position */
+# define ABS_MT_TOOL_Y           0x3d    /* Center Y tool position */
 #endif
 
 struct data_t {
