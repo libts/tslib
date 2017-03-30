@@ -639,8 +639,20 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 						total++;
 						break;
 					case SYN_MT_REPORT:
-						if (i->type_a && i->slot < (max_slots - 1))
+						if (!i->type_a)
+							break;
+
+						if (i->buf[total][i->slot].valid != 1) {
+							i->buf[total][i->slot].pressure = 0;
+							if (i->slot == 0) {
+								pen_up = 1;
+								break;
+							}
+
+						} else if (i->slot < (max_slots - 1)) {
 							i->slot++;
+						}
+
 						break;
 				#ifdef DEBUG
 					case SYN_DROPPED:
