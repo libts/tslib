@@ -755,9 +755,9 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 							i->buf[total][i->slot].valid = 1;
 						}
 						break;
-					case ABS_Z:
+					case ABS_X+2:
 						if (i->special_device == EGALAX_VERSION_112) {
-							/* this is ABS_X+2 wrongly used as ABS_X here */
+							/* this is ABS_Z wrongly used as ABS_X here */
 							if (i->mt && i->buf[total][i->slot].valid == 1)
 								break;
 
@@ -766,9 +766,9 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 							i->buf[total][i->slot].valid = 1;
 						}
 						break;
-					case ABS_RX:
+					case ABS_Y+2:
 						if (i->special_device == EGALAX_VERSION_112) {
-							/* this is ABS_Y+2 wrongly used as ABS_Y here */
+							/* this is ABS_RX wrongly used as ABS_Y here */
 							if (i->mt && i->buf[total][i->slot].valid == 1)
 								break;
 
