@@ -251,6 +251,15 @@ static int check_fd(struct tslib_input *i)
 		}
 	}
 
+	if (ioctl(ts->fd, EVIOCGBIT(EV_KEY, sizeof(keybit)), keybit) < 0) {
+		fprintf(stderr, "tslib: ioctl EVIOCGBIT error)\n");
+		return -1;
+	}
+
+
+	if (evbit[BIT_WORD(EV_SYN)] & BIT_MASK(EV_SYN))
+		i->using_syn = 1;
+
 	/* read device info and set special device nr */
 	get_special_device(i);
 
@@ -261,14 +270,6 @@ static int check_fd(struct tslib_input *i)
 	 */
 	if (!(absbit[BIT_WORD(ABS_PRESSURE)] & BIT_MASK(ABS_PRESSURE)))
 		i->no_pressure = 1;
-
-	if ((ioctl(ts->fd, EVIOCGBIT(EV_KEY, sizeof(keybit)), keybit) < 0) ||
-		!(keybit[BIT_WORD(BTN_TOUCH)] & BIT_MASK(BTN_TOUCH) ||
-		  keybit[BIT_WORD(BTN_LEFT)] & BIT_MASK(BTN_LEFT))) {
-		fprintf(stderr,
-			"tslib: Selected device is not a touchscreen (must support BTN_TOUCH or BTN_LEFT events)\n");
-		return -1;
-	}
 
 	/* Remember whether we have a multitouch device. We need to know for ABS_X,
 	 * ABS_Y and ABS_PRESSURE data.
@@ -283,9 +284,6 @@ static int check_fd(struct tslib_input *i)
 	if (i->mt && !(absbit[BIT_WORD(ABS_MT_PRESSURE)] & BIT_MASK(ABS_MT_PRESSURE)))
 		i->no_pressure = 1;
 
-	if (evbit[BIT_WORD(EV_SYN)] & BIT_MASK(EV_SYN))
-		i->using_syn = 1;
-
 	if ((ioctl(ts->fd, EVIOCGBIT(EV_SYN, sizeof(synbit)), synbit)) == -1)
 		fprintf(stderr, "tslib: ioctl error\n");
 
@@ -293,6 +291,13 @@ static int check_fd(struct tslib_input *i)
 	if (i->mt && synbit[BIT_WORD(SYN_MT_REPORT)] & BIT_MASK(SYN_MT_REPORT) &&
 	    !(absbit[BIT_WORD(ABS_MT_SLOT)] & BIT_MASK(ABS_MT_SLOT)))
 		i->type_a = 1;
+
+	if (!(keybit[BIT_WORD(BTN_TOUCH)] & BIT_MASK(BTN_TOUCH) ||
+	      keybit[BIT_WORD(BTN_LEFT)] & BIT_MASK(BTN_LEFT)) && i->type_a != 1) {
+		fprintf(stderr,
+			"tslib: Selected device is not a touchscreen (missing BTN_TOUCH or BTN_LEFT)\n");
+		return -1;
+	}
 
 	if (i->grab_events == GRAB_EVENTS_WANTED) {
 		if (ioctl(ts->fd, EVIOCGRAB, (void *)1)) {
