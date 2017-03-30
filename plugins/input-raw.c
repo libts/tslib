@@ -357,15 +357,30 @@ static int ts_input_read(struct tslib_module_info *inf,
 						samp->pressure = i->current_p;
 					}
 					samp->tv = ev.time;
-		#ifdef DEBUG
+			#ifdef DEBUG
 				fprintf(stderr,
 					"RAW---------------------> %d %d %d %ld.%ld\n",
 					samp->x, samp->y, samp->pressure,
 					(long)samp->tv.tv_sec,
 					(long)samp->tv.tv_usec);
-		#endif /* DEBUG */
+			#endif /* DEBUG */
 					samp++;
 					total++;
+				} else if (ev.code == SYN_MT_REPORT) {
+					if (!i->type_a)
+						break;
+
+					if (i->type_a == 1) { /* no data: pen-up */
+						pen_up = 1;
+
+					} else {
+						i->type_a = 1;
+					}
+			#ifdef DEBUG
+				} else if (ev.code == SYN_DROPPED) {
+					fprintf(stderr,
+						"INPUT-RAW: SYN_DROPPED\n");
+			#endif
 				}
 				break;
 			case EV_ABS:
@@ -409,9 +424,11 @@ static int ts_input_read(struct tslib_module_info *inf,
 						break;
 					case ABS_MT_POSITION_X:
 						i->current_x = ev.value;
+						i->type_a++;
 						break;
 					case ABS_MT_POSITION_Y:
 						i->current_y = ev.value;
+						i->type_a++;
 						break;
 					case ABS_PRESSURE:
 						i->current_p = ev.value;
