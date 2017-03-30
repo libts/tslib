@@ -263,6 +263,13 @@ static int check_fd(struct tslib_input *i)
 	/* read device info and set special device nr */
 	get_special_device(i);
 
+	/* Remember whether we have a multitouch device. We need to know for ABS_X,
+	 * ABS_Y and ABS_PRESSURE data.
+	 */
+	if ((absbit[BIT_WORD(ABS_MT_POSITION_X)] & BIT_MASK(ABS_MT_POSITION_X)) &&
+	    (absbit[BIT_WORD(ABS_MT_POSITION_Y)] & BIT_MASK(ABS_MT_POSITION_Y)))
+		i->mt = 1;
+
 	/* Since some touchscreens (eg. infrared) physically can't measure pressure,
 	 * the input system doesn't report it on those. Tslib relies on pressure, thus
 	 * we set it to constant 255. It's still controlled by BTN_TOUCH/BTN_LEFT -
@@ -271,18 +278,12 @@ static int check_fd(struct tslib_input *i)
 	if (!(absbit[BIT_WORD(ABS_PRESSURE)] & BIT_MASK(ABS_PRESSURE)))
 		i->no_pressure = 1;
 
-	/* Remember whether we have a multitouch device. We need to know for ABS_X,
-	 * ABS_Y and ABS_PRESSURE data.
-	 */
-	if ((absbit[BIT_WORD(ABS_MT_POSITION_X)] & BIT_MASK(ABS_MT_POSITION_X)) &&
-	    (absbit[BIT_WORD(ABS_MT_POSITION_Y)] & BIT_MASK(ABS_MT_POSITION_Y)))
-		i->mt = 1;
-
-	/* remember if we have a device that doesn't support pressure. We have to
-	 * set pressure ourselves in this case.
-	 */
-	if (i->mt && !(absbit[BIT_WORD(ABS_MT_PRESSURE)] & BIT_MASK(ABS_MT_PRESSURE)))
-		i->no_pressure = 1;
+	if (i->mt) {
+		if (!(absbit[BIT_WORD(ABS_MT_PRESSURE)] & BIT_MASK(ABS_MT_PRESSURE)))
+			i->no_pressure = 1;
+		else
+			i->no_pressure = 0;
+	}
 
 	if ((ioctl(ts->fd, EVIOCGBIT(EV_SYN, sizeof(synbit)), synbit)) == -1)
 		fprintf(stderr, "tslib: ioctl error\n");
