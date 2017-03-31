@@ -255,7 +255,7 @@ int main(int argc, char **argv)
 		}
 
 		if (ret < 0) {
-			perror("ts_read");
+			perror("ts_read_mt");
 			close_framebuffer();
 			free(samp_mt);
 			ts_close(ts);
