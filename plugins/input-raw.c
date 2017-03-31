@@ -674,6 +674,7 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 
 						} else if (i->slot < (max_slots - 1)) {
 							i->slot++;
+							i->buf[total][i->slot].slot = i->slot;
 						}
 
 						break;
