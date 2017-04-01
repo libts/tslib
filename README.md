@@ -25,8 +25,8 @@ Visit the [tslib website](http://tslib.org) for an overview of the project.
 
 ## setup and configure tslib
 ### install tslib
-tslib should be usable on various operating systems, including GNU/Linux,
-Freebsd or Android/Linux. See [building tslib](#building-tslib) for details.
+tslib runs on various operating systems, including GNU/Linux,
+FreeBSD or Android/Linux. See [building tslib](#building-tslib) for details.
 Apart from building the latest tarball release, running
 `./configure`, `make` and `make install`, tslib is available from the following
 distributors and their package management:
@@ -505,11 +505,11 @@ and call `ts_read_mt()` like so
 
 ## building tslib
 
-tslib is primarily developed for Linux. However you should be able to run
+tslib is cross-platform; you should be able to run
 `./configure && make` on a large variety of operating systems.
-You won't (yet) get the same experience for all systems though:
+The graphical test programs are not (yet) ported to all platforms though:
 
-#### libts and filter plugins (`module`s)
+#### libts and filter plugins (`module`)
 
 This is the hardware independent core part: _libts and all filter modules_ as
 _shared libraries_, build on the following operating systems.
@@ -528,16 +528,16 @@ This makes the thing usable in the read world because it accesses your device.
 See our configure.ac file for the currently possible configuration for your
 platform.
 
-* GNU / Linux - all
-* Android / Linux - all
-* FreeBSD - almost all
+* GNU / Linux - all (most importantly `input`)
+* Android / Linux - all (most importantly `input`)
+* FreeBSD - almost all (most importantly `input`)
 * GNU / Hurd - some
 * Haiku - some
 * Windows - non yet
 
 Writing your own plugin is quite easy, in case an existing one doesn't fit.
 
-#### test program and tools
+#### test programs and tools
 
 * GNU / Linux - all
 * Android / Linux - all (?)
