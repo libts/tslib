@@ -421,13 +421,13 @@ This is a complete example program, similar to `ts_print_mt.c`:
                 ts_close(ts);
                 return -ENOMEM;
         }
-	for (i = 0; i < read_samples; i++) {
-		samp_mt[i] = calloc(max_slots, sizeof(struct ts_sample_mt));
-		if (!samp_mt[i]) {
-			free(samp_mt);
-			ts_close(ts);
-			return -ENOMEM;
-		}
+        for (i = 0; i < read_samples; i++) {
+                samp_mt[i] = calloc(max_slots, sizeof(struct ts_sample_mt));
+                if (!samp_mt[i]) {
+                        free(samp_mt);
+                        ts_close(ts);
+                        return -ENOMEM;
+                }
         }
 
         while (1) {
@@ -439,7 +439,7 @@ This is a complete example program, similar to `ts_print_mt.c`:
                 }
 
                 for (j = 0; j < ret; j++) {
-			for (i = 0; i < max_slots; i++) {
+                	for (i = 0; i < max_slots; i++) {
 				if (samp_mt[j][i].valid != 1)
 					continue;
 
@@ -450,8 +450,8 @@ This is a complete example program, similar to `ts_print_mt.c`:
 				       samp_mt[j][i].x,
 				       samp_mt[j][i].y,
 				       samp_mt[j][i].pressure);
-			}
-		}
+                        }
+                }
         }
 
         ts_close(ts);
