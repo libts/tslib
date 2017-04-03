@@ -22,6 +22,7 @@
  * Just prints touchscreen events -- does not paint them on framebuffer
  */
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <sys/time.h>
@@ -56,7 +57,7 @@ static void usage(char **argv)
 {
 	printf("tslib " PACKAGE_VERSION "\n");
 	printf("\n");
-	printf("Usage: %s [--raw] [--non-blocking] [-s samples] [-i <device>]\n", argv[0]);
+	printf("Usage: %s [--raw] [--non-blocking] [-s samples] [-i <device>] [-j <slots>]\n", argv[0]);
 }
 
 int main(int argc, char **argv)
@@ -67,6 +68,7 @@ int main(int argc, char **argv)
 #ifdef TS_HAVE_EVDEV
 	struct input_absinfo slot;
 #endif
+	int32_t user_slots = 0;
 	unsigned short max_slots = 1;
 	int ret, i, j;
 	int read_samples = 1;
@@ -80,10 +82,11 @@ int main(int argc, char **argv)
 			{ "samples",      required_argument, NULL, 's' },
 			{ "non-blocking", no_argument,       NULL, 'n' },
 			{ "raw",          no_argument,       NULL, 'r' },
+			{ "slots",        required_argument, NULL, 'j' },
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "hi:s:nr", long_options, &option_index);
+		int c = getopt_long(argc, argv, "hi:s:nrj:", long_options, &option_index);
 
 		errno = 0;
 		if (c == -1)
@@ -109,6 +112,14 @@ int main(int argc, char **argv)
 		case 's':
 			read_samples = atoi(optarg);
 			if (read_samples <= 0) {
+				usage(argv);
+				return 0;
+			}
+			break;
+
+		case 'j':
+			user_slots = atoi(optarg);
+			if (user_slots <= 0) {
 				usage(argv);
 				return 0;
 			}
@@ -144,10 +155,9 @@ int main(int argc, char **argv)
 	}
 
 	max_slots = slot.maximum + 1 - slot.minimum;
-#else
-	/* random maximum in case we don't know */
-	max_slots = 11;
 #endif
+	if (user_slots > 0)
+		max_slots = user_slots;
 
 	samp_mt = malloc(read_samples * sizeof(struct ts_sample_mt *));
 	if (!samp_mt) {

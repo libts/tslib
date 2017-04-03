@@ -22,6 +22,7 @@
  * Basic multitouch test program for the libts library.
  */
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
@@ -90,7 +91,7 @@ static void help()
 {
 	printf("tslib " PACKAGE_VERSION "\n");
 	printf("\n");
-	printf("Usage: ts_test_mt [-v] [-i <device>]\n");
+	printf("Usage: ts_test_mt [-v] [-i <device>] [-j <slots>]\n");
 }
 
 int main(int argc, char **argv)
@@ -105,6 +106,7 @@ int main(int argc, char **argv)
 #ifdef TS_HAVE_EVDEV
 	struct input_absinfo slot;
 #endif
+	int32_t user_slots = 0;
 	unsigned short max_slots = 1;
 	struct ts_sample_mt **samp_mt = NULL;
 	short verbose = 0;
@@ -120,10 +122,11 @@ int main(int argc, char **argv)
 			{ "help",         no_argument,       NULL, 'h' },
 			{ "verbose",      no_argument,       NULL, 'v' },
 			{ "idev",         required_argument, NULL, 'i' },
+			{ "slots",        required_argument, NULL, 'j' },
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "hi:v", long_options, &option_index);
+		int c = getopt_long(argc, argv, "hi:vj:", long_options, &option_index);
 
 		errno = 0;
 		if (c == -1)
@@ -140,6 +143,14 @@ int main(int argc, char **argv)
 
 		case 'i':
 			tsdevice = optarg;
+			break;
+
+		case 'j':
+			user_slots = atoi(optarg);
+			if (user_slots <= 0) {
+				help();
+				return 0;
+			}
 			break;
 
 		default:
@@ -169,10 +180,9 @@ int main(int argc, char **argv)
 	}
 
 	max_slots = slot.maximum + 1 - slot.minimum;
-#else
-	/* random maximum in case don't know */
-	max_slots = 11;
 #endif
+	if (user_slots > 0)
+		max_slots = user_slots;
 
 	samp_mt = malloc(sizeof(struct ts_sample_mt *));
 	if (!samp_mt) {
