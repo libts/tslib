@@ -389,20 +389,13 @@ This is a complete example program, similar to `ts_print_mt.c`:
     #include <stdio.h>
     #include <stdlib.h>
     #include <fcntl.h>
-    #include <sys/ioctl.h>
-    #include <sys/mman.h>
     #include <sys/time.h>
-    #include <getopt.h>
-    #include <errno.h>
     #include <unistd.h>
 
-    #ifdef __FreeBSD__
-    #include <dev/evdev/input.h>
-    #else
-    #include <linux/input.h>
-    #endif
-
     #include "tslib.h"
+
+    #define SLOTS 5
+    #define SAMPLES 1
 
     int main(int argc, char **argv)
     {
@@ -411,57 +404,54 @@ This is a complete example program, similar to `ts_print_mt.c`:
         struct ts_sample_mt **samp_mt = NULL;
         struct input_absinfo slot;
         unsigned short max_slots = 1;
-        int ret, i;
+        unsigned short read_samples = 1;
+        int ret, i, j;
 
         ts = ts_setup(tsdevice, 0);
         if (!ts) {
                 perror("ts_setup");
-                return errno;
+                return -1;
         }
 
-        if (ioctl(ts_fd(ts), EVIOCGABS(ABS_MT_SLOT), &slot) < 0) {
-                perror("ioctl EVIOGABS");
-                ts_close(ts);
-                return errno;
-        }
+        max_slots = SLOTS;
+        read_samples = SAMPLES;
 
-        max_slots = slot.maximum + 1 - slot.minimum;
-
-        samp_mt = malloc(sizeof(struct ts_sample_mt *));
+        samp_mt = malloc(read_samples * sizeof(struct ts_sample_mt *));
         if (!samp_mt) {
                 ts_close(ts);
                 return -ENOMEM;
         }
-        samp_mt[0] = calloc(max_slots, sizeof(struct ts_sample_mt));
-        if (!samp_mt[0]) {
-                free(samp_mt);
-                ts_close(ts);
-                return -ENOMEM;
+	for (i = 0; i < read_samples; i++) {
+		samp_mt[i] = calloc(max_slots, sizeof(struct ts_sample_mt));
+		if (!samp_mt[i]) {
+			free(samp_mt);
+			ts_close(ts);
+			return -ENOMEM;
+		}
         }
 
         while (1) {
-                ret = ts_read_mt(ts, samp_mt, max_slots, 1);
+                ret = ts_read_mt(ts, samp_mt, max_slots, read_samples);
                 if (ret < 0) {
                         perror("ts_read_mt");
                         ts_close(ts);
                         exit(1);
                 }
 
-                if (ret != 1)
-                        continue;
+                for (j = 0; j < ret; j++) {
+			for (i = 0; i < max_slots; i++) {
+				if (samp_mt[j][i].valid != 1)
+					continue;
 
-                for (i = 0; i < max_slots; i++) {
-                        if (samp_mt[0][i].valid != 1)
-                                continue;
-
-                        printf("%ld.%06ld: (slot %d) %6d %6d %6d\n",
-                               samp_mt[0][i].tv.tv_sec,
-                               samp_mt[0][i].tv.tv_usec,
-                               samp_mt[0][i].slot,
-                               samp_mt[0][i].x,
-                               samp_mt[0][i].y,
-                               samp_mt[0][i].pressure);
-                }
+				printf("%ld.%06ld: (slot %d) %6d %6d %6d\n",
+				       samp_mt[j][i].tv.tv_sec,
+				       samp_mt[j][i].tv.tv_usec,
+				       samp_mt[j][i].slot,
+				       samp_mt[j][i].x,
+				       samp_mt[j][i].y,
+				       samp_mt[j][i].pressure);
+			}
+		}
         }
 
         ts_close(ts);
