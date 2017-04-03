@@ -725,13 +725,16 @@ int main(int argc, char **argv)
 				fflush(stdout);
 			} else {
 				perror("ioctl UI_GET_SYSNAME");
+				goto out;
 			}
 		} else {
 			fprintf(stderr, DEFAULT_UINPUT_NAME
 			": See the kernel log for the device number\n");
 		}
-		if (daemon(0, 0) == -1)
+		if (daemon(0, 0) == -1) {
 			perror("error starting daemon");
+			goto out;
+		}
 	}
 
 	while (1) {
