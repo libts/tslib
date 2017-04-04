@@ -726,7 +726,7 @@ int main(int argc, char **argv)
 				char buf[sizeof(SYS_INPUT_DIR) + sizeof(name)] = SYS_INPUT_DIR;
 				char *devnode;
 
-				snprintf(&buf[strlen(SYS_INPUT_DIR)], sizeof(name), name);
+				snprintf(&buf[strlen(SYS_INPUT_DIR)], sizeof(name), "%s", name);
 				fprintf(stdout, "created %s\n", buf);
 				devnode = fetch_device_node(buf);
 				if (devnode)
@@ -774,7 +774,7 @@ int main(int argc, char **argv)
 					char buf[sizeof(SYS_INPUT_DIR) + sizeof(name)] = SYS_INPUT_DIR;
 					char *devnode;
 
-					snprintf(&buf[strlen(SYS_INPUT_DIR)], sizeof(name), name);
+					snprintf(&buf[strlen(SYS_INPUT_DIR)], sizeof(name), "%s", name);
 					devnode = fetch_device_node(buf);
 					if (devnode)
 						fprintf(stdout, "%s\n", devnode);
