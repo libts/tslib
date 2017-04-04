@@ -12,6 +12,7 @@ tslib 1.9 is backwards compatible. Changes since last release include:
   - 338d2e4 input-raw: add MT protocol type A support to ts_read()
   - e47df79 input-raw: fix pressure capable multitouch devices
   - dbb8f4c ts_uinput: correctly return in case forking fails
+  - 73773ac fbutils-linux: fix framebuffer errors on 64 bit systems
 
 
 ## tslib 1.8
