@@ -13,6 +13,7 @@
 #include "config.h"
 
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -29,21 +30,21 @@
 #include "fbutils.h"
 
 union multiptr {
-	unsigned char *p8;
-	unsigned short *p16;
-	unsigned long *p32;
+	uint8_t *p8;
+	uint16_t *p16;
+	uint32_t *p32;
 };
 
-static int con_fd, fb_fd, last_vt = -1;
+static int con_fd, last_vt = -1;
 static struct fb_fix_screeninfo fix;
 static struct fb_var_screeninfo var;
 static unsigned char *fbuffer;
 static unsigned char **line_addr;
-static int fb_fd=0;
+static int fb_fd = 0;
 static int bytes_per_pixel;
-static int transp_mask;
+static uint32_t transp_mask;
 static unsigned colormap [256];
-__u32 xres, yres;
+uint32_t xres, yres;
 
 static char *defaultfbdevice = "/dev/fb0";
 static char *defaultconsoledevice = "/dev/tty";
@@ -314,8 +315,8 @@ void pixel (int x, int y, unsigned colidx)
 	unsigned xormode;
 	union multiptr loc;
 
-	if ((x < 0) || ((__u32)x >= var.xres_virtual) ||
-	    (y < 0) || ((__u32)y >= var.yres_virtual))
+	if ((x < 0) || ((uint32_t)x >= var.xres_virtual) ||
+	    (y < 0) || ((uint32_t)y >= var.yres_virtual))
 		return;
 
 	xormode = colidx & XORMODE;
@@ -389,22 +390,22 @@ void fillrect (int x1, int y1, int x2, int y2, unsigned colidx)
 
 	if (x1 < 0)
 		x1 = 0;
-	if ((__u32)x1 >= xres)
+	if ((uint32_t)x1 >= xres)
 		x1 = xres - 1;
 
 	if (x2 < 0)
 		x2 = 0;
-	if ((__u32)x2 >= xres)
+	if ((uint32_t)x2 >= xres)
 		x2 = xres - 1;
 
 	if (y1 < 0)
 		y1 = 0;
-	if ((__u32)y1 >= yres)
+	if ((uint32_t)y1 >= yres)
 		y1 = yres - 1;
 
 	if (y2 < 0)
 		y2 = 0;
-	if ((__u32)y2 >= yres)
+	if ((uint32_t)y2 >= yres)
 		y2 = yres - 1;
 
 	if ((x1 > x2) || (y1 > y2))
