@@ -158,6 +158,7 @@ int open_framebuffer(void)
 
 void close_framebuffer(void)
 {
+	memset(fbuffer, 0, fix.smem_len);
 	munmap(fbuffer, fix.smem_len);
 	close(fb_fd);
 
