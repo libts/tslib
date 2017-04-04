@@ -344,7 +344,7 @@ functions above to it.
 [Wikipedia](https://en.wikipedia.org/wiki/Application_binary_interface) has
 background information.
 
-#### Soname versions
+#### libts Soname versions
 Usually, and every time until now, libts does not break the ABI and your
 application can continue using libts after upgrading. Specifically this is
 indicated by the libts library version's major number, which should always stay
@@ -361,9 +361,13 @@ increase with releases. In the following example
 use `libts.so` for using tslib unconditionally and `libts.so.0` to make sure
 your current application never breaks.
 
+If a release includes changes like added features, the second number is
+incremented and the third is set to zero. If a release includes mostly just
+bugfixes, only the third number is incremented.
+
 #### tslib package version
-Officially, a tslib tarball version number doesn't tell you anything about it's
-backwards compatibility.
+A tslib tarball version number doesn't tell you anything about it's backwards
+compatibility.
 
 ### dependencies
 

@@ -87,28 +87,42 @@ A release can be done when either
 The procedure looks like this:
 
 * run coverity (or any static analysis) and fix new discovered issues
-* at least `./autogen.sh && ./configure && make` on all supported operating systems
+* at least `git pull && ./autogen.sh && ./configure && make clean && make` on all supported platforms
 * be sure to have a stable build system and your private gpg key set up
-* update the NEWS file with the changelog and bugfixes
+* make sure the NEWS file with the changelog and bugfixes is up to date (it should always be).
 * update the THANKS file
 * increment the correct version numbers in configure.ac
-  * `AC_INIT` - includes the tslib package version X.X. generally we increment the minor version
+  * `AC_INIT` - includes the tslib package version X.X. usually we increment the minor version
   * `LT_CURRENT` - increment **only if there are API changes** (additions / removals / changes)
   * `LT_REVISION` - increment if anything changed. but if `LT_CURRENT` was incremented, set to 0!
-  * `LT_AGE` - increment **only if `LT_CURRENT` was incremented** and these **API changes are backwards compatible** (should always be the case, so it should match `LT_CURRENT`)
-
+  * `LT_AGE` - increment **if `LT_CURRENT` was incremented** and these **API changes are backwards compatible** (should always be the case, so it should match `LT_CURRENT`)
+* increment the version numbers in the website's file
 * do __not__ commit the version change! run `./release -v X.X`
 * `git push origin master --tags`
-* create a github release off the signed tag by adding
-  * release notes from the NEWS file
-  * 3 times: tarball, asc signature and sha256sum files
-* publish and inform distributors
+* on Github and Gitlab, edit the release tag:
+  * add the release notes from the NEWS file
+  * upload 9 files: 3 times tarball, asc signature and sha256sum files
+* publish, send an email to the mailing list and if you're in the mood, inform distributors that you know don't automatically get informed.
 * celebrate!
-* when the backup [gitlab repository](https://gitlab.com/tslib/tslib) pulled the release tag in (after about one day), add the tarballs and release notes there.
 
-sidenote: up until 1.7 we kept the habit of adding generated files to a release
+note: up until 1.7 we kept the habit of adding generated files to a release
 branch that is never used again. Those branches exist. We can't do anything
 about it. We won't create new ones anymore. Ignore them.
+
+also note: It's important not to lose the 9 generated files (tarballs, hashes
+and signatures). Always upload them to at least 2 host providers. And do it
+immediately after pushing the tag. This also ensures you have time to find a new
+one in case one dies. Github is the primary source for distributions.
+
+also note: Really make sure you get the three library version numbers right:
+Always collect what's going on in the NEWS file. Build a "changes" and "bugfixes"
+section. If there is a significant "changes" section, `LT_CURRENT` and `LT_AGE`
+probably will be incremented and `LT_REVISION` set to 0. If there are mostly
+bugfixes, only increment `LT_REVISION`. That is what users should be able to
+rely on. We don't care how large the numbers may get. For the automatically
+generated libts.so version name, the major version usually becomes "current - age",
+so as long as they stay the same, it stays 0. The tarball version number
+set in `AC_INIT` doesn't matter that much.
 
 ### specifications relevant to tslib
 
