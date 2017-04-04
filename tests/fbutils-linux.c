@@ -143,7 +143,7 @@ int open_framebuffer(void)
 		close(fb_fd);
 		return -1;
 	}
-	memset(fbuffer,0,fix.smem_len);
+	memset(fbuffer, 0, fix.smem_len);
 
 	bytes_per_pixel = (var.bits_per_pixel + 7) / 8;
 	transp_mask = ((1 << var.transp.length) - 1) <<
