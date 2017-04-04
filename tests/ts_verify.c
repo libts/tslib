@@ -135,7 +135,6 @@ static void ts_verify_free_mt(struct ts_verify *data)
 		if (data->samp_mt[i])
 			free(data->samp_mt[i]);
 	}
-	free(data->samp_mt);
 	ts_close(data->ts);
 }
 
