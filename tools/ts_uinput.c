@@ -25,6 +25,7 @@
  * and thus Linux specific.
  */
 
+#define _GNU_SOURCE
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
@@ -36,6 +37,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <syslog.h>
+#include <dirent.h>
 #ifdef __FreeBSD__
 #include <dev/evdev/input.h>
 #include <dev/evdev/uinput.h>
@@ -95,6 +97,8 @@
 # define ABS_MT_TOOL_Y           0x3d    /* Center Y tool position */
 #endif
 
+#define SYS_INPUT_DIR "/sys/devices/virtual/input/"
+
 struct data_t {
 	int fd_uinput;
 	int fd_input;
@@ -104,6 +108,7 @@ struct data_t {
 	char *fb_name;
 	struct tsdev *ts;
 	unsigned short verbose;
+	unsigned short verbose_daemon;
 	struct input_event *ev;
 	struct ts_sample_mt **s_array;
 	int slots;
@@ -129,7 +134,7 @@ static void help(struct data_t *data)
 	printf("  -s, --slots         override available concurrent touch contacts\n");
 	if (data->uinput_version > 3) {
 		printf("\n");
-		printf("Output: virtual device name under /sys/devices/virtual/input/\n");
+		printf("Output: virtual device name under " SYS_INPUT_DIR "\n");
 	}
 }
 
@@ -498,6 +503,35 @@ static void cleanup(struct data_t *data)
 		free(data->uinput_name);
 }
 
+/* directly from libevdev (LGPL) */
+static int is_event_device(const struct dirent *dent) {
+	return strncmp("event", dent->d_name, 5) == 0;
+}
+
+/* directly from libevdev (LGPL) */
+static char *fetch_device_node(const char *path)
+{
+	char *devnode = NULL;
+	struct dirent **namelist;
+	int ndev, i;
+
+	ndev = scandir(path, &namelist, is_event_device, alphasort);
+	if (ndev <= 0)
+		return NULL;
+
+	/* ndev should only ever be 1 */
+
+	for (i = 0; i < ndev; i++) {
+		if (!devnode && asprintf(&devnode, "/dev/input/%s", namelist[i]->d_name) == -1)
+			devnode = NULL;
+		free(namelist[i]);
+	}
+
+	free(namelist);
+
+	return devnode;
+}
+
 int main(int argc, char **argv)
 {
 	struct data_t data = {
@@ -513,6 +547,7 @@ int main(int argc, char **argv)
 		.slots = 1,
 		.uinput_version = 0,
 		.mt_type_a = 0,
+		.verbose_daemon = 0,
 	};
 	int i, j;
 	unsigned short run_daemon = 0;
@@ -575,6 +610,13 @@ int main(int argc, char **argv)
 			str[7] = c & 0xff;
 			perror(str);
 		}
+	}
+
+	/* if we run as a daemon, we don't print all debug output. we print
+	 * the input device node before returning. */
+	if (data.verbose && run_daemon) {
+		data.verbose = 0;
+		data.verbose_daemon = 1;
 	}
 
 	if (data.verbose) {
@@ -680,9 +722,16 @@ int main(int argc, char **argv)
 			int ret = ioctl(data.fd_uinput,
 					UI_GET_SYSNAME(sizeof(name)),
 					name);
-			if (ret >= 0)
-				printf("created virtual input device %s\n",
-				       name);
+			if (ret >= 0) {
+				char buf[sizeof(SYS_INPUT_DIR) + sizeof(name)] = SYS_INPUT_DIR;
+				char *devnode;
+
+				snprintf(&buf[strlen(SYS_INPUT_DIR)], sizeof(name), name);
+				fprintf(stdout, "created %s\n", buf);
+				devnode = fetch_device_node(buf);
+				if (devnode)
+					fprintf(stdout, "%s\n", devnode);
+			}
 		} else {
 			fprintf(stderr, DEFAULT_UINPUT_NAME
 				": See the kernel log for the device number\n");
@@ -721,7 +770,18 @@ int main(int argc, char **argv)
 					UI_GET_SYSNAME(sizeof(name)),
 					name);
 			if (ret >= 0) {
-				fprintf(stdout, "%s\n", name);
+				if (data.verbose_daemon) {
+					char buf[sizeof(SYS_INPUT_DIR) + sizeof(name)] = SYS_INPUT_DIR;
+					char *devnode;
+
+					snprintf(&buf[strlen(SYS_INPUT_DIR)], sizeof(name), name);
+					devnode = fetch_device_node(buf);
+					if (devnode)
+						fprintf(stdout, "%s\n", devnode);
+				} else {
+					fprintf(stdout, "%s\n", name);
+				}
+
 				fflush(stdout);
 			} else {
 				perror("ioctl UI_GET_SYSNAME");

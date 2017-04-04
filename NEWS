@@ -7,6 +7,7 @@ tslib 1.9 is backwards compatible. Changes since last release include:
 * multitouch for (at least) eGalax 210 (`module_raw input` and `ts_read_mt()`)
 * new tests/ts_verify API test program
 * fix support for protocol type A devices (example Sitronix ST1232)
+* ts_uinput -d -v prints the new /dev/input/eventX device node before returning
 * bugfixes
   - 338d2e4 input-raw: add MT protocol type A support to ts_read()
   - e47df79 input-raw: fix pressure capable multitouch devices

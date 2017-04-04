@@ -98,22 +98,20 @@ You need a tool using tslib'd API and provide it to your input system. There are
 various ways to do so on various systems. We only describe one way for Linux
 here - using tslib's included userspace input evdev driver `ts_uinput`:
 
-    # ts_uinput -d
+    # ts_uinput -d -v
 
-`-d` makes the program return and run as a daemon in the background. Inside of
-`/dev/input/` there now is a new input event device, which provides your
-configured input. You can even use a script like `tools/ts_uinput_start.sh` to
-start the ts_uinput daemon and create a defined `/dev/input/ts_uinput` symlink.
+`-d` makes the program return and run as a daemon in the background. `-v` make
+it print the new `/dev/input/eventX` device node before returning.
 
 In this case, for Qt5 for example you'd probably set something like this:
 
-    QT_QPA_GENERIC_PLUGINS=evdevtouch:/dev/input/ts_uinput
-    QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS=/dev/input/ts_uinput:rotate=0
+    QT_QPA_GENERIC_PLUGINS=evdevtouch:/dev/input/eventX
+    QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS=/dev/input/eventX:rotate=0
 
 For X11 you'd probably edit your `xorg.conf` `Section "InputDevice"` for your
 touchscreen to have
 
-    Option "Device" "/dev/input/ts_uinput"
+    Option "Device" "/dev/input/eventX"
 
 and so on. Please see your system's documentation on how to use a specific
 evdev input device.

@@ -18,14 +18,14 @@ It uses ts_read_mt() and thus supports single and multi touch.
 \fB\-d, \-\-daemonize\fR
 .sp
 .RS 4
-Start ts_uinput as a daemon and return. The sysfs' input device name of the newly created device is printed to stdout before returning.
+Start ts_uinput as a daemon and return. The sysfs' input device name of the newly created device is printed to stdout before returning. If \-\-verbose is chosen too, the /dev/input/eventX path to the device node is printed.
 .RE
 
 .sp
 \fB\-v, \-\-verbose\fR
 .sp
 .RS 4
-Print debug information to stdout and stderr.
+Print debug information to stdout and stderr. Only if \-\-daemonize is not chosen. If used together with \-\-daemonize, the path to the created input event device node /dev/input/eventX is printed before the program forks and returns.
 .RE
 
 .sp
