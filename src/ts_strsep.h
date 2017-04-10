@@ -1,5 +1,5 @@
 /*
- *  tslib/src/ts_strsep.c
+ *  tslib/src/ts_strsep.h
  *
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.

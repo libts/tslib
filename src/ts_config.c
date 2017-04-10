@@ -18,7 +18,7 @@
 #endif
 #include <dlfcn.h>
 
-#if defined (WIN32) || (__HAIKU__)
+#if !defined(HAVE_STRSEP)
 #include "ts_strsep.h"
 #endif
 
@@ -35,7 +35,7 @@
 static void discard_null_tokens(char **p, char **tokPtr)
 {
 	while (*p != NULL && **tokPtr == '\0') {
-	#if defined (WIN32) || (__HAIKU__)
+	#if !defined HAVE_STRSEP
 		*tokPtr = ts_strsep(p, "\t");
 	#else
 		*tokPtr = strsep(p, " \t");
@@ -91,7 +91,7 @@ int ts_config(struct tsdev *ts)
 			break;
 		}
 
-	#if defined (WIN32) || (__HAIKU__)
+	#if !defined HAVE_STRSEP
 		tok = ts_strsep(&p, " \t");
 	#else
 		tok = strsep(&p, " \t");
@@ -106,7 +106,7 @@ int ts_config(struct tsdev *ts)
 
 		/* Search for the option. */
 		if (strcasecmp(tok, "module") == 0) {
-		#if defined (WIN32) || (__HAIKU__)
+		#if !defined HAVE_STRSEP
 			module_name = ts_strsep(&p, " \t");
 		#else
 			module_name = strsep(&p, " \t");
@@ -114,7 +114,7 @@ int ts_config(struct tsdev *ts)
 			discard_null_tokens(&p, &module_name);
 			ret = ts_load_module(ts, module_name, p);
 		} else if (strcasecmp(tok, "module_raw") == 0) {
-		#if defined (WIN32) || (__HAIKU__)
+		#if !defined HAVE_STRSEP
 			module_name = ts_strsep(&p, " \t");
 		#else
 			module_name = strsep(&p, " \t");

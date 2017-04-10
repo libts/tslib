@@ -18,7 +18,7 @@ lib_LTLIBRARIES  = libts.la
 libts_la_SOURCES = ts_attach.c ts_close.c ts_config.c ts_error.c \
 		   ts_fd.c ts_load_module.c ts_open.c ts_parse_vars.c \
 		   ts_read.c ts_read_raw.c ts_option.c ts_setup.c $(srcdir)/../plugins/plugins.h
-if WINDOWS
+if !HAVE_STRSEP
 libts_la_SOURCES += ts_strsep.c ts_strsep.h
 endif
 

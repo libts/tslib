@@ -86,7 +86,8 @@ AC_FUNC_STAT
 AC_FUNC_VPRINTF
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
-AC_CHECK_FUNCS([gettimeofday memmove memset munmap select strcasecmp strchr strdup strtoul strtol])
+AC_CHECK_FUNCS([gettimeofday memmove memset munmap select strcasecmp strchr strdup strtoul strtol strsep])
+AM_CONDITIONAL(HAVE_STRSEP, test x$HAVE_STRSEP = xyes)
 
 # filters
 TSLIB_CHECK_MODULE([linear], [yes], [Enable building of linear scaling])
