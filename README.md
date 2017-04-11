@@ -32,7 +32,7 @@ Apart from building the latest tarball release, running
 distributors and their package management:
 * [Arch Linux](https://www.archlinux.org) and [Arch Linux ARM](https://archlinuxarm.org) - `pacman -S tslib`
 * [Buildroot](https://buildroot.org/) - `BR2_PACKAGE_TSLIB=y`
-* (Debian: [Looking for a sponsor](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=854693) to include it)
+* [Debian](https://tracker.debian.org/pkg/tslib) - `apt-get install libts0 libts-bin`
 
 ### set up environment variables
     TSLIB_TSDEVICE          TS device file name.
@@ -318,26 +318,22 @@ while you are free to play with the parameter values.
 
 ## the libts library
 ### the libts API
+The API is documented in our man pages in the doc directory.
 Check out our tests directory for examples how to use it.
 
-`ts_open()`  
-`ts_config()`  
+[`ts_open()`](https://manpages.debian.org/unstable/libts0/ts_open.3.en.html)  
+[`ts_config()`](https://manpages.debian.org/unstable/libts0/ts_config.3.en.html)  
 `ts_setup()`  
-`ts_close()`  
+[`ts_close()`](https://manpages.debian.org/unstable/libts0/ts_close.3.en.html)  
 `ts_reconfig()`  
 `ts_option()`  
 `ts_fd()`  
 `ts_load_module()`  
-`ts_read()`  
-`ts_read_raw()`  
-`ts_read_mt()`  
-`ts_reat_raw_mt()`  
+[`ts_read()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
+[`ts_read_raw()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
+[`ts_read_mt()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
+[`ts_reat_raw_mt()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
 
-The API is documented in our man pages in the doc directory.
-Possibly there will be distributors who provide them online, like
-[Debian had done for tslib-1.0](https://manpages.debian.org/wheezy/libts-bin/index.html).
-As soon as there are up-to-date html pages hosted somewhere, we'll link the
-functions above to it.
 
 ### ABI - Application Binary Interface
 
