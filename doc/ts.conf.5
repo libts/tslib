@@ -84,28 +84,6 @@ where triplet is the MultiArch path, e\&.g\&. arm\-linux\-gnueabi\&.
 .RE
 .SH "MODULE PARAMETERS"
 .PP
-\fBvariance\fR
-.RS 4
-Tries to do it's best in order to filter out random noise coming from touchscreen ADCs. This is achieved by limiting the sample movement speed to some value (e\&.g\&. the pen is not supposed to move quicker than some threshold)\&.
-.sp
-This is a greedy filter, e\&.g\&. it gives less samples on output than receives on input\&.
-.sp
-.RS 4
-.ie n \{\
-\h'-04'\(bu\h'+03'\c
-.\}
-.el \{\
-.sp -1
-.IP \(bu 2.3
-.\}
-\fBdelta\fR
-.sp
-Set the squared distance in touchscreen units between previous and current pen position (e\&.g\&. (X2\-X1)^2 + (Y2\-Y1)^2)\&. This defines the criteria for determining whenever two samples are near or far to each other\&.
-.sp
-If the distance between previous and current sample is far, the sample is marked as potential noise\&. This doesn't mean yet that it will be discarded; if the next reading will be close to it, this will be considered just a regular quick motion event, and it will sneak to the next layer\&. Also, if the sample after the potential noise is far from both previously discussed samples, this is also considered a quick motion event and the sample sneaks into the output stream\&.
-.RE
-.RE
-.PP
 \fBdejitter\fR
 .RS 4
 Removes jitter on the X and Y co\-ordinates\&. This is achieved by applying a weighted smoothing filter\&. The latest samples have most weight; earlier samples have less weight\&. This allows one to achieve 1:1 input\->output rate\&.
@@ -179,6 +157,40 @@ Factor to multiply the pressure value with.
 .sp
 Value to divide the pressure value by.
 
+.RE
+.RE
+.PP
+\fBiir\fR
+.RS 4
+Infinite impulse response filter. Similar to dejitter, this is a smoothing
+filter to remove low\-level noise. There is a trade-off between noise removal
+(smoothing) and responsiveness. The parameters N and D specify the level of
+smoothing in the form of a fraction (N/D).
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBN\fR
+.sp
+numerator of the smoothing fraction
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBD\fR
+.sp
+denominator of the smoothing fraction
 .RE
 .RE
 .PP
@@ -280,6 +292,28 @@ Similar to what the variance filter does, the median filter suppresses spikes in
 \fBdepth\fR
 .sp
 Number of samples to apply the median filter to.
+.RE
+.RE
+.PP
+\fBvariance\fR
+.RS 4
+Tries to do it's best in order to filter out random noise coming from touchscreen ADCs. This is achieved by limiting the sample movement speed to some value (e\&.g\&. the pen is not supposed to move quicker than some threshold)\&.
+.sp
+This is a greedy filter, e\&.g\&. it gives less samples on output than receives on input\&. There is \fBno multitouch\fR support for this filter.
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBdelta\fR
+.sp
+Set the squared distance in touchscreen units between previous and current pen position (e\&.g\&. (X2\-X1)^2 + (Y2\-Y1)^2)\&. This defines the criteria for determining whenever two samples are near or far to each other\&.
+.sp
+If the distance between previous and current sample is far, the sample is marked as potential noise\&. This doesn't mean yet that it will be discarded; if the next reading will be close to it, this will be considered just a regular quick motion event, and it will sneak to the next layer\&. Also, if the sample after the potential noise is far from both previously discussed samples, this is also considered a quick motion event and the sample sneaks into the output stream\&.
 .RE
 .RE
 .PP
