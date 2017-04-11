@@ -202,7 +202,7 @@ static void set_pressure(struct tslib_input *i)
 
 	i->current_p = 255;
 
-	if (i->mt && i->buf) {
+	if (i->buf) {
 		for (j = 0; j < i->nr; j++) {
 			for (k = 0; k < i->max_slots; k++)
 				i->buf[j][k].pressure = 255;
