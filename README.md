@@ -80,7 +80,7 @@ through the library:
 ### calibrate the touch screen
 Calibration is done by the `linear` plugin, which uses it's own config file
 `/etc/pointercal`. Don't edit this file manually. It is created by the
-`ts_calibrate` program:
+[`ts_calibrate`](https://manpages.debian.org/unstable/libts0/ts_calibrate.1.en.html) program:
 
     # ts_calibrate
 
@@ -89,7 +89,7 @@ where is appears, as accurate as possible.
 
 ### test the filtered input behaviour
 You may quickly test the touch behaviour that results from the configured
-filters, using `ts_test_mt`:
+filters, using [`ts_test_mt`](https://manpages.debian.org/unstable/libts0/ts_test_mt.1.en.html):
 
     # ts_test_mt
 
@@ -132,7 +132,7 @@ Let's recap the data flow here:
 #### Description:
   Linear scaling - calibration - module, primerily used for conversion of touch
   screen co-ordinates to screen co-ordinates. It applies the corrections as
-  recorded and saved by the `ts_calibrate` tool. It's the only module that reads
+  recorded and saved by the [`ts_calibrate`](https://manpages.debian.org/unstable/libts0/ts_calibrate.1.en.html) tool. It's the only module that reads
   a configuration file.
 
 #### Parameters:
