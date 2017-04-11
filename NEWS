@@ -14,6 +14,7 @@ This release includes the following bugfixes:
 * e47df79 input-raw: fix pressure capable multitouch devices
 * dbb8f4c ts_uinput: correctly return in case forking fails
 * 73773ac fbutils-linux: fix framebuffer errors on 64 bit systems
+* 4d63bfa input-raw: fix ts_read_mt for non-MT devices without pressure
 
 
 ## tslib 1.8
