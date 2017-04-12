@@ -23,6 +23,7 @@ build_freebsd=no
 build_hurd=no
 build_haiku=no
 build_windows=no
+build_unknown=no
 case "${host_os}" in
 	linux*)
 		build_linux=yes
@@ -40,6 +41,7 @@ case "${host_os}" in
 		build_windows=yes
 		;;
 	*)
+		build_unknown=yes
 		;;
 esac
 AM_CONDITIONAL([LINUX], [test "$build_linux" = "yes"])
@@ -181,6 +183,21 @@ TSLIB_CHECK_MODULE([galax], [no], [Enable building of HID USB eGalax raw module 
 TSLIB_CHECK_MODULE([waveshare], [no], [Enable building of WaveShare raw module (Linux /dev/hidrawN support)])
 fi
 
+if test "$build_unknown" = "yes"; then
+TSLIB_CHECK_MODULE([ucb1x00], [no], [Enable building of ucb1x00 raw module (UCB1x00 support)])
+TSLIB_CHECK_MODULE([cy8mrln-palmpre], [no], [Enable building of cy8mrln-palmpre raw module])
+TSLIB_CHECK_MODULE([corgi], [no], [Enable building of corgi raw module (Sharp Zaurus sl-c7x0 support)])
+TSLIB_CHECK_MODULE([collie], [no], [Enable building of collie raw module (Sharp Zaurus sl-5500/5000d support)])
+TSLIB_CHECK_MODULE([h3600], [no], [Enable building of h3600 raw module (HP iPaq H3600 support)])
+TSLIB_CHECK_MODULE([mk712], [no], [Enable building of mk712 raw module (Hi tachi support)])
+TSLIB_CHECK_MODULE([arctic2], [no], [Enable building of arctic2 raw module (IBM Arctic II support)])
+TSLIB_CHECK_MODULE([tatung], [no], [Enable building of tatung raw module (Tatung Webpad support)])
+TSLIB_CHECK_MODULE([dmc], [no], [Enable building of dmc raw module (HP iPaq DMC support)])
+TSLIB_CHECK_MODULE([input], [no], [Enable building of generic input raw module (Linux /dev/input/eventN support)])
+TSLIB_CHECK_MODULE([touchkit], [no], [Enable building of serial TouchKit raw module (Linux /dev/ttySX support)])
+TSLIB_CHECK_MODULE([galax], [no], [Enable building of HID USB eGalax raw module (Linux /dev/hiddevN support)])
+TSLIB_CHECK_MODULE([waveshare], [no], [Enable building of WaveShare raw module (Linux /dev/hidrawN support)])
+fi
 
 AC_MSG_CHECKING([where to place modules])
 AC_ARG_WITH(plugindir,
