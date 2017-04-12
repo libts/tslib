@@ -453,7 +453,7 @@ static int process(struct data_t *data, struct ts_sample_mt **s_array,
 				}
 			}
 		}
-	} else if (samples_read < 0) {
+	} else if (samples_read < 0 && samples_read != -EAGAIN) {
 		if (data->verbose)
 			fprintf(stderr, RED DEFAULT_UINPUT_NAME
 				": ts_read_mt failure.\n" RESET);
@@ -675,12 +675,6 @@ int main(int argc, char **argv)
 		goto out;
 	}
 
-	data.ts = ts_open(data.input_name, 0 /* blocking */);
-	if (!data.ts) {
-		perror("ts_open");
-		goto out;
-	}
-
 	if (data.verbose)
 		printf(DEFAULT_UINPUT_NAME
 		       ": using input device " GREEN "%s" RESET "\n",
@@ -738,11 +732,6 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (ts_config(data.ts)) {
-		perror("ts_config");
-		goto out;
-	}
-
 	data.ev = malloc(sizeof(struct input_event) * MAX_CODES_PER_SLOT * data.slots);
 	if (!data.ev)
 		goto out;
@@ -761,6 +750,35 @@ int main(int argc, char **argv)
 				free(data.s_array[j]);
 			goto out;
 		}
+	}
+
+	/* non-blocking for one test run in order to verify reading and fail before forking */
+	data.ts = ts_open(data.input_name, 1);
+	if (!data.ts) {
+		perror("ts_open");
+		goto out;
+	}
+
+	if (ts_config(data.ts)) {
+		perror("ts_config");
+		goto out;
+	}
+
+	if (process(&data, data.s_array, data.slots, TS_READ_WHOLE_SAMPLES))
+		goto out;
+
+	ts_close(data.ts);
+
+	/* blocking setup for production run */
+	data.ts = ts_open(data.input_name, 0);
+	if (!data.ts) {
+		perror("ts_open");
+		goto out;
+	}
+
+	if (ts_config(data.ts)) {
+		perror("ts_config");
+		goto out;
 	}
 
 	if (run_daemon) {
