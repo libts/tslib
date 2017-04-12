@@ -323,7 +323,7 @@ Check out our tests directory for examples how to use it.
 
 [`ts_open()`](https://manpages.debian.org/unstable/libts0/ts_open.3.en.html)  
 [`ts_config()`](https://manpages.debian.org/unstable/libts0/ts_config.3.en.html)  
-`ts_setup()`  
+[`ts_setup()`](https://manpages.debian.org/unstable/libts0/ts_setup.3.en.html)  
 [`ts_close()`](https://manpages.debian.org/unstable/libts0/ts_close.3.en.html)  
 `ts_reconfig()`  
 `ts_option()`  
