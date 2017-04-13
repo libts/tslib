@@ -317,7 +317,7 @@ static int setup_uinput(struct data_t *data, int *max_slots)
 	}
 
 	data->fd_uinput = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
-	if (data->fd_uinput < 0) {
+	if (data->fd_uinput == -1) {
 		perror("open /dev/uinput");
 		goto err;
 	}
@@ -479,7 +479,7 @@ static void cleanup(struct data_t *data)
 	if (data->ts)
 		ts_close(data->ts);
 
-	if (data->fd_uinput) {
+	if (data->fd_uinput > 0) {
 		ret = ioctl(data->fd_uinput, UI_DEV_DESTROY);
 		if (ret == -1)
 			perror("ioctl UI_DEV_DESTROY");
@@ -673,8 +673,7 @@ int main(int argc, char **argv)
 		       ": using input device " GREEN "%s" RESET "\n",
 		       data.input_name);
 
-	if (setup_uinput(&data, &data.slots) < 0) {
-		perror("setup_uinput");
+	if (setup_uinput(&data, &data.slots)) {
 		goto out;
 	} else {
 		if (data.verbose && data.slots == 1)
