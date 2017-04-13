@@ -63,14 +63,6 @@
 
 #define DEFAULT_UINPUT_NAME "ts_uinput"
 
-#ifndef UI_GET_VERSION
-#define UI_GET_VERSION		_IOR(UINPUT_IOCTL_BASE, 301, unsigned int)
-#endif
-
-#ifndef UI_GET_SYSNAME
-#define UI_GET_SYSNAME(len)     _IOC(_IOC_READ, UINPUT_IOCTL_BASE, 44, len)
-#endif
-
 #ifndef ABS_MT_SLOT /* < 2.6.36 kernel headers */
 # define ABS_MT_SLOT             0x2f    /* MT slot being modified */
 #endif
@@ -99,6 +91,10 @@
 
 #define SYS_INPUT_DIR "/sys/devices/virtual/input/"
 
+#ifndef UINPUT_VERSION
+#define UINPUT_VERSION	2
+#endif
+
 struct data_t {
 	int fd_uinput;
 	int fd_input;
@@ -116,7 +112,7 @@ struct data_t {
 	short mt_type_a;
 };
 
-static void help(struct data_t *data)
+static void help(void)
 {
 	printf("Starts tslib instance listening to given event <device>, creates a virtual\n");
 	printf("input event device with given <name> using 'uinput', then continually reads\n");
@@ -132,10 +128,8 @@ static void help(struct data_t *data)
 	printf("  -i, --idev          touchscreen's input device\n");
 	printf("  -f, --fbdev         touchscreen's framebuffer device\n");
 	printf("  -s, --slots         override available concurrent touch contacts\n");
-	if (data->uinput_version > 3) {
-		printf("\n");
-		printf("Output: virtual device name under " SYS_INPUT_DIR "\n");
-	}
+	printf("\n");
+	printf("See the manpage for futher details.\n");
 }
 
 #define MAX_CODES_PER_SLOT 20
@@ -545,7 +539,6 @@ int main(int argc, char **argv)
 		.ev = NULL,
 		.s_array = NULL,
 		.slots = 1,
-		.uinput_version = 0,
 		.mt_type_a = 0,
 		.verbose_daemon = 0,
 	};
@@ -573,7 +566,7 @@ int main(int argc, char **argv)
 		errno = 0;
 		switch (c) {
 		case 'h':
-			help(&data);
+			help();
 			return 0;
 
 		case 'n':
@@ -694,24 +687,9 @@ int main(int argc, char **argv)
 			       " device\n");
 	}
 
-	/* works for version > 2 */
-	#ifdef UINPUT_VERSION
-	data.uinput_version = UINPUT_VERSION;
-	#endif
-
-	if (data.uinput_version > 4) {
-		if (ioctl(data.fd_uinput,
-			  UI_GET_VERSION,
-			  &data.uinput_version) < 0) {
-			perror("ioctl");
-			goto out;
-		}
-	}
-
 	if (data.verbose) {
-		printf(DEFAULT_UINPUT_NAME ": running uinput version %d\n",
-		       data.uinput_version);
-		if (data.uinput_version > 3) {
+		printf(DEFAULT_UINPUT_NAME ": running uinput version %d\n", UINPUT_VERSION);
+		#if UINPUT_VERSION >= 4
 			char name[64];
 			int ret = ioctl(data.fd_uinput,
 					UI_GET_SYSNAME(sizeof(name)),
@@ -726,10 +704,10 @@ int main(int argc, char **argv)
 				if (devnode)
 					fprintf(stdout, "%s\n", devnode);
 			}
-		} else {
+		#else
 			fprintf(stderr, DEFAULT_UINPUT_NAME
 				": See the kernel log for the device number\n");
-		}
+		#endif
 	}
 
 	data.ev = malloc(sizeof(struct input_event) * MAX_CODES_PER_SLOT * data.slots);
@@ -782,7 +760,7 @@ int main(int argc, char **argv)
 	}
 
 	if (run_daemon) {
-		if (data.uinput_version > 3) {
+		#if UINPUT_VERSION >= 4
 			char name[64];
 			int ret = ioctl(data.fd_uinput,
 					UI_GET_SYSNAME(sizeof(name)),
@@ -805,10 +783,10 @@ int main(int argc, char **argv)
 				perror("ioctl UI_GET_SYSNAME");
 				goto out;
 			}
-		} else {
+		#else
 			fprintf(stderr, DEFAULT_UINPUT_NAME
 			": See the kernel log for the device number\n");
-		}
+		#endif
 		if (daemon(0, 0) == -1) {
 			perror("error starting daemon");
 			goto out;
