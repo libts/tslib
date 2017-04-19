@@ -155,8 +155,9 @@ Let's recap the data flow here:
 ### module: median
 
 #### Description:
-  Similar to what a variance filter does, the median filter suppresses
-  spikes in the gesture. For some theory, see [Wikipedia](https://en.wikipedia.org/wiki/Median_filter)
+  The median filter reduces noise in the samples' coordinate values. It is
+  able to filter undesired single large jumps in the signal. For some
+  theory, see [Wikipedia](https://en.wikipedia.org/wiki/Median_filter)
 
 Parameters:
 * `depth`
@@ -183,13 +184,13 @@ Parameters:
 ### module: iir
 
 #### Description:
-  Infinite impulse response filter. Similar to dejitter, this is a smoothing
-  filter to remove low-level noise. There is a trade-off between noise removal
+  Infinite impulse response filter. This is a smoothing filter to remove
+  low-level noise. There is a trade-off between noise removal
   (smoothing) and responsiveness. The parameters N and D specify the level of
   smoothing in the form of a fraction (N/D).
 
   [Wikipedia](https://en.wikipedia.org/wiki/Infinite_impulse_response) has some
-  general theory.
+  theory.
 
 
 Parameters:
@@ -207,7 +208,7 @@ Parameters:
   Removes jitter on the X and Y co-ordinates. This is achieved by applying a
   weighted smoothing filter. The latest samples have most weight; earlier
   samples have less weight. This allows to achieve 1:1 input->output rate. See
-  [Wikipedia](https://en.wikipedia.org/wiki/Jitter#Mitigation) for some general
+  [Wikipedia](https://en.wikipedia.org/wiki/Jitter#Mitigation) for some
   theory.
 
 #### Parameters:
