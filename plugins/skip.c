@@ -246,7 +246,7 @@ static int skip_read_mt(struct tslib_module_info *info,
 #endif
 	while (nread < ret) {
 		count_current = 0;
-		memcpy(skip->cur_mt[0], samp[nread],
+		memcpy(skip->cur_mt[0], samp[count],
 		       max_slots * sizeof(struct ts_sample_mt));
 		for (i = 0; i < max_slots; i++) {
 			if (skip->cur_mt[0][i].valid != 1)
@@ -286,7 +286,7 @@ static int skip_read_mt(struct tslib_module_info *info,
 					skip->cur_mt[0][i].valid = 1;
 				}
 
-				memcpy(&samp[nread][i], &skip->cur_mt[0][i],
+				memcpy(&samp[count][i], &skip->cur_mt[0][i],
 				       sizeof(struct ts_sample_mt));
 
 				if (count_current == 0) {
@@ -298,7 +298,8 @@ static int skip_read_mt(struct tslib_module_info *info,
 				if (skip->cur_mt[0][i].pressure == 0)
 					reset_skip_mt(skip, i);
 			#ifdef DEBUG
-				fprintf(stderr, "SKIP: ntail 0 - sample accepted\n");
+				fprintf(stderr,
+					"SKIP: ntail 0 - sample accepted\n");
 			#endif
 				continue;
 			}
@@ -311,9 +312,11 @@ static int skip_read_mt(struct tslib_module_info *info,
 
 			#ifdef DEBUG
 				fprintf(stderr,
-					"SKIP: queue one sample to %d\n", skip->M_mt[i]);
+					"SKIP: queue one sample to %d\n",
+					skip->M_mt[i]);
 			#endif
-				memcpy(&skip->buf_mt[skip->M_mt[i]][i], &skip->cur_mt[0][i],
+				memcpy(&skip->buf_mt[skip->M_mt[i]][i],
+				       &skip->cur_mt[0][i],
 				       sizeof(struct ts_sample_mt));
 				skip->M_mt[i]++;
 				continue;
@@ -330,22 +333,23 @@ static int skip_read_mt(struct tslib_module_info *info,
 				skip->buf_mt[skip->M_mt[i]][i].valid = 1;
 			}
 
-			memcpy(&samp[nread][i], &skip->buf_mt[skip->M_mt[i]][i],
+			memcpy(&samp[count][i], &skip->buf_mt[skip->M_mt[i]][i],
 			       sizeof(struct ts_sample_mt));
 
-			if (count_current == 0) {
-				nread++;
-			}
-			count_current++;
-
 	#ifdef DEBUG
-			fprintf(stderr, "SKIP: (Slot %d) X:%4d Y:%4d pressure:%d btn_touch:%d\n",
+			fprintf(stderr,
+				"SKIP: (Slot %d) X:%4d Y:%4d pressure:%d btn_touch:%d\n",
 				skip->buf_mt[skip->M_mt[i]][i].slot,
 				skip->buf_mt[skip->M_mt[i]][i].x,
 				skip->buf_mt[skip->M_mt[i]][i].y,
 				skip->buf_mt[skip->M_mt[i]][i].pressure,
 				skip->buf_mt[skip->M_mt[i]][i].pen_down);
+
 	#endif
+			if (count_current == 0) {
+				nread++;
+			}
+			count_current++;
 
 			if (skip->cur_mt[0][i].pressure == 0) {
 				reset_skip_mt(skip, i);
