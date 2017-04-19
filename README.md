@@ -240,8 +240,6 @@ Parameters:
   Skip nhead samples after press and ntail samples before release. This
   should help if for the device the first or last samples are unreliable.
 
-  Note that it is still **experimental for multitouch**.
-
 Parameters:
 * `nhead`
 
