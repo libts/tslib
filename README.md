@@ -258,12 +258,8 @@ Parameters:
   movement speed to some value (e.g. the pen is not supposed to move quicker
   than some threshold).
 
-  This is a 'greedy' filter, e.g. it gives less samples on output than
-  receives on input. It can cause problems on capacitive touchscreens that
-  already apply such a filter.
-
   There is **no multitouch** support for this filter (yet). `ts_read_mt()` will
-  only read one slot when this filter is used. You can try using the median
+  limit your input to one slot when this filter is used. Try using the median
   filter instead.
 
 #### Parameters:
