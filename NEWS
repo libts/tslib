@@ -2,14 +2,15 @@
 
 This release includes libts version 0.6.0 and the following changes:
 * new `module iir` infinite impulse response filter
-* experimental support for GNU / Hurd
 * `module_raw galax` is deprecated. Users should switch to `module_raw input`
 * multitouch for (at least) eGalax 210 (`module_raw input` and `ts_read_mt()`)
-* new tests/ts_verify API test program
+* new `ts_verify` API test program
 * `ts_uinput -d -v` prints the new /dev/input/eventX device node before returning
+* experimental support for GNU / Hurd
 
 This release includes the following bugfixes:
 * fix support for protocol type A devices (for example Sitronix ST1232)
+* fix the `skip` filter's read_mt() multitouch operation
 * 338d2e4 input-raw: add MT protocol type A support to ts_read()
 * e47df79 input-raw: fix pressure capable multitouch devices
 * dbb8f4c ts_uinput: correctly return in case forking fails
