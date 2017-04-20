@@ -32,7 +32,7 @@ Apart from building the latest tarball release, running
 distributors and their package management:
 * [Arch Linux](https://www.archlinux.org) and [Arch Linux ARM](https://archlinuxarm.org) - `pacman -S tslib`
 * [Buildroot](https://buildroot.org/) - `BR2_PACKAGE_TSLIB=y`
-* [Debian](https://tracker.debian.org/pkg/tslib) - `apt-get install libts0 libts-bin`
+* [Debian](https://tracker.debian.org/pkg/tslib) - `apt-get install libts0 libts-bin libts-dev`
 
 ### set up environment variables
     TSLIB_TSDEVICE          TS device file name.
