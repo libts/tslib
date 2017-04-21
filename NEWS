@@ -1,3 +1,9 @@
+## tslib 1.10
+
+This release includes the following bugfixes:
+* c03f7c9 tools: ts_uinput_start.sh: fix usage of ts_uinput -d -v
+
+
 ## tslib 1.9
 
 This release includes libts version 0.6.0 and the following changes:
