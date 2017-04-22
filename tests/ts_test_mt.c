@@ -107,7 +107,7 @@ int main(int argc, char **argv)
 	struct input_absinfo slot;
 #endif
 	int32_t user_slots = 0;
-	unsigned short max_slots = 1;
+	int32_t max_slots = 1;
 	struct ts_sample_mt **samp_mt = NULL;
 	short verbose = 0;
 

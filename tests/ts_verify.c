@@ -61,7 +61,7 @@ struct ts_verify {
 	FILE *tsconf;
 
 	struct ts_sample_mt **samp_mt;
-	unsigned short slots;
+	int32_t slots;
 	unsigned short nr;
 	uint16_t read_mt_run_count;
 	uint16_t read_mt_fail_count;

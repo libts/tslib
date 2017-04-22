@@ -380,6 +380,7 @@ compatibility.
 This is a complete example program, similar to `ts_print_mt.c`:
 
     #include <stdio.h>
+    #include <stdint.h>
     #include <stdlib.h>
     #include <fcntl.h>
     #include <sys/time.h>
@@ -396,7 +397,7 @@ This is a complete example program, similar to `ts_print_mt.c`:
         char *tsdevice = NULL;
         struct ts_sample_mt **samp_mt = NULL;
         struct input_absinfo slot;
-        unsigned short max_slots = 1;
+        int32_t max_slots = 1;
         unsigned short read_samples = 1;
         int ret, i, j;
 
