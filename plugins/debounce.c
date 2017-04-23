@@ -32,11 +32,11 @@
 struct tslib_debounce {
 	struct tslib_module_info	module;
 	unsigned int			drop_threshold; /* ms */
-	long long			last_release;
+	int64_t				last_release;
 	int				last_pressure;
-	long long			*last_release_mt;
+	int64_t				*last_release_mt;
 	int				*last_pressure_mt;
-	int				current_max_slots;
+	int32_t				current_max_slots;
 };
 
 static int debounce_read(struct tslib_module_info *info, struct ts_sample *samp, int nr)
@@ -46,7 +46,7 @@ static int debounce_read(struct tslib_module_info *info, struct ts_sample *samp,
 	int ret;
 	int num = 0;
 	int i;
-	long long now;
+	int64_t now;
 	long dt;
 	__attribute__ ((unused)) enum { DOWN, MOVE, UP } mode;
 	int drop = 0;
@@ -102,7 +102,7 @@ static int debounce_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 {
 	struct tslib_debounce *p = (struct tslib_debounce *)info;
 	int ret;
-	long long now;
+	int64_t now;
 	long dt;
 	__attribute__ ((unused)) enum { DOWN, MOVE, UP } mode[max_slots];
 	int drop = 0;
@@ -113,7 +113,7 @@ static int debounce_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 		if (p->last_release_mt)
 			free(p->last_release_mt);
 
-		p->last_release_mt = calloc(max_slots, sizeof(long long));
+		p->last_release_mt = calloc(max_slots, sizeof(int64_t));
 		if (!p->last_release_mt)
 			return -ENOMEM;
 
