@@ -94,9 +94,10 @@ filters, using [`ts_test_mt`](https://manpages.debian.org/unstable/libts0/ts_tes
     # ts_test_mt
 
 ### use the filtered result in your system
-You need a tool using tslib'd API and provide it to your input system. There are
-various ways to do so on various systems. We only describe one way for Linux
-here - using tslib's included userspace input evdev driver `ts_uinput`:
+You need a tool using tslib's API that glues tslib's touch samples to your
+input system. There are various ways to do so on various systems. We only
+describe one way for Linux here - using tslib's included userspace input
+evdev driver `ts_uinput`:
 
     # ts_uinput -d -v
 
