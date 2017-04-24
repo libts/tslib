@@ -121,12 +121,12 @@ struct tslib_input {
 	int	max_slots;
 	int	nr;
 	int	pen_down;
-	short	mt;
 	int	last_fd;
-	short	no_pressure;
-	short	type_a;
+	int8_t	mt;
+	int8_t	no_pressure;
+	int8_t	type_a;
 
-	unsigned int	special_device; /* broken device we work around, see below */
+	uint16_t	special_device; /* broken device we work around, see below */
 };
 
 #ifndef BUS_USB
