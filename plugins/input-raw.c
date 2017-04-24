@@ -560,7 +560,7 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 			return -ENOMEM;
 
 		for (j = 0; j < nr; j++) {
-			i->buf[j] = malloc(max_slots *
+			i->buf[j] = calloc(max_slots,
 					   sizeof(struct ts_sample_mt));
 			if (!i->buf[j])
 				return -ENOMEM;
