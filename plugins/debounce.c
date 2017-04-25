@@ -48,7 +48,7 @@ static int debounce_read(struct tslib_module_info *info, struct ts_sample *samp,
 	int i;
 	int64_t now;
 	long dt;
-	__attribute__ ((unused)) enum { DOWN, MOVE, UP } mode;
+	enum { DOWN, MOVE, UP } mode;
 	int drop = 0;
 	int left;
 
@@ -104,7 +104,7 @@ static int debounce_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 	int ret;
 	int64_t now;
 	long dt;
-	__attribute__ ((unused)) enum { DOWN, MOVE, UP } mode[max_slots];
+	enum { DOWN, MOVE, UP } mode[max_slots];
 	int drop = 0;
 	int nr;
 	int i;
