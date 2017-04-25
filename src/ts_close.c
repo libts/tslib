@@ -30,7 +30,10 @@ int ts_close(struct tsdev *ts)
 		next = info->next;
 
 		handle = info->handle;
-		info->ops->fini(info);
+
+		if (info->ops->fini)
+			info->ops->fini(info);
+
 		if (handle)
 			dlclose(handle);
 

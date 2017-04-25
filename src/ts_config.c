@@ -158,7 +158,10 @@ int ts_reconfig(struct tsdev *ts)
 		next = info->next;
 
 		handle = info->handle;
-		info->ops->fini(info);
+
+		if (info->ops->fini)
+			info->ops->fini(info);
+
 		if (handle)
 			dlclose(handle);
 

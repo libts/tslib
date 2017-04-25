@@ -193,7 +193,10 @@ static int __ts_load_module(struct tsdev *ts, const char *module,
 		fprintf(stderr, "Can't attach %s\n", module);
 #endif
 		handle = info->handle;
-		info->ops->fini(info);
+
+		if (info->ops->fini)
+			info->ops->fini(info);
+
 		if (handle)
 			dlclose(handle);
 	}
