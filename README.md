@@ -379,6 +379,19 @@ compatibility.
 * [qtslib](https://github.com/qt/qtbase/tree/dev/src/platformsupport/input/tslib) - **outdated** Qt5 qtbase tslib plugin
 
 ### using libts
+If you want to support tslib < 1.2, while still support multitouch and all
+recent versions of tslib, you'd do something like this:
+
+    #include <tslib.h>
+
+    #ifndef TSLIB_VERSION_MT
+            /* ts_read() as before (due to old tslib) */
+    #else
+            /* new ts_setup() and ret = ts_read_mt() */
+            if (ret == -ENOSYS)
+                    /* ts_read() as before (due to user config) */
+    #endif
+
 This is a complete example program, similar to `ts_print_mt.c`:
 
     #include <stdio.h>
@@ -388,7 +401,7 @@ This is a complete example program, similar to `ts_print_mt.c`:
     #include <sys/time.h>
     #include <unistd.h>
 
-    #include "tslib.h"
+    #include <tslib.h>
 
     #define SLOTS 5
     #define SAMPLES 1

@@ -77,6 +77,10 @@ int main(int argc, char **argv)
 	short non_blocking = 0;
 	short raw = 0;
 
+#ifndef TSLIB_VERSION_MT
+	return -1;
+#endif
+
 	while (1) {
 		const struct option long_options[] = {
 			{ "help",         no_argument,       NULL, 'h' },
