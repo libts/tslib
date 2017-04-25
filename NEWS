@@ -1,12 +1,13 @@
 ## tslib 1.10
 
 This release includes libts version 0.7.0 and the following changes:
-* new `ts_libversion()` API
+* new `ts_libversion()` API and TSLIB_VERSION_MT definition
+  This offers seamless integration for apps that don't know tslib's version
 
 This release includes the following bugfixes:
 * c03f7c9 tools: ts_uinput_start.sh: fix usage of ts_uinput -d -v
 * 47e7ab5 input-raw: Fix wrong first slot values by using calloc instead of malloc
-
+* 7c5b4f8 plugins: filters: check for read_mt() availability
 
 
 ## tslib 1.9
