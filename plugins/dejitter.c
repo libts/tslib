@@ -193,6 +193,9 @@ static int dejitter_read_mt(struct tslib_module_info *info,
 	int ret;
 	int i, j;
 
+	if (!info->next->ops->read_mt)
+		return -ENOSYS;
+
 	ret = info->next->ops->read_mt(info->next, samp, max_slots, nr);
 	if (ret < 0)
 		return ret;

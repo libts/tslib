@@ -150,6 +150,9 @@ static int variance_read_mt(struct tslib_module_info *info,
 	short pen_down = 1;
 	int ret;
 
+	if (!info->next->ops->read_mt)
+		return -ENOSYS;
+
 	if (var->samp == NULL) {
 		var->samp = calloc(nr, sizeof(struct ts_sample));
 		if (!var->samp)

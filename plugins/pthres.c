@@ -143,6 +143,9 @@ static int pthres_read_mt(struct tslib_module_info *info,
 		p->current_max_slots = max_slots;
 	}
 
+	if (!info->next->ops->read_mt)
+		return -ENOSYS;
+
 	ret = info->next->ops->read_mt(info->next, samp, max_slots, nr_samples);
 	if (ret < 0)
 		return ret;

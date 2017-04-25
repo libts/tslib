@@ -94,6 +94,9 @@ static int linear_read_mt(struct tslib_module_info *info,
 	int i;
 	int nr;
 
+	if (!info->next->ops->read_mt)
+		return -ENOSYS;
+
 	ret = info->next->ops->read_mt(info->next, samp, max_slots, nr_samples);
 	if (ret < 0)
 		return ret;

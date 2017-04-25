@@ -236,6 +236,9 @@ static int skip_read_mt(struct tslib_module_info *info,
 		skip->slots = max_slots;
 	}
 
+	if (!info->next->ops->read_mt)
+		return -ENOSYS;
+
 	ret = info->next->ops->read_mt(info->next, samp, max_slots, nr);
 	if (ret < 0)
 		return ret;

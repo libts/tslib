@@ -199,6 +199,9 @@ static int median_read_mt(struct tslib_module_info *inf,
 	int ret;
 	int i, j;
 
+	if (!inf->next->ops->read_mt)
+		return -ENOSYS;
+
 	ret = inf->next->ops->read_mt(inf->next, samp, max_slots, nr);
 	if (ret < 0)
 		return ret;

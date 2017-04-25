@@ -131,6 +131,9 @@ static int debounce_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 		p->current_max_slots = max_slots;
 	}
 
+	if (!info->next->ops->read_mt)
+		return -ENOSYS;
+
 	ret = info->next->ops->read_mt(info->next, samp, max_slots, nr_samples);
 	if (ret < 0)
 		return ret;
