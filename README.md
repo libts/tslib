@@ -74,7 +74,7 @@ parameters.
 With this configuration file, we end up with the following data flow
 through the library:
 
-    driver --> raw read --> median  --> dejitter --> linear --> application
+    driver --> raw read --> median  --> dejitter --> linear --> application (using ts_read_mt())
                module       module      module       module
 
 ### calibrate the touch screen
@@ -101,7 +101,7 @@ evdev driver `ts_uinput`:
 
     # ts_uinput -d -v
 
-`-d` makes the program return and run as a daemon in the background. `-v` make
+`-d` makes the program return and run as a daemon in the background. `-v` makes
 it print the new `/dev/input/eventX` device node before returning.
 
 In this case, for Qt5 for example you'd probably set something like this:
@@ -117,13 +117,13 @@ touchscreen to have
 and so on. Please see your system's documentation on how to use a specific
 evdev input device.
 
-Remember to set your environment and configuration for ts_uinput, just like you
-did for ts_calibrate or ts_test_mt.
+Remember to set your environment and configuration for `ts_uinput`, just like you
+did for `ts_calibrate` or `ts_test_mt`.
 
 Let's recap the data flow here:
 
-    driver --> raw read --> filter --> (...)   --> ts_uinput  --> evdev read
-               module       module     module(s)   application    application
+    driver --> raw read --> filter --> filter(s) --> ts_uinput (ts_read_mt())  --> libevdev read  --> GUI app
+               module       module     module(s)     daemon                        e.g. in libinput
 
 
 ## filter modules
