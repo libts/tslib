@@ -281,7 +281,7 @@ static int ts_load_module_4_inv(struct ts_verify *data)
 	return ret;
 }
 
-void run_tests(struct ts_verify *data)
+static void run_tests(struct ts_verify *data)
 {
 	int32_t ret;
 
