@@ -77,8 +77,8 @@ int main(int argc, char **argv)
 	short non_blocking = 0;
 	short raw = 0;
 
-#ifndef TSLIB_VERSION_MT
-	return -1;
+#ifndef TSLIB_VERSION_MT /* < 1.10 */
+	printf("You are running an old version of tslib. Please upgrade.\n");
 #endif
 
 	while (1) {
