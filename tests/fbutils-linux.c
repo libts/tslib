@@ -229,8 +229,8 @@ void put_string_center(int x, int y, char *s, unsigned colidx)
 
 void setcolor(unsigned colidx, unsigned value)
 {
-	unsigned res;
-	unsigned short red, green, blue;
+	uint32_t res;
+	uint16_t red, green, blue;
 	struct fb_cmap cmap;
 
 #ifdef DEBUG

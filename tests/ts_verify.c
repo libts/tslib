@@ -57,12 +57,12 @@
 struct ts_verify {
 	struct tsdev *ts;
 	char *tsdevice;
-	unsigned short verbose;
+	uint8_t verbose;
 	FILE *tsconf;
 
 	struct ts_sample_mt **samp_mt;
 	int32_t slots;
-	unsigned short nr;
+	uint8_t nr;
 	uint16_t read_mt_run_count;
 	uint16_t read_mt_fail_count;
 	uint16_t read_run_count;
@@ -78,7 +78,7 @@ static void usage(char **argv)
 	printf("Usage: %s [--idev <device>] [--verbose]\n", argv[0]);
 }
 
-static int ts_verify_alloc_mt(struct ts_verify *data, int nr, short nonblocking)
+static int ts_verify_alloc_mt(struct ts_verify *data, int nr, int8_t nonblocking)
 {
 #ifdef TS_HAVE_EVDEV
 	struct input_absinfo slot;
@@ -140,7 +140,7 @@ static void ts_verify_free_mt(struct ts_verify *data)
 
 /* TEST ts_read_mt 1 */
 static int ts_verify_read_mt_1(struct ts_verify *data, int nr,
-				     int nonblocking, int raw)
+				     int8_t nonblocking, int raw)
 {
 	int i, j;
 	int ret;
