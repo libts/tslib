@@ -79,6 +79,15 @@ struct ts_sample_mt {
 	short		valid;
 };
 
+struct ts_lib_version_data {
+	int		age; /* age of this very struct */
+	const char	*package_version;
+	int		version_num;
+	unsigned int	features; /* bitmask, see below */
+};
+
+#define TSLIB_VERSION_MT	(1 << 0)	/* multitouch support */
+
 enum ts_param {
 	TS_SCREEN_RES = 0,		/* 2 integer args, x and y */
 	TS_SCREEN_ROT			/* 1 integer arg, 1 = rotate */
@@ -148,6 +157,11 @@ TSAPI int ts_read_mt(struct tsdev *, struct ts_sample_mt **, int slots, int nr);
  * Return a raw, unscaled touchscreen multitouch sample.
  */
 TSAPI int ts_read_raw_mt(struct tsdev *, struct ts_sample_mt **, int slots, int nr);
+
+/*
+ * This function returns a pointer to a static copy of the version info struct.
+ */
+TSAPI struct ts_lib_version_data *ts_libversion(void);
 
 #ifdef __cplusplus
 }

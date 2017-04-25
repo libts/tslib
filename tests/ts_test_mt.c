@@ -89,7 +89,9 @@ static void refresh_screen()
 
 static void help()
 {
-	printf("tslib " PACKAGE_VERSION "\n");
+	struct ts_lib_version_data *ver = ts_libversion();
+
+	printf("tslib %s (library 0x%X)\n", ver->package_version, ver->version_num);
 	printf("\n");
 	printf("Usage: ts_test_mt [-v] [-i <device>] [-j <slots>]\n");
 }

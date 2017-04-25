@@ -55,7 +55,9 @@
 
 static void usage(char **argv)
 {
-	printf("tslib " PACKAGE_VERSION "\n");
+	struct ts_lib_version_data *ver = ts_libversion();
+
+	printf("tslib %s (library 0x%X)\n", ver->package_version, ver->version_num);
 	printf("\n");
 	printf("Usage: %s [--raw] [--non-blocking] [-s samples] [-i <device>] [-j <slots>]\n", argv[0]);
 }

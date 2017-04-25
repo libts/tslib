@@ -1,5 +1,8 @@
 ## tslib 1.10
 
+This release includes libts version 0.7.0 and the following changes:
+* new `ts_libversion()` API
+
 This release includes the following bugfixes:
 * c03f7c9 tools: ts_uinput_start.sh: fix usage of ts_uinput -d -v
 * 47e7ab5 input-raw: Fix wrong first slot values by using calloc instead of malloc

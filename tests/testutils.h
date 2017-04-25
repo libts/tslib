@@ -17,14 +17,6 @@
 #define BLUE    "\033[34m"
 #define YELLOW  "\033[33m"
 
-#include "config.h"
-
-#ifndef PACKAGE_VERSION
-#ifdef VERSION
-#define PACKAGE_VERSION VERSION
-#endif
-#endif /* PACKAGE_VERSION */
-
 struct ts_button {
 	int x, y, w, h;
 	char *text;

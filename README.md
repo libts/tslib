@@ -317,6 +317,7 @@ while you are free to play with the parameter values.
 The API is documented in our man pages in the doc directory.
 Check out our tests directory for examples how to use it.
 
+`ts_libversion()`  
 [`ts_open()`](https://manpages.debian.org/unstable/libts0/ts_open.3.en.html)  
 [`ts_config()`](https://manpages.debian.org/unstable/libts0/ts_config.3.en.html)  
 [`ts_setup()`](https://manpages.debian.org/unstable/libts0/ts_setup.3.en.html)  
@@ -345,9 +346,9 @@ only if we break backwards compatibility. The second or third minor version will
 increase with releases. In the following example
 
 
-    libts.so -> libts.so.0.3.1
-    libts.so.0 -> libts.so.0.3.1
-    libts.so.0.3.1
+    libts.so -> libts.so.0.7.0
+    libts.so.0 -> libts.so.0.7.0
+    libts.so.0.7.0
 
 
 use `libts.so` for using tslib unconditionally and `libts.so.0` to make sure
@@ -470,6 +471,7 @@ and call `ts_read_mt()` like so
 ### Symbols in Versions
 |Name | Introduced|
 | --- | --- |
+|`ts_libversion` | 1.10 |
 |`ts_close` | 1.0 |
 |`ts_config` | 1.0 |
 |`ts_reconfig` | 1.3 |

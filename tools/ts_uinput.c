@@ -114,6 +114,10 @@ struct data_t {
 
 static void help(void)
 {
+	struct ts_lib_version_data *ver = ts_libversion();
+
+	printf("tslib %s (library 0x%X)\n", ver->package_version, ver->version_num);
+	printf("\n");
 	printf("Starts tslib instance listening to given event <device>, creates a virtual\n");
 	printf("input event device with given <name> using 'uinput', then continually reads\n");
 	printf("touch reports from tslib and replays them as touch events of protocol type B\n");

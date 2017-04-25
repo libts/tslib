@@ -1,0 +1,43 @@
+.TH TS_LIBVERSION 3  "" "" "tslib"
+.SH NAME
+ts_libversion \- get version information on the currently running tslib
+.SH SYNOPSIS
+.nf
+.B #include <tslib.h>
+.sp
+.BI "struct ts_lib_version_data *ts_libversion();"
+.sp
+.fi
+
+.SH DESCRIPTION
+.BR ts_libversion ()
+This function returns a pointer to a static copy of the version info struct:
+
+.nf
+struct ts_lib_version_data {
+        int             age; /* age of this very struct */
+        const char      *package_version;
+        int             version_num;
+        unsigned int    features;
+};
+.fi
+
+.BR version_num
+is a 24 bit number created like this: <8 bits major number> | <8 bits minor number> | <8 bits patch number> of the library libts. Version 0.7.1 is therefore returned as 0x000701.
+
+.BR package_version
+is just the string containing the tarball release number, e.g. "1.10".
+
+.BR features
+can have one or more bits set. The currently defined bits are
+
+.BR TSLIB_VERSION_MT
+(tslib supports multitouch for evdev input)
+
+.SH RETURN VALUE
+This function returns a pointer to a static copy of the version info struct.
+
+.SH SEE ALSO
+.BR ts_setup (3),
+.BR ts_read (3),
+.BR ts.conf (5)

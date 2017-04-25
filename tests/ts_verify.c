@@ -73,7 +73,9 @@ struct ts_verify {
 
 static void usage(char **argv)
 {
-	printf("tslib " PACKAGE_VERSION "\n");
+	struct ts_lib_version_data *ver = ts_libversion();
+
+	printf("tslib %s\n", ver->package_version);
 	printf("\n");
 	printf("Usage: %s [--idev <device>] [--verbose]\n", argv[0]);
 }
@@ -447,6 +449,7 @@ int main(int argc, char **argv)
 		.nr_of_iterations = 6,
 		.tsconf = NULL,
 	};
+	struct ts_lib_version_data *ver = ts_libversion();
 
 	while (1) {
 		const struct option long_options[] = {
@@ -496,6 +499,8 @@ int main(int argc, char **argv)
 	if (setenv("TSLIB_CONFFILE", CONFFILE, 1) == -1)
 		return errno;
 
+
+	printf("tslib %s (library 0x%X)\n", ver->package_version, ver->version_num);
 
 	printf("======================================================\n");
 	printf("input_raw\n");

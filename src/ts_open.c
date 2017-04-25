@@ -33,6 +33,11 @@ extern struct tslib_module_info __ts_raw;
  */
 static void print_host_os(void)
 {
+	struct ts_lib_version_data *version = ts_libversion();
+
+	printf("tslib %s (library 0x%X) on ",
+	       version->package_version, version->version_num);
+
 #if defined (__linux__)
 	printf("Host OS: Linux\n");
 #elif defined (__FreeBSD__)

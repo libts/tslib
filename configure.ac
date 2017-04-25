@@ -236,6 +236,11 @@ AC_ARG_ENABLE([tools], AS_HELP_STRING([--disable-tools], [Disable tools (ts_uinp
 AM_CONDITIONAL([ENABLE_TOOLS], [test "$enable_tools" = "yes"])
 AC_MSG_RESULT($enable_tools)
 
+AC_DEFUN([AX_DEFINE_SUBST], [
+AC_DEFINE_UNQUOTED([$1], [$2], [$3])
+AC_SUBST([$1], ['$2'])
+])
+
 # libts Library versioning
 # increment if the interface changed
 LT_CURRENT=6
@@ -246,6 +251,9 @@ LT_AGE=6
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
+AX_DEFINE_SUBST([LIBTS_VERSION_CURRENT], [$LT_CURRENT], [library current number])
+AX_DEFINE_SUBST([LIBTS_VERSION_REVISION], [$LT_REVISION], [library revision number])
+AX_DEFINE_SUBST([LIBTS_VERSION_AGE], [$LT_AGE], [library age number])
 
 AC_CONFIG_FILES([Makefile
                  etc/Makefile
