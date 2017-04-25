@@ -8,6 +8,7 @@ This release includes the following bugfixes:
 * c03f7c9 tools: ts_uinput_start.sh: fix usage of ts_uinput -d -v
 * 47e7ab5 input-raw: Fix wrong first slot values by using calloc instead of malloc
 * 7c5b4f8 plugins: filters: check for read_mt() availability
+* e684df5 call ops->fini() only when implemented by the plugin
 
 
 ## tslib 1.9
