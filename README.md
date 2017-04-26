@@ -484,6 +484,7 @@ and call `ts_read_mt()` like so
 ### Symbols in Versions
 |Name | Introduced|
 | --- | --- |
+|`TSLIB_VERSION_MT` | 1.10 |
 |`ts_libversion` | 1.10 |
 |`ts_close` | 1.0 |
 |`ts_config` | 1.0 |
