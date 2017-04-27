@@ -57,7 +57,7 @@ static int debounce_read(struct tslib_module_info *info, struct ts_sample *samp,
 	long dt;
 	int drop = 0;
 	int left;
-	enum debounce_mode mode;
+	__attribute__ ((unused)) enum debounce_mode mode;
 
 	ret = info->next->ops->read(info->next, samp, nr);
 	if (ret < 0)
