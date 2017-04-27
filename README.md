@@ -129,14 +129,12 @@ Let's recap the data flow here:
 ## filter modules
 
 ### module: linear
-
-#### Description:
   Linear scaling - calibration - module, primerily used for conversion of touch
   screen co-ordinates to screen co-ordinates. It applies the corrections as
   recorded and saved by the [`ts_calibrate`](https://manpages.debian.org/unstable/libts0/ts_calibrate.1.en.html) tool. It's the only module that reads
   a configuration file.
 
-#### Parameters:
+Parameters:
 * `xyswap`
 
 	interchange the X and Y co-ordinates -- no longer used or needed
@@ -154,8 +152,6 @@ Let's recap the data flow here:
 
 
 ### module: median
-
-#### Description:
   The median filter reduces noise in the samples' coordinate values. It is
   able to filter undesired single large jumps in the signal. For some
   theory, see [Wikipedia](https://en.wikipedia.org/wiki/Median_filter)
@@ -167,13 +163,11 @@ Parameters:
 
 
 ### module: pthres
-
-#### Description:
   Pressure threshold filter. Given a release is always pressure 0 and a
   press is always >= 1, this discards samples below / above the specified
   pressure threshold.
 
-#### Parameters:
+Parameters:
 * `pmin`
 
 	Minimum pressure value for a sample to be valid.
@@ -183,8 +177,6 @@ Parameters:
 
 
 ### module: iir
-
-#### Description:
   Infinite impulse response filter. This is a smoothing filter to remove
   low-level noise. There is a trade-off between noise removal
   (smoothing) and responsiveness. The parameters N and D specify the level of
@@ -192,7 +184,6 @@ Parameters:
 
   [Wikipedia](https://en.wikipedia.org/wiki/Infinite_impulse_response) has some
   theory.
-
 
 Parameters:
 * `N`
@@ -204,15 +195,13 @@ Parameters:
 
 
 ### module: dejitter
-
-#### Description:
   Removes jitter on the X and Y co-ordinates. This is achieved by applying a
   weighted smoothing filter. The latest samples have most weight; earlier
   samples have less weight. This allows to achieve 1:1 input->output rate. See
   [Wikipedia](https://en.wikipedia.org/wiki/Jitter#Mitigation) for some
   theory.
 
-#### Parameters:
+Parameters:
 * `delta`
 
 	Squared distance between two samples ((X2-X1)^2 + (Y2-Y1)^2) that
@@ -223,13 +212,11 @@ Parameters:
 
 
 ### module: debounce
-
-#### Description:
   Simple debounce mechanism that drops input events for the specified time
   after a touch gesture stopped. [Wikipedia](https://en.wikipedia.org/wiki/Switch#Contact_bounce)
   has more theory.
 
-#### Parameters:
+Parameters:
 * `drop_threshold`
 
 	drop events up to this number of milliseconds after the last
@@ -237,8 +224,6 @@ Parameters:
 
 
 ### module: skip
-
-#### Description:
   Skip nhead samples after press and ntail samples before release. This
   should help if for the device the first or last samples are unreliable.
 
@@ -252,8 +237,6 @@ Parameters:
 
 
 ### module:	variance
-
-#### Description:
   Variance filter. Tries to do it's best in order to filter out random noise
   coming from touchscreen ADC's. This is achieved by limiting the sample
   movement speed to some value (e.g. the pen is not supposed to move quicker
@@ -263,7 +246,7 @@ Parameters:
   limit your input to one slot when this filter is used. Try using the median
   filter instead.
 
-#### Parameters:
+Parameters:
 * `delta`
 
 	Set the squared distance in touchscreen units between previous and
