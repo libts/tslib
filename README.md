@@ -357,9 +357,9 @@ compatibility.
 
 ### libts users
 
-* ts_uinput - userspace event device driver for the tslib-filtered samples. part of tslib (tools/ts_uinput.c)
-* [xf86-input-tslib](http://public.pengutronix.de/software/xf86-input-tslib/) - **outdated** direct tslib input plugin for X
-* [qtslib](https://github.com/qt/qtbase/tree/dev/src/platformsupport/input/tslib) - **outdated** Qt5 qtbase tslib plugin
+* [ts_uinput](#use-the-filtered-result-in-your-system) - userspace event device driver for the tslib-filtered samples. Shipped as part of tslib.
+* [xf86-input-tslib](https://github.com/merge/xf86-input-tslib) - direct tslib input driver for X.org
+* [qtslib](https://github.com/qt/qtbase/tree/dev/src/platformsupport/input/tslib) - direct Qt5 tslib input plugin
 
 ### using libts
 If you want to support tslib < 1.2, while still support multitouch and all
