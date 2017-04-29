@@ -93,7 +93,7 @@ filters, using [`ts_test_mt`](https://manpages.debian.org/unstable/libts0/ts_tes
 
     # ts_test_mt
 
-### use the filtered result in your system
+### use the filtered result in your system (ts_uinput method)
 You need a tool using tslib's API that glues tslib's touch samples to your
 input system. There are various ways to do so on various systems. We only
 describe one way for Linux here - using tslib's included userspace input
@@ -104,7 +104,8 @@ evdev driver `ts_uinput`:
 `-d` makes the program return and run as a daemon in the background. `-v` makes
 it print the new `/dev/input/eventX` device node before returning.
 
-In this case, for Qt5 for example you'd probably set something like this:
+You can use *evdev* drivers now. In this case, for Qt5 for example you'd
+probably set something like this:
 
     QT_QPA_GENERIC_PLUGINS=evdevtouch:/dev/input/eventX
     QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS=/dev/input/eventX:rotate=0
@@ -124,6 +125,51 @@ Let's recap the data flow here:
 
     driver --> raw read --> filter --> filter(s) --> ts_uinput (ts_read_mt())  --> libevdev read  --> GUI app
                module       module     module(s)     daemon                        e.g. in libinput
+
+#### symlink to /dev/input/ts_uinput
+In order to know *what* enumerated input device file is created by `ts_uinput`,
+you can, among other thing:
+
+* use the included `tools/ts_uinput_start.sh` script that starts
+  `ts_uinput -d -v` and creates the symlink `/dev/input/ts_uinput` for you, or
+
+* if you're using *udev and systemd*, create the following udev rule, for
+  example `/etc/udev/rules.d/98-touchscreen.rules`:
+
+    SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{phys}=="input/ts", SYMLINK+="input/ts", TAG+="systemd"
+    SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{name}=="ts_uinput", SYMLINK+="input/ts_uinput"
+
+  where for `ATTRS{phys}=="input/ts"`, choose anything that matches your real
+  touchscreen device.
+
+  then create any file containing the environment or tslib, like `/etc/ts.env`
+
+    TSLIB_TSDEVICE=/dev/input/ts
+    TSLIB_CALIBFILE=/etc/pointercal
+    TSLIB_CONFFILE=/etc/ts.conf
+    TSLIB_PLUGINDIR=/usr/lib/ts
+    TSLIB_FBDEVICE=/dev/fb0
+
+  and create a systemd service file, like `/usr/lib/systemd/system/ts_uinput.service`
+
+	[Unit]
+	Description=touchscreen input
+	Wants=dev-input-ts_raw.device
+	After=dev-input-ts_raw.device
+
+	[Service]
+	Type=oneshot
+	EnvironmentFile=/etc/ts.env
+	ExecStart=/bin/sh -c 'exec /usr/bin/ts_uinput &> /var/log/ts_uinput.log'
+
+	[Install]
+	WantedBy=multi-user.target
+
+  and
+
+    #systemctl enable ts_uinput
+
+  will enable it permanently.
 
 
 ## filter modules
