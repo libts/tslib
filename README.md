@@ -136,38 +136,38 @@ you can, among other thing:
 * if you're using *udev and systemd*, create the following udev rule, for
   example `/etc/udev/rules.d/98-touchscreen.rules`:
 
-    SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{phys}=="input/ts", SYMLINK+="input/ts", TAG+="systemd"
-    SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{name}=="ts_uinput", SYMLINK+="input/ts_uinput"
+      SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{phys}=="input/ts", SYMLINK+="input/ts", TAG+="systemd"
+      SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{name}=="ts_uinput", SYMLINK+="input/ts_uinput"
 
   where for `ATTRS{phys}=="input/ts"`, choose anything that matches your real
-  touchscreen device.
+  touchscreen device, in case don't already have a /dev/input/ts symlink.
 
   then create any file containing the environment or tslib, like `/etc/ts.env`
 
-    TSLIB_TSDEVICE=/dev/input/ts
-    TSLIB_CALIBFILE=/etc/pointercal
-    TSLIB_CONFFILE=/etc/ts.conf
-    TSLIB_PLUGINDIR=/usr/lib/ts
-    TSLIB_FBDEVICE=/dev/fb0
+      TSLIB_TSDEVICE=/dev/input/ts
+      TSLIB_CALIBFILE=/etc/pointercal
+      TSLIB_CONFFILE=/etc/ts.conf
+      TSLIB_PLUGINDIR=/usr/lib/ts
+      TSLIB_FBDEVICE=/dev/fb0
 
   and create a systemd service file, like `/usr/lib/systemd/system/ts_uinput.service`
 
-	[Unit]
-	Description=touchscreen input
-	Wants=dev-input-ts_raw.device
-	After=dev-input-ts_raw.device
+      [Unit]
+      Description=touchscreen input
+      Wants=dev-input-ts_raw.device
+      After=dev-input-ts_raw.device
 
-	[Service]
-	Type=oneshot
-	EnvironmentFile=/etc/ts.env
-	ExecStart=/bin/sh -c 'exec /usr/bin/ts_uinput &> /var/log/ts_uinput.log'
+      [Service]
+      Type=oneshot
+      EnvironmentFile=/etc/ts.env
+      ExecStart=/bin/sh -c 'exec /usr/bin/ts_uinput &> /var/log/ts_uinput.log'
 
-	[Install]
-	WantedBy=multi-user.target
+      [Install]
+      WantedBy=multi-user.target
 
   and
 
-    #systemctl enable ts_uinput
+      #systemctl enable ts_uinput
 
   will enable it permanently.
 
