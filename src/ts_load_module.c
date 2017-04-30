@@ -65,6 +65,9 @@ static const struct {
 #ifdef TSLIB_STATIC_TATUNG_MODULE
 	{ "tatung", tatung_mod_init },
 #endif
+#ifdef TSLIB_STATIC_DMC_MODULE
+	{ "dmc", dmc_mod_init },
+#endif
 #ifdef TSLIB_STATIC_DMC_DUS3000_MODULE
 	{ "dmc_dus3000", dmc_dus3000_mod_init },
 #endif
