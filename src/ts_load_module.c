@@ -95,9 +95,9 @@ static struct tslib_module_info *__ts_load_module_static(struct tsdev *ts,
 							 const char *params)
 {
 	struct tslib_module_info *info = NULL;
-	unsigned int i;
+	int i;
 
-	for (i = 0; i < countof(tslib_modules); i++) {
+	for (i = 0; i < (int)countof(tslib_modules); i++) {
 		if (!strcmp(tslib_modules[i].name, module)) {
 			info = tslib_modules[i].mod_init(ts, params);
 #ifdef DEBUG
