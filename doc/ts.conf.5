@@ -317,7 +317,64 @@ If the distance between previous and current sample is far, the sample is marked
 .RE
 .RE
 .PP
+.BR hardware
+.BR support
+.sp
+.RE
+On Linux, use the
+\fBmodule_raw input\fR
+if you can. The other raw access modules are device specific userspace drivers. If you need one of those, enable it explicitely when building tslib. The list of modules enabled by default might shrink in the future.
+\fBmodule_raw input\fR
+supports multitouch (MT) too.
 
+.TS
+allbox;
+lb lb lb lb lb lb
+l l l l l l.
+module_raw	supported devices	interface	platforms	MT	how to enable
+T{
+.BR input
+T}	all with Linux evdev drivers	any (driver) /dev/input/	Linux, FreeBSD	yes	enabled by default
+T{
+.BR arctic2
+T}	IBM Arctic II	.	Linux, BSD, Hurd, Haiku	no	enabled by default
+T{
+.BR collie
+T}	Sharp Zaurus SL-5000d/SL-5500	.	Linux, BSD, Hurd, Haiku	no	enabled by default
+T{
+.BR corgi
+T}	Sharp Zaurus SL-C700	.	Linux, BSD, Hurd, Haiku	no	enabled by default
+T{
+.BR dmc_dus3000
+T}	DMC DUS Series (DUS3000, ...)	UART	Linux	no	--enable-dmc_dus3000
+T{
+.BR dmc
+T}	DMC (others)	.	Linux, BSD, Hurd, Haiku	no	enabled by default
+T{
+.BR galax
+T}	eGalax 100, 112, 210	any (driver)	Linux, BSD	no	enabled by default
+T{
+.BR h3600
+T}	Compaq IPAQ	.	Linux, BSD, Hurd, Haiku	no	enabled by default
+T{
+.BR mk712
+T}	Hitachi Webpad	.	Linux, BSD, Hurd, Haiku	no	enabled by default
+T{
+.BR tatung
+T}	Tatung Webpad	.	Linux, BSD, Hurd, Haiku	no	enabled by default
+T{
+.BR touchkit
+T}	Touchkit SAT4000UR	RS232	Linux, BSD, Hurd	no	enabled by default
+T{
+.BR ucb1x00
+T}	UCB1x00 Touchscreens	.	Linux, BSD, Hurd, Haiku	no	enabled by default
+T{
+.BR waveshare
+T}	Waveshare Touchscreens	/dev/hidrawX	Linux	no	enabled by default
+T{
+.BR cy8mrln-palmpre
+T}	in Palm Pre/Pre Plus/Pre 2	.	Linux	no	--enable-cy8mrln-palmpre
+.TE
 .SH "SEE ALSO"
 .BR ts_calibrate (1),
 .BR ts_test (1),
