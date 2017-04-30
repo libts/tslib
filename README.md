@@ -21,6 +21,7 @@ Visit the [tslib website](http://tslib.org) for an overview of the project.
 * [filter modules](#filter-modules)
 * [the libts library](#the-libts-library)
 * [building tslib](#building-tslib)
+* [hardware support](#hardware-support)
 
 
 ## setup and configure tslib
@@ -555,14 +556,14 @@ _shared libraries_, build on the following operating systems.
 #### input plugins (`module_raw`)
 
 This makes the thing usable in the read world because it accesses your device.
-See our configure.ac file for the currently possible configuration for your
-platform.
+See our configure.ac or [hardware support](#hardware-support) for the currently
+possible configuration for your platform.
 
 * GNU / Linux - all (most importantly `input`)
 * Android / Linux - all (most importantly `input`)
 * FreeBSD - almost all (most importantly `input`)
-* GNU / Hurd - some
-* Haiku - some
+* GNU / Hurd - some, see [hardware support](#hardware-support)
+* Haiku - some, see [hardware support](#hardware-support)
 * Windows - non yet
 
 Writing your own plugin is quite easy, in case an existing one doesn't fit.
@@ -581,3 +582,32 @@ help porting missing programs!
 #### libts user plugin
 This can be _any third party program_, using tslib's API. For Linux, we include
 `ts_uinput`, but Qt, X11 or anything else can use tslib's API.
+
+## hardware support
+This is a list of userspace drivers available to use as `module_raw`, your first
+entry in `ts.conf`. If possible, use the `input` module. Others are device-specific
+and basically a workaround in case there is no Linux support. They might get disabled
+by default in the future, as documented here. If you need another one than `input`,
+please `--enable-xxx` it explicitely to make sure you will always have it.
+
+And of course we'd happily have a generic `input-windows` or similar module for
+other platforms.
+
+|`module_raw` | supported devices | interface | Platforms | multitouch | how to enable |
+| --- | --- | --- | --- | --- | --- |
+|`input` | all with Linux evdev drivers | any (driver) / `dev/input/eventX` | Linux, FreeBSD | yes | enabled by default (recommended) |
+|`arctic2` | IBM Arctic II | | Linux, FreeBSD, Hurd, Haiku | no | enabled by default |
+|`collie` | Sharp Zaurus SL-5000d and SL-5500 | | Linux, FreeBSD, Hurd, Haiku | no | enabled by default |
+|`corgi` | Sharp Zaurus SL-C700 | | Linux, FreeBSD, Hurd, Haiku | no | enabled by default |
+|`dmc_dus3000` | DMC DUS Series (DUS3000, ...) | UART | Linux | no | `./configure --enable-dmc_dus3000` |
+|`dmc` | | | Linux, FreeBSD, Hurd, Haiku | no | enabled by default |
+|`galax` | eGalax 100, 112, 210 | any (driver)| Linux, FreeBSD | no | enabled by default (deprecated, use `input`) |
+|`h3600` | Compaq IPAQ | | Linux, FreeBSD, Hurd, Haiku | no | enabled by default |
+|`mk712` | Hitachi Webpad | | Linux, FreeBSD, Hurd, Haiku | no | enabled by default |
+|`tatung` | Tatung Webpad | | Linux, FreeBSD, Hurd, Haiku | no | enabled by default |
+|`touchkit` | TouchKit SAT4000UR | RS232 | Linux, FreeBSD, Hurd | no | enabled by default |
+|`ucb1x00` | UCB1x00 Touchscreens | | Linux, FreeBSD, Hurd, Haiku | no | enabled by default |
+|`waveshare` | Waveshare Touchscreens | `/dev/hidrawX` | Linux | no | enabled by default |
+|`cy8mrln-palmpre` | cy8mrln Touchscreen of Palm Pre/Pre Plus/Pre 2 |  | Linux | no | `./configure --enable-cy8mrln-palmpre` |
+
+Please help to complete this table, if you can.
