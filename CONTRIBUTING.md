@@ -133,7 +133,13 @@ set in `AC_INIT` doesn't matter that much.
 
 ### project organisation for new maintainers
 
-The tslib project currently consists of
+Quick note: always build everything we have. In case we remove modules from
+being built by default, you should always build them. To achieve this on Linux,
+this is right now
+
+    ./configure --enable-cy8mrln-palmpre --enable-dmc_dus3000
+
+Ok. The tslib project currently consists of
 * the [kergoth/tslib](https://github.com/kergoth/tslib) github repository. This
 is the main upstream repository users download from. The
 maintainer of course must have access to it, at least for committing and
