@@ -26,7 +26,7 @@ Visit the [tslib website](http://tslib.org) for an overview of the project.
 
 ## setup and configure tslib
 ### install tslib
-tslib runs on various operating systems, including GNU/Linux,
+tslib runs on various hardware architectures and operating systems, including GNU/Linux,
 FreeBSD or Android/Linux. See [building tslib](#building-tslib) for details.
 Apart from building the latest tarball release, running
 `./configure`, `make` and `make install`, tslib is available from the following
@@ -577,7 +577,14 @@ Writing your own plugin is quite easy, in case an existing one doesn't fit.
 * Haiku - ts_print_mt, ts_print, ts_print_raw, ts_finddev
 * Windows - ts_print.exe, ts_print_raw.exe ts_print_mt.exe
 
-help porting missing programs!
+#### download binaries?
+For GNU/Linux all architectures are _very_ well covered, thanks to Debian or Arch
+Linux or others.
+
+If you're lucky, you'll find some unofficial testing builds for Windows or other
+platforms [here](https://martinkepplinger.com/tslib/packages/).
+
+Please help porting missing programs!
 
 #### libts user plugin
 This can be _any third party program_, using tslib's API. For Linux, we include
