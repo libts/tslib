@@ -105,7 +105,7 @@ TSLIB_CHECK_MODULE([iir], [yes], [Enable building of IIR filter])
 # hardware access modules
 if test "$build_linux" = "yes"; then
 TSLIB_CHECK_MODULE([ucb1x00], [yes], [Enable building of ucb1x00 raw module (UCB1x00 support)])
-TSLIB_CHECK_MODULE([cy8mrln-palmpre], [yes], [Enable building of cy8mrln-palmpre raw module])
+TSLIB_CHECK_MODULE([cy8mrln-palmpre], [no], [Enable building of cy8mrln-palmpre raw module])
 TSLIB_CHECK_MODULE([corgi], [yes], [Enable building of corgi raw module (Sharp Zaurus sl-c7x0 support)])
 TSLIB_CHECK_MODULE([collie], [yes], [Enable building of collie raw module (Sharp Zaurus sl-5500/5000d support)])
 TSLIB_CHECK_MODULE([h3600], [yes], [Enable building of h3600 raw module (HP iPaq H3600 support)])
@@ -139,7 +139,7 @@ fi
 
 if test "$build_hurd" = "yes"; then
 TSLIB_CHECK_MODULE([ucb1x00], [yes], [Enable building of ucb1x00 raw module (UCB1x00 support)])
-TSLIB_CHECK_MODULE([cy8mrln-palmpre], [yes], [Enable building of cy8mrln-palmpre raw module])
+TSLIB_CHECK_MODULE([cy8mrln-palmpre], [no], [Enable building of cy8mrln-palmpre raw module])
 TSLIB_CHECK_MODULE([corgi], [yes], [Enable building of corgi raw module (Sharp Zaurus sl-c7x0 support)])
 TSLIB_CHECK_MODULE([collie], [yes], [Enable building of collie raw module (Sharp Zaurus sl-5500/5000d support)])
 TSLIB_CHECK_MODULE([h3600], [yes], [Enable building of h3600 raw module (HP iPaq H3600 support)])
