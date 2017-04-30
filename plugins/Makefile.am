@@ -113,6 +113,12 @@ else
 DMC_MODULE =
 endif
 
+if ENABLE_DMC_DUS3000_MODULE
+DMC_DUS3000_MODULE = dmc_dus3000.la
+else
+DMC_DUS3000_MODULE =
+endif
+
 if ENABLE_INPUT_MODULE
 INPUT_MODULE = input.la
 else
@@ -167,6 +173,7 @@ pluginexec_LTLIBRARIES = \
 	$(ARCTIC2_MODULE) \
 	$(TATUNG_MODULE) \
 	$(DMC_MODULE) \
+	$(DMC_DUS3000_MODULE) \
 	$(H2200_LINEAR_MODULE) \
 	$(INPUT_MODULE) \
 	$(GALAX_MODULE) \
@@ -261,6 +268,9 @@ tatung_la_LDFLAGS	= -module $(LTVSN)
 
 dmc_la_SOURCES		= dmc-raw.c
 dmc_la_LDFLAGS		= -module $(LTVSN)
+
+dmc_dus3000_la_SOURCES	= dmc_dus3000-raw.c
+dmc_dus3000_la_LDFLAGS	= -module $(LTVSN)
 
 input_la_SOURCES	= input-raw.c
 input_la_LDFLAGS	= -module $(LTVSN)

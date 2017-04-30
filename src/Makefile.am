@@ -55,6 +55,10 @@ if ENABLE_STATIC_CORGI_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/corgi-raw.c
 endif
 
+if ENABLE_STATIC_DMC_DUS3000_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/dmc_dus3000-raw.c
+endif
+
 if ENABLE_STATIC_COLLIE_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/collie-raw.c
 endif

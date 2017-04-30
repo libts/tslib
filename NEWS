@@ -3,6 +3,7 @@
 This release includes libts version 0.7.0 and the following changes:
 * new `ts_libversion()` API and TSLIB_VERSION_MT definition
   This offers seamless integration for apps that don't know tslib's version
+* new `module_raw dmc_dus3000` for DMC DUS Series touch screen via UART
 
 This release includes the following bugfixes:
 * c03f7c9 tools: ts_uinput_start.sh: fix usage of ts_uinput -d -v
