@@ -272,7 +272,8 @@ static const struct tslib_ops dus3000_ops =
 	.fini	= dus3000_fini,
 };
 
-TSAPI struct tslib_module_info *dmc_dus3000_mod_init(struct tsdev *dev, const char *params)
+TSAPI struct tslib_module_info *dmc_dus3000_mod_init(struct tsdev *dev,
+			    __attribute__ ((unused)) const char *params)
 {
 	struct tslib_dus3000 *d = calloc(1, sizeof(struct tslib_dus3000));
 	if (d == NULL)
