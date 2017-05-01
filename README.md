@@ -35,28 +35,30 @@ distributors and their package management:
 * [Buildroot](https://buildroot.org/) - `BR2_PACKAGE_TSLIB=y`
 * [Debian](https://tracker.debian.org/pkg/tslib) - `apt-get install libts0 libts-bin libts-dev`
 
-### set up environment variables
+### environment variables
+You only need the variables when the defaults don't fit. Most of them should
+fit your needs on Linux though.
+
     TSLIB_TSDEVICE          TS device file name.
                             Default (inputapi):     /dev/input/ts
-                            /dev/input/touchscreen
-                            /dev/input/event0
+                                                    /dev/input/touchscreen
+                                                    /dev/input/event0
                             Default (non inputapi): /dev/touchscreen/ucb1x00
-    TSLIB_CALIBFILE         Calibration file.
-                            Default: ${sysconfdir}/pointercal
-    TSLIB_CONFFILE          Config file.
-                            Default: ${sysconfdir}/ts.conf
-    TSLIB_PLUGINDIR         Plugin directory.
-                            Default: ${datadir}/plugins
-    TSLIB_CONSOLEDEVICE     Console device.
-                            Default: /dev/tty
-    TSLIB_FBDEVICE          Framebuffer device.
-                            Default: /dev/fb0
 
-* On Debian, `TSLIB_PLUGINDIR` probably is for example `/usr/lib/x86_64-linux-gnu/ts0`.
-* Find your `/dev/input/eventX` touchscreen's event file and either
-  - Symlink `ln -s /dev/input/eventX /dev/input/ts` or
-  - `export TSLIB_TSDEVICE /dev/input/eventX`
-* If you are not using `/dev/fb0`, be sure to set `TSLIB_FBDEVICE`
+    TSLIB_CALIBFILE         Calibration file.
+                            Default:                ${sysconfdir}/pointercal
+
+    TSLIB_CONFFILE          Config file.
+                            Default:                ${sysconfdir}/ts.conf
+
+    TSLIB_PLUGINDIR         Plugin directory.
+                            Default:                ${datadir}/plugins
+
+    TSLIB_CONSOLEDEVICE     Console device.
+                            Default:                /dev/tty
+
+    TSLIB_FBDEVICE          Framebuffer device.
+                            Default:                /dev/fb0
 
 ### configure tslib
 This is just an example `/etc/ts.conf` file. Touch samples flow from top to
