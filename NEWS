@@ -10,6 +10,7 @@ This release includes the following bugfixes:
 * 47e7ab5 input-raw: Fix wrong first slot values by using calloc instead of malloc
 * 7c5b4f8 plugins: filters: check for read_mt() availability
 * e684df5 call ops->fini() only when implemented by the plugin
+* 0ca9580 ts_close: free tslib_module_info when fini() is not implemented
 
 
 ## tslib 1.9
