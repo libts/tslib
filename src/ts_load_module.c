@@ -38,17 +38,29 @@ static const struct {
 #ifdef TSLIB_CY8MRLN_PALMPRE_MODULE
 	{ "cy8mrln_palmpre", cy8mrln_palmpre_mod_init },
 #endif
+#ifdef TSLIB_STATIC_DEBOUNCE_MODULE
+	{ "debounce", debounce_mod_init },
+#endif
 #ifdef TSLIB_STATIC_DEJITTER_MODULE
 	{ "dejitter", dejitter_mod_init },
+#endif
+#ifdef TSLIB_STATIC_DMC_MODULE
+	{ "dmc", dmc_mod_init },
+#endif
+#ifdef TSLIB_STATIC_DMC_DUS3000_MODULE
+	{ "dmc_dus3000", dmc_dus3000_mod_init },
 #endif
 #ifdef TSLIB_STATIC_H3600_MODULE
 	{ "h3600", h3600_mod_init },
 #endif
-#ifdef TSLIB_STATIC_INPUT_MODULE
-	{ "input", input_mod_init },
-#endif
 #ifdef TSLIB_STATIC_GALAX_MODULE
 	{ "galax", galax_mod_init },
+#endif
+#ifdef TSLIB_STATIC_IIR_MODULE
+	{ "iir", iir_mod_init },
+#endif
+#ifdef TSLIB_STATIC_INPUT_MODULE
+	{ "input", input_mod_init },
 #endif
 #ifdef TSLIB_STATIC_LINEAR_MODULE
 	{ "linear", linear_mod_init },
@@ -62,29 +74,17 @@ static const struct {
 #ifdef TSLIB_STATIC_PTHRES_MODULE
 	{ "pthres", pthres_mod_init },
 #endif
+#ifdef TSLIB_STATIC_SKIP_MODULE
+	{ "skip", skip_mod_init },
+#endif
 #ifdef TSLIB_STATIC_TATUNG_MODULE
 	{ "tatung", tatung_mod_init },
-#endif
-#ifdef TSLIB_STATIC_DMC_MODULE
-	{ "dmc", dmc_mod_init },
-#endif
-#ifdef TSLIB_STATIC_DMC_DUS3000_MODULE
-	{ "dmc_dus3000", dmc_dus3000_mod_init },
 #endif
 #ifdef TSLIB_STATIC_UCB1X00_MODULE
 	{ "ucb1x00", ucb1x00_mod_init },
 #endif
 #ifdef TSLIB_STATIC_VARIANCE_MODULE
 	{ "variance", variance_mod_init },
-#endif
-#ifdef TSLIB_STATIC_DEBOUNCE_MODULE
-	{ "debounce", debounce_mod_init },
-#endif
-#ifdef TSLIB_STATIC_SKIP_MODULE
-	{ "skip", skip_mod_init },
-#endif
-#ifdef TSLIB_STATIC_IIR_MODULE
-	{ "iir", iir_mod_init },
 #endif
 };
 
