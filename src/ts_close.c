@@ -33,6 +33,8 @@ int ts_close(struct tsdev *ts)
 
 		if (info->ops->fini)
 			info->ops->fini(info);
+		else
+			free(info);
 
 		if (handle)
 			dlclose(handle);
