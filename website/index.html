@@ -20,8 +20,10 @@
 <p>
 <b>Supports...</b>
 <p>
-tslib is cross-platform. On Linux and FreeBSD it supports <i>all modern
-devices</i> using input event drivers and includes <i>multitouch</i> support.
+tslib is a cross-platform library that provides access to touchscreen devices
+and the ability to apply filters to their input events. On Linux and FreeBSD
+it supports <i>all modern devices</i> using input event drivers and includes
+<i>multitouch</i> support.
 <p>
 Furthermore it supports the
 Palm Pre's CY8MRLN, UCB1x00, Sharp Zaurus sl-c7x0 and sl-5500/5000d,
@@ -31,13 +33,14 @@ too.
 <p>
 <b>What is tslib used for?</b>
 <p>
-tslib is used to <i>access</i> touch screen devices, no matter how old or weird it's
-driver may be. It is used to <i>optimize</i> the touch user experience at runtime,
-applying <a href="https://github.com/kergoth/tslib/blob/master/README.md#filter-modules">
-mathematical filters</a> in any number or order. Filters are configured in one
-simple configuration file. The libts library is highly configurable and portable.
-tslib includes tools to <i>calibrate</i>, test and use the library.
-It is used in many commercial products. tslib includes
+tslib is used to <i>access</i> touch screen devices, in case the operating system
+doesn't provide driver support. It may instead also only be used to <i>optimize</i>
+the touch user experience by applying
+<a href="https://github.com/kergoth/tslib/blob/master/README.md#filter-modules">
+mathematical filters</a> in any number or order.
+The libts library is highly configurable and portable. tslib includes tools to
+<i>calibrate</i>, test and use the library. It is well suited for embedded
+devices and used in many commercial products. tslib includes
 <a href="https://github.com/kergoth/tslib/blob/master/README.md">documentation</a>
 on how to use it.
 
