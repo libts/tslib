@@ -21,11 +21,13 @@
 
 #include "tslib-private.h"
 
-static const struct {
+struct tslib_module_desc {
 	const char *name;
 	tslib_module_init mod_init;
-} tslib_modules[] = {
-	/* XXX: sort alphabetically and use a binary search? */
+};
+
+static const struct tslib_module_desc tslib_modules[] = {
+	/* sort alphabetically */
 #ifdef TSLIB_STATIC_ARCTIC2_MODULE
 	{ "arctic2", arctic2_mod_init },
 #endif
