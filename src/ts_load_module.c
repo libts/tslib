@@ -92,23 +92,32 @@ static const struct tslib_module_desc tslib_modules[] = {
 
 #define countof(arr) (sizeof(arr) / sizeof((arr)[0]))
 
+static int cmp_name(const void *va, const void *vb)
+{
+	struct tslib_module_desc *a = (struct tslib_module_desc *)va;
+	struct tslib_module_desc *b = (struct tslib_module_desc *)vb;
+	return strcmp(a->name, b->name);
+}
+
 static struct tslib_module_info *__ts_load_module_static(struct tsdev *ts,
 							 const char *module,
 							 const char *params)
 {
 	struct tslib_module_info *info = NULL;
-	int i;
+	struct tslib_module_desc *result;
+	struct tslib_module_desc key;
 
-	for (i = 0; i < (int)countof(tslib_modules); i++) {
-		if (!strcmp(tslib_modules[i].name, module)) {
-			info = tslib_modules[i].mod_init(ts, params);
+	key.name = module;
+	result = bsearch(&key, tslib_modules, countof(tslib_modules),
+			 sizeof(struct tslib_module_desc), cmp_name);
+	if (!result)
+		return NULL;
+
+	info = result->mod_init(ts, params);
 #ifdef DEBUG
-			fprintf(stderr, "static module %s init %s\n", module,
-				info ? "succeeded" : "failed");
+	fprintf(stderr, "static module %s init %s\n", module,
+		info ? "succeeded" : "failed");
 #endif
-			break;
-		}
-	}
 
 	if (info)
 		info->handle = NULL;
