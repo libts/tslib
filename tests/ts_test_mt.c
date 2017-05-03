@@ -75,7 +75,7 @@ static void sig(int sig)
 	exit(1);
 }
 
-static void refresh_screen()
+static void refresh_screen(void)
 {
 	int i;
 
@@ -87,7 +87,7 @@ static void refresh_screen()
 		button_draw (&buttons [i]);
 }
 
-static void help()
+static void help(void)
 {
 	struct ts_lib_version_data *ver = ts_libversion();
 

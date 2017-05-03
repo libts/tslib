@@ -62,6 +62,11 @@ static void usage(char **argv)
 	printf("Usage: %s [--raw] [--non-blocking] [-s samples] [-i <device>] [-j <slots>]\n", argv[0]);
 }
 
+static int errfn(const char *fmt, va_list ap)
+{
+	return vfprintf(stderr, fmt, ap);
+}
+
 int main(int argc, char **argv)
 {
 	struct tsdev *ts;
@@ -152,6 +157,8 @@ int main(int argc, char **argv)
 		perror("ts_setup");
 		return errno;
 	}
+
+	ts_error_fn = errfn;
 
 #ifdef TS_HAVE_EVDEV
 	if (ioctl(ts_fd(ts), EVIOCGABS(ABS_MT_SLOT), &slot) < 0) {

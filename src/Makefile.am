@@ -95,6 +95,10 @@ if ENABLE_STATIC_SKIP_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/skip.c
 endif
 
+if ENABLE_STATIC_TOUCHKIT_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/touchkit-raw.c
+endif
+
 if ENABLE_STATIC_IIR_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/iir.c
 endif

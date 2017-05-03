@@ -54,10 +54,9 @@ int ts_read_mt(struct tsdev *ts, struct ts_sample_mt **samp, int max_slots,
 			if (samp[j][i].valid != 1)
 				continue;
 
-			fprintf(stderr,
-				"TS_READ_MT----> slot %d: x = %d, y = %d, pressure = %d\n",
-				samp[j][i].slot, samp[j][i].x, samp[j][i].y,
-				samp[j][i].pressure);
+			ts_error("TS_READ_MT----> slot %d: x = %d, y = %d, pressure = %d\n",
+				 samp[j][i].slot, samp[j][i].x, samp[j][i].y,
+				 samp[j][i].pressure);
 		}
 	}
 #endif

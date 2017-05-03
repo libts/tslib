@@ -148,8 +148,8 @@ static const struct tslib_ops touchkit_ops = {
 	.read = touchkit_read,
 };
 
-TSAPI struct tslib_module_info *mod_init(__attribute__ ((unused)) struct tsdev *dev,
-					 __attribute__ ((unused)) const char *params)
+TSAPI struct tslib_module_info *touchkit_mod_init(__attribute__ ((unused)) struct tsdev *dev,
+						  __attribute__ ((unused)) const char *params)
 {
 	struct tslib_module_info *m;
 
@@ -160,3 +160,6 @@ TSAPI struct tslib_module_info *mod_init(__attribute__ ((unused)) struct tsdev *
 	m->ops = &touchkit_ops;
 	return m;
 }
+#ifndef TSLIB_STATIC_TOUCHKIT_MODULE
+	TSLIB_MODULE_INIT(touchkit_mod_init);
+#endif

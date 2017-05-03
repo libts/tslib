@@ -33,17 +33,16 @@ Apart from building the latest tarball release, running
 distributors and their package management:
 * [Arch Linux](https://www.archlinux.org) and [Arch Linux ARM](https://archlinuxarm.org) - `pacman -S tslib`
 * [Buildroot](https://buildroot.org/) - `BR2_PACKAGE_TSLIB=y`
-* [Debian](https://tracker.debian.org/pkg/tslib) - `apt-get install libts0 libts-bin libts-dev`
+* [Debian](https://tracker.debian.org/pkg/tslib) / [Ubuntu](https://launchpad.net/ubuntu/+source/tslib) - `apt-get install libts0 libts-bin libts-dev`
 
 ### environment variables
-You only need the variables when the defaults don't fit. Most of them should
-fit your needs on Linux though.
+You only need the variables in case the following defaults don't fit:
 
-    TSLIB_TSDEVICE          TS device file name.
-                            Default (inputapi):     /dev/input/ts
+    TSLIB_TSDEVICE          Touchscreen device file name.
+                            Default (ts_setup):     /dev/input/ts
                                                     /dev/input/touchscreen
                                                     /dev/input/event0
-                            Default (non inputapi): /dev/touchscreen/ucb1x00
+                                                    /dev/touchscreen/ucb1x00
 
     TSLIB_CALIBFILE         Calibration file.
                             Default:                ${sysconfdir}/pointercal
@@ -349,19 +348,19 @@ while you are free to play with the parameter values.
 The API is documented in our man pages in the doc directory.
 Check out our tests directory for examples how to use it.
 
-`ts_libversion()`  
+[`ts_libversion()`](https://manpages.debian.org/unstable/libts0/ts_libversion.3.en.html)  
 [`ts_open()`](https://manpages.debian.org/unstable/libts0/ts_open.3.en.html)  
 [`ts_config()`](https://manpages.debian.org/unstable/libts0/ts_config.3.en.html)  
 [`ts_setup()`](https://manpages.debian.org/unstable/libts0/ts_setup.3.en.html)  
 [`ts_close()`](https://manpages.debian.org/unstable/libts0/ts_close.3.en.html)  
-`ts_reconfig()`  
+[`ts_reconfig()`](https://manpages.debian.org/unstable/libts0/ts_config.3.en.html)  
 `ts_option()`  
 `ts_fd()`  
 `ts_load_module()`  
 [`ts_read()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
 [`ts_read_raw()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
 [`ts_read_mt()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
-[`ts_reat_raw_mt()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
+[`ts_read_raw_mt()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
 
 
 ### ABI - Application Binary Interface
@@ -406,7 +405,7 @@ compatibility.
 
 ### libts users
 
-* [ts_uinput](#use-the-filtered-result-in-your-system) - userspace event device driver for the tslib-filtered samples. Shipped as part of tslib.
+* [ts_uinput](#use-the-filtered-result-in-your-system-ts_uinput-method) - userspace event device driver for the tslib-filtered samples. Shipped as part of tslib.
 * [xf86-input-tslib](https://github.com/merge/xf86-input-tslib) - direct tslib input driver for X.org
 * [qtslib](https://github.com/qt/qtbase/tree/dev/src/platformsupport/input/tslib) - direct Qt5 tslib input plugin
 

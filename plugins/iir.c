@@ -269,6 +269,6 @@ TSAPI struct tslib_module_info *iir_mod_init(__attribute__ ((unused)) struct tsd
 	return &iir->module;
 }
 
-#ifndef TSLIB_STATIC_DEJITTER_MODULE
+#ifndef TSLIB_STATIC_IIR_MODULE
 	TSLIB_MODULE_INIT(iir_mod_init);
 #endif

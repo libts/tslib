@@ -49,13 +49,17 @@ static int waveshare_read(struct tslib_module_info *inf, struct ts_sample *samp,
 		reopen = 0;
 
 		if (i->vendor > 0 && i->product > 0) {
+#ifdef DEBUG
 			fprintf(stderr,
 				"waveshare: searching for device using hidraw...\n");
+#endif
 			for (cnt = 0; cnt < HIDRAW_MAX_DEVICES; cnt++) {
 				snprintf(name_buf, sizeof(buf),
 					 "/dev/hidraw%d", cnt);
+#ifdef DEBUG
 				fprintf(stderr,
 					"waveshare: device: %s\n", name_buf);
+#endif
 				ret = stat(name_buf, &devstat);
 				if (ret < 0)
 					continue;
@@ -64,7 +68,9 @@ static int waveshare_read(struct tslib_module_info *inf, struct ts_sample *samp,
 				if (!ts_tmp)
 					continue;
 
+#ifdef DEBUG
 				fprintf(stderr, "  opened\n");
+#endif
 				ret = ioctl(ts_tmp->fd, HIDIOCGRAWINFO, &info);
 				if (ret < 0) {
 					ts_close(ts_tmp);
@@ -73,9 +79,11 @@ static int waveshare_read(struct tslib_module_info *inf, struct ts_sample *samp,
 
 				info.vendor &= 0xFFFF;
 				info.product &= 0xFFFF;
+#ifdef DEBUG
 				fprintf(stderr,
 					"  vid=%04X, pid=%04X\n",
 					info.vendor, info.product);
+#endif
 
 				if (i->vendor == info.vendor &&
 				    i->product == info.product) {
@@ -85,7 +93,9 @@ static int waveshare_read(struct tslib_module_info *inf, struct ts_sample *samp,
 					ts->fd = ts_tmp->fd;
 					free(ts_tmp);
 					found = 1;
+#ifdef DEBUG
 					fprintf(stderr, "  correct device\n");
+#endif
 					break;
 				}
 
@@ -169,7 +179,9 @@ static int parse_len(struct tslib_module_info *inf, char *str, void *data)
 	switch ((int)(intptr_t) data) {
 	case 1:
 		i->len = v;
+#ifdef DEBUG
 		fprintf(stderr, "waveshare raw data len: %d bytes\n", i->len);
+#endif
 		break;
 	default:
 		return -1;

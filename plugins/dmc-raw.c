@@ -25,7 +25,7 @@ struct tslib_dmc {
 	int	sane_fd;
 };
 
-int dmc_init_device(struct tsdev *dev)
+static int dmc_init_device(struct tsdev *dev)
 {
 	int fd = dev->fd;
 	struct termios t;
