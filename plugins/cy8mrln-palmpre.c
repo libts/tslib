@@ -716,6 +716,6 @@ TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init(struct tsdev *dev, cons
 
 	return &(info->module);
 }
-#ifndef TSLIB_STATIC_CY8MRLN_MODULE
+#ifndef TSLIB_STATIC_CY8MRLN_PALMPRE_MODULE
 	TSLIB_MODULE_INIT(cy8mrln_palmpre_mod_init);
 #endif
