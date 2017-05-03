@@ -148,7 +148,7 @@ static int get_special_device(struct tslib_input *i)
 	struct tsdev *ts = i->module.dev;
 
 	if ((ioctl(ts->fd, EVIOCGID, &id) < 0)) {
-		ts_error("tslib: warning, can't read device id\n");
+		fprintf(stderr, "tslib: warning, can't read device id\n");
 		return -1;
 	}
 
@@ -220,7 +220,8 @@ static int check_fd(struct tslib_input *i)
 	long synbit[BITS_TO_LONGS(SYN_CNT)];
 
 	if (ioctl(ts->fd, EVIOCGVERSION, &version) < 0) {
-		ts_error("tslib: Selected device is not a Linux input event device\n");
+		fprintf(stderr,
+			"tslib: Selected device is not a Linux input event device\n");
 		return -1;
 	}
 
@@ -228,12 +229,14 @@ static int check_fd(struct tslib_input *i)
 	 * this check causes more troubles than it solves here
 	 */
 	if (version < EV_VERSION)
-		ts_error("tslib: Warning: Selected device uses a different version of the event protocol than tslib was compiled for\n");
+		fprintf(stderr,
+			"tslib: Warning: Selected device uses a different version of the event protocol than tslib was compiled for\n");
 
 	if ((ioctl(ts->fd, EVIOCGBIT(0, sizeof(evbit)), evbit) < 0) ||
 		!(evbit[BIT_WORD(EV_ABS)] & BIT_MASK(EV_ABS)) ||
 		!(evbit[BIT_WORD(EV_KEY)] & BIT_MASK(EV_KEY))) {
-		ts_error("tslib: Selected device is not a touchscreen (must support ABS and KEY event types)\n");
+		fprintf(stderr,
+			"tslib: Selected device is not a touchscreen (must support ABS and KEY event types)\n");
 		return -1;
 	}
 
@@ -242,13 +245,14 @@ static int check_fd(struct tslib_input *i)
 	    !(absbit[BIT_WORD(ABS_Y)] & BIT_MASK(ABS_Y))) {
 		if (!(absbit[BIT_WORD(ABS_MT_POSITION_X)] & BIT_MASK(ABS_MT_POSITION_X)) ||
 		    !(absbit[BIT_WORD(ABS_MT_POSITION_Y)] & BIT_MASK(ABS_MT_POSITION_Y))) {
-			ts_error("tslib: Selected device is not a touchscreen (must support ABS_X/Y or ABS_MT_POSITION_X/Y events)\n");
+			fprintf(stderr,
+				"tslib: Selected device is not a touchscreen (must support ABS_X/Y or ABS_MT_POSITION_X/Y events)\n");
 			return -1;
 		}
 	}
 
 	if (ioctl(ts->fd, EVIOCGBIT(EV_KEY, sizeof(keybit)), keybit) < 0) {
-		ts_error("tslib: ioctl EVIOCGBIT error)\n");
+		fprintf(stderr, "tslib: ioctl EVIOCGBIT error)\n");
 		return -1;
 	}
 
@@ -282,7 +286,7 @@ static int check_fd(struct tslib_input *i)
 	}
 
 	if ((ioctl(ts->fd, EVIOCGBIT(EV_SYN, sizeof(synbit)), synbit)) == -1)
-		ts_error("tslib: ioctl error\n");
+		fprintf(stderr, "tslib: ioctl error\n");
 
 	/* remember whether we have a multitouch type A device */
 	if (i->mt && synbit[BIT_WORD(SYN_MT_REPORT)] & BIT_MASK(SYN_MT_REPORT) &&
@@ -291,13 +295,15 @@ static int check_fd(struct tslib_input *i)
 
 	if (!(keybit[BIT_WORD(BTN_TOUCH)] & BIT_MASK(BTN_TOUCH) ||
 	      keybit[BIT_WORD(BTN_LEFT)] & BIT_MASK(BTN_LEFT)) && i->type_a != 1) {
-		ts_error("tslib: Selected device is not a touchscreen (missing BTN_TOUCH or BTN_LEFT)\n");
+		fprintf(stderr,
+			"tslib: Selected device is not a touchscreen (missing BTN_TOUCH or BTN_LEFT)\n");
 		return -1;
 	}
 
 	if (i->grab_events == GRAB_EVENTS_WANTED) {
 		if (ioctl(ts->fd, EVIOCGRAB, (void *)1)) {
-			ts_error("tslib: Unable to grab selected input device\n");
+			fprintf(stderr,
+				"tslib: Unable to grab selected input device\n");
 			return -1;
 		}
 		i->grab_events = GRAB_EVENTS_ACTIVE;
@@ -470,7 +476,8 @@ static int ts_input_read(struct tslib_module_info *inf,
 						samp->y = i->current_y;
 						samp->pressure = i->current_p;
 					} else {
-						ts_error("tslib: dropped x = 0\n");
+						fprintf(stderr,
+							"tslib: dropped x = 0\n");
 						continue;
 					}
 					break;
@@ -480,7 +487,8 @@ static int ts_input_read(struct tslib_module_info *inf,
 						samp->y = i->current_y = ev.value;
 						samp->pressure = i->current_p;
 					} else {
-						ts_error("tslib: dropped y = 0\n");
+						fprintf(stderr,
+							"tslib: dropped y = 0\n");
 						continue;
 					}
 					break;
@@ -514,7 +522,8 @@ static int ts_input_read(struct tslib_module_info *inf,
 					break;
 				}
 			} else {
-				ts_error("tslib: Unknown event type %d\n",
+				fprintf(stderr,
+					"tslib: Unknown event type %d\n",
 					ev.type);
 			}
 			p = (unsigned char *) &ev;
@@ -774,7 +783,7 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 						break;
 					case ABS_MT_SLOT:
 						if (i->ev[it].value < 0 || i->ev[it].value >= max_slots) {
-							ts_error("tslib: warning: slot out of range. data corrupted!\n");
+							fprintf(stderr, "tslib: warning: slot out of range. data corrupted!\n");
 							i->slot = max_slots - 1;
 						} else {
 							i->slot = i->ev[it].value;
@@ -849,7 +858,7 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 						samp[total][0].y = i->current_y;
 						samp[total][0].pressure = i->current_p;
 					} else {
-						ts_error("tslib: dropped x = 0\n");
+						fprintf(stderr, "tslib: dropped x = 0\n");
 						continue;
 					}
 					break;
@@ -859,7 +868,7 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 						samp[total][0].y = i->current_y = ev_single.value;
 						samp[total][0].pressure = i->current_p;
 					} else {
-						ts_error("tslib: dropped y = 0\n");
+						fprintf(stderr, "tslib: dropped y = 0\n");
 						continue;
 					}
 					break;
@@ -891,7 +900,7 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 					break;
 				}
 			} else {
-				ts_error("tslib: Unknown event type %d\n", ev_single.type);
+				fprintf(stderr, "tslib: Unknown event type %d\n", ev_single.type);
 			}
 			p = (unsigned char *) &ev_single;
 		}
@@ -909,7 +918,7 @@ static int ts_input_fini(struct tslib_module_info *inf)
 
 	if (i->grab_events == GRAB_EVENTS_ACTIVE) {
 		if (ioctl(ts->fd, EVIOCGRAB, (void *)0))
-			ts_error("tslib: Unable to un-grab selected input device\n");
+			fprintf(stderr, "tslib: Unable to un-grab selected input device\n");
 	}
 
 	for (j = 0; j < i->nr; j++) {
