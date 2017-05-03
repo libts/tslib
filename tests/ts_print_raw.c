@@ -15,7 +15,7 @@
 #include "tslib.h"
 
 
-int main()
+int main(void)
 {
 	struct tsdev *ts;
 

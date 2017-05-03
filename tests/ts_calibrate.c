@@ -175,7 +175,7 @@ static void clearbuf(struct tsdev *ts)
 	}
 }
 
-int main()
+int main(void)
 {
 	struct tsdev *ts;
 	calibration cal = {

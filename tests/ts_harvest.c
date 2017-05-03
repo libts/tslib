@@ -41,7 +41,7 @@ static void sig(int sig)
 	exit(1);
 }
 
-static void refresh_screen ()
+static void refresh_screen(void)
 {
 	fillrect (0, 0, xres - 1, yres - 1, 0);
 }
@@ -53,7 +53,7 @@ static void ts_harvest_put_cross (int x, int y, unsigned colidx)
         line (x, y - 10, x, y - 2, colidx);
         line (x, y + 2, x, y + 10, colidx);
 }                                                                                                              
-int main()
+int main(void)
 {
 	struct tsdev *ts;
 	int x_ts, y_ts, x_incr, y_incr;

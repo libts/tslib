@@ -36,7 +36,7 @@ static void sig(int sig)
 	exit(1);
 }
 
-static void refresh_screen ()
+static void refresh_screen(void)
 {
 	int i;
 
@@ -48,7 +48,7 @@ static void refresh_screen ()
 		button_draw (&buttons [i]);
 }
 
-int main()
+int main(void)
 {
 	struct tsdev *ts;
 	int x, y;
