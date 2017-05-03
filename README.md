@@ -405,7 +405,7 @@ compatibility.
 
 ### libts users
 
-* [ts_uinput](#use-the-filtered-result-in-your-system) - userspace event device driver for the tslib-filtered samples. Shipped as part of tslib.
+* [ts_uinput](#use-the-filtered-result-in-your-system-ts_uinput-method) - userspace event device driver for the tslib-filtered samples. Shipped as part of tslib.
 * [xf86-input-tslib](https://github.com/merge/xf86-input-tslib) - direct tslib input driver for X.org
 * [qtslib](https://github.com/qt/qtbase/tree/dev/src/platformsupport/input/tslib) - direct Qt5 tslib input plugin
 
