@@ -13,6 +13,7 @@
 #include "tslib.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
 
 static const char * const ts_name_default[] = {
 		"/dev/input/ts",
@@ -44,7 +45,7 @@ struct tsdev *ts_setup(const char *dev_name, int nonblock)
 
 	/* if detected try to configure it */
 	if (ts && ts_config(ts) != 0) {
-		perror("ts_config");
+		ts_error("ts_config: %s\n", strerror(errno));
 		ts_close(ts);
 		return NULL;
 	}
