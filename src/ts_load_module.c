@@ -142,7 +142,7 @@ static struct tslib_module_info *__ts_load_module_shared(struct tsdev *ts,
 
 	if (strlen(plugin_directory) >= PLUGIN_DIR_LEN) {
 #ifdef DEBUG
-		fprintf(stderr, "%s dlopen() failed: path too long\n", fn);
+		ts_error("%s dlopen() failed: path too long\n", fn);
 #endif
 		return NULL;
 	}
@@ -152,7 +152,7 @@ static struct tslib_module_info *__ts_load_module_shared(struct tsdev *ts,
 	handle = dlopen(fn, RTLD_NOW);
 	if (!handle) {
 #ifdef DEBUG
-		fprintf(stderr, "%s dlopen() failed: %s\n", fn, dlerror());
+		ts_error("%s dlopen() failed: %s\n", fn, dlerror());
 #endif
 		return NULL;
 	}
@@ -160,7 +160,7 @@ static struct tslib_module_info *__ts_load_module_shared(struct tsdev *ts,
 	init = dlsym(handle, "mod_init");
 	if (!init || !(*init)) {
 #ifdef DEBUG
-		fprintf(stderr, "%s dlsym() failed: %s\n", fn, dlerror());
+		ts_error("%s dlsym() failed: %s\n", fn, dlerror());
 #endif
 		dlclose(handle);
 		return NULL;
@@ -169,7 +169,7 @@ static struct tslib_module_info *__ts_load_module_shared(struct tsdev *ts,
 	info = (*init)(ts, params);
 	if (!info) {
 #ifdef DEBUG
-		fprintf(stderr, "Can't init %s\n", fn);
+		ts_error("Can't init %s\n", fn);
 #endif
 		dlclose(handle);
 		return NULL;
@@ -207,7 +207,7 @@ static int __ts_load_module(struct tsdev *ts, const char *module,
 
 	if (ret) {
 #ifdef DEBUG
-		fprintf(stderr, "Can't attach %s\n", module);
+		ts_error("Can't attach %s\n", module);
 #endif
 		handle = info->handle;
 
