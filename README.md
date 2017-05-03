@@ -36,14 +36,13 @@ distributors and their package management:
 * [Debian](https://tracker.debian.org/pkg/tslib) - `apt-get install libts0 libts-bin libts-dev`
 
 ### environment variables
-You only need the variables when the defaults don't fit. Most of them should
-fit your needs on Linux though.
+You only need the variables in case the following defaults don't fit:
 
-    TSLIB_TSDEVICE          TS device file name.
-                            Default (inputapi):     /dev/input/ts
+    TSLIB_TSDEVICE          Touchscreen device file name.
+                            Default (ts_setup):     /dev/input/ts
                                                     /dev/input/touchscreen
                                                     /dev/input/event0
-                            Default (non inputapi): /dev/touchscreen/ucb1x00
+                                                    /dev/touchscreen/ucb1x00
 
     TSLIB_CALIBFILE         Calibration file.
                             Default:                ${sysconfdir}/pointercal
