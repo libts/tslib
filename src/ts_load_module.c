@@ -70,6 +70,9 @@ static const struct tslib_module_desc tslib_modules[] = {
 #ifdef TSLIB_STATIC_LINEAR_H2200_MODULE
 	{ "linear_h2200", linear_h2200_mod_init },
 #endif
+#ifdef TSLIB_STATIC_MEDIAN_MODULE
+	{ "median", median_mod_init },
+#endif
 #ifdef TSLIB_STATIC_MK712_MODULE
 	{ "mk712", mk712_mod_init },
 #endif
@@ -90,6 +93,9 @@ static const struct tslib_module_desc tslib_modules[] = {
 #endif
 #ifdef TSLIB_STATIC_VARIANCE_MODULE
 	{ "variance", variance_mod_init },
+#endif
+#ifdef TSLIB_STATIC_WAVESHARE_MODULE
+	{ "waveshare", waveshare_mod_init },
 #endif
 };
 
