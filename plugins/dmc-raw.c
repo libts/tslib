@@ -13,7 +13,6 @@
 #include <inttypes.h>
 #include <errno.h>
 #include <termios.h>
-#include <string.h>
 
 #include "config.h"
 #include "tslib-private.h"
@@ -60,11 +59,11 @@ static int dmc_init_device(struct tsdev *dev)
 	}
 	sleep(1);
 	if (write(fd, "\x05\x40", 2) != 2) {
-		ts_error("dmc write: %s\n", strerror(errno));
+		perror("dmc write");
 		goto fail;
 	}
 	if (read(fd, buf, 1) != 1) {
-		ts_error("dmc read: %s\n", strerror(errno));
+		perror("dmc read");
 		goto fail;
 	}
 	if (buf[0] != 0x6)
@@ -72,7 +71,7 @@ static int dmc_init_device(struct tsdev *dev)
 			"dmc: got wrong return value. The touchscreen may not work.\n");
 
 	if (write(fd, "\x31", 1) != 1) {
-		ts_error("dmc write: %s\n", strerror(errno));
+		perror("dmc write");
 		goto fail;
 	}
 	return 0;
