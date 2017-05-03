@@ -11,9 +11,11 @@
  */
 
 #include "tslib.h"
+#include "tslib-private.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+#include <string.h>
 
 static const char * const ts_name_default[] = {
 		"/dev/input/ts",
