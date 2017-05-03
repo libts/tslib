@@ -267,8 +267,7 @@ TSAPI struct tslib_module_info *linear_mod_init(__attribute__ ((unused)) struct 
 				break;
 
 		if (!fscanf(pcal_fd, "%d %d", &lin->cal_res_x, &lin->cal_res_y))
-			fprintf(stderr,
-				"LINEAR: Couldn't read resolution values\n");
+			ts_error("LINEAR: Couldn't read resolution values\n");
 
 #ifdef DEBUG
 		printf("Linear calibration constants: ");
