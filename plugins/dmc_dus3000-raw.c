@@ -286,6 +286,6 @@ TSAPI struct tslib_module_info *dmc_dus3000_mod_init(struct tsdev *dev,
 	return &(d->module);
 }
 
-#ifndef TSLIB_STATIC_DUS3000_MODULE
+#ifndef TSLIB_STATIC_DMC_DUS3000_MODULE
 	TSLIB_MODULE_INIT(dmc_dus3000_mod_init);
 #endif
