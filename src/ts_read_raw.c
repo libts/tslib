@@ -51,10 +51,9 @@ int ts_read_raw_mt(struct tsdev *ts, struct ts_sample_mt **samp, int slots,
 			if (samp[i][j].valid != 1)
 				continue;
 
-			fprintf(stderr,
-				"TS_READ_RAW_MT----> slot %d: x = %d, y = %d, pressure = %d\n",
-				samp[i][j].slot, samp[i][j].x, samp[i][j].y,
-				samp[i][j].pressure);
+			ts_error("TS_READ_RAW_MT----> slot %d: x = %d, y = %d, pressure = %d\n",
+				 samp[i][j].slot, samp[i][j].x, samp[i][j].y,
+				 samp[i][j].pressure);
 		}
 	}
 #endif
