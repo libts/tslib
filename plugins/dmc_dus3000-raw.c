@@ -85,7 +85,7 @@ struct Command {
 	uint8_t data[5];
 };
 
-int send_command(int fd, TTouchMessages id)
+static int send_command(int fd, TTouchMessages id)
 {
 	static const struct Command commands[tm_NumberOfTouchMessages] = {
 		{ 5, { 0x02, 0x4C, 0x02, 0x04, 0x00 } }, // tm_version_info
@@ -137,7 +137,7 @@ static void dus3000_init_device(struct tslib_dus3000 *d, struct tsdev *dev)
 	}
 }
 
-int read_to_pos(int fd, struct tslib_dus3000 *d, ssize_t pos)
+static int read_to_pos(int fd, struct tslib_dus3000 *d, ssize_t pos)
 {
 	ssize_t toRead = pos - d->rxPosition;
 	if (toRead <= 0) {
