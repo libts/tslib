@@ -360,7 +360,7 @@ Check out our tests directory for examples how to use it.
 [`ts_read()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
 [`ts_read_raw()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
 [`ts_read_mt()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
-[`ts_reat_raw_mt()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
+[`ts_read_raw_mt()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
 
 
 ### ABI - Application Binary Interface
