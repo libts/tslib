@@ -33,7 +33,7 @@ Apart from building the latest tarball release, running
 distributors and their package management:
 * [Arch Linux](https://www.archlinux.org) and [Arch Linux ARM](https://archlinuxarm.org) - `pacman -S tslib`
 * [Buildroot](https://buildroot.org/) - `BR2_PACKAGE_TSLIB=y`
-* [Debian](https://tracker.debian.org/pkg/tslib) - `apt-get install libts0 libts-bin libts-dev`
+* [Debian](https://tracker.debian.org/pkg/tslib) / [Ubuntu](https://launchpad.net/ubuntu/+source/tslib) - `apt-get install libts0 libts-bin libts-dev`
 
 ### environment variables
 You only need the variables in case the following defaults don't fit:
