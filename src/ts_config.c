@@ -17,6 +17,7 @@
 #include <unistd.h>
 #endif
 #include <dlfcn.h>
+#include <errno.h>
 
 #if !defined(HAVE_STRSEP)
 #include "ts_strsep.h"
@@ -58,7 +59,8 @@ int ts_config(struct tsdev *ts)
 		if (conffile) {
 			strdup_allocated = 1;
 		} else {
-			perror("Couldn't find tslib config file");
+			ts_error("Couldn't find tslib config file: %s\n",
+				 strerror(errno));
 			return -1;
 		}
 	}
@@ -68,7 +70,8 @@ int ts_config(struct tsdev *ts)
 		if (strdup_allocated)
 			free(conffile);
 
-		perror("Couldnt open tslib config file");
+		ts_error("Couldn't open tslib config file: %s\n",
+			 strerror(errno));
 		return -1;
 	}
 
