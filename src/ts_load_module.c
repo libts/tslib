@@ -52,11 +52,11 @@ static const struct tslib_module_desc tslib_modules[] = {
 #ifdef TSLIB_STATIC_DMC_DUS3000_MODULE
 	{ "dmc_dus3000", dmc_dus3000_mod_init },
 #endif
-#ifdef TSLIB_STATIC_H3600_MODULE
-	{ "h3600", h3600_mod_init },
-#endif
 #ifdef TSLIB_STATIC_GALAX_MODULE
 	{ "galax", galax_mod_init },
+#endif
+#ifdef TSLIB_STATIC_H3600_MODULE
+	{ "h3600", h3600_mod_init },
 #endif
 #ifdef TSLIB_STATIC_IIR_MODULE
 	{ "iir", iir_mod_init },
