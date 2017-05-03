@@ -348,12 +348,12 @@ while you are free to play with the parameter values.
 The API is documented in our man pages in the doc directory.
 Check out our tests directory for examples how to use it.
 
-`ts_libversion()`  
+[`ts_libversion()`](https://manpages.debian.org/unstable/libts0/ts_libversion.3.en.html)  
 [`ts_open()`](https://manpages.debian.org/unstable/libts0/ts_open.3.en.html)  
 [`ts_config()`](https://manpages.debian.org/unstable/libts0/ts_config.3.en.html)  
 [`ts_setup()`](https://manpages.debian.org/unstable/libts0/ts_setup.3.en.html)  
 [`ts_close()`](https://manpages.debian.org/unstable/libts0/ts_close.3.en.html)  
-`ts_reconfig()`  
+[`ts_reconfig()`](https://manpages.debian.org/unstable/libts0/ts_config.3.en.html)  
 `ts_option()`  
 `ts_fd()`  
 `ts_load_module()`  
