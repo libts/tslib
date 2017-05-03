@@ -82,6 +82,9 @@ static const struct tslib_module_desc tslib_modules[] = {
 #ifdef TSLIB_STATIC_TATUNG_MODULE
 	{ "tatung", tatung_mod_init },
 #endif
+#ifdef TSLIB_STATIC_TOUCHKIT_MODULE
+	{ "touchkit", touchkit_mod_init },
+#endif
 #ifdef TSLIB_STATIC_UCB1X00_MODULE
 	{ "ucb1x00", ucb1x00_mod_init },
 #endif
