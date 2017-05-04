@@ -537,6 +537,21 @@ and call `ts_read_mt()` like so
 
 ## building tslib
 
+### shared vs. static builds
+
+libts can be built to fit your needs. Use the configure script to enable only
+the modules you need. By default, libts to build as a shared library, with
+each module being a shared library object itself. You can, however, configure
+tslib to build libts statically linked, and the needed modules compiled inside
+of libts. Here's an example for this:
+
+    ./configure --enable-static --disable-shared --enable-input=static --enable-linear=static --enable-iir=static
+
+This should result in a `libts.a` of roughly 50 kilobytes, ready for using
+calibration (linear filter) and the infinite impulse response filter in ts.conf.
+
+### portability
+
 tslib is cross-platform; you should be able to run
 `./configure && make` on a large variety of operating systems.
 The graphical test programs are not (yet) ported to all platforms though:
@@ -591,7 +606,7 @@ Please help porting missing programs!
 This can be _any third party program_, using tslib's API. For Linux, we include
 `ts_uinput`, but Qt, X11 or anything else can use tslib's API.
 
-## hardware support
+## touchscreen hardware support
 The [ts.conf man page](https://manpages.debian.org/unstable/libts0/ts.conf.5.en.html)
 has details on the available `module_raw` drivers. Not all of them are listed in the
 default `etc/ts.conf` config file. Hardware access modules other than the generic
