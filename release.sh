@@ -114,6 +114,10 @@ sha256sum tslib-${version}.tar.xz > tslib-${version}.tar.xz.sha256
 sha256sum tslib-${version}.tar.gz > tslib-${version}.tar.gz.sha256
 sha256sum tslib-${version}.tar.bz2 > tslib-${version}.tar.bz2.sha256
 
+sha512sum tslib-${version}.tar.xz > tslib-${version}.tar.xz.sha512
+sha512sum tslib-${version}.tar.gz > tslib-${version}.tar.gz.sha512
+sha512sum tslib-${version}.tar.bz2 > tslib-${version}.tar.bz2.sha512
+
 gpg -b -a tslib-${version}.tar.xz
 gpg -b -a tslib-${version}.tar.gz
 gpg -b -a tslib-${version}.tar.bz2

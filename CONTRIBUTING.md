@@ -101,7 +101,7 @@ The procedure looks like this:
 * `git push origin master --tags`
 * on Github and Gitlab, edit the release tag:
   * add the release notes from the NEWS file
-  * upload 9 files: 3 times tarball, asc signature and sha256sum files
+  * upload all tarball files: 3 times tarball, asc signature and hashsum files
 * publish, send an email to the mailing list and if you're in the mood, inform distributors that you know don't automatically get informed.
 * celebrate!
 
@@ -109,7 +109,7 @@ note: up until 1.7 we kept the habit of adding generated files to a release
 branch that is never used again. Those branches exist. We can't do anything
 about it. We won't create new ones anymore. Ignore them.
 
-also note: It's important not to lose the 9 generated files (tarballs, hashes
+also note: It's important not to lose the generated files (tarballs, hashes
 and signatures). Always upload them to at least 2 host providers. And do it
 immediately after pushing the tag. This also ensures you have time to find a new
 one in case one dies. Github is the primary source for distributions.
