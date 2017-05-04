@@ -9,6 +9,8 @@
 
 # WARNING: This script is very dangerous! It may delete any untracked files.
 
+set -e
+
 have_version=0
 
 usage()
@@ -83,9 +85,26 @@ echo "======================================================"
 read -p "           Press enter to continue"
 echo "======================================================"
 
+# Linux default build test
 ./autogen.sh && ./configure && make distcheck
 ./configure --disable-dependency-tracking && make distclean && ./autogen-clean.sh
 git clean -d -f
+
+# static build test
+./autogen.sh
+./configure --disable-dependency-tracking \
+--disable-shared --enable-static --enable-input=static \
+--enable-skip=static \
+--enable-pthres=static \
+--enable-debounce=static \
+--enable-median=static \
+--enable-iir=static \
+--enable-variance=static \
+--enable-dejitter=static \
+--enable-linear=static
+make distcheck
+make distclean
+./autogen-clean.sh
 
 git commit -a -m "tslib ${version}"
 git tag -s ${version} -m "tslib ${version}"
