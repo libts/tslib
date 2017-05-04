@@ -21,7 +21,7 @@ Visit the [tslib website](http://tslib.org) for an overview of the project.
 * [filter modules](#filter-modules)
 * [the libts library](#the-libts-library)
 * [building tslib](#building-tslib)
-* [hardware support](#hardware-support)
+* [hardware support](#touchscreen-hardware-support)
 
 
 ## setup and configure tslib
@@ -572,14 +572,14 @@ _shared libraries_, build on the following operating systems.
 #### input plugins (`module_raw`)
 
 This makes the thing usable in the read world because it accesses your device.
-See our configure.ac or [hardware support](#hardware-support) for the currently
+See our configure.ac or [hardware support](#touchscreen-hardware-support) for the currently
 possible configuration for your platform.
 
 * GNU / Linux - all (most importantly `input`)
 * Android / Linux - all (most importantly `input`)
 * FreeBSD - almost all (most importantly `input`)
-* GNU / Hurd - some, see [hardware support](#hardware-support)
-* Haiku - some, see [hardware support](#hardware-support)
+* GNU / Hurd - some, see [hardware support](#touchscreen-hardware-support)
+* Haiku - some, see [hardware support](#touchscreen-hardware-support)
 * Windows - non yet
 
 Writing your own plugin is quite easy, in case an existing one doesn't fit.
