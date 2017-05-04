@@ -383,11 +383,11 @@ static int median_depth(struct tslib_module_info *inf, char *str,
 	return 0;
 }
 
-static const struct tslib_vars raw_vars[] = {
+static const struct tslib_vars median_vars[] = {
 	{ "depth", (void *)1, median_depth },
 };
 
-#define NR_VARS (sizeof(raw_vars) / sizeof(raw_vars[0]))
+#define NR_VARS (sizeof(median_vars) / sizeof(median_vars[0]))
 
 TSAPI struct tslib_module_info *median_mod_init(__attribute__ ((unused)) struct tsdev *dev,
 						const char *params)
@@ -407,7 +407,7 @@ TSAPI struct tslib_module_info *median_mod_init(__attribute__ ((unused)) struct 
 	c->sorted = NULL;
 	c->usorted = NULL;
 
-	if (tslib_parse_vars(&c->module, raw_vars, NR_VARS, params)) {
+	if (tslib_parse_vars(&c->module, median_vars, NR_VARS, params)) {
 		free(c);
 		return NULL;
 	}
