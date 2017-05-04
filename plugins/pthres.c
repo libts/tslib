@@ -35,14 +35,14 @@ struct tslib_pthres {
 };
 
 static int pthres_read(struct tslib_module_info *info, struct ts_sample *samp,
-		       int nr)
+		       int nr_samples)
 {
 	struct tslib_pthres *p = (struct tslib_pthres *)info;
 	int ret;
 	static int xsave = 0, ysave = 0;
 	static int press = 0;
 
-	ret = info->next->ops->read(info->next, samp, nr);
+	ret = info->next->ops->read(info->next, samp, nr_samples);
 	if (ret >= 0) {
 		int nr = 0, i;
 		struct ts_sample *s;

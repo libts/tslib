@@ -13,14 +13,14 @@ struct tatung_ts_event { /* Tatung touchscreen 4bytes protocol */
 };
 
 static int tatung_read(struct tslib_module_info *inf, struct ts_sample *samp,
-		       int nr)
+		       int nr_samples)
 {
 	struct tsdev *ts = inf->dev;
 	struct tatung_ts_event *tatung_evt;
 	int ret;
 
-	tatung_evt = alloca(sizeof(*tatung_evt) * nr);
-	ret = read(ts->fd, tatung_evt, sizeof(*tatung_evt) * nr);
+	tatung_evt = alloca(sizeof(*tatung_evt) * nr_samples);
+	ret = read(ts->fd, tatung_evt, sizeof(*tatung_evt) * nr_samples);
 	if (ret > 0) {
 		int nr = ret / sizeof(*tatung_evt);
 
@@ -51,7 +51,7 @@ static int tatung_read(struct tslib_module_info *inf, struct ts_sample *samp,
 	}
 
 	samp->pressure = 0;
-	ret = nr;
+	ret = nr_samples;
 	return ret;
 }
 

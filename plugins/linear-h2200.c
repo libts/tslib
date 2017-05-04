@@ -54,12 +54,12 @@ struct tslib_linear_h2200 {
 
 static int
 linear_h2200_read(struct tslib_module_info *info, struct ts_sample *samp,
-		  int nr)
+		  int nr_samples)
 {
 	int ret;
 	long x, y, new_x, new_y;
 
-	ret = info->next->ops->read(info->next, samp, nr);
+	ret = info->next->ops->read(info->next, samp, nr_samples);
 	if (ret >= 0) {
 		int nr;
 

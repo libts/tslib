@@ -41,13 +41,13 @@ struct tslib_linear {
 };
 
 static int linear_read(struct tslib_module_info *info, struct ts_sample *samp,
-		       int nr)
+		       int nr_samples)
 {
 	struct tslib_linear *lin = (struct tslib_linear *)info;
 	int ret;
 	int xtemp, ytemp;
 
-	ret = info->next->ops->read(info->next, samp, nr);
+	ret = info->next->ops->read(info->next, samp, nr_samples);
 	if (ret >= 0) {
 		int nr;
 
