@@ -36,16 +36,15 @@ struct ts_lib_version_data *ts_libversion(void)
 	if (initialized)
 		return &version_data;
 
+#ifdef LIBTS_VERSION_CURRENT
 	major = LIBTS_VERSION_CURRENT - LIBTS_VERSION_AGE;
 	minor = LIBTS_VERSION_AGE;
 	patch = LIBTS_VERSION_REVISION;
 
-	if (major == 0 && minor == 0)
-		return NULL;
-
 	version_data.version_num |= major << 16;
 	version_data.version_num |= minor << 8;
 	version_data.version_num |= patch << 0;
+#endif
 
 	initialized = 1;
 
