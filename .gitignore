@@ -27,6 +27,7 @@ stamp-h1
 !visibility.m4
 .libs
 .deps
+.dirstamp
 tests/ts_calibrate
 tests/ts_harvest
 tests/ts_print
