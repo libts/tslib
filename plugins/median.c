@@ -302,6 +302,7 @@ static int median_read_mt(struct tslib_module_info *inf,
 				memset(c->delay_mt[j],
 				       0,
 				       sizeof(struct ts_sample_mt) * c->size);
+
 				c->withsamples_mt[j] = 0;
 			#ifdef DEBUG
 				printf("MEDIAN: Pen Up\n");
@@ -314,6 +315,11 @@ static int median_read_mt(struct tslib_module_info *inf,
 			#ifdef DEBUG
 				printf("MEDIAN: Pen Down\n");
 			#endif
+			}
+
+			if (cpress != 0 && c->withsamples_mt[j] <= c->size / 2) {
+				samp[i][j].valid = -1;
+				c->withsamples_mt[j]++;
 			}
 		}
 	}
