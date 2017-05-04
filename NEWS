@@ -12,6 +12,7 @@ This release includes the following bugfixes:
 * 7c5b4f8 plugins: filters: check for read_mt() availability
 * e684df5 call ops->fini() only when implemented by the plugin
 * 0ca9580 ts_close: free tslib_module_info when fini() is not implemented
+* 5974266 median: read_mt: mark all-zero samples invalid
 
 
 ## tslib 1.9
