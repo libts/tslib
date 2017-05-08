@@ -35,6 +35,9 @@ distributors and their package management:
 * [Buildroot](https://buildroot.org/) - `BR2_PACKAGE_TSLIB=y`
 * [Debian](https://tracker.debian.org/pkg/tslib) / [Ubuntu](https://launchpad.net/ubuntu/+source/tslib) - `apt-get install libts0 libts-bin libts-dev`
 
+If you have X.org running, the easiest way to use tslib would be to use
+[xf86-input-tslib](https://github.com/merge/xf86-input-tslib).
+
 ### environment variables
 You only need the variables in case the following defaults don't fit:
 
@@ -172,6 +175,13 @@ you can, among other thing:
       #systemctl enable ts_uinput
 
   will enable it permanently.
+
+
+### use the filtered result in your system (X.org method)
+If you're using X.org graphical X server, things should be very easy. Install
+tslib and [xf86-input-tslib](https://github.com/merge/xf86-input-tslib),
+reboot, and you should instantly have your `ts.conf` filters running, without
+configuring anything else yourself.
 
 
 ## filter modules
