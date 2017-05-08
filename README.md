@@ -98,16 +98,27 @@ filters, using [`ts_test_mt`](https://manpages.debian.org/unstable/libts0/ts_tes
 
     # ts_test_mt
 
+### use the filtered result in your system (X.org method)
+If you're using X.org graphical X server, things should be very easy. Install
+tslib and [xf86-input-tslib](https://github.com/merge/xf86-input-tslib),
+reboot, and you should instantly have your `ts.conf` filters running, without
+configuring anything else yourself.
+
 ### use the filtered result in your system (ts_uinput method)
-You need a tool using tslib's API that glues tslib's touch samples to your
-input system. There are various ways to do so on various systems. We only
-describe one way for Linux here - using tslib's included userspace input
-evdev driver `ts_uinput`:
+This is a generic solution for Linux  - using tslib's included userspace input
+evdev driver `ts_uinput`. You need to set the `TSLIB_TSDEVICE` environment
+variable to point to your touchscreen device. But __don't__ use `/dev/input/eventX`;
+the event numbers are not persistent. Use such a udev rule:
+
+    SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{name}=="mydrivername", SYMLINK+="input/ts", TAG+="systemd"
+
+or find another way of creating a `/dev/input/ts` symlink. You'd need that for any
+application using your device. Now you can use `ts_uinput`:
 
     # ts_uinput -d -v
 
 `-d` makes the program return and run as a daemon in the background. `-v` makes
-it print the new `/dev/input/eventX` device node before returning.
+it print the __new__ `/dev/input/eventX` device node before returning.
 
 You can use *evdev* drivers now. In this case, for Qt5 for example you'd
 probably set something like this:
@@ -132,8 +143,9 @@ Let's recap the data flow here:
                module       module     module(s)     daemon                        e.g. in libinput
 
 #### symlink to /dev/input/ts_uinput
-In order to know *what* enumerated input device file is created by `ts_uinput`,
-you can, among other thing:
+Again, /dev/input/event numbers are not persistent. In order to know in advance,
+*what* enumerated input device file is created by `ts_uinput`, you can, among
+other thing:
 
 * use the included `tools/ts_uinput_start.sh` script that starts
   `ts_uinput -d -v` and creates the symlink `/dev/input/ts_uinput` for you, or
@@ -141,13 +153,10 @@ you can, among other thing:
 * if you're using *udev and systemd*, create the following udev rule, for
   example `/etc/udev/rules.d/98-touchscreen.rules`:
 
-      SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{phys}=="input/ts", SYMLINK+="input/ts", TAG+="systemd"
       SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{name}=="ts_uinput", SYMLINK+="input/ts_uinput"
 
-  where for `ATTRS{phys}=="input/ts"`, choose anything that matches your real
-  touchscreen device, in case don't already have a /dev/input/ts symlink.
-
-  then create any file containing the environment or tslib, like `/etc/ts.env`
+  in case you have to use non-standard paths, create a file containing the
+  environment or tslib, like `/etc/ts.env`
 
       TSLIB_TSDEVICE=/dev/input/ts
       TSLIB_CALIBFILE=/etc/pointercal
@@ -175,13 +184,6 @@ you can, among other thing:
       #systemctl enable ts_uinput
 
   will enable it permanently.
-
-
-### use the filtered result in your system (X.org method)
-If you're using X.org graphical X server, things should be very easy. Install
-tslib and [xf86-input-tslib](https://github.com/merge/xf86-input-tslib),
-reboot, and you should instantly have your `ts.conf` filters running, without
-configuring anything else yourself.
 
 
 ## filter modules
