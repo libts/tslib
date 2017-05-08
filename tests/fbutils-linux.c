@@ -35,15 +35,15 @@ union multiptr {
 	uint32_t *p32;
 };
 
-static int con_fd, last_vt = -1;
+static int32_t con_fd, last_vt = -1;
 static struct fb_fix_screeninfo fix;
 static struct fb_var_screeninfo var;
 static unsigned char *fbuffer;
 static unsigned char **line_addr;
-static int fb_fd = 0;
-static int bytes_per_pixel;
+static int32_t fb_fd = 0;
+static int32_t bytes_per_pixel;
 static uint32_t transp_mask;
-static unsigned colormap [256];
+static uint32_t colormap[256];
 uint32_t xres, yres;
 
 static char *defaultfbdevice = "/dev/fb0";
@@ -57,8 +57,8 @@ int open_framebuffer(void)
 {
 	struct vt_stat vts;
 	char vtname[VTNAME_LEN];
-	int fd, nr;
-	unsigned y, addr;
+	int32_t fd, nr;
+	uint32_t y, addr;
 
 	if ((fbdevice = getenv ("TSLIB_FBDEVICE")) == NULL)
 		fbdevice = defaultfbdevice;
@@ -177,7 +177,7 @@ void close_framebuffer(void)
 	free (line_addr);
 }
 
-void put_cross(int x, int y, unsigned colidx)
+void put_cross(int32_t x, int32_t y, uint32_t colidx)
 {
 	line (x - 10, y, x - 2, y, colidx);
 	line (x + 2, y, x + 10, y, colidx);
@@ -201,9 +201,9 @@ void put_cross(int x, int y, unsigned colidx)
 #endif
 }
 
-static void put_char(int x, int y, int c, int colidx)
+static void put_char(int32_t x, int32_t y, int32_t c, int32_t colidx)
 {
-	int i,j,bits;
+	int32_t i,j,bits;
 
 	for (i = 0; i < font_vga_8x8.height; i++) {
 		bits = font_vga_8x8.data [font_vga_8x8.height * c + i];
@@ -213,21 +213,21 @@ static void put_char(int x, int y, int c, int colidx)
 	}
 }
 
-void put_string(int x, int y, char *s, unsigned colidx)
+void put_string(int32_t x, int32_t y, char *s, uint32_t colidx)
 {
-	int i;
+	int32_t i;
 	for (i = 0; *s; i++, x += font_vga_8x8.width, s++)
 		put_char (x, y, *s, colidx);
 }
 
-void put_string_center(int x, int y, char *s, unsigned colidx)
+void put_string_center(int32_t x, int32_t y, char *s, uint32_t colidx)
 {
 	size_t sl = strlen (s);
         put_string (x - (sl / 2) * font_vga_8x8.width,
                     y - font_vga_8x8.height / 2, s, colidx);
 }
 
-void setcolor(unsigned colidx, unsigned value)
+void setcolor(uint32_t colidx, uint32_t value)
 {
 	uint32_t res;
 	uint16_t red, green, blue;
@@ -271,7 +271,7 @@ void setcolor(unsigned colidx, unsigned value)
         colormap [colidx] = res;
 }
 
-static inline void __setpixel (union multiptr loc, unsigned xormode, unsigned color)
+static inline void __setpixel (union multiptr loc, uint32_t xormode, uint32_t color)
 {
 	switch(bytes_per_pixel) {
 	case 1:
@@ -311,9 +311,9 @@ static inline void __setpixel (union multiptr loc, unsigned xormode, unsigned co
 	}
 }
 
-void pixel (int x, int y, unsigned colidx)
+void pixel (int32_t x, int32_t y, uint32_t colidx)
 {
-	unsigned xormode;
+	uint32_t xormode;
 	union multiptr loc;
 
 	if ((x < 0) || ((uint32_t)x >= var.xres_virtual) ||
@@ -335,11 +335,11 @@ void pixel (int x, int y, unsigned colidx)
 	__setpixel (loc, xormode, colormap [colidx]);
 }
 
-void line (int x1, int y1, int x2, int y2, unsigned colidx)
+void line (int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colidx)
 {
-	int tmp;
-	int dx = x2 - x1;
-	int dy = y2 - y1;
+	int32_t tmp;
+	int32_t dx = x2 - x1;
+	int32_t dy = y2 - y1;
 
 	if (abs (dx) < abs (dy)) {
 		if (y1 > y2) {
@@ -371,7 +371,7 @@ void line (int x1, int y1, int x2, int y2, unsigned colidx)
 	}
 }
 
-void rect (int x1, int y1, int x2, int y2, unsigned colidx)
+void rect (int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colidx)
 {
 	line (x1, y1, x2, y1, colidx);
 	line (x2, y1+1, x2, y2-1, colidx);
@@ -379,10 +379,10 @@ void rect (int x1, int y1, int x2, int y2, unsigned colidx)
 	line (x1, y2-1, x1, y1+1, colidx);
 }
 
-void fillrect (int x1, int y1, int x2, int y2, unsigned colidx)
+void fillrect (int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colidx)
 {
-	int tmp;
-	unsigned xormode;
+	int32_t tmp;
+	uint32_t xormode;
 	union multiptr loc;
 
 	/* Clipping and sanity checking */
