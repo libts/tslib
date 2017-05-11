@@ -15,7 +15,6 @@
 #include "tslib.h"
 
 static struct ts_lib_version_data version_data = {
-	0,		/* age of this struct */
 	PACKAGE_VERSION,
 	0x000000,	/* version_num calculated below */
 	0		/* features */

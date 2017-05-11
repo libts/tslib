@@ -80,7 +80,6 @@ struct ts_sample_mt {
 };
 
 struct ts_lib_version_data {
-	int		age; /* age of this very struct */
 	const char	*package_version;
 	int		version_num;
 	unsigned int	features; /* bitmask, see below */
