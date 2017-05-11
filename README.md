@@ -31,9 +31,10 @@ FreeBSD or Android/Linux. See [building tslib](#building-tslib) for details.
 Apart from building the latest tarball release, running
 `./configure`, `make` and `make install`, tslib is available from the following
 distributors and their package management:
-* [Arch Linux](https://www.archlinux.org) and [Arch Linux ARM](https://archlinuxarm.org) - `pacman -S tslib`
-* [Buildroot](https://buildroot.org/) - `BR2_PACKAGE_TSLIB=y`
-* [Debian](https://tracker.debian.org/pkg/tslib) / [Ubuntu](https://launchpad.net/ubuntu/+source/tslib) - `apt-get install libts0 libts-bin libts-dev`
+* [Arch Linux](https://www.archlinux.org/packages/?q=tslib) / [Arch Linux ARM](https://archlinuxarm.org/packages/aarch64/tslib)
+* [Buildroot](https://buildroot.org/)
+* [Debian](https://tracker.debian.org/pkg/tslib) / [Ubuntu](https://launchpad.net/ubuntu/+source/tslib)
+* [Fedora](https://apps.fedoraproject.org/packages/tslib/)
 
 If you have X.org running, the easiest way to use tslib would be to use
 [xf86-input-tslib](https://github.com/merge/xf86-input-tslib).
