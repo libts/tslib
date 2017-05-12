@@ -1,3 +1,9 @@
+## tslib 1.11
+
+This release includes the following bugfixes:
+* ff8c7d9 use dlfcn.h dynamic loading function only if libdl is available
+
+
 ## tslib 1.10
 
 This release includes libts version 0.7.0 and the following changes:
