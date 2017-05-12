@@ -1,5 +1,8 @@
 ## tslib 1.11
 
+This release includes libts version 0.7.1 and the following changes:
+* The graphical tools don't show TSLIB anymore, but Touchscreen instead.
+
 This release includes the following bugfixes:
 * ff8c7d9 use dlfcn.h dynamic loading function only if libdl is available
 
