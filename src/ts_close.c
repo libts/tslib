@@ -14,7 +14,9 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#ifdef HAVE_LIBDL
 #include <dlfcn.h>
+#endif
 
 #include "tslib-private.h"
 
@@ -35,9 +37,10 @@ int ts_close(struct tsdev *ts)
 			info->ops->fini(info);
 		else
 			free(info);
-
+	#ifdef HAVE_LIBDL
 		if (handle)
 			dlclose(handle);
+	#endif
 
 		info = next;
 	}

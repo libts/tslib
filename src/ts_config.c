@@ -13,10 +13,15 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+
+#ifdef HAVE_LIBDL
 #include <dlfcn.h>
+#endif
+
 #include <errno.h>
 
 #if !defined(HAVE_STRSEP)
@@ -164,9 +169,10 @@ int ts_reconfig(struct tsdev *ts)
 
 		if (info->ops->fini)
 			info->ops->fini(info);
-
+	#ifdef HAVE_LIBDL
 		if (handle)
 			dlclose(handle);
+	#endif
 
 		info = next;
 	}

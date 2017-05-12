@@ -14,10 +14,14 @@
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef HAVE_LIBDL
 #include <dlfcn.h>
+#endif
 
 #include "tslib-private.h"
 
@@ -138,6 +142,7 @@ static struct tslib_module_info *__ts_load_module_static(struct tsdev *ts,
 
 #define PLUGIN_DIR_LEN 1024
 
+#ifdef HAVE_LIBDL
 static struct tslib_module_info *__ts_load_module_shared(struct tsdev *ts,
 							 const char *module,
 							 const char *params)
@@ -190,6 +195,7 @@ static struct tslib_module_info *__ts_load_module_shared(struct tsdev *ts,
 
 	return info;
 }
+#endif /* HAVE_LIBDL */
 
 static int __ts_load_module(struct tsdev *ts, const char *module,
 			    const char *params, int raw)
@@ -206,8 +212,10 @@ static int __ts_load_module(struct tsdev *ts, const char *module,
 #endif
 
 	info = __ts_load_module_static(ts, module, params);
+#ifdef HAVE_LIBDL
 	if (!info)
 		info = __ts_load_module_shared(ts, module, params);
+#endif
 	if (!info)
 		return -1;
 
@@ -225,8 +233,10 @@ static int __ts_load_module(struct tsdev *ts, const char *module,
 		if (info->ops->fini)
 			info->ops->fini(info);
 
+#ifdef HAVE_LIBDL
 		if (handle)
 			dlclose(handle);
+#endif
 	}
 
 	return ret;
