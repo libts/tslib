@@ -133,7 +133,7 @@ static void help(void)
 	printf("  -f, --fbdev         touchscreen's framebuffer device\n");
 	printf("  -s, --slots         override available concurrent touch contacts\n");
 	printf("\n");
-	printf("See the manpage for futher details.\n");
+	printf("See the manpage for further details.\n");
 }
 
 #define MAX_CODES_PER_SLOT 20
