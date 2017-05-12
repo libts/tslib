@@ -80,7 +80,7 @@ static void refresh_screen(void)
 	int i;
 
 	fillrect (0, 0, xres - 1, yres - 1, 0);
-	put_string_center (xres/2, yres/4,   "TSLIB multitouch test program", 1);
+	put_string_center (xres/2, yres/4,   "Multitouch test program", 1);
 	put_string_center (xres/2, yres/4+20,"Touch screen to move crosshairs", 2);
 
 	for (i = 0; i < NR_BUTTONS; i++)

@@ -82,7 +82,7 @@ int main(void)
 		setcolor (i, palette [i]);
 
 	refresh_screen ();
-	put_string_center (xres/2, yres*0.1, "TSLIB harvesting utility", 4);
+	put_string_center (xres/2, yres*0.1, "Touchscreen harvesting utility", 4);
 	put_string_center (xres/2, yres*0.15, "Touch the crosshair center", 1);
 	put_string_center (xres/2, yres*0.2, "with as much accurary", 1);
 	put_string_center (xres/2, yres*0.25, "as possible", 1);

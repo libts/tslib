@@ -207,7 +207,7 @@ int main(void)
 		setcolor(i, palette[i]);
 
 	put_string_center(xres / 2, yres / 4,
-			  "TSLIB calibration utility", 1);
+			  "Touchscreen calibration utility", 1);
 	put_string_center(xres / 2, yres / 4 + 20,
 			  "Touch crosshair to calibrate", 2);
 
