@@ -293,8 +293,10 @@ static int check_fd(struct tslib_input *i)
 	    !(absbit[BIT_WORD(ABS_MT_SLOT)] & BIT_MASK(ABS_MT_SLOT)))
 		i->type_a = 1;
 
+	/* for multitouch type B, tracking id is enough for pen down/up. type A
+	 * has pen down/up through the list of (empty) SYN_MT_REPORT */
 	if (!(keybit[BIT_WORD(BTN_TOUCH)] & BIT_MASK(BTN_TOUCH) ||
-	      keybit[BIT_WORD(BTN_LEFT)] & BIT_MASK(BTN_LEFT)) && i->type_a != 1) {
+	      keybit[BIT_WORD(BTN_LEFT)] & BIT_MASK(BTN_LEFT)) && i->mt != 1) {
 		fprintf(stderr,
 			"tslib: Selected device is not a touchscreen (missing BTN_TOUCH or BTN_LEFT)\n");
 		return -1;
