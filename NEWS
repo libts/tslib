@@ -5,6 +5,7 @@ This release includes libts version 0.7.1 and the following changes:
 
 This release includes the following bugfixes:
 * ff8c7d9 use dlfcn.h dynamic loading function only if libdl is available
+* d39d358 input-raw: fix multitouch devices without BTN_TOUCH
 
 
 ## tslib 1.10
