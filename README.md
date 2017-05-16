@@ -93,11 +93,15 @@ Calibration is done by the `linear` plugin, which uses it's own config file
 The calibration procedure simply requires you to touch the cross on screen,
 where is appears, as accurate as possible.
 
+![ts_calibrate](doc/screenshots/ts_calibrate.png?raw=true)
+
 ### test the filtered input behaviour
 You may quickly test the touch behaviour that results from the configured
 filters, using [`ts_test_mt`](https://manpages.debian.org/unstable/libts0/ts_test_mt.1.en.html):
 
     # ts_test_mt
+
+![ts_test_mt](doc/screenshots/ts_test_mt.png?raw=true)
 
 ### use the filtered result in your system (X.org method)
 If you're using X.org graphical X server, things should be very easy. Install
