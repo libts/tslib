@@ -1,0 +1,370 @@
+2006-08-16 Chris Larson <clarson@kergoth.com>
+
+	* plugins/collie.c,plugins/corgi.c: Apply patch from Richard Purdie to
+	  fix the microseconds field of the timeval struct, as it was
+	  inadvertantly holding milliseconds.
+
+2005-03-01 Chris Larson <kergoth@handhelds.org>
+
+	* src/tslib-filter.h: BUGFIX: make the symbol used by the plugins,
+	  tslib_parse_vars, visible.
+
+2005-02-28 Chris Larson <kergoth@handhelds.org>
+
+	* tslib.pc.in: Add pkg-config file for tslib.
+	* configure.ac, Makefile.am: Create tslib-$LT_RELEASE.pc, and install
+	  it into the correct place.  Also change the AC_INIT 'PACKAGE' from
+	  libts to tslib.  Bump the LT_REVISION, since libts has changed a fair
+	  bit now, in preparation for the 1.0.0 release.
+	* .cvsignore: Add *.pc to CVS ignore.
+
+	* m4/internal/visibility.m4, src/Makefile.am, plugins/Makefile.am:
+	  Fixup the visibility macros to set VIS_CFLAGS and VIS_CXXFLAGS, so
+	  we can choose to use the visibility flags for the core lib and
+	  plugins, but not the test apps, as the gains would be nonexistant
+	  there.
+
+2005-02-25 Chris Larson <kergoth@handhelds.org>
+
+	* AUTHORS: Add self to AUTHORS file.
+	* configure.in: Deleted.
+	* configure.ac: Bump version passed to AC_INIT, set my email address
+	  as the contact point for the time being.
+
+2005-02-16 Michael Opdenacker <michaelo@handhelds.org>
+
+	* configure.ac, plugins/Makefile.am, plugins/linear-h2200.c: Add
+	  tslib plugin to linearly scale touchscreen values for the HP iPAQ
+	  h22xx.
+
+2004-12-14 Chris Larson <kergoth@handhelds.org>
+
+	* Files all over the tree: Apply patch to add support for using
+	  the new gcc symbol visibility features that are available
+	  in gcc 4.0 (and patched 3.4.x).  Also import a few m4 macros
+	  and general buildsystem updates to facilitate automatic use of
+	  gcc visibility if it's supported.
+
+2004-11-22 Holger Freyther <zecke@handhelds.org>
+
+	* plugins/dejitter.c: Sometimes after ts_open/ts_close/ts_open on
+	  the first sample(s) dejitter will crash.  memset the tslib_dejitter
+	  structure with zeros so djt->nr's value isn't undefined.
+
+2004-10-19 Chris Larson <kergoth@handhelds.org>
+
+	* Files all over the tree: Fixed up a bunch of compile warnings,
+	  at least some of which actually did cause breakage for the user.
+
+2004-07-08 Chris Larson <kergoth@handhelds.org>
+
+	* plugins/input-raw.c: As EV_SYN can be checked for at runtime rather
+	  than build time, #define it when compiling against kernel headers
+	  that do not define it (2.4).
+
+2004-01-26 Andrew Zabolotny <zap@homelink.ru>
+
+	* README: Updated documentation on module parameters.
+	* plugins/linear.c: Removed the bogus noxyswap parameter.
+
+2004-06-14  Chris Larson  <kergoth@handhelds.org>
+
+	* src/ts_read_raw.c: Fix bug hit by me and identified by Phil
+	  related to the way we call the raw read functions.
+	* src/input-raw.c (ts_input_read): Rename function, call out
+	  check_fd to confirm sanity of this inputdevice, make EV_SYN
+	  decision at runtime.
+	* src/input-raw.c (check_fd): Rework a bit, and check for EV_SYN
+	  event availability.
+	* src/input-raw.c (mod_init): Switch from static to vars in our
+	  malloced tslib_module_info based structure.
+	* src/input-raw.c (ts_input_fini): New function.  Free malloced structure.
+	* etc/ts.conf: Add commented module_raw entry for 'input'.
+	* src/ts_config.c: Abort and warn when no raw modules were loaded.
+	* plugins/*.c: Use C99 initializers.
+
+2004-06-11  Philip Blundell  <philb@gnu.org>
+
+	* plugins/variance.c (variance_read): Also clear VAR_LASTVALID on
+	  pen up events.
+
+2004-06-09  Chris Larson  <kergoth@handhelds.org>
+
+	* plugins/Makefile.am: Ensure plugins get installed.
+	* plugins/input-raw.c: Watch for a BTN_TOUCH input key event,
+	  to use it as an indication of pen release.
+
+2004-06-09  Glenn McGrath  <glennm@hydrix.com>
+	* input-raw.c:
+	  - Rewrite !EV_SYN section.
+	  - Never return -1, causes cursor flicker in kdrive xserver.
+	  - Handle partial reads without throwing out data.
+	  - Run through indent.
+	  - Simplify.
+	* ts_config.c:
+	  - Optimize to save some space.
+	  - Fix long line check, they dont always end '\n'.
+	  - Report the name of modules that wont load.
+	* configure.ac:
+	  - Allow default plugindir to be set by configure.
+
+2004-06-08  Philip Blundell  <philb@gnu.org>
+
+	Patch from Glenn McGrath <bug1@iinet.net.au>
+	* configure.in: Renamed to ...
+	* configure.ac: ... this.  Use AM_CONDITIONAL to enable plugins.
+	  Fix confusion between input and arctic2 drivers.  Install plugins
+	  into ${libdir}/ts, not ${libdir}/ts/plugins.
+	* plugins/Makefile.am: Keep in step with AM_CONDITIONAL changes.
+
+2004-06-07  Philip Blundell  <philb@gnu.org>
+
+	* plugins/input-raw.c: Fix compilation errors.
+	* src/tslib-private.h: Remove #ifdef USE_INPUT_API block.
+	* configure.in: Enable input plugin if requested.
+
+2004-06-06  Philip Blundell  <philb@gnu.org>
+
+	* tests/Makefile.am (ts_test_SOURCES, ts_calibrate_SOURCES,
+	  ts_harvest_SOURCES): Add fbutils.h and font.h.
+	  (ts_calibrate_SOURCES, ts_harvest_SOURCES): Add testutils.h as
+	  well.
+
+	* src/ts_open.c (ts_open): Remove INPUT_API stuff.
+	* src/ts_read_raw_module.c: Deleted.
+	* src/Makefile.am (libts_la_SOURCES): Remove ts_read_raw_module.c.
+	* plugins/input-raw.c: New file.
+	* plugins/Makefile.am (EXTRA_LTLIBRARIES): Add input.la.
+	* configure.in: Remove --enable-input-api option.
+	  (PLUGIN_DIR): Place under ${libdir}, not ${datadir}.
+
+2004-06-04  Philip Blundell  <philb@gnu.org>
+
+	* src/ts_config.c (ts_config): Increase size of line buffer.
+
+	* plugins/variance.c (variance_read): Correct test of return value
+	  from ->read method.
+
+2004-05-10 Michael Opdenacker <michaelo@handhelds.org>
+
+	* src/tslib.h: removed the obsolete comment that ts_fd is not implemented yet
+
+	* tests/testutils.c: new file, containing the getxy function,
+	  previously in tests/ts_calibrate.c
+
+	* tests/testutils.h: corresponding include file
+
+	* tests/ts_calibrate.c: moved getxy, sort_by_x and sort_by_y functions
+	  to tests/testutils.c
+
+	* tests/ts_harvest.c: new program to harvest hundreds
+	  of raw coordinates for non linear touchscreens
+	  (as found in the h2200 devices, for example)
+
+	* tests/Makefile.am: added ts_harvest.c and testutils.c
+
+	* tests/ts_test.c: now tells the name of the touchscreen device file
+	  when it fails to open it.
+
+	* src/ts_config.c: added missing \n at the end of
+	  "option `%s' not recognised" and "line too long" error messages.
+	  Also made the error message clearer by giving the config file
+	  name and telling that the number is a line number.
+
+	* src/ts_config.c: fixed the code testing blank lines
+	  which didn't work for me.
+
+2004-01-29 Chris Larson <kergoth@handhelds.org>
+
+	* Make all the actual hardware access methods (minus input) individual
+	  module_raw tslib modules.  Remove reference to TSLIB_TSEVENTTYPE from
+	  README, and update etc/ts.conf to include commented out entries for
+	  the various module_raw modules.
+
+2004-01-26 Andrew Zabolotny <zap@homelink.ru>
+
+	* src/ts_read_raw_module.c: Added EV_SYN support for kernels >2.5.x.
+	  This makes the touchscreen event boundary detection 100% correct
+	  and removes the need for tricky assumptions tslib had to do until
+	  now. If the EV_SYN macro is not defined, the old algorithm is
+	  enabled instead.
+
+	* plugins/variance.c: Rewrote almost from scratch the variance filter.
+	  The old variance filter made the input very sluggish because it
+	  lets out only one of every four input samples. Now it generates
+	  approximatively 1:1 output, except that it filters out what it
+	  thinks are "noise" samples.
+
+	* plugins/dejitter.c: Rewrote almost from scratch the dejitter filter.
+	  Now it just applies a weighted smoothing algorithm with most weight
+	  in most recent samples; this leaves touchscreen input responsive and
+	  still smooths out jitter.
+
+	* tests/fbutilc.c: Improved a lot; added line drawing, rectangle
+	  drawing and filled rectangle drawing, support for up to 256
+	  user-defined colors.
+
+	* tests/ts_test.c, tests/ts_calibrate.c: Update to take advantage of
+	  the improved functionality of fbutils.c. The ts_test tool now has
+	  a "drag" (old behaviour) and "draw" mode (the pen leaves a trace on
+	  the screen).
+
+2003-11-01 Chris Larson <kergoth@handhelds.org>
+
+	* plugins/pthres.c, plugins/Makefile.am, configure.in: Added pressure
+	  threshold tslib plugin, which is used to ensure that the release
+	  event's pressure is 0.
+
+	* plugins/variance.c, plugins/dejitter.c: Removed pressure threshold
+	  handling from plugins, now that pthres is handling it.
+
+	* etc/ts.conf: Updated default ts.conf per changes due to pthres.
+
+2003-08-05 Chris Larson <kergoth@handhelds.org>
+
+	* Updated README documentation.  Added information on what the various
+	  TSLIB environment variables do, and information on a guideline for
+	  tslib filter module creators.
+
+2003-07-31 Chris Larson <kergoth@handhelds.org>
+
+	* Corrected some issues with automake usage, which included changing
+	  references of CFLAGS to AM_CFLAGS where necessary.
+
+2003-03-12 Chris Larson <kergoth@handhelds.org>
+
+	* Add a raw module linked list, connected to the primary list, to
+	  facilitate tslib modules affecting ts_read_raw behavior.
+
+2003-03-04 Douglas Lowder <dlowder@earthlink.net>
+
+	* Added support for COLLIE and CORGI event types (thanks to Chris Larson
+	  of the OpenZaurus project)
+
+2003-03-03 Douglas Lowder <dlowder@earthlink.net>
+
+	* Fixed segfault bug in src/ts_parse_args.c
+
+2002-11-08  Douglas Lowder <dlowder@earthlink.net>
+
+	* Added patch from Scott Anderson to improve tests/ts_calibrate.c by taking
+	  median of multiple samples for each point.
+
+2002-08-29  Douglas Lowder <dlowder@earthlink.net>
+
+	* Added tests/ts_print_raw.c to print raw uncalibrated touchscreen events
+	  (useful for debugging)
+
+2002-07-11  Douglas Lowder <dlowder@earthlink.net>
+
+	* Added code in src/ts_read_raw.c to handle reading events from the mk712
+	  touchscreen driver on the Hitachi Webpad.
+
+	* Fixed a bug in plugins/linear.c (incorrect default calibration in
+	  absence of /etc/pointercal)
+
+2002-07-10  Douglas Lowder <dlowder@earthlink.net>
+
+	* Added a patch by Holger Schurig <h.schurig@mn-logistik.de> to fix
+	  issues encountered on an Accelent PXA250 board.  The patch is against
+	  tests/ts_calibrate.c.  Among other things, it removes the extra event
+	  that was being read before the first crosshair is painted.
+
+	* Modified the code in plugins/dejitter.c to guarantee that the "release"
+	  touchscreen event (event with pressure=0 that occurs when the pointer is
+	  lifted from the screen) has the same xy position as the preceding event.
+	  This eliminates the cursor "jumping" that can occur otherwise.
+
+	* Fixed a bug in src/ts_read_raw.c that caused segfaults if TSLIB_TSEVENTTYPE
+	  was not defined in the environment.
+
+2002-07-05  Douglas Lowder <dlowder@earthlink.net>
+
+	* libts.so now handles both UCB1x00 and H3600 type touchscreen events.  Default
+	  is UCB1x00; H3600 is selected by setting environment variable
+	  TSLIB_TSEVENTTYPE to the value "H3600".
+
+	* With the above change, generation of libtsipaq.so is no longer required,
+	  and it has been removed.
+
+2002-07-03  Douglas Lowder <dlowder@earthlink.net>
+
+	* Added back the code to open the virtual console (works if device file chosen
+	  correctly).
+
+	* Made the console device and framebuffer device configurable for ts_calibrate
+	  and ts_test: new environment variables defined.
+	  TSLIB_FBDEVICE (defaults to /dev/fb0)
+	  TSLIB_CONSOLEDEVICE (defaults to /dev/tty)
+
+	  On a system using devfs, the above should be set to /dev/fb/0 and /dev/vc/,
+	  respectively.
+
+2002-07-01  Douglas Lowder <dlowder@earthlink.net>
+
+	* Fixes to make this code work better on targets with framebuffers that have
+	  more than 8 bits per pixel (changes to tests/fbutils.c):
+	  * Removed the code that attempts to change colormap
+	  * Temporarily commented out the code that opens /dev/tty1 (does not work on all targets)
+
+	* Fixed the test program so that the crosshair is drawn XORed with the text on the screen,
+	  so the text is not corrupted when the crosshair moves over it. (tests/fbutils.c)
+
+	* Made the code much more configurable by adding checks for environment variables:
+	  TSLIB_CALIBFILE -- location of calibration file for linear plugin (default: /etc/pointercal)
+	  TSLIB_CONFFILE -- location of configuration file (default: /usr/local/etc/ts.conf)
+	  TSLIB_PLUGINDIR -- location of plugins (default: /usr/local/share/ts/plugins)
+	  TSLIB_TSDEVICE -- Name of touchscreen device file if not using input API (default: /dev/touchscreen/ucb1x00)
+
+	* Added new file, src/ts_read_raw_ipaq.c, to make code work with the h3600_ts driver
+	  on the Compaq iPAQ.  This creates a new library, libtsipaq.so, that should replace
+	  the default libts.so if using this code on an iPAQ.
+
+2002-06-19  Douglas Lowder <dlowder@earthlink.net>
+
+	* Fixed a problem that caused tslib_parse_vars() (src/ts_parse_vars.c) to not
+	  read parameters correctly from the ts.conf file.
+
+	* Made modifications to simplify and improve the performance of the dejitter filter
+	  (plugins/dejitter.c).
+
+	* Added the configure script and Makefile.in files, plus other files generated by
+	  autogen.sh, so that only "configure" needs to be run before running "make".
+	  If a user wishes to rerun the automake and autoconf steps, run "autogen-clean.sh"
+	  and then "autogen.sh".
+
+2002-06-17  Douglas Lowder <dlowder@earthlink.net>
+
+	* I added a simple script, autogen-clean.sh, to make it easier to change configure.in
+	  and regenerate configure scripts and Makefiles.
+
+	* I made modifications so that npitre's new input API code is now wrapped in
+	  #ifdef USE_INPUT_API.  Added a new configure flag, --enable-inputapi, which
+	  is turned on by default, and which adds -DUSE_INPUT_API to CFLAGS in all the
+	  Makefiles.  --disable-inputapi will return the code to its original behavior
+	  of opening /dev/touchscreen/ucb1x00 and reading events directly.
+
+	* I modified plugins/linear.c so that it determines the full linear transformation
+	  between touchscreen and framebuffer coordinate systems.  This method not only
+	  rescales and offsets the coordinates correctly, but also automatically takes care
+	  of rotation or tilt between the coordinate systems, and automatically takes care
+	  of cases where X and Y are interchanged.  Therefore, the xyswap parameter is
+	  no longer required or used.
+
+	* I found the framebuffer code in tests/ts_calibrate.c and tests/ts_test.c to be
+	  broken, and fixed it so it works correctly (used ADS GraphicsClient+ and an Intel
+	  DBPXA250 (Lubbock) Xscale target for testing).
+	  Since there was a lot of duplication, I extracted all the framebuffer specific stuff
+	  to new files fbutils.c and fbutils.h, so it will be easier to add more framebuffer
+	  tests in future if desired.  I also extract a couple of fonts and wrote simple text
+	  printing code so text messages can be displayed in ts_test and ts_calibrate.
+
+	* I added a new configure flag, --enable-debug, which is turned off by default.  When
+	  enabled, it adds -g -ggdb -DDEBUG to CFLAGS in all the Makefiles.  I have debug
+	  print statements in ts_read_raw and in the plugins that are wrapped with #ifdef DEBUG --
+	  this way I can see how many events are being filtered away and get a better idea
+	  of what the filters are doing.
+
+	* Joanne Woo <jwoo@mvista.com> added C++ wrappers to the header files so this library
+	  can be safely used with C++ code.
+
