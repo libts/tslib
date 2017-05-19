@@ -45,6 +45,7 @@ static int32_t bytes_per_pixel;
 static uint32_t transp_mask;
 static uint32_t colormap[256];
 uint32_t xres, yres;
+int8_t rotation;
 
 static char *defaultfbdevice = "/dev/fb0";
 static char *defaultconsoledevice = "/dev/tty";
@@ -134,8 +135,16 @@ int open_framebuffer(void)
 		close(fb_fd);
 		return -1;
 	}
-	xres = var.xres;
-	yres = var.yres;
+	if (rotation & 1) {
+		/* 1 or 3 */
+		y = var.yres;
+		yres = var.xres;
+		xres = y;
+	} else {
+		/* 0 or 2 */
+		xres = var.xres;
+		yres = var.yres;
+	}
 
 	fbuffer = mmap(NULL, fix.smem_len, PROT_READ | PROT_WRITE, MAP_FILE | MAP_SHARED, fb_fd, 0);
 	if (fbuffer == (unsigned char *)-1) {
@@ -162,7 +171,6 @@ void close_framebuffer(void)
 	munmap(fbuffer, fix.smem_len);
 	close(fb_fd);
 
-
 	if(strcmp(consoledevice,"none")!=0) {
 		if (ioctl(con_fd, KDSETMODE, KD_TEXT) < 0)
 			perror("KDSETMODE");
@@ -175,6 +183,10 @@ void close_framebuffer(void)
 	}
 
 	free (line_addr);
+
+	xres = 0;
+	yres = 0;
+	rotation = 0;
 }
 
 void put_cross(int32_t x, int32_t y, uint32_t colidx)
@@ -271,6 +283,25 @@ void setcolor(uint32_t colidx, uint32_t value)
         colormap [colidx] = res;
 }
 
+static void __pixel_loc(int32_t x, int32_t y, union multiptr *loc)
+{
+	switch (rotation) {
+	case 0:
+	default:
+		loc->p8 = line_addr[y] + x * bytes_per_pixel;
+		break;
+	case 1:
+		loc->p8 = line_addr[x] + (yres - y - 1) * bytes_per_pixel;
+		break;
+	case 2:
+		loc->p8 = line_addr[yres - y - 1] + (xres - x - 1) * bytes_per_pixel;
+		break;
+	case 3:
+		loc->p8 = line_addr[xres - x - 1] + y * bytes_per_pixel;
+		break;
+	}
+}
+
 static inline void __setpixel (union multiptr loc, uint32_t xormode, uint32_t color)
 {
 	switch(bytes_per_pixel) {
@@ -316,8 +347,8 @@ void pixel (int32_t x, int32_t y, uint32_t colidx)
 	uint32_t xormode;
 	union multiptr loc;
 
-	if ((x < 0) || ((uint32_t)x >= var.xres_virtual) ||
-	    (y < 0) || ((uint32_t)y >= var.yres_virtual))
+	if ((x < 0) || ((uint32_t)x >= xres) ||
+	    (y < 0) || ((uint32_t)y >= yres))
 		return;
 
 	xormode = colidx & XORMODE;
@@ -331,7 +362,7 @@ void pixel (int32_t x, int32_t y, uint32_t colidx)
 	}
 #endif
 
-	loc.p8 = line_addr [y] + x * bytes_per_pixel;
+	__pixel_loc(x, y, &loc);
 	__setpixel (loc, xormode, colormap [colidx]);
 }
 
@@ -426,9 +457,9 @@ void fillrect (int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colidx)
 	colidx = colormap [colidx];
 
 	for (; y1 <= y2; y1++) {
-		loc.p8 = line_addr [y1] + x1 * bytes_per_pixel;
+		__pixel_loc(x1, y1, &loc);
 		for (tmp = x1; tmp <= x2; tmp++) {
-			__setpixel (loc, xormode, colidx);
+			__setpixel(loc, xormode, colidx);
 			loc.p8 += bytes_per_pixel;
 		}
 	}
