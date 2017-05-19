@@ -598,7 +598,8 @@ int main(int argc, char **argv)
 			break;
 
 		default:
-			break;
+			help();
+			return 0;
 		}
 
 		if (errno) {

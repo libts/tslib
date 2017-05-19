@@ -157,7 +157,7 @@ int main(int argc, char **argv)
 
 		default:
 			help();
-			break;
+			return 0;
 		}
 
 		if (errno) {

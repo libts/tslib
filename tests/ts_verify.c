@@ -481,7 +481,7 @@ int main(int argc, char **argv)
 
 		default:
 			usage(argv);
-			break;
+			return 0;
 		}
 
 		if (errno) {
