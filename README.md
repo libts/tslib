@@ -11,7 +11,8 @@ _use it_ in your environment. There's a [short introductory presentation from 20
 
 ## contact
 If you have problems, questions, ideas or suggestions, please contact us by
-posting to [our mailing list](http://lists.infradead.org/mailman/listinfo/tslib).
+writing an email to [tslib@lists.infradead.org](mailto:tslib@lists.infradead.org),
+which is [our mailing list](http://lists.infradead.org/mailman/listinfo/tslib).
 
 ## website
 Visit the [tslib website](http://tslib.org) for an overview of the project.
