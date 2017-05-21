@@ -357,10 +357,11 @@ would be achieved by the following ts.conf:
 while you are free to play with the parameter values.
 
 ### screen rotation
-ts_calibrate and ts_test_mt support rotating the screen for input, see
+The graphical tools support rotating the screen, see
 `ts_calibrate --help` or the man pages for the details. Note that this _only_
 rotates the framebuffer output. Rotating the input samples is a different task
-that has to be done by the linear filter module (re-calibrating).
+that has to be done by the linear filter module (re-calibrating or re-loading
+with different parameters).
 
 ***
 
