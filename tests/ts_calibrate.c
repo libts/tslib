@@ -190,7 +190,7 @@ static void help(void)
 	printf("                       2 ... upside down orientation; 180 degrees\n");
 	printf("                       3 ... counterclockwise orientation; 270 degrees\n");
 	printf("\n");
-	printf("Example (Linux): ts_test_mt -r $(cat /sys/class/graphics/fbcon/rotate)\n");
+	printf("Example (Linux): ts_calibrate -r $(cat /sys/class/graphics/fbcon/rotate)\n");
 	printf("\n");
 }
 
