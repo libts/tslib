@@ -39,7 +39,10 @@ static unsigned char **line_addr;
 static int fb_fd=0;
 static int bytes_per_pixel;
 static unsigned colormap [256];
+
+/* extern */
 uint32_t xres, yres;
+int8_t rotation;
 
 static char *defaultfbdevice = "/dev/fb0";
 static char *fbdevice = NULL;
@@ -71,8 +74,16 @@ int open_framebuffer(void)
 		return -1;
 	}
 
-	xres = fb.fb_width;
-	yres = fb.fb_height;
+	if (rotation & 1) {
+		/* 1 or 3 */
+		y = fb.fb_height;
+		yres = fb.fb_width;
+		xres = y;
+	} else {
+		/* 0 or 2 */
+		xres = fb.fb_width;
+		yres = fb.fb_height;
+	}
 
 	int pagemask = getpagesize() - 1;
 	fbsize = ((int) line_length*yres + pagemask) & ~pagemask;
@@ -187,6 +198,25 @@ void setcolor(unsigned colidx, unsigned value)
         colormap [colidx] = res;
 }
 
+static void __pixel_loc(int32_t x, int32_t y, union multiptr *loc)
+{
+	switch (rotation) {
+	case 0:
+	default:
+		loc->p8 = line_addr[y] + x * bytes_per_pixel;
+		break;
+	case 1:
+		loc->p8 = line_addr[x] + (yres - y - 1) * bytes_per_pixel;
+		break;
+	case 2:
+		loc->p8 = line_addr[yres - y - 1] + (xres - x - 1) * bytes_per_pixel;
+		break;
+	case 3:
+		loc->p8 = line_addr[xres - x - 1] + y * bytes_per_pixel;
+		break;
+	}
+}
+
 static inline void __setpixel (union multiptr loc, unsigned xormode, unsigned color)
 {
 	switch(bytes_per_pixel) {
@@ -243,7 +273,7 @@ void pixel (int x, int y, unsigned colidx)
 	}
 #endif
 
-	loc.p8 = line_addr [y] + x * bytes_per_pixel;
+	__pixel_loc(x, y, &loc);
 	__setpixel (loc, xormode, colormap [colidx]);
 }
 
@@ -322,8 +352,8 @@ void fillrect (int x1, int y1, int x2, int y2, unsigned colidx)
 	colidx = colormap [colidx];
 
 	for (; y1 <= y2; y1++) {
-		loc.p8 = line_addr [y1] + x1 * bytes_per_pixel;
 		for (tmp = x1; tmp <= x2; tmp++) {
+			__pixel_loc(x1, y1, &loc);
 			__setpixel (loc, xormode, colidx);
 			loc.p8 += bytes_per_pixel;
 		}
