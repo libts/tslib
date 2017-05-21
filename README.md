@@ -30,15 +30,13 @@ Visit the [tslib website](http://tslib.org) for an overview of the project.
 tslib runs on various hardware architectures and operating systems, including GNU/Linux,
 FreeBSD or Android/Linux. See [building tslib](#building-tslib) for details.
 Apart from building the latest tarball release, running
-`./configure`, `make` and `make install`, tslib is available from the following
-distributors and their package management:
-* [Arch Linux](https://www.archlinux.org/packages/?q=tslib) / [Arch Linux ARM](https://archlinuxarm.org/packages/aarch64/tslib)
-* [Buildroot](https://buildroot.org/)
-* [Debian](https://tracker.debian.org/pkg/tslib) / [Ubuntu](https://launchpad.net/ubuntu/+source/tslib)
-* [Fedora](https://apps.fedoraproject.org/packages/tslib/)
-
-If you have X.org running, the easiest way to use tslib would be to use
-[xf86-input-tslib](https://github.com/merge/xf86-input-tslib).
+`./configure`, `make` and `make install`, tslib is available from distributors like
+[Arch Linux](https://www.archlinux.org/packages/?q=tslib) / [Arch Linux ARM](https://archlinuxarm.org/packages/aarch64/tslib),
+[Buildroot](https://buildroot.org/),
+[Debian](https://tracker.debian.org/pkg/tslib) / [Ubuntu](https://launchpad.net/ubuntu/+source/tslib),
+[Fedora](https://apps.fedoraproject.org/packages/tslib/) or
+[OpenSUSE](https://software.opensuse.org/package/tslib)
+and their package management.
 
 ### environment variables
 You only need the variables in case the following defaults don't fit:
