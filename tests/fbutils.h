@@ -15,9 +15,8 @@
 
 #ifdef __FreeBSD__
 #include <sys/stdint.h>
-typedef uint32_t __u32;
 #else
-#include <asm/types.h>
+#include <stdint.h>
 #endif
 
 /* This constant, being ORed with the color index tells the library
@@ -26,7 +25,8 @@ typedef uint32_t __u32;
  */
 #define XORMODE	0x80000000
 
-extern __u32 xres, yres;
+extern uint32_t xres, yres;
+extern int8_t rotation;
 
 int open_framebuffer(void);
 void close_framebuffer(void);
