@@ -245,13 +245,13 @@ void setcolor(uint32_t colidx, uint32_t value)
 	uint16_t red, green, blue;
 	struct fb_cmap cmap;
 
-#ifdef DEBUG
 	if (colidx > 255) {
+#ifdef DEBUG
 		fprintf (stderr, "WARNING: color index = %u, must be <256\n",
 			 colidx);
+#endif
 		return;
 	}
-#endif
 
 	switch (bytes_per_pixel) {
 	default:
@@ -354,13 +354,13 @@ void pixel (int32_t x, int32_t y, uint32_t colidx)
 	xormode = colidx & XORMODE;
 	colidx &= ~XORMODE;
 
-#ifdef DEBUG
 	if (colidx > 255) {
+#ifdef DEBUG
 		fprintf (stderr, "WARNING: color value = %u, must be <256\n",
 			 colidx);
+#endif
 		return;
 	}
-#endif
 
 	__pixel_loc(x, y, &loc);
 	__setpixel (loc, xormode, colormap [colidx]);
@@ -446,13 +446,13 @@ void fillrect (int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colidx)
 	xormode = colidx & XORMODE;
 	colidx &= ~XORMODE;
 
-#ifdef DEBUG
 	if (colidx > 255) {
+#ifdef DEBUG
 		fprintf (stderr, "WARNING: color value = %u, must be <256\n",
 			 colidx);
+#endif
 		return;
 	}
-#endif
 
 	colidx = colormap [colidx];
 
