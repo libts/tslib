@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <getopt.h>
+#include <errno.h>
 
 #include "tslib.h"
 #include "fbutils.h"
@@ -48,7 +50,24 @@ static void refresh_screen(void)
 		button_draw (&buttons [i]);
 }
 
-int main(void)
+static void help(void)
+{
+	struct ts_lib_version_data *ver = ts_libversion();
+
+	printf("tslib %s (library 0x%X)\n", ver->package_version, ver->version_num);
+	printf("\n");
+	printf("Usage: ts_test [-r <rotate_value>]\n");
+	printf("\n");
+	printf("        <rotate_value> 0 ... no rotation; 0 degree (default)\n");
+	printf("                       1 ... clockwise orientation; 90 degrees\n");
+	printf("                       2 ... upside down orientation; 180 degrees\n");
+	printf("                       3 ... counterclockwise orientation; 270 degrees\n");
+	printf("\n");
+	printf("Example (Linux): ts_test -r $(cat /sys/class/graphics/fbcon/rotate)\n");
+	printf("\n");
+}
+
+int main(int argc, char **argv)
 {
 	struct tsdev *ts;
 	int x, y;
@@ -59,6 +78,45 @@ int main(void)
 	signal(SIGSEGV, sig);
 	signal(SIGINT, sig);
 	signal(SIGTERM, sig);
+
+	while (1) {
+		const struct option long_options[] = {
+			{ "help",         no_argument,       NULL, 'h' },
+			{ "rotate",       required_argument, NULL, 'r' },
+		};
+
+		int option_index = 0;
+		int c = getopt_long(argc, argv, "hr:", long_options, &option_index);
+
+		errno = 0;
+		if (c == -1)
+			break;
+
+		switch (c) {
+		case 'h':
+			help();
+			return 0;
+
+		case 'r':
+			/* extern in fbutils.h */
+			rotation = atoi(optarg);
+			if (rotation < 0 || rotation > 3) {
+				help();
+				return 0;
+			}
+			break;
+
+		default:
+			help();
+			return 0;
+		}
+
+		if (errno) {
+			char *str = "option ?";
+			str[7] = c & 0xff;
+			perror(str);
+		}
+	}
 
 	ts = ts_setup(NULL, 0);
 	if (!ts) {
