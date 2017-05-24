@@ -384,7 +384,7 @@ Check out our tests directory for examples how to use it.
 [`ts_read_raw()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
 [`ts_read_mt()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
 [`ts_read_raw_mt()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
-`int (*ts_error_fn)(const char *fmt, va_list ap)`
+[`int (*ts_error_fn)(const char *fmt, va_list ap)`](https://manpages.debian.org/unstable/libts0/ts_error_fn.3.en.html)  
 
 
 ### ABI - Application Binary Interface

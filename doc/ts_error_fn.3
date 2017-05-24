@@ -1,0 +1,65 @@
+.\" Copyright (c) 2017, Martin Kepplinger <martink@posteo.de>
+.\"
+.\" %%%LICENSE_START(GPLv2+_DOC_FULL)
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, see
+.\" <http://www.gnu.org/licenses/>.
+.\" %%%LICENSE_END
+.\"
+.TH TS_ERROR_FN 3  "" "" "tslib"
+.SH NAME
+ts_error_fn \- use a custom error function for libts library errors
+.SH SYNOPSIS
+.nf
+.B #include <tslib.h>
+.sp
+.BI "int (*ts_error_fn)(const char *fmt, va_list ap);
+.sp
+.fi
+
+.SH DESCRIPTION
+.BR ts_error_fn ()
+is by default implemented similar like this:
+.nf
+
+static int errfn(const char *fmt, va_list ap)
+{
+        return vfprintf(stderr, fmt, ap);
+}       
+
+.fi
+inside the library. It is exposed to the user and can be replaced by a custom
+error function. Simply assign your custom implentation to
+.BR ts_error_fn
+like
+.nf
+
+ts_error_fn = my_custom_errfn;
+
+.fi
+It can be used to write the system log files, for example. The ts_print_mt test
+program has an example.
+.SH RETURN VALUE
+user defined.
+
+.SH SEE ALSO
+.BR ts_read (3),
+.BR ts_open (3),
+.BR ts_setup (3),
+.BR ts_close (3),
+.BR ts.conf (5)
