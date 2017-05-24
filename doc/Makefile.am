@@ -18,4 +18,5 @@ dist_man_MANS = \
 	ts_config.3 \
 	ts_setup.3 \
 	ts_libversion.3 \
-	ts_verify.1
+	ts_verify.1 \
+	ts_fd.3

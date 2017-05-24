@@ -378,7 +378,7 @@ Check out our tests directory for examples how to use it.
 [`ts_close()`](https://manpages.debian.org/unstable/libts0/ts_close.3.en.html)  
 [`ts_reconfig()`](https://manpages.debian.org/unstable/libts0/ts_config.3.en.html)  
 `ts_option()`  
-`ts_fd()`  
+[`ts_fd()`](https://manpages.debian.org/unstable/libts0/ts_fd.3.en.html)  
 `ts_load_module()`  
 [`ts_read()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
 [`ts_read_raw()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
