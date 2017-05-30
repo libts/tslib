@@ -145,5 +145,5 @@ TSAPI struct tslib_module_info *dmc_mod_init(struct tsdev *dev,
 }
 
 #ifndef TSLIB_STATIC_DMC_MODULE
-        TSLIB_MODULE_INIT(dmc_mod_init);
+	TSLIB_MODULE_INIT(dmc_mod_init);
 #endif
