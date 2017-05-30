@@ -61,10 +61,10 @@ static int touchkit_init(int dev)
 static int touchkit_read(struct tslib_module_info *inf, struct ts_sample *samp,
 			 __attribute__ ((unused)) int nr)
 {
-	static int initDone = 0;
+	static int initDone;
 	/* enough space for 2 "normal" packets */
 	static unsigned char buffer[BUFFER_SIZE];
-	static int pos = 0;
+	static int pos;
 	int ret;
 	struct tsdev *ts = inf->dev;
 	int p;
