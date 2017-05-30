@@ -39,8 +39,8 @@ static int pthres_read(struct tslib_module_info *info, struct ts_sample *samp,
 {
 	struct tslib_pthres *p = (struct tslib_pthres *)info;
 	int ret;
-	static int xsave = 0, ysave = 0;
-	static int press = 0;
+	static int xsave, ysave;
+	static int press;
 
 	ret = info->next->ops->read(info->next, samp, nr_samples);
 	if (ret >= 0) {
