@@ -162,9 +162,9 @@ static int get_special_device(struct tslib_input *i)
 	if (id.bustype != BUS_USB)
 		return 0;
 
-	switch(id.vendor) {
+	switch (id.vendor) {
 	case USB_VID_EGALAX:
-		switch(id.product) {
+		switch (id.product) {
 		case 0x0001:
 		/* taken from galax-raw. is this correct? */
 		case 0x7200:
@@ -174,7 +174,7 @@ static int get_special_device(struct tslib_input *i)
 			 * but to the product ID, should *really* be handled
 			 * in the kernel! They have quirks over there.
 			 */
-			switch(id.version) {
+			switch (id.version) {
 			case 0x0112:
 				i->special_device = EGALAX_VERSION_112;
 				break;
