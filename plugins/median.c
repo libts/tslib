@@ -48,8 +48,8 @@ struct median_context {
 	int				*withsamples_mt;
 	int				slots;
 	unsigned int			depth;
-	int32_t *			sorted;
-	uint32_t *			usorted;
+	int32_t				*sorted;
+	uint32_t			*usorted;
 };
 
 static int comp_int(const void *n1, const void *n2)
