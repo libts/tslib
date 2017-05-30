@@ -64,8 +64,7 @@ typedef enum {
 	Coordinates
 } TState;
 
-struct tslib_dus3000
-{
+struct tslib_dus3000 {
 	struct tslib_module_info module;
 
 	TState state;
@@ -124,7 +123,7 @@ static void dus3000_init_device(struct tslib_dus3000 *d, struct tsdev *dev)
 	// which finger(s) to accept.
 	send_command(fd, tm_setup_winxp);
 
-	switch(d->state) {
+	switch (d->state) {
 	case AdjustOffset:
 		send_command(fd, tm_adjust_offset);
 		break;
@@ -212,7 +211,8 @@ static int dus3000_read(struct tslib_module_info *m, struct ts_sample *samples, 
 						continue;
 					}
 					if (!send_command(fd, tm_calibrate_offset)) {
-						fprintf(stderr, "Calibrate offset command transmission failed!\n");
+						fprintf(stderr,
+							"Calibrate offset command transmission failed!\n");
 						continue;
 					}
 					d->state = CalibrateOffset;
@@ -230,7 +230,8 @@ static int dus3000_read(struct tslib_module_info *m, struct ts_sample *samples, 
 					}
 					// calibration done, restart coordinate transmission
 					if (!send_command(fd, tm_coordinates_on)) {
-						fprintf(stderr, "Enable coordinates command transmission failed!\n");
+						fprintf(stderr,
+							"Enable coordinates command transmission failed!\n");
 						continue;
 					}
 					d->state = Coordinates;
@@ -241,8 +242,9 @@ static int dus3000_read(struct tslib_module_info *m, struct ts_sample *samples, 
 
 				} // switch
 			} else {
-				fprintf(stderr, "DUS3000: unknown response 0x %02x %02x %02x %02x - resynchronizing!\n",
-				        d->rxBuffer[0], d->rxBuffer[1], d->rxBuffer[2], d->rxBuffer[3]);
+				fprintf(stderr,
+					"DUS3000: unknown response 0x %02x %02x %02x %02x - resynchronizing!\n",
+					d->rxBuffer[0], d->rxBuffer[1], d->rxBuffer[2], d->rxBuffer[3]);
 
 				// stop coordinate transmission, flush buffers, and re-enable
 				send_command(fd, tm_coordinates_off);
@@ -266,8 +268,7 @@ static int dus3000_fini(struct tslib_module_info *inf)
 	return 0;
 }
 
-static const struct tslib_ops dus3000_ops =
-{
+static const struct tslib_ops dus3000_ops = {
 	.read	= dus3000_read,
 	.fini	= dus3000_fini,
 };
