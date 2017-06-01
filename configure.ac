@@ -248,15 +248,15 @@ AC_SUBST([$1], ['$2'])
 ])
 
 AC_ARG_WITH(sdl,
-  [AS_HELP_STRING([--with-sdl], [enables programs using sdl])],
-  [with_sdl=$withval],
-  [with_sdl=no])
+  [AS_HELP_STRING([--with-sdl2], [enables programs using sdl])],
+  [with_sdl2=$withval],
+  [with_sdl2=no])
 
-AM_CONDITIONAL(SDL, test x"$with_sdl" = "xyes")
-if test x"$with_sdl" = "xyes" ; then
-  AC_DEFINE(HAVE_SDL,,[Use SDL.])
-  PKG_CHECK_MODULES([SDL], [sdl], [], [
-    AC_CHECK_LIB([SDL], [SDL_Init], [], [exit 1])
+AM_CONDITIONAL(SDL, test x"$with_sdl2" = "xyes")
+if test x"$with_sdl2" = "xyes" ; then
+  AC_DEFINE(HAVE_SDL2,,[Use SDL2.])
+  PKG_CHECK_MODULES([SDL2], [sdl2], [], [
+    AC_CHECK_LIB([SDL2], [SDL_Init], [], [exit 1])
   ])
 fi
 

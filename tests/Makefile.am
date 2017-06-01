@@ -41,7 +41,7 @@ bin_PROGRAMS		= ts_print ts_print_raw ts_finddev ts_print_mt
 endif
 
 ts_test_mt_sdl_SOURCES	= ts_test_mt_sdl.c
-ts_test_mt_sdl_LDADD	= $(top_builddir)/src/libts.la @SDL_LIBS@
+ts_test_mt_sdl_LDADD	= $(top_builddir)/src/libts.la @SDL2_LIBS@
 
 ts_test_SOURCES		= ts_test.c testutils.c testutils.h fbutils.h font_8x8.c font_8x16.c font.h
 ts_test_LDADD		= $(top_builddir)/src/libts.la

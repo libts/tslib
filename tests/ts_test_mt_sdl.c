@@ -1,5 +1,5 @@
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,7 +25,7 @@
 
 #include <tslib.h>
 
-const int BLOCK_SIZE = 7;
+const int BLOCK_SIZE = 9;
 
 static void help(void)
 {
@@ -61,6 +61,8 @@ int main(int argc, char **argv)
 	short verbose = 0;
 	int ret;
 	int i;
+	SDL_Window *sdlWindow;
+	SDL_Renderer *sdlRenderer;
 	SDL_Event ev;
 	SDL_Rect r;
 
@@ -152,48 +154,40 @@ int main(int argc, char **argv)
 
 	r.w = r.h = BLOCK_SIZE;
 
-	SDL_Init(SDL_INIT_VIDEO);
+	SDL_SetMainReady();
 
-	SDL_Surface *main_surface = SDL_SetVideoMode(0, 0, 0, SDL_FULLSCREEN | SDL_ANYFORMAT | SDL_DOUBLEBUF);
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+			     "Couldn't initialize SDL: %s", SDL_GetError());
+		goto out;
+	}
 
-	if (!main_surface &&
-	    !(main_surface = SDL_SetVideoMode(0, 0, 0, SDL_FULLSCREEN | SDL_ANYFORMAT | SDL_DOUBLEBUF))) {
-		puts("Failed to setup video mode. Giving up!");
-		if (samp_mt) {
-			if (samp_mt[0])
-				free(samp_mt[0]);
-
-			free(samp_mt);
-		}
-
-		return -1;
+	if (SDL_CreateWindowAndRenderer(0, 0,
+					SDL_WINDOW_FULLSCREEN_DESKTOP,
+					&sdlWindow, &sdlRenderer)) {
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+			     "Couldn't create window and renderer: %s", SDL_GetError());
+		goto out;
 	}
 
 	SDL_ShowCursor(SDL_DISABLE);
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
-	SDL_FillRect(main_surface, NULL, SDL_MapRGB(main_surface->format, 0, 0, 0));
+	SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 0, 255);
+	SDL_RenderClear(sdlRenderer);
 
 	while (1) {
 		ret = ts_read_mt(ts, samp_mt, max_slots, 1);
 		if (ret < 0) {
 			SDL_Quit();
-			if (ts)
-				ts_close(ts);
-
-			if (samp_mt) {
-				if (samp_mt[0])
-					free(samp_mt[0]);
-
-				free(samp_mt);
-			}
-
-			return 0;
+			goto out;
 		}
 
 		if (ret != 1)
 			continue;
 
-		SDL_FillRect(main_surface, NULL, SDL_MapRGB(main_surface->format, 0, 0, 0));
+		SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 0, 255);
+		SDL_RenderClear(sdlRenderer);
 
 		for (i = 0; i < max_slots; i++) {
 			if (samp_mt[0][i].valid != 1)
@@ -202,7 +196,18 @@ int main(int argc, char **argv)
 			r.x = samp_mt[0][i].x;
 			r.y = samp_mt[0][i].y;
 			r.w = r.h = BLOCK_SIZE;
-			SDL_FillRect(main_surface, &r, SDL_MapRGB(main_surface->format, 255, 255, 255));
+			SDL_SetRenderDrawColor(sdlRenderer, 255, 255, 255, 255);
+			SDL_RenderFillRect(sdlRenderer, &r);
+
+			if (verbose) {
+				printf("%ld.%06ld: (slot %d) %6d %6d %6d\n",
+					samp_mt[0][i].tv.tv_sec,
+					samp_mt[0][i].tv.tv_usec,
+					samp_mt[0][i].slot,
+					samp_mt[0][i].x,
+					samp_mt[0][i].y,
+					samp_mt[0][i].pressure);
+                        }
 		}
 
 		SDL_PollEvent(&ev);
@@ -210,20 +215,22 @@ int main(int argc, char **argv)
 			case SDL_KEYDOWN:
 			case SDL_QUIT:
 				SDL_ShowCursor(SDL_ENABLE);
+				SDL_DestroyWindow(sdlWindow);
 				SDL_Quit();
-				if (ts)
-					ts_close(ts);
-
-				if (samp_mt) {
-					if (samp_mt[0])
-						free(samp_mt[0]);
-
-					free(samp_mt);
-				}
-
-				return 0;
+				goto out;
 		}
 
-		SDL_Flip(main_surface);
+		SDL_RenderPresent(sdlRenderer);
 	}
+out:
+	if (ts)
+		ts_close(ts);
+
+	if (samp_mt) {
+		if (samp_mt[0])
+			free(samp_mt[0]);
+
+		free(samp_mt);
+	}
+	return 0;
 }
