@@ -247,8 +247,8 @@ AC_DEFINE_UNQUOTED([$1], [$2], [$3])
 AC_SUBST([$1], ['$2'])
 ])
 
-AC_ARG_WITH(sdl,
-  [AS_HELP_STRING([--with-sdl2], [enables programs using sdl])],
+AC_ARG_WITH(sdl2,
+  [AS_HELP_STRING([--with-sdl2], [enables programs using SDL2])],
   [with_sdl2=$withval],
   [with_sdl2=no])
 
