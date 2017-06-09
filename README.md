@@ -467,8 +467,6 @@ This is a complete example program, similar to `ts_print_mt.c`:
         char *tsdevice = NULL;
         struct ts_sample_mt **samp_mt = NULL;
         struct input_absinfo slot;
-        int32_t max_slots = 1;
-        unsigned short read_samples = 1;
         int ret, i, j;
 
         ts = ts_setup(tsdevice, 0);
@@ -477,16 +475,13 @@ This is a complete example program, similar to `ts_print_mt.c`:
                 return -1;
         }
 
-        max_slots = SLOTS;
-        read_samples = SAMPLES;
-
-        samp_mt = malloc(read_samples * sizeof(struct ts_sample_mt *));
+        samp_mt = malloc(SAMPLES * sizeof(struct ts_sample_mt *));
         if (!samp_mt) {
                 ts_close(ts);
                 return -ENOMEM;
         }
-        for (i = 0; i < read_samples; i++) {
-                samp_mt[i] = calloc(max_slots, sizeof(struct ts_sample_mt));
+        for (i = 0; i < SAMPLES; i++) {
+                samp_mt[i] = calloc(SLOTS, sizeof(struct ts_sample_mt));
                 if (!samp_mt[i]) {
                         free(samp_mt);
                         ts_close(ts);
@@ -495,7 +490,7 @@ This is a complete example program, similar to `ts_print_mt.c`:
         }
 
         while (1) {
-                ret = ts_read_mt(ts, samp_mt, max_slots, read_samples);
+                ret = ts_read_mt(ts, samp_mt, SLOTS, SAMPLES);
                 if (ret < 0) {
                         perror("ts_read_mt");
                         ts_close(ts);
@@ -503,7 +498,7 @@ This is a complete example program, similar to `ts_print_mt.c`:
                 }
 
                 for (j = 0; j < ret; j++) {
-                	for (i = 0; i < max_slots; i++) {
+                	for (i = 0; i < SLOTS; i++) {
 				if (samp_mt[j][i].valid != 1)
 					continue;
 
