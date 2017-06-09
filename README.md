@@ -564,7 +564,7 @@ and call `ts_read_mt()` like so
 ### shared vs. static builds
 
 libts can be built to fit your needs. Use the configure script to enable only
-the modules you need. By default, libts to build as a shared library, with
+the modules you need. By default, libts is built as a shared library, with
 each module being a shared library object itself. You can, however, configure
 tslib to build libts statically linked, and the needed modules compiled inside
 of libts. Here's an example for this:
