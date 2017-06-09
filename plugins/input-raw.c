@@ -125,6 +125,7 @@ struct tslib_input {
 	int8_t	mt;
 	int8_t	no_pressure;
 	int8_t	type_a;
+	int32_t *last_pressure;
 
 	uint16_t	special_device; /* broken device we work around, see below */
 };
@@ -290,7 +291,8 @@ static int check_fd(struct tslib_input *i)
 
 	/* remember whether we have a multitouch type A device */
 	if (i->mt && synbit[BIT_WORD(SYN_MT_REPORT)] & BIT_MASK(SYN_MT_REPORT) &&
-	    !(absbit[BIT_WORD(ABS_MT_SLOT)] & BIT_MASK(ABS_MT_SLOT)))
+	    !(absbit[BIT_WORD(ABS_MT_SLOT)] & BIT_MASK(ABS_MT_SLOT)) &&
+	    !(absbit[BIT_WORD(ABS_MT_TRACKING_ID)] & BIT_MASK(ABS_MT_TRACKING_ID)))
 		i->type_a = 1;
 
 	/* for multitouch type B, tracking id is enough for pen down/up. type A
@@ -547,6 +549,13 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 	int rd;
 	int j, k;
 	uint8_t pen_up = 0;
+	static int32_t next_trackid;
+
+	if (ts->fd != i->last_fd)
+		i->last_fd = check_fd(i);
+
+	if (i->last_fd == -1)
+		return -ENODEV;
 
 	if (i->buf == NULL || i->max_slots < max_slots || i->nr < nr) {
 		if (i->buf) {
@@ -570,13 +579,17 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 
 		i->max_slots = max_slots;
 		i->nr = nr;
+
+		if (i->type_a) {
+			i->last_pressure = calloc(max_slots, sizeof(int32_t));
+			if (!i->last_pressure) {
+				for (j = 0; j < nr; j++)
+					free(i->buf[j]);
+
+				return -ENOMEM;
+			}
+		}
 	}
-
-	if (ts->fd != i->last_fd)
-		i->last_fd = check_fd(i);
-
-	if (i->last_fd == -1)
-		return -ENODEV;
 
 	if (i->no_pressure)
 		set_pressure(i);
@@ -652,6 +665,19 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 
 						for (j = 0; j < nr; j++) {
 							for (k = 0; k < max_slots; k++) {
+								/* generate tracking id if not available */
+								if (i->type_a) {
+									if (i->buf[j][k].pressure == 0) {
+										i->buf[j][k].tracking_id = -1;
+										i->last_pressure[k] = 0;
+									} else {
+										if (i->last_pressure[k] == 0)
+											next_trackid++;
+
+										i->buf[j][k].tracking_id = next_trackid;
+									}
+								}
+
 								memcpy(&samp[j][k],
 									&i->buf[j][k],
 									sizeof(struct ts_sample_mt));
@@ -930,6 +956,9 @@ static int ts_input_fini(struct tslib_module_info *inf)
 	if (i->buf)
 		free(i->buf);
 
+	if (i->last_pressure)
+		free(i->last_pressure);
+
 	free(inf);
 
 	return 0;
@@ -995,6 +1024,7 @@ TSAPI struct tslib_module_info *input_mod_init(__attribute__ ((unused)) struct t
 	i->last_fd = -2;
 	i->type_a = 0;
 	i->special_device = 0;
+	i->last_pressure = NULL;
 
 	if (tslib_parse_vars(&i->module, raw_vars, NR_VARS, params)) {
 		free(i);
