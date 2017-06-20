@@ -578,7 +578,7 @@ The graphical test programs are not (yet) ported to all platforms though:
 #### libts and filter plugins (`module`)
 
 This is the hardware independent core part: _libts and all filter modules_ as
-_shared libraries_, build on the following operating systems.
+_shared libraries_, build on the following operating systems and probably more.
 
 * **GNU / Linux**
 * **Android / Linux**
@@ -586,7 +586,7 @@ _shared libraries_, build on the following operating systems.
 * **GNU / Hurd**
 * **Haiku**
 * **Windows**
-* Mac OS X (?)
+* **Mac OS X**
 
 #### input plugins (`module_raw`)
 
