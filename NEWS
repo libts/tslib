@@ -1,3 +1,10 @@
+tslib 1.12 - tbd
+================================
+
+This release includes the following bugfixes:
+* 74f527e configure.ac: fix help text by defining only one default configuration
+
+
 tslib 1.11 - released 2017-06-06
 ================================
 
