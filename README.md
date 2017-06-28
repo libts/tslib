@@ -590,16 +590,31 @@ _shared libraries_, build on the following operating systems and probably more.
 
 #### input plugins (`module_raw`)
 
-This makes the thing usable in the read world because it accesses your device.
-See our configure.ac or [hardware support](#touchscreen-hardware-support) for the currently
+This makes the thing usable in the real world because it accesses your device.
+See [hardware support](#touchscreen-hardware-support) for the currently
 possible configuration for your platform.
 
+The libts default configuration currently has the following input modules
+__disabled__:
+* `cy8mrln-palmpre`
+* `dmc_dus3000`
+
+Please note that this list may grow over time. If you rely on
+a particular input plugin, you should enable it explicitely. Building __all__
+supported modules for your platform should look like so:
+
 * GNU / Linux - all (most importantly `input`)
+  - `./configure.ac --enable-cy8mrln-palmpre  --enable-dmc_dus3000`
 * Android / Linux - all (most importantly `input`)
+  - `./configure.ac --enable-cy8mrln-palmpre  --enable-dmc_dus3000`
 * FreeBSD - almost all (most importantly `input`)
+  - `./configure.ac --disable-waveshare`
 * GNU / Hurd - some, see [hardware support](#touchscreen-hardware-support)
+  - `./configure.ac --disable-input --disable-galax --disable-waveshare`
 * Haiku - some, see [hardware support](#touchscreen-hardware-support)
-* Windows - non yet
+  - `./configure.ac --disable-input --disable-galax --disable-touchkit --disable-waveshare`
+* Windows - none yet
+  - `./configure.ac --disable-ucb1x00 --disable-corgi --disable-collie --disable-h3600 --disable-mk712 --disable-arctic2 --disable-tatung --disable-dmc --disable-input --disable-galax --disable-touchkit --disable-waveshare`
 
 Writing your own plugin is quite easy, in case an existing one doesn't fit.
 
