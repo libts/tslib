@@ -1,6 +1,9 @@
 tslib 1.12 - tbd
 ================================
 
+This release includes libts version 0.7.2 and the following changes:
+* Generate a tracking ID value for multitouch type A devices
+
 This release includes the following bugfixes:
 * 74f527e configure.ac: fix help text by defining only one default configuration
 
