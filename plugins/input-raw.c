@@ -645,10 +645,10 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 								i->buf[total][k].y = 0;
 								i->buf[total][k].pressure = 0;
 							}
+						}
 
 						if (pen_up)
 							pen_up = 0;
-						}
 
 						for (j = 0; j < nr; j++) {
 							for (k = 0; k < max_slots; k++) {
