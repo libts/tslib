@@ -467,8 +467,6 @@ This is a complete example program, similar to `ts_print_mt.c`:
         char *tsdevice = NULL;
         struct ts_sample_mt **samp_mt = NULL;
         struct input_absinfo slot;
-        int32_t max_slots = 1;
-        unsigned short read_samples = 1;
         int ret, i, j;
 
         ts = ts_setup(tsdevice, 0);
@@ -477,16 +475,13 @@ This is a complete example program, similar to `ts_print_mt.c`:
                 return -1;
         }
 
-        max_slots = SLOTS;
-        read_samples = SAMPLES;
-
-        samp_mt = malloc(read_samples * sizeof(struct ts_sample_mt *));
+        samp_mt = malloc(SAMPLES * sizeof(struct ts_sample_mt *));
         if (!samp_mt) {
                 ts_close(ts);
                 return -ENOMEM;
         }
-        for (i = 0; i < read_samples; i++) {
-                samp_mt[i] = calloc(max_slots, sizeof(struct ts_sample_mt));
+        for (i = 0; i < SAMPLES; i++) {
+                samp_mt[i] = calloc(SLOTS, sizeof(struct ts_sample_mt));
                 if (!samp_mt[i]) {
                         free(samp_mt);
                         ts_close(ts);
@@ -495,7 +490,7 @@ This is a complete example program, similar to `ts_print_mt.c`:
         }
 
         while (1) {
-                ret = ts_read_mt(ts, samp_mt, max_slots, read_samples);
+                ret = ts_read_mt(ts, samp_mt, SLOTS, SAMPLES);
                 if (ret < 0) {
                         perror("ts_read_mt");
                         ts_close(ts);
@@ -503,7 +498,7 @@ This is a complete example program, similar to `ts_print_mt.c`:
                 }
 
                 for (j = 0; j < ret; j++) {
-                	for (i = 0; i < max_slots; i++) {
+                	for (i = 0; i < SLOTS; i++) {
 				if (samp_mt[j][i].valid != 1)
 					continue;
 
@@ -564,7 +559,7 @@ and call `ts_read_mt()` like so
 ### shared vs. static builds
 
 libts can be built to fit your needs. Use the configure script to enable only
-the modules you need. By default, libts to build as a shared library, with
+the modules you need. By default, libts is built as a shared library, with
 each module being a shared library object itself. You can, however, configure
 tslib to build libts statically linked, and the needed modules compiled inside
 of libts. Here's an example for this:
@@ -583,7 +578,7 @@ The graphical test programs are not (yet) ported to all platforms though:
 #### libts and filter plugins (`module`)
 
 This is the hardware independent core part: _libts and all filter modules_ as
-_shared libraries_, build on the following operating systems.
+_shared libraries_, build on the following operating systems and probably more.
 
 * **GNU / Linux**
 * **Android / Linux**
@@ -591,20 +586,35 @@ _shared libraries_, build on the following operating systems.
 * **GNU / Hurd**
 * **Haiku**
 * **Windows**
-* Mac OS X (?)
+* **Mac OS X**
 
 #### input plugins (`module_raw`)
 
-This makes the thing usable in the read world because it accesses your device.
-See our configure.ac or [hardware support](#touchscreen-hardware-support) for the currently
+This makes the thing usable in the real world because it accesses your device.
+See [hardware support](#touchscreen-hardware-support) for the currently
 possible configuration for your platform.
 
+The libts default configuration currently has the following input modules
+__disabled__:
+* `cy8mrln-palmpre`
+* `dmc_dus3000`
+
+Please note that this list may grow over time. If you rely on
+a particular input plugin, you should enable it explicitely. Building __all__
+supported modules for your platform should look like so:
+
 * GNU / Linux - all (most importantly `input`)
+  - `./configure.ac --enable-cy8mrln-palmpre  --enable-dmc_dus3000`
 * Android / Linux - all (most importantly `input`)
+  - `./configure.ac --enable-cy8mrln-palmpre  --enable-dmc_dus3000`
 * FreeBSD - almost all (most importantly `input`)
+  - `./configure.ac --disable-waveshare`
 * GNU / Hurd - some, see [hardware support](#touchscreen-hardware-support)
+  - `./configure.ac --disable-input --disable-galax --disable-waveshare`
 * Haiku - some, see [hardware support](#touchscreen-hardware-support)
-* Windows - non yet
+  - `./configure.ac --disable-input --disable-galax --disable-touchkit --disable-waveshare`
+* Windows - none yet
+  - `./configure.ac --disable-ucb1x00 --disable-corgi --disable-collie --disable-h3600 --disable-mk712 --disable-arctic2 --disable-tatung --disable-dmc --disable-input --disable-galax --disable-touchkit --disable-waveshare`
 
 Writing your own plugin is quite easy, in case an existing one doesn't fit.
 
