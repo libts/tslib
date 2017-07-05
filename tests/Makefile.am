@@ -64,12 +64,17 @@ ts_verify_LDADD		= $(top_builddir)/src/libts.la
 ts_print_raw_SOURCES	= ts_print_raw.c
 ts_print_raw_LDADD	= $(top_builddir)/src/libts.la
 
-ts_calibrate_SOURCES	= ts_calibrate.c fbutils.h testutils.c testutils.h font_8x8.c font_8x16.c font.h
+if SDL
+ts_calibrate_SOURCES	= ts_calibrate_sdl.c ts_calibrate.h ts_calibrate_common.c
+ts_calibrate_LDADD	= $(top_builddir)/src/libts.la @SDL2_LIBS@
+else
+ts_calibrate_SOURCES	= ts_calibrate.c ts_calibrate.h ts_calibrate_common.c fbutils.h testutils.c testutils.h font_8x8.c font_8x16.c font.h
 ts_calibrate_LDADD	= $(top_builddir)/src/libts.la
 if FREEBSD
 ts_calibrate_SOURCES	+= fbutils-bsd.c
 else
 ts_calibrate_SOURCES	+= fbutils-linux.c
+endif
 endif
 
 ts_harvest_SOURCES	= ts_harvest.c fbutils.h testutils.c testutils.h font_8x8.c font_8x16.c font.h
