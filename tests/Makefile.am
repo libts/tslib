@@ -17,31 +17,19 @@ endif
 
 if WINDOWS
 bin_PROGRAMS		= ts_print ts_print_raw ts_print_mt
-if SDL
-bin_PROGRAMS		+= ts_test_mt_sdl
-endif
 endif
 
 if LINUX
 bin_PROGRAMS		= ts_test ts_test_mt ts_calibrate ts_print ts_print_mt ts_print_raw ts_harvest ts_finddev ts_verify
-if SDL
-bin_PROGRAMS		+= ts_test_mt_sdl
-endif
 endif
 
 if FREEBSD
 bin_PROGRAMS		= ts_test ts_test_mt ts_calibrate ts_print ts_print_mt ts_print_raw ts_harvest ts_finddev
-if SDL
-bin_PROGRAMS		+= ts_test_mt_sdl
-endif
 endif
 
 if HURD
 bin_PROGRAMS		= ts_print ts_print_raw ts_finddev ts_print_mt
 endif
-
-ts_test_mt_sdl_SOURCES	= ts_test_mt_sdl.c
-ts_test_mt_sdl_LDADD	= $(top_builddir)/src/libts.la @SDL2_LIBS@
 
 ts_test_SOURCES		= ts_test.c testutils.c testutils.h fbutils.h font_8x8.c font_8x16.c font.h
 ts_test_LDADD		= $(top_builddir)/src/libts.la
@@ -51,12 +39,17 @@ else
 ts_test_SOURCES		+= fbutils-linux.c
 endif
 
+if SDL
+ts_test_mt_SOURCES	= ts_test_mt_sdl.c
+ts_test_mt_LDADD	= $(top_builddir)/src/libts.la @SDL2_LIBS@
+else
 ts_test_mt_SOURCES	= ts_test_mt.c testutils.c testutils.h fbutils.h font_8x8.c font_8x16.c font.h
 ts_test_mt_LDADD	= $(top_builddir)/src/libts.la
 if FREEBSD
 ts_test_mt_SOURCES	+= fbutils-bsd.c
 else
 ts_test_mt_SOURCES	+= fbutils-linux.c
+endif
 endif
 
 ts_print_SOURCES	= ts_print.c

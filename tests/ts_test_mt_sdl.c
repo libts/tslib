@@ -33,7 +33,7 @@ static void help(void)
 
 	printf("tslib %s (library 0x%X)\n", ver->package_version, ver->version_num);
 	printf("\n");
-	printf("Usage: ts_test_mt_sdl [-v] [-i <device>] [-j <slots>] [-r <rotate_value>]\n");
+	printf("Usage: ts_test_mt [-v] [-i <device>] [-j <slots>] [-r <rotate_value>]\n");
 	printf("\n");
 	printf("        <device>       Override the input device to use\n");
 	printf("        <slots>        Override the number of possible touch contacts\n");
@@ -44,7 +44,7 @@ static void help(void)
 	printf("                       2 ... upside down orientation; 180 degrees\n");
 	printf("                       3 ... counterclockwise orientation; 270 degrees\n");
 	printf("\n");
-	printf("Example (Linux): ts_test_mt_sdl -r $(cat /sys/class/graphics/fbcon/rotate)\n");
+	printf("Example (Linux): ts_test_mt -r $(cat /sys/class/graphics/fbcon/rotate)\n");
 	printf("\n");
 }
 
