@@ -1,5 +1,5 @@
 /*
- *  tslib/src/ts_getxy.c
+ *  tslib/src/testutils.c
  *
  *  Copyright (C) 2001 Russell King.
  *
@@ -7,8 +7,7 @@
  * COPYING for more details.
  *
  *
- * Waits for the screen to be touched, averages x and y sample
- * coordinates until the end of contact
+ * Common functions for the test programs
  */
 
 #include "config.h"
@@ -76,6 +75,8 @@ static int sort_by_y(const void* a, const void *b)
 	return (((struct ts_sample *)a)->y - ((struct ts_sample *)b)->y);
 }
 
+/* Waits for the screen to be touched, averages x and y sample
+ * coordinates until the end of contact */
 void getxy(struct tsdev *ts, int *x, int *y)
 {
 #define MAX_SAMPLES 128
