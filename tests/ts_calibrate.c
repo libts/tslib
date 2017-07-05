@@ -171,7 +171,7 @@ static void clearbuf(struct tsdev *ts)
 			break;
 
 		if (ts_read_raw(ts, &sample, 1) < 0) {
-			perror("ts_read");
+			perror("ts_read_raw");
 			exit(1);
 		}
 	}
