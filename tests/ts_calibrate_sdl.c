@@ -48,6 +48,78 @@ static void help(void)
 	printf("\n");
 }
 
+static void draw_line(SDL_Renderer *r, int32_t x1, int32_t y1, int32_t x2, int32_t y2)
+{
+	int32_t tmp;
+	int32_t dx = x2 - x1;
+	int32_t dy = y2 - y1;
+
+	if (abs(dx) < abs(dy)) {
+		if (y1 > y2) {
+			tmp = x1;
+			x1 = x2;
+			x2 = tmp;
+
+			tmp = y1;
+			y1 = y2;
+			y2 = tmp;
+
+			dx = -dx;
+			dy = -dy;
+		}
+
+		x1 <<= 16;
+
+		dx = (dx << 16) / dy;
+		while (y1 <= y2) {
+			SDL_RenderDrawPoint(r, x1 >> 16, y1);
+			y1 += dx;
+			y1++;
+		}
+	} else {
+		if (x1 > x2) {
+			tmp = x1;
+			x1 = x2;
+			x2 = tmp;
+
+			tmp = y1;
+			y1 = y2;
+			y2 = tmp;
+
+			dx = -dx;
+			dy = -dy;
+		}
+
+		y1 <<= 16;
+
+		dy = dx ? (dy << 16) : 0;
+		while (x1 <= x2) {
+			SDL_RenderDrawPoint(r, x1, y1 >> 16);
+			y1 += dy;
+			x1++;
+		}
+	}
+}
+
+static void draw_crosshair(SDL_Renderer *r, int32_t x, int32_t y)
+{
+	SDL_SetRenderDrawColor(r, 255, 255, 255, 255);
+	draw_line(r, x - 10, y, x - 2, y);
+	draw_line(r, x + 2, y, x + 10, y);
+	draw_line(r, x, y - 10, x, y - 2);
+	draw_line(r, x, y + 2, x, y + 10);
+
+	SDL_SetRenderDrawColor(r, 0xff, 0xe0, 0x80, 255);
+	draw_line(r, x - 6, y - 9, x - 9, y - 9);
+	draw_line(r, x - 9, y - 8, x - 9, y - 6);
+	draw_line(r, x - 9, y + 6, x - 9, y + 9);
+	draw_line(r, x - 8, y + 9, x - 6, y + 9);
+	draw_line(r, x + 6, y + 9, x + 9, y + 9);
+	draw_line(r, x + 9, y + 8, x + 9, y + 6);
+	draw_line(r, x + 9, y - 6, x + 9, y - 9);
+	draw_line(r, x + 8, y - 9, x + 6, y - 9);
+}
+
 static void get_sample(struct tsdev *ts, calibration *cal,
 		       int index, int x, int y, char *name)
 {
@@ -291,11 +363,7 @@ int main(int argc, char **argv)
 			if (samp_mt[0][i].valid != 1)
 				continue;
 
-			r.x = samp_mt[0][i].x;
-			r.y = samp_mt[0][i].y;
-			r.w = r.h = BLOCK_SIZE;
-			SDL_SetRenderDrawColor(sdlRenderer, 255, 255, 255, 255);
-			SDL_RenderFillRect(sdlRenderer, &r);
+			draw_crosshair(sdlRenderer, samp_mt[0][i].x, samp_mt[0][i].y);
 
 			if (verbose) {
 				printf("%ld.%06ld: (slot %d) %6d %6d %6d\n",
