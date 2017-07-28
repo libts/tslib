@@ -120,13 +120,87 @@ static void draw_crosshair(SDL_Renderer *r, int32_t x, int32_t y)
 	draw_line(r, x + 8, y - 9, x + 6, y - 9);
 }
 
+static int sort_by_x(const void* a, const void *b)
+{
+	return (((struct ts_sample *)a)->x - ((struct ts_sample *)b)->x);
+}
+
+static int sort_by_y(const void* a, const void *b)
+{
+	return (((struct ts_sample *)a)->y - ((struct ts_sample *)b)->y);
+}
+
+void getxy(struct tsdev *ts, int *x, int *y)
+{
+#define MAX_SAMPLES 128
+	struct ts_sample samp[MAX_SAMPLES];
+	int index, middle;
+
+	do {
+		if (ts_read_raw(ts, &samp[0], 1) < 0) {
+			perror("ts_read");
+			SDL_Quit();
+		}
+		
+	} while (samp[0].pressure == 0);
+
+	/* Now collect up to MAX_SAMPLES touches into the samp array. */
+	index = 0;
+	do {
+		if (index < MAX_SAMPLES-1)
+			index++;
+		if (ts_read_raw(ts, &samp[index], 1) < 0) {
+			perror("ts_read");
+			SDL_Quit();
+		}
+	} while (samp[index].pressure > 0);
+	printf("Took %d samples...\n",index);
+
+	/*
+	 * At this point, we have samples in indices zero to (index-1)
+	 * which means that we have (index) number of samples.  We want
+	 * to calculate the median of the samples so that wild outliers
+	 * don't skew the result.  First off, let's assume that arrays
+	 * are one-based instead of zero-based.  If this were the case
+	 * and index was odd, we would need sample number ((index+1)/2)
+	 * of a sorted array; if index was even, we would need the
+	 * average of sample number (index/2) and sample number
+	 * ((index/2)+1).  To turn this into something useful for the
+	 * real world, we just need to subtract one off of the sample
+	 * numbers.  So for when index is odd, we need sample number
+	 * (((index+1)/2)-1).  Due to integer division truncation, we
+	 * can simplify this to just (index/2).  When index is even, we
+	 * need the average of sample number ((index/2)-1) and sample
+	 * number (index/2).  Calculate (index/2) now and we'll handle
+	 * the even odd stuff after we sort.
+	 */
+	middle = index/2;
+	if (x) {
+		qsort(samp, index, sizeof(struct ts_sample), sort_by_x);
+		if (index & 1)
+			*x = samp[middle].x;
+		else
+			*x = (samp[middle-1].x + samp[middle].x) / 2;
+	}
+	if (y) {
+		qsort(samp, index, sizeof(struct ts_sample), sort_by_y);
+		if (index & 1)
+			*y = samp[middle].y;
+		else
+			*y = (samp[middle-1].y + samp[middle].y) / 2;
+	}
+}
+
 static void get_sample(struct tsdev *ts, calibration *cal,
-		       int index, int x, int y, char *name)
+		       int index, int x, int y, char *name,
+		       SDL_Renderer *r)
 {
 	static int last_x = -1, last_y;
+	SDL_Event ev;
 
 	if (last_x != -1) {
-#define NR_STEPS 10
+
+#define NR_STEPS 20
 		int dx = ((x - last_x) << 16) / NR_STEPS;
 		int dy = ((y - last_y) << 16) / NR_STEPS;
 		int i;
@@ -134,22 +208,43 @@ static void get_sample(struct tsdev *ts, calibration *cal,
 		last_x <<= 16;
 		last_y <<= 16;
 		for (i = 0; i < NR_STEPS; i++) {
-//			put_cross(last_x >> 16, last_y >> 16, 2 | XORMODE);
-			usleep(1000);
-//			put_cross(last_x >> 16, last_y >> 16, 2 | XORMODE);
+			SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
+			SDL_RenderClear(r);
+			draw_crosshair(r, last_x >> 16, last_y >> 16);
+			SDL_RenderPresent(r);
+
 			last_x += dx;
 			last_y += dy;
 		}
 	}
 
-//	put_cross(x, y, 2 | XORMODE);
-//	getxy(ts, &cal->x[index], &cal->y[index]);
-//	put_cross(x, y, 2 | XORMODE);
+	SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
+	SDL_RenderClear(r);
+	draw_crosshair(r, x, y);
+	SDL_RenderPresent(r);
+
+	getxy(ts, &cal->x[index], &cal->y[index]);
+
+	SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
+	SDL_RenderClear(r);
+	draw_crosshair(r, x, y);
+	SDL_RenderPresent(r);
 
 	last_x = cal->xfb[index] = x;
 	last_y = cal->yfb[index] = y;
 
 	printf("%s : X = %4d Y = %4d\n", name, cal->x[index], cal->y[index]);
+
+	SDL_PollEvent(&ev);
+	switch (ev.type) {
+		case SDL_KEYDOWN:
+		case SDL_QUIT:
+			SDL_ShowCursor(SDL_ENABLE);
+//			SDL_DestroyWindow(sdlWindow);
+			SDL_Quit();
+//			goto out;
+	}
+
 }
 
 static void clearbuf(struct tsdev *ts)
@@ -181,16 +276,12 @@ static void clearbuf(struct tsdev *ts)
 int main(int argc, char **argv)
 {
 	struct tsdev *ts;
-	int32_t max_slots = 1;
 	const char *tsdevice = NULL;
-	struct ts_sample_mt **samp_mt = NULL;
 	short verbose = 0;
 	int ret;
 	int i;
 	SDL_Window *sdlWindow;
 	SDL_Renderer *sdlRenderer;
-	SDL_Event ev;
-	SDL_Rect r;
 	calibration cal = {
 		.x = { 0 },
 		.y = { 0 },
@@ -255,20 +346,6 @@ int main(int argc, char **argv)
 		return errno;
 	}
 
-	samp_mt = malloc(sizeof(struct ts_sample_mt *));
-	if (!samp_mt) {
-		ts_close(ts);
-		return -ENOMEM;
-	}
-	samp_mt[0] = calloc(max_slots, sizeof(struct ts_sample_mt));
-	if (!samp_mt[0]) {
-		free(samp_mt);
-		ts_close(ts);
-		return -ENOMEM;
-	}
-
-	r.w = r.h = BLOCK_SIZE;
-
 	SDL_SetMainReady();
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -302,15 +379,15 @@ int main(int argc, char **argv)
 	/* Clear the buffer */
 	clearbuf(ts);
 
-	get_sample(ts, &cal, 0, 50,        50,        "Top left");
+	get_sample(ts, &cal, 0, 50,        50,        "Top left", sdlRenderer);
 	clearbuf(ts);
-	get_sample(ts, &cal, 1, xres - 50, 50,        "Top right");
+	get_sample(ts, &cal, 1, xres - 50, 50,        "Top right", sdlRenderer);
 	clearbuf(ts);
-	get_sample(ts, &cal, 2, xres - 50, yres - 50, "Bot right");
+	get_sample(ts, &cal, 2, xres - 50, yres - 50, "Bot right", sdlRenderer);
 	clearbuf(ts);
-	get_sample(ts, &cal, 3, 50,        yres - 50, "Bot left");
+	get_sample(ts, &cal, 3, 50,        yres - 50, "Bot left", sdlRenderer);
 	clearbuf(ts);
-	get_sample(ts, &cal, 4, xres / 2,  yres / 2,  "Center");
+	get_sample(ts, &cal, 4, xres / 2,  yres / 2,  "Center", sdlRenderer);
 
 	if (perform_calibration (&cal)) {
 		printf("Calibration constants: ");
@@ -346,57 +423,9 @@ int main(int argc, char **argv)
 		i = -1;
 	}
 
-	while (1) {
-		ret = ts_read_mt(ts, samp_mt, max_slots, 1);
-		if (ret < 0) {
-			SDL_Quit();
-			goto out;
-		}
-
-		if (ret != 1)
-			continue;
-
-		SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 0, 255);
-		SDL_RenderClear(sdlRenderer);
-
-		for (i = 0; i < max_slots; i++) {
-			if (samp_mt[0][i].valid != 1)
-				continue;
-
-			draw_crosshair(sdlRenderer, samp_mt[0][i].x, samp_mt[0][i].y);
-
-			if (verbose) {
-				printf("%ld.%06ld: (slot %d) %6d %6d %6d\n",
-					samp_mt[0][i].tv.tv_sec,
-					samp_mt[0][i].tv.tv_usec,
-					samp_mt[0][i].slot,
-					samp_mt[0][i].x,
-					samp_mt[0][i].y,
-					samp_mt[0][i].pressure);
-                        }
-		}
-
-		SDL_PollEvent(&ev);
-		switch (ev.type) {
-			case SDL_KEYDOWN:
-			case SDL_QUIT:
-				SDL_ShowCursor(SDL_ENABLE);
-				SDL_DestroyWindow(sdlWindow);
-				SDL_Quit();
-				goto out;
-		}
-
-		SDL_RenderPresent(sdlRenderer);
-	}
 out:
 	if (ts)
 		ts_close(ts);
 
-	if (samp_mt) {
-		if (samp_mt[0])
-			free(samp_mt[0]);
-
-		free(samp_mt);
-	}
 	return 0;
 }
