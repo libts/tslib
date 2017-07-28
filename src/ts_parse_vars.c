@@ -1,5 +1,5 @@
 /*
- *  tslib/src/ts_read.c
+ *  tslib/src/ts_parse_vars.c
  *
  *  Copyright (C) 2001 Russell King.
  *
@@ -7,7 +7,7 @@
  * COPYING for more details.
  *
  *
- * Read raw pressure, x, y, and timestamp from a touchscreen device.
+ * Parse modules' parameters and call their own parsing functions
  */
 #include "config.h"
 
