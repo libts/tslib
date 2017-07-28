@@ -7,7 +7,7 @@
  * COPYING for more details.
  *
  *
- * Close a touchscreen device.
+ * Share and static plugin-modules loading functions
  */
 #include "config.h"
 
