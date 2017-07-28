@@ -7,7 +7,9 @@
  * COPYING for more details.
  *
  *
- * Basic test program for touchscreen library.
+ * Graphical touchscreen calibration tool. This writes the configuration
+ * file used by tslib's "linear" filter plugin module to transform the
+ * touch samples according to the calibration.
  */
 #include <stdio.h>
 #include <stdlib.h>
