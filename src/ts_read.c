@@ -7,7 +7,7 @@
  * COPYING for more details.
  *
  *
- * Read raw pressure, x, y, and timestamp from a touchscreen device.
+ * Read touch samples as tslib sample structs
  */
 #include "config.h"
 
