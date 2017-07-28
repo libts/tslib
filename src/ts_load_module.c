@@ -111,6 +111,7 @@ static int cmp_name(const void *va, const void *vb)
 {
 	struct tslib_module_desc *a = (struct tslib_module_desc *)va;
 	struct tslib_module_desc *b = (struct tslib_module_desc *)vb;
+
 	return strcmp(a->name, b->name);
 }
 
