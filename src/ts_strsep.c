@@ -11,9 +11,9 @@ char *ts_strsep(char **stringp, const char *delim)
 	char *start = *stringp;
 	char *p;
 
-	p = (start != NULL) ? strpbrk(start, delim) : NULL;
+	p = (start) ? strpbrk(start, delim) : NULL;
 
-	if (p == NULL) {
+	if (!p) {
 		*stringp = NULL;
 	} else {
 		*p = '\0';
