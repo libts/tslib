@@ -6,7 +6,7 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
- * Read the configuration and load the appropriate drivers.
+ * Interface for setting parameters for the core library
  */
 #include "config.h"
 #include <stdarg.h>
