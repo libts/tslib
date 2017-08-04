@@ -167,6 +167,19 @@ AC_DEFINE_UNQUOTED([$1], [$2], [$3])
 AC_SUBST([$1], ['$2'])
 ])
 
+AC_ARG_WITH(sdl2,
+  [AS_HELP_STRING([--with-sdl2], [enables programs using SDL2])],
+  [with_sdl2=$withval],
+  [with_sdl2=no])
+
+AM_CONDITIONAL(SDL, test x"$with_sdl2" = "xyes")
+if test x"$with_sdl2" = "xyes" ; then
+  AC_DEFINE(HAVE_SDL2,,[Use SDL2.])
+  PKG_CHECK_MODULES([SDL2], [sdl2], [], [
+    AC_CHECK_LIB([SDL2], [SDL_Init], [], [exit 1])
+  ])
+fi
+
 # libts Library versioning
 # increment if the interface changed
 LT_CURRENT=7
