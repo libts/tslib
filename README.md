@@ -569,6 +569,13 @@ of libts. Here's an example for this:
 This should result in a `libts.a` of roughly 50 kilobytes, ready for using
 calibration (linear filter) and the infinite impulse response filter in ts.conf.
 
+### portable `ts_calibrate` and `ts_test_mt` using SDL2
+
+In case you cannot draw to the framebuffer directly, there is an __experimental__
+implentation of the necessary graphical tools using SDL2. They are more portable
+but require more resources to run. To use them, make sure you have SDL2 and the
+development headers installed and use `./configure --with-sdl2`.
+
 ### portability
 
 tslib is cross-platform; you should be able to run
