@@ -39,7 +39,6 @@ tools/ts_uinput
 tests/ts_finddev
 tests/ts_test_mt
 tests/ts_verify
-tests/ts_test_mt_sdl
 compile
 *.exe
 
