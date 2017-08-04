@@ -40,7 +40,7 @@ ts_test_SOURCES		+= fbutils-linux.c
 endif
 
 if SDL
-ts_test_mt_SOURCES	= ts_test_mt_sdl.c
+ts_test_mt_SOURCES	= ts_test_mt_sdl.c sdlutils.c sdlutils.h
 ts_test_mt_LDADD	= $(top_builddir)/src/libts.la @SDL2_LIBS@
 else
 ts_test_mt_SOURCES	= ts_test_mt.c testutils.c testutils.h fbutils.h font_8x8.c font_8x16.c font.h
@@ -65,7 +65,7 @@ ts_print_raw_SOURCES	= ts_print_raw.c
 ts_print_raw_LDADD	= $(top_builddir)/src/libts.la
 
 if SDL
-ts_calibrate_SOURCES	= ts_calibrate_sdl.c ts_calibrate.h ts_calibrate_common.c
+ts_calibrate_SOURCES	= ts_calibrate_sdl.c ts_calibrate.h ts_calibrate_common.c sdlutils.c sdlutils.h
 ts_calibrate_LDADD	= $(top_builddir)/src/libts.la @SDL2_LIBS@
 else
 ts_calibrate_SOURCES	= ts_calibrate.c ts_calibrate.h ts_calibrate_common.c fbutils.h testutils.c testutils.h font_8x8.c font_8x16.c font.h
