@@ -16,15 +16,27 @@ bin_PROGRAMS		= ts_print ts_print_raw ts_finddev ts_print_mt
 endif
 
 if WINDOWS
+if SDL
+bin_PROGRAMS		= ts_print ts_print_raw ts_print_mt ts_calibrate ts_test_mt
+else
 bin_PROGRAMS		= ts_print ts_print_raw ts_print_mt
+endif
 endif
 
 if LINUX
+if SDL
+bin_PROGRAMS		= ts_test_mt ts_calibrate ts_print ts_print_mt ts_print_raw ts_finddev ts_verify
+else
 bin_PROGRAMS		= ts_test ts_test_mt ts_calibrate ts_print ts_print_mt ts_print_raw ts_harvest ts_finddev ts_verify
+endif
 endif
 
 if FREEBSD
+if SDL
+bin_PROGRAMS		= ts_test_mt ts_calibrate ts_print ts_print_mt ts_print_raw ts_finddev
+else
 bin_PROGRAMS		= ts_test ts_test_mt ts_calibrate ts_print ts_print_mt ts_print_raw ts_harvest ts_finddev
+endif
 endif
 
 if HURD
