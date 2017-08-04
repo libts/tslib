@@ -31,8 +31,6 @@
 #include "ts_calibrate.h"
 #include "sdlutils.h"
 
-const int BLOCK_SIZE = 9;
-
 static void help(void)
 {
 	struct ts_lib_version_data *ver = ts_libversion();
@@ -55,7 +53,7 @@ static int sort_by_y(const void* a, const void *b)
 	return (((struct ts_sample *)a)->y - ((struct ts_sample *)b)->y);
 }
 
-void getxy(struct tsdev *ts, int *x, int *y)
+static void getxy(struct tsdev *ts, int *x, int *y)
 {
 #define MAX_SAMPLES 128
 	struct ts_sample samp[MAX_SAMPLES];

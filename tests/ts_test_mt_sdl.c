@@ -44,8 +44,6 @@
 #include <tslib.h>
 #include "sdlutils.h"
 
-const int BLOCK_SIZE = 9;
-
 static void help(void)
 {
 	struct ts_lib_version_data *ver = ts_libversion();
@@ -83,7 +81,6 @@ int main(int argc, char **argv)
 	SDL_Window *sdlWindow;
 	SDL_Renderer *sdlRenderer;
 	SDL_Event ev;
-	SDL_Rect r;
 
 	while (1) {
 		const struct option long_options[] = {
@@ -170,8 +167,6 @@ int main(int argc, char **argv)
 		ts_close(ts);
 		return -ENOMEM;
 	}
-
-	r.w = r.h = BLOCK_SIZE;
 
 	SDL_SetMainReady();
 
