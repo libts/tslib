@@ -39,13 +39,9 @@ static void help(void)
 
 	printf("tslib %s (library 0x%X)\n", ver->package_version, ver->version_num);
 	printf("\n");
-	printf("Usage: ts_calibrate [-v] [-i <device>] [-r <rotate_value>]\n");
+	printf("Usage: ts_calibrate [-i <device>]\n");
 	printf("\n");
 	printf("        <device>       Override the input device to use\n");
-	printf("        <rotate_value> 0 ... no rotation; 0 degree (default)\n");
-	printf("                       1 ... clockwise orientation; 90 degrees\n");
-	printf("                       2 ... upside down orientation; 180 degrees\n");
-	printf("                       3 ... counterclockwise orientation; 270 degrees\n");
 	printf("\n");
 }
 
@@ -204,7 +200,6 @@ int main(int argc, char **argv)
 {
 	struct tsdev *ts;
 	const char *tsdevice = NULL;
-	short verbose = 0;
 	int ret;
 	int i;
 	SDL_Window *sdlWindow;
@@ -224,13 +219,12 @@ int main(int argc, char **argv)
 	while (1) {
 		const struct option long_options[] = {
 			{ "help",         no_argument,       NULL, 'h' },
-			{ "verbose",      no_argument,       NULL, 'v' },
 			{ "idev",         required_argument, NULL, 'i' },
 			{ "rotate",       required_argument, NULL, 'r' },
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "hi:vr:", long_options, &option_index);
+		int c = getopt_long(argc, argv, "hi:r:", long_options, &option_index);
 
 		errno = 0;
 		if (c == -1)
@@ -240,10 +234,6 @@ int main(int argc, char **argv)
 		case 'h':
 			help();
 			return 0;
-
-		case 'v':
-			verbose = 1;
-			break;
 
 		case 'i':
 			tsdevice = optarg;
