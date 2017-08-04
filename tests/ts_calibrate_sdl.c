@@ -240,9 +240,7 @@ static void get_sample(struct tsdev *ts, calibration *cal,
 		case SDL_KEYDOWN:
 		case SDL_QUIT:
 			SDL_ShowCursor(SDL_ENABLE);
-//			SDL_DestroyWindow(sdlWindow);
 			SDL_Quit();
-//			goto out;
 	}
 
 }
@@ -292,6 +290,7 @@ int main(int argc, char **argv)
 	int cal_fd;
 	char cal_buffer[256];
 	uint32_t len;
+	SDL_DisplayMode currentDisplay;
 
 	while (1) {
 		const struct option long_options[] = {
@@ -322,7 +321,7 @@ int main(int argc, char **argv)
 			break;
 
 		case 'r':
-			/* TODO */
+			/* TODO add rotation */
 			help();
 			return 0;
 
@@ -358,7 +357,8 @@ int main(int argc, char **argv)
 					SDL_WINDOW_FULLSCREEN_DESKTOP,
 					&sdlWindow, &sdlRenderer)) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-			     "Couldn't create window and renderer: %s", SDL_GetError());
+			     "Couldn't create window and renderer: %s",
+			     SDL_GetError());
 		goto out;
 	}
 
@@ -368,11 +368,23 @@ int main(int argc, char **argv)
 	SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 0, 255);
 	SDL_RenderClear(sdlRenderer);
 
+	/* TODO add support for selecting the display */
+	if (SDL_GetNumVideoDisplays() > 1) {
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+			     "More than one display found");
+		goto out;
+	}
 
+	ret = SDL_GetCurrentDisplayMode(0, &currentDisplay);
+	if (ret) {
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+			     "Could not get display mode for display #1: %s",
+			     SDL_GetError());
+		goto out;
+	}
 
-
-	/* TODO get xres and yres */
-	xres = 800; yres = 600;
+	xres = currentDisplay.w;
+	yres = currentDisplay.h;
 
 	printf("xres = %d, yres = %d\n", xres, yres);
 
