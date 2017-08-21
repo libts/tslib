@@ -168,7 +168,7 @@ AC_SUBST([$1], ['$2'])
 ])
 
 AC_ARG_WITH(sdl2,
-  [AS_HELP_STRING([--with-sdl2], [enables programs using SDL2])],
+  [AS_HELP_STRING([--with-sdl2], [build graphical tools like ts_calibrate using SDL2])],
   [with_sdl2=$withval],
   [with_sdl2=no])
 
