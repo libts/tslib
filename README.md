@@ -110,7 +110,7 @@ configuring anything else yourself.
 
 ### use the filtered result in your system (ts_uinput method)
 This is a generic solution for Linux  - using tslib's included userspace input
-evdev driver `ts_uinput`. You need to set the `TSLIB_TSDEVICE` environment
+**evdev** driver `ts_uinput`. You need to set the `TSLIB_TSDEVICE` environment
 variable to point to your touchscreen device. But __don't__ use `/dev/input/eventX`;
 the event numbers are not persistent. Use such a udev rule:
 
@@ -124,19 +124,19 @@ application using your device. Now you can use `ts_uinput`:
 `-d` makes the program return and run as a daemon in the background. `-v` makes
 it print the __new__ `/dev/input/eventX` device node before returning.
 
-You can use *evdev* drivers now. In this case, for Qt5 for example you'd
+You can use **evdev** drivers now. For *Qt5* for example you'd
 probably set something like this:
 
     QT_QPA_GENERIC_PLUGINS=evdevtouch:/dev/input/eventX
     QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS=/dev/input/eventX:rotate=0
 
-For X11 you'd probably edit your `xorg.conf` `Section "InputDevice"` for your
+For *X11* you'd probably edit your `xorg.conf` `Section "InputDevice"` for your
 touchscreen to have
 
     Option "Device" "/dev/input/eventX"
 
-and so on. Please see your system's documentation on how to use a specific
-evdev input device.
+For *Wayland*, you'd make libinput use the new `/dev/input/eventX` and so on.
+Please see your system's documentation on how to use a specific evdev input device.
 
 Remember to set your environment and configuration for `ts_uinput`, just like you
 did for `ts_calibrate` or `ts_test_mt`.
@@ -188,6 +188,11 @@ other thing:
       #systemctl enable ts_uinput
 
   will enable it permanently.
+
+### other operating systems
+There is no tool that we know of that reads tslib samples and uses the
+[Windows touch injection API](https://msdn.microsoft.com/en-us/library/windows/desktop/hh802899(v=vs.85).aspx),
+for example (yet).
 
 
 ## filter modules
@@ -587,9 +592,8 @@ development headers installed and use `./configure --with-sdl2`.
 
 ### portability
 
-tslib is cross-platform; you should be able to run
-`./configure && make` on a large variety of operating systems.
-The graphical test programs are not (yet) ported to all platforms though:
+tslib is cross-platform; you should be able to build it on a large variety of
+operating systems.
 
 #### libts and filter plugins (`module`)
 
@@ -629,8 +633,8 @@ supported modules for your platform should look like so:
   - `./configure.ac --disable-input --disable-galax --disable-waveshare`
 * Haiku - some, see [hardware support](#touchscreen-hardware-support)
   - `./configure.ac --disable-input --disable-galax --disable-touchkit --disable-waveshare`
-* Windows - none yet
-  - `./configure.ac --disable-ucb1x00 --disable-corgi --disable-collie --disable-h3600 --disable-mk712 --disable-arctic2 --disable-tatung --disable-dmc --disable-input --disable-galax --disable-touchkit --disable-waveshare`
+* Windows - no tslib module for the [Windows touchscreen API](https://msdn.microsoft.com/en-us/library/windows/desktop/dd317323(v=vs.85).aspx) (yet)
+  - `./configure.ac --with-sdl2 --disable-ucb1x00 --disable-corgi --disable-collie --disable-h3600 --disable-mk712 --disable-arctic2 --disable-tatung --disable-dmc --disable-input --disable-galax --disable-touchkit --disable-waveshare`
 
 Writing your own plugin is quite easy, in case an existing one doesn't fit.
 
@@ -641,7 +645,7 @@ Writing your own plugin is quite easy, in case an existing one doesn't fit.
 * FreeBSD - all (?)
 * GNU / Hurd - ts_print_mt, ts_print, ts_print_raw, ts_finddev
 * Haiku - ts_print_mt, ts_print, ts_print_raw, ts_finddev
-* Windows - ts_print.exe, ts_print_raw.exe ts_print_mt.exe
+* Windows - ts_print.exe, ts_print_raw.exe ts_print_mt.exe ts_test_mt.exe ts_calibrate.exe
 
 #### download binaries?
 For GNU/Linux all architectures are _very_ well covered, thanks to Debian or Arch
@@ -652,16 +656,15 @@ platforms [here](https://martinkepplinger.com/tslib/packages/).
 
 Please help porting missing programs!
 
-#### libts user plugin
-This can be _any third party program_, using tslib's API. For Linux, we include
-`ts_uinput`, but Qt, X11 or anything else can use tslib's API.
-
 ## touchscreen hardware support
+For mostly historical reasons, tslib includes device specific `module_raw` userspace
+drivers.
 The [ts.conf man page](https://manpages.debian.org/unstable/libts0/ts.conf.5.en.html)
-has details on the available `module_raw` drivers. Not all of them are listed in the
-default `etc/ts.conf` config file. Hardware access modules other than the generic
-ones like `input` for Linux are to be seen as workarounds for missing generic drivers.
-If you use one of those, please `./configure --enable-...` them explicitely.
+has details on the available `module_raw` drivers; not all of them are listed in the
+default `etc/ts.conf` config file. Those are to be considered workarounds and may get
+disabled in the default configuration in the future.
+If you use one of those, please `./configure --enable-...` it explicitely.
 
-And of course we'd happily have a generic `input-windows` or similar module for
-other platforms.
+It is strongly recommended to have a real device driver for your system
+and use a generic access `module_raw` of tslib. For Linux ([evdev](https://en.wikipedia.org/wiki/Evdev))
+this is called `input`.
