@@ -429,10 +429,18 @@ compatibility.
 * [xf86-input-evdev](https://cgit.freedesktop.org/xorg/driver/xf86-input-evdev/) - evdev plugin for X (uses libevdev)
 
 ### libts users
+This lists the programs for the *every day use* of tslib, facing the outside world.
+For testing purposes there are tools like [ts_test_mt](#test-the-filtered-input-behaviour)
+too.
 
-* [ts_uinput](#use-the-filtered-result-in-your-system-ts_uinput-method) - userspace event device driver for the tslib-filtered samples. Shipped as part of tslib.
-* [xf86-input-tslib](https://github.com/merge/xf86-input-tslib) - direct tslib input driver for X.org
+#### shipped as part of tslib
+* [ts_calibrate](#filter-modules) - graphical calibration tool. Configures the `linear` filter module.
+* [ts_uinput](#use-the-filtered-result-in-your-system-ts_uinput-method) - userspace **evdev** driver for the tslib-filtered samples.
+
+#### third party applications
+* [xf86-input-tslib](https://github.com/merge/xf86-input-tslib) - direct tslib input driver for X11
 * [qtslib](https://github.com/qt/qtbase/tree/dev/src/platformsupport/input/tslib) - direct Qt5 tslib input plugin
+* [enlightenment](https://www.enlightenment.org/) - A Window Manager (direct support in framebuffer mode, X11 via xf86-input-tslib)
 
 ### using libts
 If you want to support tslib < 1.2, while still support multitouch and all
