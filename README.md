@@ -419,7 +419,8 @@ compatibility.
 
 ### dependencies
 
-* libc (with libdl if you build it dynamically linked)
+* libc (with libdl only when building dynamically linked)
+* libsdl2-dev (only when using `--with-sdl2` for [SDL2](https://www.libsdl.org/) graphical applications)
 
 ### related libraries
 
