@@ -50,18 +50,12 @@ static void help(void)
 
 	printf("tslib %s (library 0x%X)\n", ver->package_version, ver->version_num);
 	printf("\n");
-	printf("Usage: ts_test_mt [-v] [-i <device>] [-j <slots>] [-r <rotate_value>]\n");
+	printf("Usage: ts_test_mt [-v] [-i <device>] [-j <slots>]\n");
 	printf("\n");
 	printf("        <device>       Override the input device to use\n");
 	printf("        <slots>        Override the number of possible touch contacts\n");
 	printf("                       Automatically detected only on Linux, but not\n");
 	printf("                       for all devices\n");
-	printf("        <rotate_value> 0 ... no rotation; 0 degree (default)\n");
-	printf("                       1 ... clockwise orientation; 90 degrees\n");
-	printf("                       2 ... upside down orientation; 180 degrees\n");
-	printf("                       3 ... counterclockwise orientation; 270 degrees\n");
-	printf("\n");
-	printf("Example (Linux): ts_test_mt -r $(cat /sys/class/graphics/fbcon/rotate)\n");
 	printf("\n");
 }
 
@@ -88,11 +82,10 @@ int main(int argc, char **argv)
 			{ "verbose",      no_argument,       NULL, 'v' },
 			{ "idev",         required_argument, NULL, 'i' },
 			{ "slots",        required_argument, NULL, 'j' },
-			{ "rotate",       required_argument, NULL, 'r' },
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "hi:vj:r:", long_options, &option_index);
+		int c = getopt_long(argc, argv, "hi:vj:", long_options, &option_index);
 
 		errno = 0;
 		if (c == -1)
@@ -118,14 +111,6 @@ int main(int argc, char **argv)
 				return 0;
 			}
 			break;
-
-		case 'r':
-			/* TODO */
-			help();
-			return 0;
-
-			break;
-
 		default:
 			help();
 			return 0;

@@ -147,11 +147,10 @@ int main(int argc, char **argv)
 		const struct option long_options[] = {
 			{ "help",         no_argument,       NULL, 'h' },
 			{ "idev",         required_argument, NULL, 'i' },
-			{ "rotate",       required_argument, NULL, 'r' },
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "hi:r:", long_options, &option_index);
+		int c = getopt_long(argc, argv, "hi:", long_options, &option_index);
 
 		errno = 0;
 		if (c == -1)
@@ -165,14 +164,6 @@ int main(int argc, char **argv)
 		case 'i':
 			tsdevice = optarg;
 			break;
-
-		case 'r':
-			/* TODO add rotation */
-			help();
-			return 0;
-
-			break;
-
 		default:
 			help();
 			return 0;
