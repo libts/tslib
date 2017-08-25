@@ -131,6 +131,16 @@ TSAPI int ts_option(struct tsdev *, enum ts_param, ...);
 extern TSAPI int (*ts_error_fn)(const char *fmt, va_list ap);
 
 /*
+ * Implement this to override open() for the input device and return the fd.
+ */
+extern TSAPI int (*ts_open_restricted)(const char *path, int flags, void *user_data);
+
+/*
+ * Implement this to override close().
+ */
+extern TSAPI void (*ts_close_restricted)(int fd, void *user_data);
+
+/*
  * Returns the file descriptor in use for the touchscreen device.
  */
 TSAPI int ts_fd(struct tsdev *);

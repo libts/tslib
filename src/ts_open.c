@@ -60,6 +60,8 @@ static void print_host_os(void)
 }
 #endif /* DEBUG */
 
+int (*ts_open_restricted)(const char *path, int flags, void *user_data) = NULL;
+
 struct tsdev *ts_open(const char *name, int nonblock)
 {
 	struct tsdev *ts;
@@ -76,25 +78,34 @@ struct tsdev *ts_open(const char *name, int nonblock)
 	}
 
 	ts = malloc(sizeof(struct tsdev));
-	if (ts) {
-		memset(ts, 0, sizeof(struct tsdev));
+	if (!ts)
+		return NULL;
 
-		ts->fd = open(name, flags);
-		/*
-		 * Try again in case file is simply not writable
-		 * It will do for most drivers
-		 */
-		if (ts->fd == -1 && errno == EACCES) {
-		#ifndef WIN32
-			flags = nonblock ? (O_RDONLY | O_NONBLOCK) : O_RDONLY;
-		#else
-			flags = O_RDONLY;
-		#endif
-			ts->fd = open(name, flags);
-		}
+	memset(ts, 0, sizeof(struct tsdev));
+
+	if (ts_open_restricted) {
+		ts->fd = ts_open_restricted(name, flags, NULL);
 		if (ts->fd == -1)
 			goto free;
+
+		return ts;
 	}
+
+	ts->fd = open(name, flags);
+	/*
+	 * Try again in case file is simply not writable
+	 * It will do for most drivers
+	 */
+	if (ts->fd == -1 && errno == EACCES) {
+	#ifndef WIN32
+		flags = nonblock ? (O_RDONLY | O_NONBLOCK) : O_RDONLY;
+	#else
+		flags = O_RDONLY;
+	#endif
+		ts->fd = open(name, flags);
+	}
+	if (ts->fd == -1)
+		goto free;
 
 	return ts;
 

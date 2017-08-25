@@ -390,6 +390,8 @@ Check out our tests directory for examples how to use it.
 [`ts_read_mt()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
 [`ts_read_raw_mt()`](https://manpages.debian.org/unstable/libts0/ts_read.3.en.html)  
 [`int (*ts_error_fn)(const char *fmt, va_list ap)`](https://manpages.debian.org/unstable/libts0/ts_error_fn.3.en.html)  
+[`int (*ts_open_restricted)(const char *path, int flags, void *user_data)`](https://manpages.debian.org/unstable/libts0/ts_open_restricted.3.en.html)  
+[`void (*ts_close_restricted)(int fd, void *user_data)`](https://manpages.debian.org/unstable/libts0/ts_close_restricted.3.en.html)  
 
 
 ### ABI - Application Binary Interface
@@ -555,6 +557,8 @@ and call `ts_read_mt()` like so
 |`ts_reconfig` | 1.3 |
 |`ts_setup` | 1.4 |
 |`ts_error_fn` | 1.0 |
+|`ts_open_restricted` | 1.13 |
+|`ts_close_restricted` | 1.13 |
 |`ts_fd` | 1.0 |
 |`ts_load_module` | 1.0 |
 |`ts_open` | 1.0 |

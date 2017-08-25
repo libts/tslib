@@ -67,6 +67,14 @@ static int errfn(const char *fmt, va_list ap)
 	return vfprintf(stderr, fmt, ap);
 }
 
+static int openfn(const char *path, int flags,
+		  void *user_data __attribute__((unused)))
+{
+	printf("ts_print_mt: opening %s\n", path);
+
+	return open(path, flags);
+}
+
 int main(int argc, char **argv)
 {
 	struct tsdev *ts;
@@ -148,6 +156,9 @@ int main(int argc, char **argv)
 		}
 	}
 
+	ts_error_fn = errfn;
+	ts_open_restricted = openfn;
+
 	if (non_blocking)
 		ts = ts_setup(tsdevice, 1);
 	else
@@ -157,8 +168,6 @@ int main(int argc, char **argv)
 		perror("ts_setup");
 		return errno;
 	}
-
-	ts_error_fn = errfn;
 
 #ifdef TS_HAVE_EVDEV
 	if (ioctl(ts_fd(ts), EVIOCGABS(ABS_MT_SLOT), &slot) < 0) {

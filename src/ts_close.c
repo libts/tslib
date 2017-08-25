@@ -20,10 +20,12 @@
 
 #include "tslib-private.h"
 
+void (*ts_close_restricted)(int fd, void *user_data) = NULL;
+
 int ts_close(struct tsdev *ts)
 {
 	void *handle;
-	int ret;
+	int ret = 0;
 	struct tslib_module_info *info, *next;
 
 	info = ts->list;
@@ -45,7 +47,12 @@ int ts_close(struct tsdev *ts)
 		info = next;
 	}
 
-	ret = close(ts->fd);
+	if (ts_close_restricted) {
+		ts_close_restricted(ts->fd, NULL);
+	} else {
+		ret = close(ts->fd);
+	}
+
 	free(ts);
 
 	return ret;
