@@ -53,7 +53,8 @@ struct tslib_iir {
 };
 
 static void iir_filter(struct tslib_module_info *info, int32_t *new,
-		       int32_t *save) {
+		       int32_t *save)
+{
 	struct tslib_iir *iir = (struct tslib_iir *)info;
 
 	*save = (iir->N * *save + (iir->D - iir->N) * *new + iir->D / 2) / iir->D;
