@@ -88,7 +88,7 @@ int main(void)
 	put_string_center (xres/2, yres*0.25, "as possible", 1);
 	put_string_center (xres/2, yres*0.35, "Touch anywhere to start", 1);
 
-	getxy (ts, &x_ts, &y_ts); 
+	getxy (ts, &x_ts, &y_ts);
 	refresh_screen ();
 
 	output_fid = fopen ("ts_harvest.out", "w");
@@ -110,7 +110,7 @@ int main(void)
 		 * otherwise the pen may still be down on the previous location
 		 * while a new cross has already been drawn.
 		 */
-	
+
 		usleep (700000);
 
 		/* Show the cross */
@@ -130,9 +130,9 @@ int main(void)
 		usleep (700000);
 
 		/* Get a point */
-		
+
 		getxy (ts, &x_ts, &y_ts);
-        	fprintf (output_fid, "%d\t%d\t%d\t%d\n", x, y, x_ts, y_ts);
+		fprintf (output_fid, "%d\t%d\t%d\t%d\n", x, y, x_ts, y_ts);
 
 		/* Hide the cross */
 
@@ -140,7 +140,7 @@ int main(void)
 
 		/* Manage increments */
 
-		x_new = x + (x_incr * X_STEP); 
+		x_new = x + (x_incr * X_STEP);
 
 		if (x < xres_half) {
 		   if (x_new > xres_half) {
@@ -156,10 +156,10 @@ int main(void)
 		x = x_new;
 	   }
 
-	   y_new = y + (y_incr * Y_STEP); 
+	   y_new = y + (y_incr * Y_STEP);
 
 	   if (y < yres_half) {
-              if  (y_new > yres_half) {
+		if  (y_new > yres_half) {
                   y_new = yres_half + (yres_half - y - 1);
                   y_incr--;
               } else if (y_new < yres_half) { 
@@ -168,8 +168,8 @@ int main(void)
            } else {
               y_incr--;
            }
-                                                                                                              
-           y = y_new;  
+
+           y = y_new;
 	}
 
 	fclose (output_fid);
@@ -178,7 +178,7 @@ int main(void)
 	put_string_center (xres/2, yres*0.75, "Thank you (pfooh!)", 1);
 	put_string_center (xres/2, yres*0.80, "Output saved to ts_harvest.out", 1);
 	put_string_center (xres/2, yres*0.85, "Touch anywhere to quit", 4);
-	getxy (ts, &x_ts, &y_ts); 
+	getxy (ts, &x_ts, &y_ts);
 	refresh_screen ();
 	close_framebuffer();
 	ts_close(ts);
