@@ -89,12 +89,11 @@ static void get_sample(struct tsdev *ts, calibration *cal,
 
 	SDL_PollEvent(&ev);
 	switch (ev.type) {
-		case SDL_KEYDOWN:
-		case SDL_QUIT:
-			SDL_ShowCursor(SDL_ENABLE);
-			SDL_Quit();
+	case SDL_KEYDOWN:
+	case SDL_QUIT:
+		SDL_ShowCursor(SDL_ENABLE);
+		SDL_Quit();
 	}
-
 }
 
 static void clearbuf(struct tsdev *ts)
