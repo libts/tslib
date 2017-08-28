@@ -492,7 +492,7 @@ int main(int argc, char **argv)
 	}
 
 	unlink(CONFFILE);
-	data.tsconf = fopen(CONFFILE,"a+");
+	data.tsconf = fopen(CONFFILE, "a+");
 	fprintf(data.tsconf, "module_raw input\n");
 	fclose(data.tsconf);
 
@@ -507,7 +507,7 @@ int main(int argc, char **argv)
 
 	run_tests(&data);
 
-	data.tsconf = fopen(CONFFILE,"a+");
+	data.tsconf = fopen(CONFFILE, "a+");
 	fprintf(data.tsconf, "module skip nhead=1 ntail=1\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
@@ -515,7 +515,7 @@ int main(int argc, char **argv)
 
 	run_tests(&data);
 
-	data.tsconf = fopen(CONFFILE,"a+");
+	data.tsconf = fopen(CONFFILE, "a+");
 	fprintf(data.tsconf, "module pthres pmin=20\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
@@ -523,7 +523,7 @@ int main(int argc, char **argv)
 
 	run_tests(&data);
 
-	data.tsconf = fopen(CONFFILE,"a+");
+	data.tsconf = fopen(CONFFILE, "a+");
 	fprintf(data.tsconf, "module debounce drop_threshold=40\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
@@ -531,7 +531,7 @@ int main(int argc, char **argv)
 
 	run_tests(&data);
 
-	data.tsconf = fopen(CONFFILE,"a+");
+	data.tsconf = fopen(CONFFILE, "a+");
 	fprintf(data.tsconf, "module median depth=7\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
@@ -539,7 +539,7 @@ int main(int argc, char **argv)
 
 	run_tests(&data);
 
-	data.tsconf = fopen(CONFFILE,"a+");
+	data.tsconf = fopen(CONFFILE, "a+");
 	fprintf(data.tsconf, "module dejitter delta=100\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
@@ -547,7 +547,7 @@ int main(int argc, char **argv)
 
 	run_tests(&data);
 
-	data.tsconf = fopen(CONFFILE,"a+");
+	data.tsconf = fopen(CONFFILE, "a+");
 	fprintf(data.tsconf, "module linear\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
