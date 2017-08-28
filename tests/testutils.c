@@ -142,7 +142,7 @@ void getxy(struct tsdev *ts, int *x, int *y)
 
 void ts_flush (struct tsdev *ts)
 {
-	/* Read all unread touchscreen data, 
+	/* Read all unread touchscreen data,
 	 * so that we are sure that the next data that we read
 	 * have been input after this flushing.
 	 */
