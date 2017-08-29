@@ -85,9 +85,18 @@ echo "======================================================"
 read -p "           Press enter to continue"
 echo "======================================================"
 
-# Linux default build test
-./autogen.sh && ./configure && make distcheck
-./configure --disable-dependency-tracking && make distclean && ./autogen-clean.sh
+# Linux full build test
+./autogen.sh
+./configure --disable-dependency-tracking --enable-cy8mrln-palmpre --enable-dmc_dus3000
+make distcheck
+make distclean && ./autogen-clean.sh
+
+# Linux SDL2 build test
+./autogen.sh
+./configure --disable-dependency-tracking --enable-cy8mrln-palmpre --enable-dmc_dus3000 --with-sdl2
+make distcheck
+make distclean && ./autogen-clean.sh
+
 git clean -d -f
 
 # static build test
