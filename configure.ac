@@ -173,12 +173,12 @@ AC_ARG_WITH(sdl2,
   [with_sdl2=no])
 
 AM_CONDITIONAL(SDL, test x"$with_sdl2" = "xyes")
-if test x"$with_sdl2" = "xyes" ; then
+AS_IF([test "x$with_sdl2" = "xyes"], [
   AC_DEFINE(HAVE_SDL2,,[Use SDL2.])
   PKG_CHECK_MODULES([SDL2], [sdl2], [], [
     AC_CHECK_LIB([SDL2], [SDL_Init], [], [exit 1])
   ])
-fi
+])
 
 # libts Library versioning
 # increment if the interface changed
