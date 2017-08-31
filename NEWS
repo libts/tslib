@@ -1,3 +1,10 @@
+tslib 1.13 - tba
+================================
+
+This release includes the following bugfixes:
+* 18dfd8b remove build dependency on pkg-config
+
+
 tslib 1.12 - released 2017-08-29
 ================================
 
