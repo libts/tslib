@@ -98,7 +98,8 @@ struct ts_lib_version_data {
 	unsigned int	features; /* bitmask, see below */
 };
 
-#define TSLIB_VERSION_MT	(1 << 0)	/* multitouch support */
+#define TSLIB_VERSION_MT		(1 << 0)	/* multitouch support */
+#define TSLIB_VERSION_OPEN_RESTRICTED	(1 << 1)	/* ts_open_restricted() */
 
 enum ts_param {
 	TS_SCREEN_RES = 0,		/* 2 integer args, x and y */

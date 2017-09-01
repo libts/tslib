@@ -19,6 +19,7 @@ static struct ts_lib_version_data version_data = {
 	0x000000,	/* version_num calculated below */
 	0		/* features */
 	| TSLIB_VERSION_MT
+	| TSLIB_VERSION_OPEN_RESTRICTED
 	,
 };
 
