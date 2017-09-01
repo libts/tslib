@@ -316,6 +316,7 @@ static int check_fd(struct tslib_input *i)
 	if (i->mt && !i->using_syn) {
 		fprintf(stderr,
 			"tslib: Unsupported multitouch device (missing EV_SYN)\n");
+		return -1;
 	}
 
 	return ts->fd;
