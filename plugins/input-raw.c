@@ -111,8 +111,8 @@ struct tslib_input {
 	int	current_y;
 	int	current_p;
 
-	int	using_syn;
-	int	grab_events;
+	int8_t	using_syn;
+	int8_t	grab_events;
 
 	struct input_event ev[NUM_EVENTS_READ];
 	struct ts_sample_mt **buf;
@@ -311,6 +311,11 @@ static int check_fd(struct tslib_input *i)
 			return -1;
 		}
 		i->grab_events = GRAB_EVENTS_ACTIVE;
+	}
+
+	if (i->mt && !i->using_syn) {
+		fprintf(stderr,
+			"tslib: Unsupported multitouch device (missing EV_SYN)\n");
 	}
 
 	return ts->fd;
@@ -601,341 +606,254 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 		}
 	}
 
-	if (i->using_syn) {
-		while (total < nr) {
-			memset(i->ev, 0, sizeof(i->ev));
-			rd = read(ts->fd,
-				  i->ev,
-				  sizeof(struct input_event) * NUM_EVENTS_READ);
-			if (rd == -1) {
-				if (total == 0) {
-					if (errno > 0)
-						return errno * -1;
-					else
-						return errno;
-				} else {
-					return total;
-				}
-			} else if (rd < (int) sizeof(struct input_event)) {
-				if (total == 0)
-					return -1;
+	while (total < nr) {
+		memset(i->ev, 0, sizeof(i->ev));
+		rd = read(ts->fd,
+			  i->ev,
+			  sizeof(struct input_event) * NUM_EVENTS_READ);
+		if (rd == -1) {
+			if (total == 0) {
+				if (errno > 0)
+					return errno * -1;
 				else
-					return total;
+					return errno;
+			} else {
+				return total;
 			}
+		} else if (rd < (int) sizeof(struct input_event)) {
+			if (total == 0)
+				return -1;
+			else
+				return total;
+		}
 
-			for (it = 0; it < rd / sizeof(struct input_event); it++) {
-			#ifdef DEBUG
-				printf("INPUT-RAW: read type %d  code %3d  value %4d  time %ld.%ld\n",
-				       i->ev[it].type, i->ev[it].code,
-				       i->ev[it].value, (long)i->ev[it].time.tv_sec,
-				       (long)i->ev[it].time.tv_usec);
-			#endif
-				switch (i->ev[it].type) {
-				case EV_KEY:
-					switch (i->ev[it].code) {
-					case BTN_TOUCH:
-					case BTN_LEFT:
-						if (i->ev[it].code == BTN_TOUCH) {
-							i->buf[total][i->slot].pen_down = i->ev[it].value;
-							i->buf[total][i->slot].tv = i->ev[it].time;
-							if (i->ev[it].value == 0)
-								pen_up = 1;
-						}
-						break;
+		for (it = 0; it < rd / sizeof(struct input_event); it++) {
+		#ifdef DEBUG
+			printf("INPUT-RAW: read type %d  code %3d  value %4d  time %ld.%ld\n",
+			       i->ev[it].type, i->ev[it].code,
+			       i->ev[it].value, (long)i->ev[it].time.tv_sec,
+			       (long)i->ev[it].time.tv_usec);
+		#endif
+			switch (i->ev[it].type) {
+			case EV_KEY:
+				switch (i->ev[it].code) {
+				case BTN_TOUCH:
+				case BTN_LEFT:
+					if (i->ev[it].code == BTN_TOUCH) {
+						i->buf[total][i->slot].pen_down = i->ev[it].value;
+						i->buf[total][i->slot].tv = i->ev[it].time;
+						if (i->ev[it].value == 0)
+							pen_up = 1;
 					}
 					break;
-				case EV_SYN:
-					switch (i->ev[it].code) {
-					case SYN_REPORT:
-						if (pen_up && i->no_pressure) {
-							for (k = 0; k < max_slots; k++) {
-								if (i->buf[total][k].x != 0 ||
-								    i->buf[total][k].y != 0 ||
-								    i->buf[total][k].pressure != 0)
-									i->buf[total][i->slot].valid = 1;
+				}
+				break;
+			case EV_SYN:
+				switch (i->ev[it].code) {
+				case SYN_REPORT:
+					if (pen_up && i->no_pressure) {
+						for (k = 0; k < max_slots; k++) {
+							if (i->buf[total][k].x != 0 ||
+							    i->buf[total][k].y != 0 ||
+							    i->buf[total][k].pressure != 0)
+								i->buf[total][i->slot].valid = 1;
 
-								i->buf[total][k].x = 0;
-								i->buf[total][k].y = 0;
-								i->buf[total][k].pressure = 0;
-							}
+							i->buf[total][k].x = 0;
+							i->buf[total][k].y = 0;
+							i->buf[total][k].pressure = 0;
 						}
+					}
 
-						if (pen_up)
-							pen_up = 0;
+					if (pen_up)
+						pen_up = 0;
 
-						for (j = 0; j < nr; j++) {
-							for (k = 0; k < max_slots; k++) {
-								/* generate tracking id if not available */
-								if (i->type_a) {
-									if (i->buf[j][k].pressure == 0) {
-										i->buf[j][k].tracking_id = -1;
-										i->last_pressure[k] = 0;
-									} else {
-										if (i->last_pressure[k] == 0)
-											next_trackid++;
+					for (j = 0; j < nr; j++) {
+						for (k = 0; k < max_slots; k++) {
+							/* generate tracking id if not available */
+							if (i->type_a) {
+								if (i->buf[j][k].pressure == 0) {
+									i->buf[j][k].tracking_id = -1;
+									i->last_pressure[k] = 0;
+								} else {
+									if (i->last_pressure[k] == 0)
+										next_trackid++;
 
-										i->buf[j][k].tracking_id = next_trackid;
-									}
+									i->buf[j][k].tracking_id = next_trackid;
 								}
-
-								memcpy(&samp[j][k],
-									&i->buf[j][k],
-									sizeof(struct ts_sample_mt));
 							}
+
+							memcpy(&samp[j][k],
+								&i->buf[j][k],
+								sizeof(struct ts_sample_mt));
 						}
+					}
 
-						if (i->type_a)
-							i->slot = 0;
+					if (i->type_a)
+						i->slot = 0;
 
-						total++;
+					total++;
+					break;
+				case SYN_MT_REPORT:
+					if (!i->type_a)
 						break;
-					case SYN_MT_REPORT:
-						if (!i->type_a)
+
+					if (i->buf[total][i->slot].valid != 1) {
+						i->buf[total][i->slot].pressure = 0;
+						if (i->slot == 0) {
+							pen_up = 1;
 							break;
-
-						if (i->buf[total][i->slot].valid != 1) {
-							i->buf[total][i->slot].pressure = 0;
-							if (i->slot == 0) {
-								pen_up = 1;
-								break;
-							}
-
-						} else if (i->slot < (max_slots - 1)) {
-							i->slot++;
-							i->buf[total][i->slot].slot = i->slot;
 						}
 
+					} else if (i->slot < (max_slots - 1)) {
+						i->slot++;
+						i->buf[total][i->slot].slot = i->slot;
+					}
+
+					break;
+			#ifdef DEBUG
+				case SYN_DROPPED:
+					fprintf(stderr,
+						"INPUT-RAW: SYN_DROPPED\n");
+					break;
+			#endif
+				}
+				break;
+			case EV_ABS:
+				switch (i->ev[it].code) {
+				case ABS_X:
+					/* in case we didn't already get data for this
+					 * slot, we go ahead and act as if this would be
+					 * ABS_MT_POSITION_X
+					 */
+					if (i->mt && i->buf[total][i->slot].valid == 1)
 						break;
-				#ifdef DEBUG
-					case SYN_DROPPED:
-						fprintf(stderr,
-							"INPUT-RAW: SYN_DROPPED\n");
+				case ABS_MT_POSITION_X:
+					i->buf[total][i->slot].x = i->ev[it].value;
+					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].valid = 1;
+					break;
+				case ABS_Y:
+					if (i->mt && i->buf[total][i->slot].valid == 1)
 						break;
-				#endif
+				case ABS_MT_POSITION_Y:
+					i->buf[total][i->slot].y = i->ev[it].value;
+					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].valid = 1;
+					break;
+				case ABS_PRESSURE:
+					if (i->mt && i->buf[total][i->slot].valid == 1)
+						break;
+				case ABS_MT_PRESSURE:
+					i->buf[total][i->slot].pressure = i->ev[it].value;
+					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].valid = 1;
+					break;
+				case ABS_MT_TOOL_X:
+					i->buf[total][i->slot].tool_x = i->ev[it].value;
+					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].valid = 1;
+					break;
+				case ABS_MT_TOOL_Y:
+					i->buf[total][i->slot].tool_y = i->ev[it].value;
+					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].valid = 1;
+					break;
+				case ABS_MT_TOOL_TYPE:
+					i->buf[total][i->slot].tool_type = i->ev[it].value;
+					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].valid = 1;
+					break;
+				case ABS_MT_ORIENTATION:
+					i->buf[total][i->slot].orientation = i->ev[it].value;
+					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].valid = 1;
+					break;
+				case ABS_MT_DISTANCE:
+					i->buf[total][i->slot].distance = i->ev[it].value;
+					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].valid = 1;
+
+					if (i->special_device == EGALAX_VERSION_210) {
+						if (i->ev[it].value > 0)
+							i->buf[total][i->slot].pressure = 0;
+						else
+							i->buf[total][i->slot].pressure = 255;
+					}
+
+					break;
+				case ABS_MT_BLOB_ID:
+					i->buf[total][i->slot].blob_id = i->ev[it].value;
+					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].valid = 1;
+					break;
+				case ABS_MT_TOUCH_MAJOR:
+					i->buf[total][i->slot].touch_major = i->ev[it].value;
+					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].valid = 1;
+					break;
+				case ABS_MT_WIDTH_MAJOR:
+					i->buf[total][i->slot].width_major = i->ev[it].value;
+					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].valid = 1;
+					break;
+				case ABS_MT_TOUCH_MINOR:
+					i->buf[total][i->slot].touch_minor = i->ev[it].value;
+					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].valid = 1;
+					break;
+				case ABS_MT_WIDTH_MINOR:
+					i->buf[total][i->slot].width_minor = i->ev[it].value;
+					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].valid = 1;
+					break;
+				case ABS_MT_TRACKING_ID:
+					i->buf[total][i->slot].tracking_id = i->ev[it].value;
+					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].valid = 1;
+					if (i->ev[it].value == -1)
+						i->buf[total][i->slot].pressure = 0;
+					break;
+				case ABS_MT_SLOT:
+					if (i->ev[it].value < 0 || i->ev[it].value >= max_slots) {
+						fprintf(stderr, "tslib: warning: slot out of range. data corrupted!\n");
+						i->slot = max_slots - 1;
+					} else {
+						i->slot = i->ev[it].value;
+						i->buf[total][i->slot].slot = i->ev[it].value;
+						i->buf[total][i->slot].valid = 1;
 					}
 					break;
-				case EV_ABS:
-					switch (i->ev[it].code) {
-					case ABS_X:
-						/* in case we didn't already get data for this
-						 * slot, we go ahead and act as if this would be
-						 * ABS_MT_POSITION_X
-						 */
+				case ABS_X+2:
+					if (i->special_device == EGALAX_VERSION_112) {
+						/* this is ABS_Z wrongly used as ABS_X here */
 						if (i->mt && i->buf[total][i->slot].valid == 1)
 							break;
-					case ABS_MT_POSITION_X:
+
 						i->buf[total][i->slot].x = i->ev[it].value;
 						i->buf[total][i->slot].tv = i->ev[it].time;
 						i->buf[total][i->slot].valid = 1;
-						break;
-					case ABS_Y:
+					}
+					break;
+				case ABS_Y+2:
+					if (i->special_device == EGALAX_VERSION_112) {
+						/* this is ABS_RX wrongly used as ABS_Y here */
 						if (i->mt && i->buf[total][i->slot].valid == 1)
 							break;
-					case ABS_MT_POSITION_Y:
+
 						i->buf[total][i->slot].y = i->ev[it].value;
 						i->buf[total][i->slot].tv = i->ev[it].time;
 						i->buf[total][i->slot].valid = 1;
-						break;
-					case ABS_PRESSURE:
-						if (i->mt && i->buf[total][i->slot].valid == 1)
-							break;
-					case ABS_MT_PRESSURE:
-						i->buf[total][i->slot].pressure = i->ev[it].value;
-						i->buf[total][i->slot].tv = i->ev[it].time;
-						i->buf[total][i->slot].valid = 1;
-						break;
-					case ABS_MT_TOOL_X:
-						i->buf[total][i->slot].tool_x = i->ev[it].value;
-						i->buf[total][i->slot].tv = i->ev[it].time;
-						i->buf[total][i->slot].valid = 1;
-						break;
-					case ABS_MT_TOOL_Y:
-						i->buf[total][i->slot].tool_y = i->ev[it].value;
-						i->buf[total][i->slot].tv = i->ev[it].time;
-						i->buf[total][i->slot].valid = 1;
-						break;
-					case ABS_MT_TOOL_TYPE:
-						i->buf[total][i->slot].tool_type = i->ev[it].value;
-						i->buf[total][i->slot].tv = i->ev[it].time;
-						i->buf[total][i->slot].valid = 1;
-						break;
-					case ABS_MT_ORIENTATION:
-						i->buf[total][i->slot].orientation = i->ev[it].value;
-						i->buf[total][i->slot].tv = i->ev[it].time;
-						i->buf[total][i->slot].valid = 1;
-						break;
-					case ABS_MT_DISTANCE:
-						i->buf[total][i->slot].distance = i->ev[it].value;
-						i->buf[total][i->slot].tv = i->ev[it].time;
-						i->buf[total][i->slot].valid = 1;
-
-						if (i->special_device == EGALAX_VERSION_210) {
-							if (i->ev[it].value > 0)
-								i->buf[total][i->slot].pressure = 0;
-							else
-								i->buf[total][i->slot].pressure = 255;
-						}
-
-						break;
-					case ABS_MT_BLOB_ID:
-						i->buf[total][i->slot].blob_id = i->ev[it].value;
-						i->buf[total][i->slot].tv = i->ev[it].time;
-						i->buf[total][i->slot].valid = 1;
-						break;
-					case ABS_MT_TOUCH_MAJOR:
-						i->buf[total][i->slot].touch_major = i->ev[it].value;
-						i->buf[total][i->slot].tv = i->ev[it].time;
-						i->buf[total][i->slot].valid = 1;
-						break;
-					case ABS_MT_WIDTH_MAJOR:
-						i->buf[total][i->slot].width_major = i->ev[it].value;
-						i->buf[total][i->slot].tv = i->ev[it].time;
-						i->buf[total][i->slot].valid = 1;
-						break;
-					case ABS_MT_TOUCH_MINOR:
-						i->buf[total][i->slot].touch_minor = i->ev[it].value;
-						i->buf[total][i->slot].tv = i->ev[it].time;
-						i->buf[total][i->slot].valid = 1;
-						break;
-					case ABS_MT_WIDTH_MINOR:
-						i->buf[total][i->slot].width_minor = i->ev[it].value;
-						i->buf[total][i->slot].tv = i->ev[it].time;
-						i->buf[total][i->slot].valid = 1;
-						break;
-					case ABS_MT_TRACKING_ID:
-						i->buf[total][i->slot].tracking_id = i->ev[it].value;
-						i->buf[total][i->slot].tv = i->ev[it].time;
-						i->buf[total][i->slot].valid = 1;
-						if (i->ev[it].value == -1)
-							i->buf[total][i->slot].pressure = 0;
-						break;
-					case ABS_MT_SLOT:
-						if (i->ev[it].value < 0 || i->ev[it].value >= max_slots) {
-							fprintf(stderr, "tslib: warning: slot out of range. data corrupted!\n");
-							i->slot = max_slots - 1;
-						} else {
-							i->slot = i->ev[it].value;
-							i->buf[total][i->slot].slot = i->ev[it].value;
-							i->buf[total][i->slot].valid = 1;
-						}
-						break;
-					case ABS_X+2:
-						if (i->special_device == EGALAX_VERSION_112) {
-							/* this is ABS_Z wrongly used as ABS_X here */
-							if (i->mt && i->buf[total][i->slot].valid == 1)
-								break;
-
-							i->buf[total][i->slot].x = i->ev[it].value;
-							i->buf[total][i->slot].tv = i->ev[it].time;
-							i->buf[total][i->slot].valid = 1;
-						}
-						break;
-					case ABS_Y+2:
-						if (i->special_device == EGALAX_VERSION_112) {
-							/* this is ABS_RX wrongly used as ABS_Y here */
-							if (i->mt && i->buf[total][i->slot].valid == 1)
-								break;
-
-							i->buf[total][i->slot].y = i->ev[it].value;
-							i->buf[total][i->slot].tv = i->ev[it].time;
-							i->buf[total][i->slot].valid = 1;
-						}
-						break;
 					}
 					break;
 				}
-				if (total == ret)
-					break;
-			} /* just NUM_EVENTS_READ. it's simply 1 */
-		}
-		ret = total;
-	} else {
-		/*
-		 * XXX This could be simplified because it duplicates the above ts_read()
-		 * code for ts_read_mt() to stay compatible and also support single touch
-		 * protocols without EV_SYN.
-		 */
-		struct input_event ev_single;
-		unsigned char *p = (unsigned char *) &ev_single;
-		int len = sizeof(struct input_event);
-
-		while (total < nr) {
-			ret = read(ts->fd, p, len);
-			if (ret == -1) {
-				if (errno == EINTR)
-					continue;
-
 				break;
 			}
-
-			if (ret < (int)sizeof(struct input_event)) {
-				/* short read
-				 * restart read to get the rest of the event
-				 */
-				p += ret;
-				len -= ret;
-				continue;
-			}
-			/* successful read of a whole event */
-
-			if (ev_single.type == EV_ABS) {
-				switch (ev_single.code) {
-				case ABS_X:
-					if (ev_single.value != 0) {
-						samp[total][0].x = i->current_x = ev_single.value;
-						samp[total][0].y = i->current_y;
-						samp[total][0].pressure = i->current_p;
-					} else {
-						fprintf(stderr, "tslib: dropped x = 0\n");
-						continue;
-					}
-					break;
-				case ABS_Y:
-					if (ev_single.value != 0) {
-						samp[total][0].x = i->current_x;
-						samp[total][0].y = i->current_y = ev_single.value;
-						samp[total][0].pressure = i->current_p;
-					} else {
-						fprintf(stderr, "tslib: dropped y = 0\n");
-						continue;
-					}
-					break;
-				case ABS_PRESSURE:
-					samp[total][0].x = i->current_x;
-					samp[total][0].y = i->current_y;
-					samp[total][0].pressure = i->current_p = ev_single.value;
-					break;
-				}
-				samp[total][0].tv = ev_single.time;
-	#ifdef DEBUG
-				fprintf(stderr, "RAW---------------------------> %d %d %d\n",
-					samp[total][0].x, samp[total][0].y, samp[total][0].pressure);
-	#endif /* DEBUG */
-				samp++;
-				total++;
-			} else if (ev_single.type == EV_KEY) {
-				switch (ev_single.code) {
-				case BTN_TOUCH:
-				case BTN_LEFT:
-					if (ev_single.value == 0) {
-						/* pen up */
-						samp[total][0].x = 0;
-						samp[total][0].y = 0;
-						samp[total][0].pressure = 0;
-						samp[total][0].tv = ev_single.time;
-						total++;
-					}
-					break;
-				}
-			} else {
-				fprintf(stderr, "tslib: Unknown event type %d\n", ev_single.type);
-			}
-			p = (unsigned char *) &ev_single;
-		}
-		ret = total;
+			if (total == ret)
+				break;
+		} /* just NUM_EVENTS_READ. it's simply 1 */
 	}
 
-	return ret;
+	return total;
 }
 
 static int ts_input_fini(struct tslib_module_info *inf)
