@@ -89,6 +89,7 @@ int main(int argc, char **argv)
 	int read_samples = 1;
 	short non_blocking = 0;
 	short raw = 0;
+	struct ts_lib_version_data *ver = ts_libversion();
 
 #ifndef TSLIB_VERSION_MT /* < 1.10 */
 	printf("You are running an old version of tslib. Please upgrade.\n");
@@ -157,7 +158,11 @@ int main(int argc, char **argv)
 	}
 
 	ts_error_fn = errfn;
-	ts_open_restricted = openfn;
+
+#ifdef TSLIB_VERSION_OPEN_RESTRICTED
+	if (ver->features & TSLIB_VERSION_OPEN_RESTRICTED)
+		ts_open_restricted = openfn;
+#endif
 
 	if (non_blocking)
 		ts = ts_setup(tsdevice, 1);
