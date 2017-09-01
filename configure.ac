@@ -28,7 +28,7 @@ case "${host_os}" in
 	linux*)
 		build_linux=yes
 		;;
-	freebsd*)
+	freebsd*|k*bsd-gnu*)
 		build_freebsd=yes
 		;;
 	gnu*)
