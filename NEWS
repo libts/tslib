@@ -7,6 +7,7 @@ This release includes libts version 0.8.0 and the following changes:
 This release includes the following bugfixes:
 * 18dfd8b remove build dependency on pkg-config
 * f10104e configure.ac: add GNU/kFreeBSD to build config
+* b8594cc input-raw: Don't require to have the EV_KEY event type
 
 
 tslib 1.12 - released 2017-08-29
