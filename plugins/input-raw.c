@@ -234,10 +234,9 @@ static int check_fd(struct tslib_input *i)
 			"tslib: Warning: Selected device uses a different version of the event protocol than tslib was compiled for\n");
 
 	if ((ioctl(ts->fd, EVIOCGBIT(0, sizeof(evbit)), evbit) < 0) ||
-		!(evbit[BIT_WORD(EV_ABS)] & BIT_MASK(EV_ABS)) ||
-		!(evbit[BIT_WORD(EV_KEY)] & BIT_MASK(EV_KEY))) {
+		!(evbit[BIT_WORD(EV_ABS)] & BIT_MASK(EV_ABS))) {
 		fprintf(stderr,
-			"tslib: Selected device is not a touchscreen (must support ABS and KEY event types)\n");
+			"tslib: Selected device is not a touchscreen (must support ABS event type)\n");
 		return -1;
 	}
 
@@ -252,24 +251,36 @@ static int check_fd(struct tslib_input *i)
 		}
 	}
 
-	if (ioctl(ts->fd, EVIOCGBIT(EV_KEY, sizeof(keybit)), keybit) < 0) {
-		fprintf(stderr, "tslib: ioctl EVIOCGBIT error)\n");
-		return -1;
-	}
-
-
-	if (evbit[BIT_WORD(EV_SYN)] & BIT_MASK(EV_SYN))
-		i->using_syn = 1;
-
-	/* read device info and set special device nr */
-	get_special_device(i);
-
 	/* Remember whether we have a multitouch device. We need to know for ABS_X,
 	 * ABS_Y and ABS_PRESSURE data.
 	 */
 	if ((absbit[BIT_WORD(ABS_MT_POSITION_X)] & BIT_MASK(ABS_MT_POSITION_X)) &&
 	    (absbit[BIT_WORD(ABS_MT_POSITION_Y)] & BIT_MASK(ABS_MT_POSITION_Y)))
 		i->mt = 1;
+
+	if (evbit[BIT_WORD(EV_KEY)] & BIT_MASK(EV_KEY)) {
+		if (ioctl(ts->fd, EVIOCGBIT(EV_KEY, sizeof(keybit)), keybit) < 0) {
+			fprintf(stderr, "tslib: ioctl EVIOCGBIT error)\n");
+			return -1;
+		}
+
+		/* for multitouch type B, tracking id is enough for pen down/up. type A
+		 * has pen down/up through the list of (empty) SYN_MT_REPORT
+		 * only for singletouch we need BTN_TOUCH or BTN_LEFT
+		 */
+		if (!(keybit[BIT_WORD(BTN_TOUCH)] & BIT_MASK(BTN_TOUCH) ||
+		      keybit[BIT_WORD(BTN_LEFT)] & BIT_MASK(BTN_LEFT)) && !i->mt) {
+			fprintf(stderr,
+				"tslib: Selected device is not a touchscreen (missing BTN_TOUCH or BTN_LEFT)\n");
+			return -1;
+		}
+	}
+
+	if (evbit[BIT_WORD(EV_SYN)] & BIT_MASK(EV_SYN))
+		i->using_syn = 1;
+
+	/* read device info and set special device nr */
+	get_special_device(i);
 
 	/* Since some touchscreens (eg. infrared) physically can't measure pressure,
 	 * the input system doesn't report it on those. Tslib relies on pressure, thus
@@ -294,15 +305,6 @@ static int check_fd(struct tslib_input *i)
 	    !(absbit[BIT_WORD(ABS_MT_SLOT)] & BIT_MASK(ABS_MT_SLOT)) &&
 	    !(absbit[BIT_WORD(ABS_MT_TRACKING_ID)] & BIT_MASK(ABS_MT_TRACKING_ID)))
 		i->type_a = 1;
-
-	/* for multitouch type B, tracking id is enough for pen down/up. type A
-	 * has pen down/up through the list of (empty) SYN_MT_REPORT */
-	if (!(keybit[BIT_WORD(BTN_TOUCH)] & BIT_MASK(BTN_TOUCH) ||
-	      keybit[BIT_WORD(BTN_LEFT)] & BIT_MASK(BTN_LEFT)) && i->mt != 1) {
-		fprintf(stderr,
-			"tslib: Selected device is not a touchscreen (missing BTN_TOUCH or BTN_LEFT)\n");
-		return -1;
-	}
 
 	if (i->grab_events == GRAB_EVENTS_WANTED) {
 		if (ioctl(ts->fd, EVIOCGRAB, (void *)1)) {
