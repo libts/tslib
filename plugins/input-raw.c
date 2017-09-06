@@ -451,6 +451,9 @@ static int ts_input_read(struct tslib_module_info *inf,
 					case ABS_PRESSURE:
 						i->current_p = ev.value;
 						break;
+					case ABS_MT_PRESSURE:
+						i->current_p = ev.value;
+						break;
 					}
 				}
 				break;
