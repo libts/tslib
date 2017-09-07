@@ -448,6 +448,7 @@ too.
 * [xf86-input-tslib](https://github.com/merge/xf86-input-tslib) - direct tslib input driver for X11
 * [qtslib](https://github.com/qt/qtbase/tree/dev/src/platformsupport/input/tslib) - direct Qt5 tslib input plugin
 * [enlightenment](https://www.enlightenment.org/) - A Window Manager (direct support in framebuffer mode, X11 via xf86-input-tslib)
+* [DirectFB](https://github.com/deniskropp/DirectFB) - Graphics library on top of framebuffer
 
 ### using libts
 If you want to support tslib < 1.2, while still support multitouch and all
