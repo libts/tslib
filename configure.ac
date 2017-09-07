@@ -118,12 +118,12 @@ TSLIB_CHECK_MODULE([arctic2], [yes], [Enable building of arctic2 raw module (IBM
 TSLIB_CHECK_MODULE([tatung], [yes], [Enable building of tatung raw module (Tatung Webpad support)])
 TSLIB_CHECK_MODULE([dmc], [yes], [Enable building of dmc raw module (HP iPaq DMC support)])
 TSLIB_CHECK_MODULE([touchkit], [yes], [Enable building of serial TouchKit raw module (Linux /dev/ttySX support)])
-TSLIB_CHECK_MODULE([galax], [yes], [Enable building of HID USB eGalax raw module (Linux /dev/hiddevN support)])
 TSLIB_CHECK_MODULE([waveshare], [yes], [Enable building of WaveShare raw module (Linux /dev/hidrawN support)])
 
 # userspace device drivers, disabled by default
 TSLIB_CHECK_MODULE([dmc_dus3000], [no], [Enable building of dmc_dus3000 raw module (DMC DUS Series support)])
 TSLIB_CHECK_MODULE([cy8mrln-palmpre], [no], [Enable building of cy8mrln-palmpre raw module])
+TSLIB_CHECK_MODULE([galax], [no], [Enable building of HID USB eGalax raw module (Linux /dev/hiddevN support)])
 
 AC_MSG_CHECKING([where to place modules])
 AC_ARG_WITH(plugindir,

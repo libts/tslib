@@ -3,6 +3,8 @@ tslib 1.13 - tba
 
 This release includes libts version 0.8.0 and the following changes:
 * Add ts_open_restricted() and ts_close_restricted() API
+* `module_raw galax` is now disabled in the default configuration.
+  Please use `module_raw input` instead.
 
 This release includes the following bugfixes:
 * 18dfd8b remove build dependency on pkg-config

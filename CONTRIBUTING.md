@@ -137,7 +137,7 @@ Quick note: always build everything we have. In case we remove modules from
 being built by default, you should always build them. To achieve this on Linux,
 this is right now
 
-    ./configure --enable-cy8mrln-palmpre --enable-dmc_dus3000
+    ./configure --enable-cy8mrln-palmpre --enable-dmc_dus3000 --enable-galax
 
 Ok. The tslib project currently consists of
 * the [kergoth/tslib](https://github.com/kergoth/tslib) github repository. This

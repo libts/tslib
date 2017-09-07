@@ -623,23 +623,25 @@ The libts default configuration currently has the following input modules
 __disabled__:
 * `cy8mrln-palmpre`
 * `dmc_dus3000`
+* `galax`
 
 Please note that this list may grow over time. If you rely on
-a particular input plugin, you should enable it explicitely. Building __all__
+a particular input plugin, you should enable it explicitely. Even though on Linux
+you should only need `input`, building __all__
 supported modules for your platform should look like so:
 
 * GNU / Linux - all (most importantly `input`)
-  - `./configure.ac --enable-cy8mrln-palmpre  --enable-dmc_dus3000`
+  - `./configure.ac --enable-cy8mrln-palmpre  --enable-dmc_dus3000 --enable-galax`
 * Android / Linux - all (most importantly `input`)
-  - `./configure.ac --enable-cy8mrln-palmpre  --enable-dmc_dus3000`
+  - `./configure.ac --enable-cy8mrln-palmpre  --enable-dmc_dus3000 --enable-galax`
 * FreeBSD - almost all (most importantly `input`)
   - `./configure.ac --disable-waveshare`
 * GNU / Hurd - some, see [hardware support](#touchscreen-hardware-support)
-  - `./configure.ac --disable-input --disable-galax --disable-waveshare`
+  - `./configure.ac --disable-input --disable-waveshare`
 * Haiku - some, see [hardware support](#touchscreen-hardware-support)
-  - `./configure.ac --disable-input --disable-galax --disable-touchkit --disable-waveshare`
+  - `./configure.ac --disable-input --disable-touchkit --disable-waveshare`
 * Windows - no tslib module for the [Windows touchscreen API](https://msdn.microsoft.com/en-us/library/windows/desktop/dd317323(v=vs.85).aspx) (yet)
-  - `./configure.ac --with-sdl2 --disable-ucb1x00 --disable-corgi --disable-collie --disable-h3600 --disable-mk712 --disable-arctic2 --disable-tatung --disable-dmc --disable-input --disable-galax --disable-touchkit --disable-waveshare`
+  - `./configure.ac --with-sdl2 --disable-ucb1x00 --disable-corgi --disable-collie --disable-h3600 --disable-mk712 --disable-arctic2 --disable-tatung --disable-dmc --disable-input --disable-touchkit --disable-waveshare`
 
 Writing your own plugin is quite easy, in case an existing one doesn't fit.
 
