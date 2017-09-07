@@ -64,11 +64,8 @@ sure you have the right to the code you are contributing yourself. There is no
 other copyright aggreement. You retain your copyright to your code.
 
 ### branching model
-The short version is: there really is none. But what is important is that
-our master branch is __not__ to be considered stable! A stable state will always
-be tagged (and released as tarballs).
-
-And please simply ignore the release/X.X branches! They are old.
+Simple: our master branch is __not__ to be considered stable! A stable state
+will always be tagged (and released as tarballs).
 
 For larger features that aren't in any useful state, there are feature branches
 with random names.
@@ -105,11 +102,7 @@ The procedure looks like this:
 * publish, send an email to the mailing list and if you're in the mood, inform distributors that you know don't automatically get informed.
 * celebrate!
 
-note: up until 1.7 we kept the habit of adding generated files to a release
-branch that is never used again. Those branches exist. We can't do anything
-about it. We won't create new ones anymore. Ignore them.
-
-also note: It's important not to lose the generated files (tarballs, hashes
+note: Do not lose the generated files (tarballs, hashes
 and signatures). Always upload them to at least 2 host providers. And do it
 immediately after pushing the tag. This also ensures you have time to find a new
 one in case one dies. Github is the primary source for distributions.
