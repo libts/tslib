@@ -117,7 +117,8 @@ int main(int argc, char **argv)
 		}
 
 		if (errno) {
-			char *str = "option ?";
+			char str[9];
+			sprintf(str, "option ?");
 			str[7] = c & 0xff;
 			perror(str);
 		}
