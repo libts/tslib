@@ -454,6 +454,10 @@ static int ts_input_read(struct tslib_module_info *inf,
 					case ABS_MT_PRESSURE:
 						i->current_p = ev.value;
 						break;
+					case ABS_MT_TRACKING_ID:
+						if (ev.value == -1)
+							i->current_p = 0;
+						break;
 					}
 				}
 				break;
