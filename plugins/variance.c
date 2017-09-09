@@ -207,7 +207,7 @@ static int variance_read_mt(struct tslib_module_info *info,
 			}
 
 			for (i = 1; i < max_slots; i++) {
-				if (var->cur_mt[0][i].valid == 1) {
+				if (var->cur_mt[0][i].valid & TSLIB_MT_VALID) {
 				#ifdef DEBUG
 					fprintf(stderr,
 						"VARIANCE: MT data dropped.\n");
@@ -219,7 +219,7 @@ static int variance_read_mt(struct tslib_module_info *info,
 					var->cur_mt[0][i].valid = 0;
 				}
 			}
-			if (var->cur_mt[0][0].valid != 1)
+			if (!(var->cur_mt[0][0].valid & TSLIB_MT_VALID))
 				continue;
 
 			cur.x = var->cur_mt[0][0].x;
@@ -272,7 +272,7 @@ static int variance_read_mt(struct tslib_module_info *info,
 					samp_mt[count][0].y = var->samp[count].y;
 					samp_mt[count][0].pressure = var->samp[count].pressure;
 					samp_mt[count][0].tv = var->samp[count].tv;
-					samp_mt[count][0].valid = 1;
+					samp_mt[count][0].valid |= TSLIB_MT_VALID;
 					samp_mt[count][0].slot = var->cur_mt[0][0].slot;
 					samp_mt[count][0].tracking_id = var->cur_mt[0][0].tracking_id;
 					samp_mt[count][0].pen_down = pen_down;
@@ -302,7 +302,7 @@ acceptsample:
 		samp_mt[count][0].y = var->samp[count].y;
 		samp_mt[count][0].pressure = var->samp[count].pressure;
 		samp_mt[count][0].tv = var->samp[count].tv;
-		samp_mt[count][0].valid = 1;
+		samp_mt[count][0].valid |= TSLIB_MT_VALID;
 		samp_mt[count][0].slot = var->cur_mt[0][0].slot;
 		samp_mt[count][0].tracking_id = var->cur_mt[0][0].tracking_id;
 		samp_mt[count][0].pen_down = var->last_pen_down;
