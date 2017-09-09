@@ -301,7 +301,7 @@ int main(int argc, char **argv)
 			continue;
 
 		for (j = 0; j < max_slots; j++) {
-			if (samp_mt[0][j].valid != 1)
+			if (!(samp_mt[0][j].valid & TSLIB_MT_VALID))
 				continue;
 
 			for (i = 0; i < NR_BUTTONS; i++) {
