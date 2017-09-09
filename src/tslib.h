@@ -86,11 +86,15 @@ struct ts_sample_mt {
 	/* BTN_TOUCH state */
 	short		pen_down;
 
-	/* valid is set to 1 if this sample
-	 * contains new data; set to 0 otherwise
+	/* valid is set > 0 if this sample
+	 * contains new data, see below
+	 * valid is set to 0 otherwise
 	 */
 	short		valid;
 };
+
+#define TSLIB_MT_VALID			(1 << 0)	/* any new data */
+#define TSLIB_MT_VALID_TOOL		(1 << 1)	/* new tool_x or tool_y data */
 
 struct ts_lib_version_data {
 	const char	*package_version;
