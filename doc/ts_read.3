@@ -89,8 +89,9 @@ struct ts_sample_mt {
         /* BTN_TOUCH state */
         short           pen_down;
 
-        /* valid is set to 1 if this sample
-         * contains new data; set to 0 otherwise */
+        /* valid is set to TSLIB_MT_VALID if this sample
+         * contains new data;
+	 * valid is set to 0 otherwise */
         short           valid;
 };
 .fi
@@ -152,7 +153,7 @@ int main(int argc, char **argv)
                 for (i = 0; i < ret; i++) {
                         printf("sample nr %d\n", i);
                         for (j = 0; i < MAX_SLOTS; j++) {
-                                if (samp_mt[i][j].valid != 1)
+                                if (!(samp_mt[i][j].valid & TSLIB_MT_VALID))
                                         continue;
 
                                 printf("slot %d: X:%d Y: %d\n",
