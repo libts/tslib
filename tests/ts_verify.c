@@ -166,7 +166,7 @@ static int ts_verify_read_mt_1(struct ts_verify *data, int nr,
 
 		for (j = 0; j < ret; j++) {
 			for (i = 0; i < data->slots; i++) {
-				if (data->samp_mt[j][i].valid != 1)
+				if (!(data->samp_mt[j][i].valid & TSLIB_MT_VALID))
 					continue;
 
 				if (data->samp_mt[j][i].pressure > 255) {
