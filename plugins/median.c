@@ -258,7 +258,7 @@ static int median_read_mt(struct tslib_module_info *inf,
 		for (j = 0; j < max_slots; j++) {
 			unsigned int cpress = 0;
 
-			if (samp[i][j].valid != 1)
+			if (!(samp[i][j].valid & TSLIB_MT_VALID))
 				continue;
 
 			memset(c->sorted, 0, c->size * sizeof(int32_t));
@@ -318,7 +318,7 @@ static int median_read_mt(struct tslib_module_info *inf,
 			}
 
 			if (cpress != 0 && c->withsamples_mt[j] <= c->size / 2) {
-				samp[i][j].valid = -1;
+				samp[i][j].valid = 0;
 				c->withsamples_mt[j]++;
 			}
 		}
