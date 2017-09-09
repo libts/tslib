@@ -2,7 +2,8 @@ tslib 1.13 - tba
 ================================
 
 This release includes libts version 0.8.0 and the following changes:
-* Add ts_open_restricted() and ts_close_restricted() API
+* Added ts_open_restricted() and ts_close_restricted() API
+* Added TSLIB_MT_VALID bit definition for ts_sample_mt's valid flag
 * `module_raw galax` is now disabled in the default configuration.
   Please use `module_raw input` instead.
 
