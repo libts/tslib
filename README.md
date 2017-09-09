@@ -558,6 +558,8 @@ and call `ts_read_mt()` like so
 | --- | --- |
 |`TSLIB_VERSION_MT` | 1.10 |
 |`TSLIB_VERSION_OPEN_RESTRICTED` | 1.13 |
+|`TSLIB_MT_VALID` | 1.13 |
+|`TSLIB_MT_VALID_TOOL` | 1.13 |
 |`ts_libversion` | 1.10 |
 |`ts_close` | 1.0 |
 |`ts_config` | 1.0 |
