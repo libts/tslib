@@ -161,7 +161,7 @@ static int debounce_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 
 	for (nr = 0; nr < ret; nr++) {
 		for (i = 0; i < max_slots; i++) {
-			if (samp[nr][i].valid != 1)
+			if (!(samp[nr][i].valid & TSLIB_MT_VALID))
 				continue;
 
 			now = samp[nr][i].tv.tv_sec * 1e6 + samp[nr][i].tv.tv_usec;
