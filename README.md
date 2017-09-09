@@ -516,8 +516,13 @@ This is a complete example program, similar to `ts_print_mt.c`:
 
                 for (j = 0; j < ret; j++) {
                 	for (i = 0; i < SLOTS; i++) {
+			#ifdef TSLIB_MT_VALID
+				if (!(samp_mt[j][i].valid & TSLIB_MT_VALID)
+					continue;
+			#else
 				if (samp_mt[j][i].valid != 1)
 					continue;
+			#endif
 
 				printf("%ld.%06ld: (slot %d) %6d %6d %6d\n",
 				       samp_mt[j][i].tv.tv_sec,
