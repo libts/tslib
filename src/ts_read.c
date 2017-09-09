@@ -51,7 +51,7 @@ int ts_read_mt(struct tsdev *ts, struct ts_sample_mt **samp, int max_slots,
 #ifdef DEBUG
 	for (j = 0; j < result; j++) {
 		for (i = 0; i < max_slots; i++) {
-			if (samp[j][i].valid != 1)
+			if (!(samp[j][i].valid & TSLIB_MT_VALID))
 				continue;
 
 			ts_error("TS_READ_MT----> slot %d: x = %d, y = %d, pressure = %d\n",

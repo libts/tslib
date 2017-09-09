@@ -48,7 +48,7 @@ int ts_read_raw_mt(struct tsdev *ts, struct ts_sample_mt **samp, int slots,
 #ifdef DEBUG
 	for (i = 0; i < result; i++) {
 		for (j = 0; j < slots; j++) {
-			if (samp[i][j].valid != 1)
+			if (!(samp[i][j].valid & TSLIB_MT_VALID))
 				continue;
 
 			ts_error("TS_READ_RAW_MT----> slot %d: x = %d, y = %d, pressure = %d\n",
