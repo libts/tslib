@@ -252,7 +252,7 @@ static int skip_read_mt(struct tslib_module_info *info,
 		memcpy(skip->cur_mt[0], samp[count],
 		       max_slots * sizeof(struct ts_sample_mt));
 		for (i = 0; i < max_slots; i++) {
-			if (skip->cur_mt[0][i].valid != 1)
+			if (!(skip->cur_mt[0][i].valid & TSLIB_MT_VALID))
 				continue;
 
 			/* skip the first N samples */
@@ -286,7 +286,7 @@ static int skip_read_mt(struct tslib_module_info *info,
 
 				if (skip->sent_mt[i] == 0) {
 					skip->cur_mt[0][i].pen_down = 1;
-					skip->cur_mt[0][i].valid = 1;
+					skip->cur_mt[0][i].valid |= TSLIB_MT_VALID;
 				}
 
 				memcpy(&samp[count][i], &skip->cur_mt[0][i],
@@ -310,7 +310,7 @@ static int skip_read_mt(struct tslib_module_info *info,
 			/* ntail > 0,  Queue current point if we need to */
 			if (skip->sent_mt[i] == 0 && skip->M_mt[i] < skip->ntail) {
 				skip->cur_mt[0][i].pen_down = 1;
-				skip->cur_mt[0][i].valid = 1;
+				skip->cur_mt[0][i].valid |= TSLIB_MT_VALID;
 				samp[count][i].valid = 0;
 
 			#ifdef DEBUG
@@ -333,7 +333,7 @@ static int skip_read_mt(struct tslib_module_info *info,
 				skip->buf_mt[skip->M_mt[i]][i].pressure = 0;
 				skip->buf_mt[skip->M_mt[i]][i].pen_down = 0;
 				skip->buf_mt[skip->M_mt[i]][i].tracking_id = -1;
-				skip->buf_mt[skip->M_mt[i]][i].valid = 1;
+				skip->buf_mt[skip->M_mt[i]][i].valid |= TSLIB_MT_VALID;
 			}
 
 			memcpy(&samp[count][i], &skip->buf_mt[skip->M_mt[i]][i],
