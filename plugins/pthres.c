@@ -157,7 +157,7 @@ static int pthres_read_mt(struct tslib_module_info *info,
 
 	for (i = 0; i < ret; i++) {
 		for (j = 0; j < max_slots; j++) {
-			if (samp[i][j].valid != 1)
+			if (!(samp[i][j].valid & TSLIB_MT_VALID))
 				continue;
 
 			if (samp[i][j].pressure < p->pmin) {
