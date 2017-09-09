@@ -255,7 +255,7 @@ static int dejitter_read_mt(struct tslib_module_info *info,
 
 	for (j = 0; j < ret; j++) {
 		for (i = 0; i < max_slots; i++) {
-			if (samp[j][i].valid != 1)
+			if (!(samp[j][i].valid & TSLIB_MT_VALID))
 				continue;
 
 			if (samp[j][i].pressure == 0) {
