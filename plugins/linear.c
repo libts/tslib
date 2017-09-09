@@ -108,7 +108,7 @@ static int linear_read_mt(struct tslib_module_info *info,
 		fprintf(stderr, "BEFORE CALIB:\n");
 	#endif /*DEBUG*/
 		for (i = 0; i < max_slots; i++) {
-			if (samp[nr][i].valid != 1)
+			if (!(samp[nr][i].valid & TSLIB_MT_VALID))
 				continue;
 
 		#ifdef DEBUG
