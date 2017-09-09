@@ -220,7 +220,7 @@ int main(int argc, char **argv)
 
 		for (j = 0; j < ret; j++) {
 			for (i = 0; i < max_slots; i++) {
-				if (samp_mt[j][i].valid != 1)
+				if (!(samp_mt[j][i].valid & TSLIB_MT_VALID))
 					continue;
 
 				printf(YELLOW "sample %d - %ld.%06ld -" RESET " (slot %d) %6d %6d %6d\n",
