@@ -191,7 +191,7 @@ int main(int argc, char **argv)
 		SDL_RenderClear(sdlRenderer);
 
 		for (i = 0; i < max_slots; i++) {
-			if (samp_mt[0][i].valid != 1)
+			if (!(samp_mt[0][i].valid & TSLIB_MT_VALID))
 				continue;
 
 			draw_crosshair(sdlRenderer,
