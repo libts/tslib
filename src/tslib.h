@@ -86,8 +86,9 @@ struct ts_sample_mt {
 	/* BTN_TOUCH state */
 	short		pen_down;
 
-	/* valid is set > 0 if this sample
-	 * contains new data, see below
+	/* valid is set != 0 if this sample
+	 * contains new data; see below for the
+	 * bits that get set.
 	 * valid is set to 0 otherwise
 	 */
 	short		valid;

@@ -89,7 +89,7 @@ struct ts_sample_mt {
         /* BTN_TOUCH state */
         short           pen_down;
 
-        /* valid is set to TSLIB_MT_VALID if this sample
+        /* the TSLIB_MT_VALID bit is set in valid if this sample
          * contains new data;
 	 * valid is set to 0 otherwise */
         short           valid;
