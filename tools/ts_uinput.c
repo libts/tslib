@@ -158,7 +158,7 @@ static int send_touch_events(struct data_t *data, struct ts_sample_mt **s,
 				c++;
 			}
 
-			if (s[j][i].valid != 1)
+			if (!(s[j][i].valid & TSLIB_MT_VALID))
 				continue;
 
 			data->ev[c].time = s[j][i].tv;
@@ -440,7 +440,7 @@ static int process(struct data_t *data, struct ts_sample_mt **s_array,
 				       ": sample %d:  x\ty\tslot\ttracking_id\n"
 				       RESET, j);
 				for (i = 0; i < max_slots; i++) {
-					if (s_array[j][i].valid == 1) {
+					if (s_array[j][i].valid & TSLIB_MT_VALID) {
 						printf(DEFAULT_UINPUT_NAME
 						       ": \t%d\t%d\t%d\t%d\n",
 						       s_array[j][i].x,
