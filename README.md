@@ -520,7 +520,7 @@ This is a complete example program, similar to `ts_print_mt.c`:
 				if (!(samp_mt[j][i].valid & TSLIB_MT_VALID)
 					continue;
 			#else
-				if (samp_mt[j][i].valid != 1)
+				if (samp_mt[j][i].valid < 1)
 					continue;
 			#endif
 
