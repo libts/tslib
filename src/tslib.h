@@ -111,6 +111,15 @@ enum ts_param {
 	TS_SCREEN_ROT			/* 1 integer arg, 1 = rotate */
 };
 
+struct ts_module_conf {
+	char *name;
+	char *params;
+	int active;			/* is the module currently running?
+					 * if not, ts_reconfig() might be necessary. */
+	struct ts_module_conf *next;
+	struct ts_module_conf *prev;
+};
+
 /*
  * Close the touchscreen device, free all resources.
  */
@@ -190,6 +199,16 @@ TSAPI int ts_read_raw_mt(struct tsdev *, struct ts_sample_mt **, int slots, int 
  * This function returns a pointer to a static copy of the version info struct.
  */
 TSAPI struct ts_lib_version_data *ts_libversion(void);
+
+/*
+ * Get the list of (commented-in) ts.conf module lines (as structs)
+ */
+TSAPI struct ts_module_conf *ts_conf_get(struct tsdev *ts, const char *path);
+
+/*
+ * Write the list of modules to ts.conf
+ */
+TSAPI int ts_conf_set(struct tsdev *ts, const char *path, struct ts_module_conf *conf);
 
 #ifdef __cplusplus
 }
