@@ -451,6 +451,24 @@ too.
 * [DirectFB](https://github.com/deniskropp/DirectFB) - Graphics library on top of framebuffer
 
 ### using libts
+To use the library from C or C++, include the following preprocessor directive
+in your source files:
+
+    #include <tslib.h>
+
+
+To link with with library, specify `-lts` as an argument to the linker.
+
+#### compiling using autoconf and pkg-config
+On UNIX systems you can use pkg-config to automatically select the appropriate
+compiler and linker switches for libts. The `PKG_CHECK_MODULES` m4 macro may be
+used to automatically set the appropriate Makefile variables:
+
+    PKG_CHECK_MODULES([TSLIB], [tslib >= 1.10],,
+      AC_MSG_ERROR([libts 1.10 or newer not found.])
+    )
+
+
 If you want to support tslib < 1.2, while still support multitouch and all
 recent versions of tslib, you'd do something like this:
 
