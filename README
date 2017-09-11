@@ -1,1 +1,32 @@
-see README.md
+                             _       _ _ _
+                            | |_ ___| (_) |
+                            | __/ __| | | '_ \
+                            | |_\__ \ | | |_) |
+                             \__|___/_|_|_.__/
+
+                C library for filtering touchscreen events
+
+README
+
+  tslib consists of the library libts and tools that help you calibrate and use
+  it in your environment.
+
+  see README.md and the man pages in the doc directory for all documentation
+
+CONTACT
+
+  If you have problems, questions, ideas or suggestions, please contact us by
+  writing an email to our mailing list: tslib@lists.infradead.org
+
+WEBSITE
+
+  Visit the tslib website for an overview of the project: http://tslib.org
+
+GIT
+
+  The main source repository is at https://github.com/kergoth/tslib
+
+LICENSE
+
+  The libts library is available under the LGPL license. The provided programs
+  that use it are available under the GPL license, see the COPYING files.
