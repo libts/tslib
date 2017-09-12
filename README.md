@@ -394,62 +394,6 @@ Check out our tests directory for examples how to use it.
 [`void (*ts_close_restricted)(int fd, void *user_data)`](https://manpages.debian.org/unstable/libts0/ts_close_restricted.3.en.html)  
 
 
-### ABI - Application Binary Interface
-
-[Wikipedia](https://en.wikipedia.org/wiki/Application_binary_interface) has
-background information.
-
-#### libts Soname versions
-Usually, and every time until now, libts does not break the ABI and your
-application can continue using libts after upgrading. Specifically this is
-indicated by the libts library version's major number, which should always stay
-the same. According to our versioning scheme, the major number is incremented
-only if we break backwards compatibility. The second or third minor version will
-increase with releases. In the following example
-
-
-    libts.so -> libts.so.0.7.0
-    libts.so.0 -> libts.so.0.7.0
-    libts.so.0.7.0
-
-
-use `libts.so` for using tslib unconditionally and `libts.so.0` to make sure
-your current application never breaks.
-
-If a release includes changes like added features, the second number is
-incremented and the third is set to zero. If a release includes mostly just
-bugfixes, only the third number is incremented.
-
-#### tslib package version
-A tslib tarball version number doesn't tell you anything about it's backwards
-compatibility.
-
-### dependencies
-
-* libc (with libdl only when building dynamically linked)
-* libsdl2-dev (only when using `--with-sdl2` for [SDL2](https://www.libsdl.org/) graphical applications)
-
-### related libraries
-
-* [libevdev](https://www.freedesktop.org/wiki/Software/libevdev/) - access wrapper for [event device](https://en.wikipedia.org/wiki/Evdev) access, uinput too ("Linux API")
-* [libinput](https://www.freedesktop.org/wiki/Software/libinput/) - handle input devices for Wayland (uses libevdev)
-* [xf86-input-evdev](https://cgit.freedesktop.org/xorg/driver/xf86-input-evdev/) - evdev plugin for X (uses libevdev)
-
-### libts users
-This lists the programs for the *every day use* of tslib, facing the outside world.
-For testing purposes there are tools like [ts_test_mt](#test-the-filtered-input-behaviour)
-too.
-
-#### shipped as part of tslib
-* [ts_calibrate](#filter-modules) - graphical calibration tool. Configures the `linear` filter module.
-* [ts_uinput](#use-the-filtered-result-in-your-system-ts_uinput-method) - userspace **evdev** driver for the tslib-filtered samples.
-
-#### third party applications
-* [xf86-input-tslib](https://github.com/merge/xf86-input-tslib) - direct tslib input driver for X11
-* [qtslib](https://github.com/qt/qtbase/tree/dev/src/platformsupport/input/tslib) - direct Qt5 tslib input plugin
-* [enlightenment](https://www.enlightenment.org/) - A Window Manager (direct support in framebuffer mode, X11 via xf86-input-tslib)
-* [DirectFB](https://github.com/deniskropp/DirectFB) - Graphics library on top of framebuffer
-
 ### using libts
 To use the library from C or C++, include the following preprocessor directive
 in your source files:
@@ -569,6 +513,78 @@ If you know how many slots your device can handle, you could avoid malloc:
 and call `ts_read_mt()` like so
 
     ts_read_mt(ts, ts_samp, SLOTS, SAMPLES);
+
+
+### ABI - Application Binary Interface
+
+[Wikipedia](https://en.wikipedia.org/wiki/Application_binary_interface) has
+background information.
+
+#### libts Soname versions
+Usually, and every time until now, libts does not break the ABI and your
+application can continue using libts after upgrading. Specifically this is
+indicated by the libts library version's major number, which should always stay
+the same. According to our versioning scheme, the major number is incremented
+only if we break backwards compatibility. The second or third minor version will
+increase with releases. In the following example
+
+
+    libts.so -> libts.so.0.7.0
+    libts.so.0 -> libts.so.0.7.0
+    libts.so.0.7.0
+
+
+use `libts.so` for using tslib unconditionally and `libts.so.0` to make sure
+your current application never breaks.
+
+If a release includes changes like added features, the second number is
+incremented and the third is set to zero. If a release includes mostly just
+bugfixes, only the third number is incremented.
+
+#### tslib package version
+A tslib tarball version number doesn't tell you anything about it's backwards
+compatibility.
+
+### dependencies
+
+* libc (with libdl only when building dynamically linked)
+* libsdl2-dev (only when using `--with-sdl2` for [SDL2](https://www.libsdl.org/) graphical applications)
+
+### related libraries
+
+* [libevdev](https://www.freedesktop.org/wiki/Software/libevdev/) - access wrapper for [event device](https://en.wikipedia.org/wiki/Evdev) access, uinput too ("Linux API")
+* [libinput](https://www.freedesktop.org/wiki/Software/libinput/) - handle input devices for Wayland (uses libevdev)
+* [xf86-input-evdev](https://cgit.freedesktop.org/xorg/driver/xf86-input-evdev/) - evdev plugin for X (uses libevdev)
+
+### libts users
+This lists the programs for the *every day use* of tslib, facing the outside world.
+For testing purposes there are tools like [ts_test_mt](#test-the-filtered-input-behaviour)
+too.
+
+#### shipped as part of tslib
+* [ts_calibrate](#filter-modules) - graphical calibration tool. Configures the `linear` filter module.
+* [ts_uinput](#use-the-filtered-result-in-your-system-ts_uinput-method) - userspace **evdev** driver for the tslib-filtered samples.
+
+#### third party applications
+* [xf86-input-tslib](https://github.com/merge/xf86-input-tslib) - direct tslib input driver for X11
+* [qtslib](https://github.com/qt/qtbase/tree/dev/src/platformsupport/input/tslib) - direct Qt5 tslib input plugin
+* [enlightenment](https://www.enlightenment.org/) - A Window Manager (direct support in framebuffer mode, X11 via xf86-input-tslib)
+* [DirectFB](https://github.com/deniskropp/DirectFB) - Graphics library on top of framebuffer
+
+### tslib module API
+`struct tslib_module_info`  
+`struct tslib_vars`  
+`struct tslib_ops`  
+`tslib_parse_vars(struct tslib_module_info *,const struct tslib_vars *, int, const char *);`  
+
+tslib modules (filter or driver/raw module) in the plugins directory need to
+implement `mod_init()`. If the module takes parameters, it has to declare a
+`const struct tslib_vars` and pass that, it's lengths and the params string
+that is passed to `mod_init` to `tslib_parse_vars()` during `mod_init()`.
+
+Furthermore a `const struct tslib_ops` has to be declared, with it's members
+pointing to the module's implementation of module-operations like `read_mt`
+that get called in the chain of filters.
 
 
 ### Symbols in Versions
