@@ -506,8 +506,8 @@ int main(int argc, char **argv)
 	printf("                | __/ __| | | '_ \\\n");
 	printf("                | |_\\__ \\ | | |_) |\n");
 	printf("                 \\__|___/_|_|_.__/\n\n");
-	printf("tslib %s (library 0x%X)\n", ver->package_version, ver->version_num);
-
+	printf("tslib %s / libts ABI version %d (0x%06X)\n",
+		ver->package_version, ver->version_num >> 16, ver->version_num);
 	printf("======================================================\n");
 	printf("input_raw\n");
 
