@@ -564,6 +564,8 @@ int main(int argc, char **argv)
 	unlink(CONFFILE);
 
 	printf("------------------------------------------------------\n");
+	printf("summary of results:\n");
+	printf("------------------------------------------------------\n");
 	printf("read_mt FAILs: %3d of %3d\n", data.read_mt_fail_count, data.read_mt_run_count);
 	printf("read    FAILs: %3d of %3d (WONTFIX)\n", data.read_fail_count, data.read_run_count);
 	printf("------------------------------------------------------\n");
