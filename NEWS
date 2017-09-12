@@ -12,6 +12,7 @@ This release includes the following bugfixes:
 * f10104e configure.ac: add GNU/kFreeBSD to build config
 * b8594cc input-raw: Don't require to have the EV_KEY event type
 * 1ad02d4 input-raw.c: support MT-only devices in ts_read()
+* 00c69d6 fix static building for galax and cy8mrln-palmpre
 
 
 tslib 1.12 - released 2017-08-29
