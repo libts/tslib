@@ -120,8 +120,10 @@ git clean -d -f
 	--enable-arctic2=static \
 	--enable-collie=static \
 	--enable-corgi=static \
+	--enable-cy8mrln-palmpre=static \
 	--enable-dmc_dus3000=static \
 	--enable-dmc=static \
+	--enable-galax=static \
 	--enable-h3600=static \
 	--enable-mk712=static \
 	--enable-tatung=static \

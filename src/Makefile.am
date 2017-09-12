@@ -107,6 +107,15 @@ if ENABLE_STATIC_WAVESHARE_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/waveshare-raw.c
 endif
 
+if ENABLE_STATIC_GALAX_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/galax-raw.c
+endif
+
+if ENABLE_STATIC_CY8MRLN_PALMPRE_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/cy8mrln.h
+libts_la_SOURCES += $(top_srcdir)/plugins/cy8mrln-palmpre.c
+endif
+
 libts_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
 		   -export-dynamic
 if WINDOWS
