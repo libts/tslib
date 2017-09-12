@@ -12,6 +12,7 @@
 set -e
 
 have_version=0
+NUMCPUS=`grep -c '^processor' /proc/cpuinfo`
 
 usage()
 {
@@ -85,16 +86,28 @@ echo "======================================================"
 read -p "           Press enter to continue"
 echo "======================================================"
 
-# Linux full build test
 ./autogen.sh
-./configure --disable-dependency-tracking --enable-cy8mrln-palmpre --enable-dmc_dus3000
-make distcheck
+./configure --disable-dependency-tracking
+make distclean
+
+# Linux all modules build test
+./autogen.sh
+./configure --disable-dependency-tracking \
+	--enable-cy8mrln-palmpre \
+	--enable-dmc_dus3000 \
+	--enable-galax
+
+make -j${NUMCPUS}
+make clean
 make distclean && ./autogen-clean.sh
 
 # Linux SDL2 build test
 ./autogen.sh
-./configure --disable-dependency-tracking --enable-cy8mrln-palmpre --enable-dmc_dus3000 --with-sdl2
-make distcheck
+./configure --disable-dependency-tracking \
+	--with-sdl2
+
+make -j${NUMCPUS}
+make clean
 make distclean && ./autogen-clean.sh
 
 git clean -d -f
@@ -102,16 +115,30 @@ git clean -d -f
 # static build test
 ./autogen.sh
 ./configure --disable-dependency-tracking \
---disable-shared --enable-static --enable-input=static \
---enable-skip=static \
---enable-pthres=static \
---enable-debounce=static \
---enable-median=static \
---enable-iir=static \
---enable-variance=static \
---enable-dejitter=static \
---enable-linear=static
-make distcheck
+	--disable-shared --enable-static \
+	--enable-input=static \
+	--enable-arctic2=static \
+	--enable-collie=static \
+	--enable-corgi=static \
+	--enable-dmc_dus3000=static \
+	--enable-dmc=static \
+	--enable-h3600=static \
+	--enable-mk712=static \
+	--enable-tatung=static \
+	--enable-touchkit=static \
+	--enable-ucb1x00=static \
+	--enable-waveshare=static \
+	--enable-skip=static \
+	--enable-pthres=static \
+	--enable-debounce=static \
+	--enable-median=static \
+	--enable-iir=static \
+	--enable-variance=static \
+	--enable-dejitter=static \
+	--enable-linear=static
+
+make -j${NUMCPUS}
+make clean
 make distclean
 ./autogen-clean.sh
 
