@@ -116,7 +116,13 @@ static void help(void)
 {
 	struct ts_lib_version_data *ver = ts_libversion();
 
-	printf("tslib %s (library 0x%X)\n", ver->package_version, ver->version_num);
+	printf("                 _       _ _ _\n");
+	printf("                | |_ ___| (_) |__\n");
+	printf("                | __/ __| | | '_ \\\n");
+	printf("                | |_\\__ \\ | | |_) |\n");
+	printf("                 \\__|___/_|_|_.__/\n\n");
+	printf("tslib %s / libts ABI version %d (0x%06X)\n",
+		ver->package_version, ver->version_num >> 16, ver->version_num);
 	printf("\n");
 	printf("Starts tslib instance listening to given event <device>, creates a virtual\n");
 	printf("input event device with given <name> using 'uinput', then continually reads\n");

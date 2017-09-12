@@ -35,7 +35,7 @@ static void print_host_os(void)
 {
 	struct ts_lib_version_data *version = ts_libversion();
 
-	printf("tslib %s (library 0x%X) on ",
+	printf("tslib %s (library 0x%06X) on ",
 	       version->package_version, version->version_num);
 
 #if defined (__linux__)

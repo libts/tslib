@@ -18,7 +18,13 @@ static void usage(char **argv)
 {
 	struct ts_lib_version_data *ver = ts_libversion();
 
-	printf("tslib %s (library 0x%X)\n", ver->package_version, ver->version_num);
+	printf("                 _       _ _ _\n");
+	printf("                | |_ ___| (_) |__\n");
+	printf("                | __/ __| | | '_ \\\n");
+	printf("                | |_\\__ \\ | | |_) |\n");
+	printf("                 \\__|___/_|_|_.__/\n\n");
+	printf("tslib %s / libts ABI version %d (0x%06X)\n",
+		ver->package_version, ver->version_num >> 16, ver->version_num);
 	printf("\n");
 	printf("Usage: %s device_name wait_for_sec\n", argv[0]);
 	printf("\tdevice_name  - tdevice to probe, example /dev/input/event0\n");
