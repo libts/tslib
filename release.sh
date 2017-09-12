@@ -12,7 +12,7 @@
 set -e
 
 have_version=0
-NUMCPUS=`grep -c '^processor' /proc/cpuinfo`
+NUMCPUS=$(grep -c '^processor' /proc/cpuinfo)
 
 usage()
 {
