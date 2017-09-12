@@ -91,7 +91,6 @@ echo "======================================================"
 make distclean
 
 # Linux all modules build test
-./autogen.sh
 ./configure --disable-dependency-tracking \
 	--enable-cy8mrln-palmpre \
 	--enable-dmc_dus3000 \
@@ -99,21 +98,17 @@ make distclean
 
 make -j${NUMCPUS}
 make clean
-make distclean && ./autogen-clean.sh
+make distclean
 
 # Linux SDL2 build test
-./autogen.sh
 ./configure --disable-dependency-tracking \
 	--with-sdl2
 
 make -j${NUMCPUS}
 make clean
-make distclean && ./autogen-clean.sh
-
-git clean -d -f
+make distclean
 
 # static build test
-./autogen.sh
 ./configure --disable-dependency-tracking \
 	--disable-shared --enable-static \
 	--enable-input=static \
@@ -137,12 +132,15 @@ git clean -d -f
 	--enable-iir=static \
 	--enable-variance=static \
 	--enable-dejitter=static \
-	--enable-linear=static
+	--enable-linear=static \
+	--enable-linear-h2200=static
 
 make -j${NUMCPUS}
 make clean
 make distclean
 ./autogen-clean.sh
+
+git clean -d -f
 
 git commit -a -m "tslib ${version}"
 git tag -s ${version} -m "tslib ${version}"
