@@ -501,6 +501,11 @@ int main(int argc, char **argv)
 		return errno;
 
 
+	printf("                 _       _ _ _\n");
+	printf("                | |_ ___| (_) |__\n");
+	printf("                | __/ __| | | '_ \\\n");
+	printf("                | |_\\__ \\ | | |_) |\n");
+	printf("                 \\__|___/_|_|_.__/\n\n");
 	printf("tslib %s (library 0x%X)\n", ver->package_version, ver->version_num);
 
 	printf("======================================================\n");
