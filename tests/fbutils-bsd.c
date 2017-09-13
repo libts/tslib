@@ -353,7 +353,7 @@ void fillrect (int x1, int y1, int x2, int y2, unsigned colidx)
 
 	for (; y1 <= y2; y1++) {
 		for (tmp = x1; tmp <= x2; tmp++) {
-			__pixel_loc(x1, y1, &loc);
+			__pixel_loc(tmp, y1, &loc);
 			__setpixel (loc, xormode, colidx);
 			loc.p8 += bytes_per_pixel;
 		}
