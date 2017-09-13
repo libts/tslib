@@ -13,6 +13,7 @@ This release includes the following bugfixes:
 * b8594cc input-raw: Don't require to have the EV_KEY event type
 * 1ad02d4 input-raw.c: support MT-only devices in ts_read()
 * 00c69d6 fix static building for galax and cy8mrln-palmpre
+* 5a8b080 Update fbutils-linux.c to fix fillrect only drawing first y line
 
 
 tslib 1.12 - released 2017-08-29
