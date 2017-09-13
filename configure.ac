@@ -93,15 +93,15 @@ AM_CONDITIONAL(HAVE_STRSEP, test x$HAVE_STRSEP = xyes)
 
 # filters
 #########
-TSLIB_CHECK_MODULE([linear], [yes], [Enable building of linear scaling])
+TSLIB_CHECK_MODULE([debounce], [yes], [Enable building of debounce filter])
 TSLIB_CHECK_MODULE([dejitter], [yes], [Enable building of dejitter filter])
+TSLIB_CHECK_MODULE([iir], [yes], [Enable building of IIR filter])
+TSLIB_CHECK_MODULE([linear], [yes], [Enable building of linear scaling])
 TSLIB_CHECK_MODULE([linear-h2200], [yes], [Enable building of linearizing filter for iPAQ h2200])
-TSLIB_CHECK_MODULE([variance], [yes], [Enable building of variance filter])
 TSLIB_CHECK_MODULE([median], [yes], [Enable building of median filter])
 TSLIB_CHECK_MODULE([pthres], [yes], [Enable building of pthres filter])
-TSLIB_CHECK_MODULE([debounce], [yes], [Enable building of debounce filter])
 TSLIB_CHECK_MODULE([skip], [yes], [Enable building of skip filter])
-TSLIB_CHECK_MODULE([iir], [yes], [Enable building of IIR filter])
+TSLIB_CHECK_MODULE([variance], [yes], [Enable building of variance filter])
 
 # hardware access modules
 #########################

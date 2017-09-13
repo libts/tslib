@@ -23,20 +23,28 @@ if !HAVE_STRSEP
 libts_la_SOURCES += ts_strsep.c ts_strsep.h
 endif
 
-if ENABLE_STATIC_LINEAR_MODULE
-libts_la_SOURCES += $(top_srcdir)/plugins/linear.c
+##################
+# filter modules #
+##################
+
+if ENABLE_STATIC_DEBOUNCE_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/debounce.c
 endif
 
 if ENABLE_STATIC_DEJITTER_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/dejitter.c
 endif
 
-if ENABLE_STATIC_LINEAR_H2200_MODULE
-libts_la_SOURCES += $(top_srcdir)/plugins/linear-h2200.c
+if ENABLE_STATIC_IIR_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/iir.c
 endif
 
-if ENABLE_STATIC_VARIANCE_MODULE
-libts_la_SOURCES += $(top_srcdir)/plugins/variance.c
+if ENABLE_STATIC_LINEAR_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/linear.c
+endif
+
+if ENABLE_STATIC_LINEAR_H2200_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/linear-h2200.c
 endif
 
 if ENABLE_STATIC_MEDIAN_MODULE
@@ -47,20 +55,28 @@ if ENABLE_STATIC_PTHRES_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/pthres.c
 endif
 
+if ENABLE_STATIC_SKIP_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/skip.c
+endif
+
+if ENABLE_STATIC_VARIANCE_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/variance.c
+endif
+
+###############
+# raw modules #
+###############
+
+if ENABLE_STATIC_INPUT_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/input-raw.c
+endif
+
 if ENABLE_STATIC_UCB1X00_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/ucb1x00-raw.c
 endif
 
 if ENABLE_STATIC_CORGI_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/corgi-raw.c
-endif
-
-if ENABLE_STATIC_DMC_MODULE
-libts_la_SOURCES += $(top_srcdir)/plugins/dmc-raw.c
-endif
-
-if ENABLE_STATIC_DMC_DUS3000_MODULE
-libts_la_SOURCES += $(top_srcdir)/plugins/dmc_dus3000-raw.c
 endif
 
 if ENABLE_STATIC_COLLIE_MODULE
@@ -83,28 +99,21 @@ if ENABLE_STATIC_TATUNG_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/tatung-raw.c
 endif
 
-if ENABLE_STATIC_INPUT_MODULE
-libts_la_SOURCES += $(top_srcdir)/plugins/input-raw.c
-endif
-
-if ENABLE_STATIC_DEBOUNCE_MODULE
-libts_la_SOURCES += $(top_srcdir)/plugins/debounce.c
-endif
-
-if ENABLE_STATIC_SKIP_MODULE
-libts_la_SOURCES += $(top_srcdir)/plugins/skip.c
+if ENABLE_STATIC_DMC_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/dmc-raw.c
 endif
 
 if ENABLE_STATIC_TOUCHKIT_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/touchkit-raw.c
 endif
 
-if ENABLE_STATIC_IIR_MODULE
-libts_la_SOURCES += $(top_srcdir)/plugins/iir.c
-endif
-
 if ENABLE_STATIC_WAVESHARE_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/waveshare-raw.c
+endif
+
+
+if ENABLE_STATIC_DMC_DUS3000_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/dmc_dus3000-raw.c
 endif
 
 if ENABLE_STATIC_GALAX_MODULE
