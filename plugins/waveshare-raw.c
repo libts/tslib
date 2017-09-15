@@ -54,7 +54,7 @@ static int waveshare_read(struct tslib_module_info *inf, struct ts_sample *samp,
 				"waveshare: searching for device using hidraw...\n");
 #endif
 			for (cnt = 0; cnt < HIDRAW_MAX_DEVICES; cnt++) {
-				snprintf(name_buf, sizeof(buf),
+				snprintf(name_buf, sizeof(name_buf),
 					 "/dev/hidraw%d", cnt);
 #ifdef DEBUG
 				fprintf(stderr,
