@@ -1,0 +1,5 @@
+# filter tests require evdev input. Evemu create an input device via uinput
+module_raw input
+
+# playing evemu_XXX_rec_debounce to TSLIB_TSDEVICE must result in no samples
+module debounce drop_threshold=250

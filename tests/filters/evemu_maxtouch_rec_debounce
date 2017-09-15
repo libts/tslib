@@ -1,0 +1,202 @@
+# EVEMU 1.3
+# Kernel: 4.9.20-ge-17.04-general-1
+# Input device name: "Atmel maXTouch Touchscreen"
+# Input device ID: bus 0x18 vendor 0000 product 0000 version 0000
+# Supported events:
+#   Event type 0 (EV_SYN)
+#     Event code 0 (SYN_REPORT)
+#     Event code 1 (SYN_CONFIG)
+#     Event code 2 (SYN_MT_REPORT)
+#     Event code 3 (SYN_DROPPED)
+#     Event code 4 ((null))
+#     Event code 5 ((null))
+#     Event code 6 ((null))
+#     Event code 7 ((null))
+#     Event code 8 ((null))
+#     Event code 9 ((null))
+#     Event code 10 ((null))
+#     Event code 11 ((null))
+#     Event code 12 ((null))
+#     Event code 13 ((null))
+#     Event code 14 ((null))
+#   Event type 1 (EV_KEY)
+#     Event code 330 (BTN_TOUCH)
+#   Event type 3 (EV_ABS)
+#     Event code 0 (ABS_X)
+#       Value    390
+#       Min        0
+#       Max      799
+#       Fuzz       0
+#       Flat       0
+#       Resolution 0
+#     Event code 1 (ABS_Y)
+#       Value    246
+#       Min        0
+#       Max      479
+#       Fuzz       0
+#       Flat       0
+#       Resolution 0
+#     Event code 47 (ABS_MT_SLOT)
+#       Value      0
+#       Min        0
+#       Max        9
+#       Fuzz       0
+#       Flat       0
+#       Resolution 0
+#     Event code 53 (ABS_MT_POSITION_X)
+#       Value      0
+#       Min        0
+#       Max      799
+#       Fuzz       0
+#       Flat       0
+#       Resolution 0
+#     Event code 54 (ABS_MT_POSITION_Y)
+#       Value      0
+#       Min        0
+#       Max      479
+#       Fuzz       0
+#       Flat       0
+#       Resolution 0
+#     Event code 55 (ABS_MT_TOOL_TYPE)
+#       Value      0
+#       Min        0
+#       Max        2
+#       Fuzz       0
+#       Flat       0
+#       Resolution 0
+#     Event code 57 (ABS_MT_TRACKING_ID)
+#       Value      0
+#       Min        0
+#       Max    65535
+#       Fuzz       0
+#       Flat       0
+#       Resolution 0
+#     Event code 59 (ABS_MT_DISTANCE)
+#       Value      0
+#       Min        0
+#       Max        1
+#       Fuzz       0
+#       Flat       0
+#       Resolution 0
+# Properties:
+#   Property  type 1 (INPUT_PROP_DIRECT)
+N: Atmel maXTouch Touchscreen
+I: 0018 0000 0000 0000
+P: 02 00 00 00 00 00 00 00
+B: 00 0b 00 00 00 00 00 00 00
+B: 01 00 00 00 00 00 00 00 00
+B: 01 00 00 00 00 00 00 00 00
+B: 01 00 00 00 00 00 00 00 00
+B: 01 00 00 00 00 00 00 00 00
+B: 01 00 00 00 00 00 00 00 00
+B: 01 00 04 00 00 00 00 00 00
+B: 01 00 00 00 00 00 00 00 00
+B: 01 00 00 00 00 00 00 00 00
+B: 01 00 00 00 00 00 00 00 00
+B: 01 00 00 00 00 00 00 00 00
+B: 01 00 00 00 00 00 00 00 00
+B: 01 00 00 00 00 00 00 00 00
+B: 02 00 00 00 00 00 00 00 00
+B: 03 03 00 00 00 00 80 e0 0a
+B: 04 00 00 00 00 00 00 00 00
+B: 05 00 00 00 00 00 00 00 00
+B: 11 00 00 00 00 00 00 00 00
+B: 12 00 00 00 00 00 00 00 00
+B: 14 00 00 00 00 00 00 00 00
+B: 15 00 00 00 00 00 00 00 00
+B: 15 00 00 00 00 00 00 00 00
+A: 00 0 799 0 0 0
+A: 01 0 479 0 0 0
+A: 2f 0 9 0 0 0
+A: 35 0 799 0 0 0
+A: 36 0 479 0 0 0
+A: 37 0 2 0 0 0
+A: 39 0 65535 0 0 0
+A: 3b 0 1 0 0 0
+################################
+#      Waiting for events      #
+################################
+E: 0.000001 0003 0039 0003	# EV_ABS / ABS_MT_TRACKING_ID   3
+E: 0.000001 0003 0035 0340	# EV_ABS / ABS_MT_POSITION_X    340
+E: 0.000001 0003 0036 0242	# EV_ABS / ABS_MT_POSITION_Y    242
+E: 0.000001 0001 014a 0001	# EV_KEY / BTN_TOUCH            1
+E: 0.000001 0003 0000 0340	# EV_ABS / ABS_X                340
+E: 0.000001 0003 0001 0242	# EV_ABS / ABS_Y                242
+E: 0.000001 0000 0000 0000	# ------------ SYN_REPORT (0) ---------- +0ms
+E: 0.095573 0003 0039 -001	# EV_ABS / ABS_MT_TRACKING_ID   -1
+E: 0.095573 0001 014a 0000	# EV_KEY / BTN_TOUCH            0
+E: 0.095573 0000 0000 0000	# ------------ SYN_REPORT (0) ---------- +95ms
+E: 0.233856 0003 0039 0004	# EV_ABS / ABS_MT_TRACKING_ID   4
+E: 0.233856 0003 0035 0354	# EV_ABS / ABS_MT_POSITION_X    354
+E: 0.233856 0003 0036 0228	# EV_ABS / ABS_MT_POSITION_Y    228
+E: 0.233856 0001 014a 0001	# EV_KEY / BTN_TOUCH            1
+E: 0.233856 0003 0000 0354	# EV_ABS / ABS_X                354
+E: 0.233856 0003 0001 0228	# EV_ABS / ABS_Y                228
+E: 0.233856 0000 0000 0000	# ------------ SYN_REPORT (0) ---------- +138ms
+E: 0.316645 0003 0039 -001	# EV_ABS / ABS_MT_TRACKING_ID   -1
+E: 0.316645 0001 014a 0000	# EV_KEY / BTN_TOUCH            0
+E: 0.316645 0000 0000 0000	# ------------ SYN_REPORT (0) ---------- +83ms
+E: 0.469258 0003 0039 0005	# EV_ABS / ABS_MT_TRACKING_ID   5
+E: 0.469258 0003 0035 0357	# EV_ABS / ABS_MT_POSITION_X    357
+E: 0.469258 0003 0036 0239	# EV_ABS / ABS_MT_POSITION_Y    239
+E: 0.469258 0001 014a 0001	# EV_KEY / BTN_TOUCH            1
+E: 0.469258 0003 0000 0357	# EV_ABS / ABS_X                357
+E: 0.469258 0003 0001 0239	# EV_ABS / ABS_Y                239
+E: 0.469258 0000 0000 0000	# ------------ SYN_REPORT (0) ---------- +153ms
+E: 0.551496 0003 0039 -001	# EV_ABS / ABS_MT_TRACKING_ID   -1
+E: 0.551496 0001 014a 0000	# EV_KEY / BTN_TOUCH            0
+E: 0.551496 0000 0000 0000	# ------------ SYN_REPORT (0) ---------- +82ms
+E: 0.690746 0003 0039 0006	# EV_ABS / ABS_MT_TRACKING_ID   6
+E: 0.690746 0003 0035 0364	# EV_ABS / ABS_MT_POSITION_X    364
+E: 0.690746 0003 0036 0255	# EV_ABS / ABS_MT_POSITION_Y    255
+E: 0.690746 0001 014a 0001	# EV_KEY / BTN_TOUCH            1
+E: 0.690746 0003 0000 0364	# EV_ABS / ABS_X                364
+E: 0.690746 0003 0001 0255	# EV_ABS / ABS_Y                255
+E: 0.690746 0000 0000 0000	# ------------ SYN_REPORT (0) ---------- +139ms
+E: 0.772994 0003 0039 -001	# EV_ABS / ABS_MT_TRACKING_ID   -1
+E: 0.772994 0001 014a 0000	# EV_KEY / BTN_TOUCH            0
+E: 0.772994 0000 0000 0000	# ------------ SYN_REPORT (0) ---------- +82ms
+E: 0.911634 0003 0039 0007	# EV_ABS / ABS_MT_TRACKING_ID   7
+E: 0.911634 0003 0036 0251	# EV_ABS / ABS_MT_POSITION_Y    251
+E: 0.911634 0001 014a 0001	# EV_KEY / BTN_TOUCH            1
+E: 0.911634 0003 0001 0251	# EV_ABS / ABS_Y                251
+E: 0.911634 0000 0000 0000	# ------------ SYN_REPORT (0) ---------- +139ms
+E: 0.994298 0003 0039 -001	# EV_ABS / ABS_MT_TRACKING_ID   -1
+E: 0.994298 0001 014a 0000	# EV_KEY / BTN_TOUCH            0
+E: 0.994298 0000 0000 0000	# ------------ SYN_REPORT (0) ---------- +83ms
+E: 1.132404 0003 0039 0008	# EV_ABS / ABS_MT_TRACKING_ID   8
+E: 1.132404 0003 0035 0345	# EV_ABS / ABS_MT_POSITION_X    345
+E: 1.132404 0001 014a 0001	# EV_KEY / BTN_TOUCH            1
+E: 1.132404 0003 0000 0345	# EV_ABS / ABS_X                345
+E: 1.132404 0000 0000 0000	# ------------ SYN_REPORT (0) ---------- +138ms
+E: 1.214633 0003 0039 -001	# EV_ABS / ABS_MT_TRACKING_ID   -1
+E: 1.214633 0001 014a 0000	# EV_KEY / BTN_TOUCH            0
+E: 1.214633 0000 0000 0000	# ------------ SYN_REPORT (0) ---------- +82ms
+E: 1.367030 0003 0039 0009	# EV_ABS / ABS_MT_TRACKING_ID   9
+E: 1.367030 0003 0035 0349	# EV_ABS / ABS_MT_POSITION_X    349
+E: 1.367030 0003 0036 0250	# EV_ABS / ABS_MT_POSITION_Y    250
+E: 1.367030 0001 014a 0001	# EV_KEY / BTN_TOUCH            1
+E: 1.367030 0003 0000 0349	# EV_ABS / ABS_X                349
+E: 1.367030 0003 0001 0250	# EV_ABS / ABS_Y                250
+E: 1.367030 0000 0000 0000	# ------------ SYN_REPORT (0) ---------- +153ms
+E: 1.449650 0003 0039 -001	# EV_ABS / ABS_MT_TRACKING_ID   -1
+E: 1.449650 0001 014a 0000	# EV_KEY / BTN_TOUCH            0
+E: 1.449650 0000 0000 0000	# ------------ SYN_REPORT (0) ---------- +82ms
+E: 1.574957 0003 0039 0010	# EV_ABS / ABS_MT_TRACKING_ID   10
+E: 1.574957 0003 0036 0264	# EV_ABS / ABS_MT_POSITION_Y    264
+E: 1.574957 0001 014a 0001	# EV_KEY / BTN_TOUCH            1
+E: 1.574957 0003 0001 0264	# EV_ABS / ABS_Y                264
+E: 1.574957 0000 0000 0000	# ------------ SYN_REPORT (0) ---------- +125ms
+E: 1.685151 0003 0039 -001	# EV_ABS / ABS_MT_TRACKING_ID   -1
+E: 1.685151 0001 014a 0000	# EV_KEY / BTN_TOUCH            0
+E: 1.685151 0000 0000 0000	# ------------ SYN_REPORT (0) ---------- +111ms
+E: 1.823540 0003 0039 0011	# EV_ABS / ABS_MT_TRACKING_ID   11
+E: 1.823540 0003 0035 0373	# EV_ABS / ABS_MT_POSITION_X    373
+E: 1.823540 0003 0036 0252	# EV_ABS / ABS_MT_POSITION_Y    252
+E: 1.823540 0001 014a 0001	# EV_KEY / BTN_TOUCH            1
+E: 1.823540 0003 0000 0373	# EV_ABS / ABS_X                373
+E: 1.823540 0003 0001 0252	# EV_ABS / ABS_Y                252
+E: 1.823540 0000 0000 0000	# ------------ SYN_REPORT (0) ---------- +138ms
+E: 1.934008 0003 0039 -001	# EV_ABS / ABS_MT_TRACKING_ID   -1
+E: 1.934008 0001 014a 0000	# EV_KEY / BTN_TOUCH            0
+E: 1.934008 0000 0000 0000	# ------------ SYN_REPORT (0) ---------- +111ms
