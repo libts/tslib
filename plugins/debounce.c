@@ -68,6 +68,8 @@ static int debounce_read(struct tslib_module_info *info, struct ts_sample *samp,
 		dt = (long)(now - p->last_release) / 1000; /* ms */
 		mode = MOVE;
 
+		drop = 0;
+
 		if (!s->pressure) {
 			mode = UP;
 			p->last_release = now;
