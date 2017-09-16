@@ -68,6 +68,8 @@ static int debounce_read(struct tslib_module_info *info, struct ts_sample *samp,
 		dt = (long)(now - p->last_release) / 1000; /* ms */
 		mode = MOVE;
 
+		drop = 0;
+
 		if (!s->pressure) {
 			mode = UP;
 			p->last_release = now;
@@ -77,10 +79,8 @@ static int debounce_read(struct tslib_module_info *info, struct ts_sample *samp,
 
 		p->last_pressure = s->pressure;
 
-		if (s->pressure) {
-			if (dt < p->drop_threshold)
-				drop = 1;
-		}
+		if (dt < p->drop_threshold)
+			drop = 1;
 
 #ifdef DEBUG
 		fprintf(stderr, "\033[%smDEBOUNCE:\033[m  press=%u  x=%d  y=%d  dt=%ld%s\n",
@@ -89,7 +89,7 @@ static int debounce_read(struct tslib_module_info *info, struct ts_sample *samp,
 				drop ? "  \033[31mdropped\033[m" : "");
 #endif
 
-		if (s->pressure && drop) {
+		if (drop) {
 			left = ret - num - 1;
 			if (left > 0) {
 				memmove(s, s + 1, left * sizeof(struct ts_sample));
@@ -111,7 +111,6 @@ static int debounce_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 	int ret;
 	int64_t now;
 	long dt;
-	int drop = 0;
 	int nr;
 	int i;
 
@@ -177,21 +176,16 @@ static int debounce_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 
 			p->last_pressure_mt[i] = samp[nr][i].pressure;
 
-			if (samp[nr][i].pressure) {
-				if (dt < p->drop_threshold)
-					drop = 1;
-			}
+			if (dt < p->drop_threshold)
+				samp[nr][i].valid = 0;
 
 	#ifdef DEBUG
 			fprintf(stderr, "\033[%smDEBOUNCE:\033[m (slot %d) P:%u X:%4d  Y:%4d  dt=%ld%s\n",
 					p->mode_mt[i] == DOWN ? "92" : p->mode_mt[i] == MOVE ? "32" : "93",
 					samp[nr][i].slot, samp[nr][i].pressure,
 					samp[nr][i].x, samp[nr][i].y, dt,
-					drop ? "  \033[31mdropped\033[m" : "");
+					samp[nr][i].valid ? "" : "  \033[31mdropped\033[m");
 	#endif
-
-			if (samp[nr][i].pressure && drop)
-				samp[nr][i].valid = 0;
 		}
 	}
 
