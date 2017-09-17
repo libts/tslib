@@ -1,5 +1,4 @@
-# filter tests require evdev input. Evemu create an input device via uinput
+# evdev input only. evemu uses uinput
 module_raw input
-
-# playing evemu_XXX_rec_debounce to TSLIB_TSDEVICE must result in no samples
+# playing evemu_maxtouch_rec_debounce must result in seeing no samples
 module debounce drop_threshold=250
