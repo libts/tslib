@@ -87,11 +87,9 @@ static int waveshare_read(struct tslib_module_info *inf, struct ts_sample *samp,
 
 				if (i->vendor == info.vendor &&
 				    i->product == info.product) {
-					if (ts->fd > 0)
 					close(ts->fd);
 
 					ts->fd = ts_tmp->fd;
-					free(ts_tmp);
 					found = 1;
 #ifdef DEBUG
 					fprintf(stderr, "  correct device\n");
