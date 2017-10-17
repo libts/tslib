@@ -1,4 +1,4 @@
 # evdev input only. evemu uses uinput
 module_raw input
-# playing evemu_maxtouch_rec_debounce must result in seeing no samples
+# playing evemu_maxtouch_rec_skip must result in no samples
 module skip nhead=5 ntail=5
