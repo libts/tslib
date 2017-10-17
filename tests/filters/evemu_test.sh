@@ -3,6 +3,7 @@
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
 NC='\033[0m' # No Color
 
 # A POSIX variable
@@ -29,26 +30,18 @@ shift $((OPTIND-1))
 
 [ "$1" = "--" ] && shift
 
-if [ $verbose = 1 ] ; then
-	echo "verbose=$verbose, filter='$filtername', Leftovers: $@"
-fi
-
 if [ -z "$filtername" ] ; then
 	echo "Usage: ./evemu_test -f <filtername>"
 	exit 1
-fi
-
-if [ $verbose = 1 ] ; then
-	echo "build tslib before running this in tests/filters/"
 fi
 
 export TSLIB_CONFFILE=$(readlink -f evemu_${filtername}_tsconf)
 # TODO get the ts.conf on the commandline
 
 if [ $verbose = 1 ] ; then
-	echo "===== ts.conf: $TSLIB_CONFFILE ====="
+	echo -e "${YELLOW}ts.conf:${NC}"
 	cat $TSLIB_CONFFILE
-	echo "===================================="
+	echo ""
 fi
 
 EVEMU_DESC=$(readlink -f evemu_maxtouch_desc)
@@ -56,7 +49,7 @@ TS_PRINT_MT=$(readlink -f ../ts_print_mt)
 
 # create the virtual touchscreen via uinput
 evemu-device $EVEMU_DESC | {
-# this only tries to catch the created device path
+# this tries to catch the created device path
 for runs in 1
 do
   while IFS= read -r line
@@ -66,12 +59,25 @@ do
     do
       :
     done
-      # here we should have the device path
-      echo "evemu device: $word"
-      export TSLIB_TSDEVICE=$word
-      echo "now play a sequence to see the filtered result"
-      echo -e "example: ${GREEN}evemu-play $word < evemu_maxtouch_rec_${filtername}${NC}"
-      $TS_PRINT_MT
+
+    # here we should have the device path
+    if [ $verbose = 1 ] ; then
+      echo -e "${YELLOW}$word${NC}"
+    fi
+
+    export TSLIB_TSDEVICE=$word
+
+    if [ $verbose = 1 ] ; then
+      echo -e "running ${GREEN}evemu-play $word < evemu_maxtouch_rec_${filtername}${NC}"
+      echo "please verify the resulting samples you see and quit"
+    fi
+
+    $TS_PRINT_MT &
+
+    # give tslib some time to start up
+    sleep 1
+
+    evemu-play $word < evemu_maxtouch_rec_${filtername}
   done
 done
 }
