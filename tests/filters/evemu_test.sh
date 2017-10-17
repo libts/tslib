@@ -1,5 +1,5 @@
 #!/bin/bash
- set -e
+set -e
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -30,6 +30,15 @@ shift $((OPTIND-1))
 
 [ "$1" = "--" ] && shift
 
+
+# trap ctrl-c and call ctrl_c()
+trap ctrl_c INT
+
+function ctrl_c() {
+	diff --report-identical-files ${filtername}.expected result/${filtername}.result
+}
+
+
 if [ -z "$filtername" ] ; then
 	echo "Usage: ./evemu_test -f <filtername>"
 	exit 1
@@ -46,6 +55,8 @@ fi
 
 EVEMU_DESC=$(readlink -f evemu_maxtouch_desc)
 TS_PRINT_MT=$(readlink -f ../ts_print_mt)
+
+mkdir -p result
 
 # create the virtual touchscreen via uinput
 evemu-device $EVEMU_DESC | {
@@ -72,12 +83,13 @@ do
       echo "please verify the resulting samples you see and quit"
     fi
 
-    $TS_PRINT_MT &
+    $TS_PRINT_MT | grep sample | sed --expression='s/[[:digit:]]\+\.\+[[:digit:]]\+//g' > result/${filtername}.result &
 
     # give tslib some time to start up
     sleep 1
 
     evemu-play $word < evemu_maxtouch_rec_${filtername}
+
   done
 done
 }
