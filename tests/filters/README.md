@@ -16,9 +16,10 @@ For each touchscreen device used in evemu recordings, there must be one evemu
 descriptor file:
 * `evemu_<touchscreen_name>_desc` - evemu touchscreen descriptor file
 
-Each filter to be tested conists of a pair of 2 files:
+Each filter to be tested conists of 3 files:
 * `evemu_<filter_name>_tsconf` - ts.conf config file for tslib
 * `evemu_<touchscreen_name>_rec_<filter_name>` - evemu touch recording for the filter
+* `<filter_name>.expected` - the expected filtered result for the recording
 
 ### available filters to test
 * `debounce`
@@ -26,14 +27,3 @@ Each filter to be tested conists of a pair of 2 files:
 
 ### available touchscreens
 * `maxtouch`
-
-### expected results
-results are the samples that fall out of tslib's ts_read() API, i.e. the `ts_print_mt`
-program. They depend on the parameters in ts.conf and the touch recordings (input
-for tslib). For some filters we such recordings/parameters pairs that should
-produce ***no samples*** to be read from tslib's ts_read() or ts_read_mt().
-Other combinations should produce output. This list defines the expected test
-results:
-
-* debounce: no samples
-* skip: no samples
