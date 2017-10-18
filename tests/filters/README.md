@@ -5,25 +5,21 @@ without the need for real touchscreen devices, using [Evemu](https://www.freedes
 These tests are used during development and documented here as they are not
 included in tslib's release tarballs.
 
-### Usage
+### How-to
 
 
-		./evemu_test.sh -f <filtername>
+		./evemu_test.sh -f <filtername> -e <eventfile>
 
 
-### file conventions
-For each touchscreen device used in evemu recordings, there must be one evemu
-descriptor file:
-* `evemu_<touchscreen_name>_desc` - evemu touchscreen descriptor file
+These tests use the [evemu-devices](https://github.com/whot/evemu-devices)
+repository with it's collection of device descriptors and recordings. It is
+cloned as part of the test script.
 
-Each filter to be tested conists of 3 files:
-* `evemu_<filter_name>_tsconf` - ts.conf config file for tslib
-* `evemu_<touchscreen_name>_rec_<filter_name>` - evemu touch recording for the filter
-* `<filter_name>.expected` - the expected filtered result for the recording
+If you want to permanently add a recording you want to test against filters,
+you have to add it there.
 
-### available filters to test
-* `debounce`
-* `skip`
-
-### available touchscreens
-* `maxtouch`
+Some files involved in a filter test are:
+* `<filter_name>.conf` - ts.conf config file for tslib, including the filter plugin
+* `<eventfile>.<filter_name>.expected` - the expected filtered result for the
+recording. "eventfile" is a events filename from the
+[evemu-devices](https://github.com/whot/evemu-devices) repository
