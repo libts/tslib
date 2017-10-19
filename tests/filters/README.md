@@ -33,7 +33,7 @@ Example:
 Use a filter / eventfile combination for that an ".expected" file is available
 here.
 
-#### Creating .exptected files
+#### Creating .expected files
 
 Creating the files included here, with suffix "expected", requires attention.
 They enable to run tests in the first place.
@@ -46,4 +46,4 @@ recordings available.
 
 As soon as you want to add ".expected" files where other filter parameters
 than in the current ".conf" files are being used, you have to create a new
-"filtername_name.conf" file and use that to call `test.sh -f <filtername_new>`
+"filtername_new.conf" file and use that to call `test.sh -f <filtername_new>`
