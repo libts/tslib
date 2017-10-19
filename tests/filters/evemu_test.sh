@@ -77,7 +77,7 @@ if [ -z "$eventfile" ] ; then
 fi
 
 if [ ! -f "${eventfile}.${filtername}.expected" ] ; then
-	echo -e "${RED}WARNING: reference file doesn't yet exist"
+	echo -e "${RED}WARNING: reference file doesn't yet exist${NC}"
 fi
 
 descfile=${eventfile%.*}
