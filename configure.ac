@@ -16,6 +16,10 @@ AC_SUBST(PACKAGE_DESCRIPTION)
 # Set our default flags variables
 TS_DEFAULT_FLAGS
 
+if test "x${enable_dependency_tracking}" = "x"; then
+	enable_dependency_tracking=no
+fi
+
 # Check for host os
 AC_CANONICAL_HOST
 build_linux=no
