@@ -2,6 +2,7 @@ tslib 1.14 - tbd
 ================================
 
 This release includes the following bugfixes:
+* 93ac81d autoconf: disable dependency tracking by default (fixes out-of-source builds)
 * f4cd766 waveshare-raw: fix snprintf error in finding a device in ts_read()
 * 57d9081 debounce: drop samples irrespective of pressure value
 
