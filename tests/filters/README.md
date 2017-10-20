@@ -5,10 +5,10 @@ without the need for real touchscreen devices, using [Evemu](https://www.freedes
 These tests are used during development and documented here as they are not
 included in tslib's release tarballs.
 
-### How-to
+### How to test a filter
 
 
-		./test.sh -f <filtername> -e <eventfile>
+		./test.sh -f <filtername> -e "<eventfile>"
 
 
 These tests use the [evemu-devices](https://github.com/whot/evemu-devices)
@@ -47,3 +47,16 @@ recordings available.
 As soon as you want to add ".expected" files where other filter parameters
 than in the current ".conf" files are being used, you have to create a new
 "filtername_new.conf" file and use that to call `test.sh -f <filtername_new>`
+
+### How to test the libts API
+
+`ts_verify_evemu.sh` uses evemu and a recording saved here, named
+"NAME.ts-verify-X.events" to run ts_verify against libts.
+
+		./ts_verify_evemu.sh -e "<eventfile>"
+
+
+For example
+
+		./ts_verify_evemu.sh -e "Atmel maXTouch Touchscreen.ts-verify-1.events"
+
