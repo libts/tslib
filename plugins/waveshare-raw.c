@@ -94,6 +94,7 @@ static int waveshare_read(struct tslib_module_info *inf, struct ts_sample *samp,
 #ifdef DEBUG
 					fprintf(stderr, "  correct device\n");
 #endif
+					ts_close(ts_tmp);
 					break;
 				}
 
