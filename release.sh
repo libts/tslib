@@ -94,7 +94,10 @@ make distclean
 ./configure --disable-dependency-tracking \
 	--enable-cy8mrln-palmpre \
 	--enable-dmc_dus3000 \
-	--enable-galax
+	--enable-galax \
+	--enable-arctic2 \
+	--enable-corgi \
+	--enable-collie
 
 make -j${NUMCPUS}
 make clean
