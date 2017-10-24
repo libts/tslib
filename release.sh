@@ -97,7 +97,10 @@ make distclean
 	--enable-galax \
 	--enable-arctic2 \
 	--enable-corgi \
-	--enable-collie
+	--enable-collie \
+	--enable-dmc \
+	--enable-h3600 \
+	--enable-linear-h2200
 
 make -j${NUMCPUS}
 make clean

@@ -669,6 +669,8 @@ __disabled__:
 * `arctic2`
 * `corgi`
 * `collie`
+* `dmc`
+* `h3600`
 
 Please note that this list may grow over time. If you rely on
 a particular input plugin, you should enable it explicitely. On Linux
@@ -685,7 +687,7 @@ you should only need `input` though.
 * Haiku - some, see [hardware support](#touchscreen-hardware-support)
   - `./configure.ac --disable-input --disable-touchkit --disable-waveshare`
 * Windows - no tslib module for the [Windows touchscreen API](https://msdn.microsoft.com/en-us/library/windows/desktop/dd317323(v=vs.85).aspx) (yet)
-  - `./configure.ac --with-sdl2 --disable-ucb1x00 --disable-h3600 --disable-mk712 --disable-tatung --disable-dmc --disable-input --disable-touchkit --disable-waveshare`
+  - `./configure.ac --with-sdl2 --disable-ucb1x00 --disable-mk712 --disable-tatung --disable-input --disable-touchkit --disable-waveshare`
 
 Writing your own plugin is quite easy, in case an existing one doesn't fit.
 

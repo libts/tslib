@@ -6,6 +6,8 @@ This release includes libts version 0.8.1 and the following changes:
  * `module_raw arctic2`
  * `module_raw corgi`
  * `module_raw collie`
+ * `module_raw dmc`
+ * `module_raw h3600`
  Users of those modules must enable them, like `./configure --enable-arctic2`
 
 This release includes the following bugfixes:
