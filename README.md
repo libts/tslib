@@ -677,17 +677,17 @@ a particular input plugin, you should enable it explicitely. On Linux
 you should only need `input` though.
 
 * GNU / Linux - all (most importantly `input`)
-  - `./configure.ac
+  - `./configure`
 * Android / Linux - all (most importantly `input`)
-  - `./configure.ac
+  - `./configure`
 * FreeBSD - almost all (most importantly `input`)
-  - `./configure.ac --disable-waveshare`
+  - `./configure --disable-waveshare`
 * GNU / Hurd - some, see [hardware support](#touchscreen-hardware-support)
-  - `./configure.ac --disable-input --disable-waveshare`
+  - `./configure --disable-input --disable-waveshare`
 * Haiku - some, see [hardware support](#touchscreen-hardware-support)
-  - `./configure.ac --disable-input --disable-touchkit --disable-waveshare`
+  - `./configure --disable-input --disable-touchkit --disable-waveshare`
 * Windows - no tslib module for the [Windows touchscreen API](https://msdn.microsoft.com/en-us/library/windows/desktop/dd317323(v=vs.85).aspx) (yet)
-  - `./configure.ac --with-sdl2 --disable-ucb1x00 --disable-mk712 --disable-tatung --disable-input --disable-touchkit --disable-waveshare`
+  - `./configure --with-sdl2 --disable-ucb1x00 --disable-mk712 --disable-tatung --disable-input --disable-touchkit --disable-waveshare`
 
 Writing your own plugin is quite easy, in case an existing one doesn't fit.
 
