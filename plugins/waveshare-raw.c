@@ -6,6 +6,9 @@
  *
  * This file is placed under the LGPL.  Please see the file COPYING for more
  * details.
+ *
+ * Usage:
+ *   module_raw waveshare vid_pid=<vendorID>:<productID> len=<raw_data_len>
  */
 
 #include <stdlib.h>
