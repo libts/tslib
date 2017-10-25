@@ -72,8 +72,6 @@ static char* scan_devices(void)
 			continue;
 		} else {
 			have_touchscreen = 1;
-
-			printf("found prop direct device\n");
 		}
 
 		close(fd);

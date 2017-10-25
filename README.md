@@ -44,6 +44,7 @@ tslib (using `ts_setup()`) tries to automatically find your touchscreen input
 device.:
 
     TSLIB_TSDEVICE          Touchscreen device file name.
+                            Default: automatic detection (ts_setup() on Linux)
 
     TSLIB_CALIBFILE         Calibration file.
                             Default:                ${sysconfdir}/pointercal

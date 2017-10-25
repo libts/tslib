@@ -663,6 +663,7 @@ int main(int argc, char **argv)
 		       GREEN "%s" RESET "\n",
 		       getenv("TSLIB_FBDEVICE"));
 
+	/* TODO re-implement ts_setup() that gives us the original fd */
 	if (!data.input_name) {
 		if (getenv("TSLIB_TSDEVICE")) {
 			data.input_name = getenv("TSLIB_TSDEVICE");
