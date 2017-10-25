@@ -39,13 +39,11 @@ Apart from building the latest tarball release, running
 and their package management.
 
 ### environment variables
-You only need the variables in case the following defaults don't fit:
+You only need the variables in case the following defaults don't fit. On Linux,
+tslib (using `ts_setup()`) tries to automatically find your touchscreen input
+device.:
 
     TSLIB_TSDEVICE          Touchscreen device file name.
-                            Default (ts_setup):     /dev/input/ts
-                                                    /dev/input/touchscreen
-                                                    /dev/input/event0
-                                                    /dev/touchscreen/ucb1x00
 
     TSLIB_CALIBFILE         Calibration file.
                             Default:                ${sysconfdir}/pointercal
@@ -109,15 +107,12 @@ reboot, and you should instantly have your `ts.conf` filters running, without
 configuring anything else yourself.
 
 ### use the filtered result in your system (ts_uinput method)
-This is a generic solution for Linux  - using tslib's included userspace input
-**evdev** driver `ts_uinput`. You need to set the `TSLIB_TSDEVICE` environment
-variable to point to your touchscreen device. But __don't__ use `/dev/input/eventX`;
-the event numbers are not persistent. Use such a udev rule:
+**TL;DR:** Use `tools/ts_uinput_start.sh` and use `/dev/input/ts_uinput` as your evdev
+device.
 
-    SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{name}=="mydrivername", SYMLINK+="input/ts", TAG+="systemd"
 
-or find another way of creating a `/dev/input/ts` symlink. You'd need that for any
-application using your device. Now you can use `ts_uinput`:
+tslib tries to automatically find your touchscreen device in `/dev/input/event*`
+on Linux. Use it via `ts_uinput`:
 
     # ts_uinput -d -v
 
