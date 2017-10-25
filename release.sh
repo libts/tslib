@@ -100,7 +100,8 @@ make distclean
 	--enable-collie \
 	--enable-dmc \
 	--enable-h3600 \
-	--enable-linear-h2200
+	--enable-linear-h2200 \
+	--enable-mk712
 
 make -j${NUMCPUS}
 make clean
