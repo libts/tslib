@@ -9,6 +9,7 @@ This release includes libts version 0.8.1 and the following changes:
  * `module_raw dmc`
  * `module_raw h3600`
  * `module_raw mk712`
+ * `module_raw ucb1x00`
  Users of those modules must enable them, like `./configure --enable-arctic2`
 
 This release includes the following bugfixes:

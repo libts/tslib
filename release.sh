@@ -101,7 +101,8 @@ make distclean
 	--enable-dmc \
 	--enable-h3600 \
 	--enable-linear-h2200 \
-	--enable-mk712
+	--enable-mk712 \
+	--enable-ucb1x00
 
 make -j${NUMCPUS}
 make clean
