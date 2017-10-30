@@ -52,6 +52,10 @@ static char* scan_devices(void)
 	int have_touchscreen = 0;
 	long propbit[BITS_TO_LONGS(INPUT_PROP_MAX)] = {0};
 
+#ifdef DEBUG
+	printf("scanning for devices in %s\n", DEV_INPUT_EVENT);
+#endif
+
 	ndev = scandir(DEV_INPUT_EVENT, &namelist, is_event_device, alphasort);
 	if (ndev <= 0)
 		return NULL;
@@ -110,7 +114,13 @@ struct tsdev *ts_setup(const char *dev_name, int nonblock)
 {
 	const char * const *defname;
 	struct tsdev *ts = NULL;
+#if HAVE_DIRENT_H
+#if HAVE_UNISTD_H
+#if defined (__linux__)
 	char *fname = NULL;
+#endif /* __linux__ */
+#endif /* unistd.h */
+#endif /* dirent.h */
 
 	dev_name = dev_name ? dev_name : getenv("TSLIB_TSDEVICE");
 
