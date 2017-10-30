@@ -18,8 +18,6 @@
 #include <string.h>
 
 #if defined (__linux__) 
-#if HAVE_DIRENT_H
-#if HAVE_UNISTD_H
 #include <dirent.h>
 #include <stdio.h>
 #include <string.h>
@@ -99,8 +97,6 @@ static char* scan_devices(void)
 	return NULL;
 }
 
-#endif /* unistd.h */
-#endif /* dirent.h */
 #endif /* __linux__ */
 
 static const char * const ts_name_default[] = {
@@ -114,13 +110,9 @@ struct tsdev *ts_setup(const char *dev_name, int nonblock)
 {
 	const char * const *defname;
 	struct tsdev *ts = NULL;
-#if HAVE_DIRENT_H
-#if HAVE_UNISTD_H
 #if defined (__linux__)
 	char *fname = NULL;
 #endif /* __linux__ */
-#endif /* unistd.h */
-#endif /* dirent.h */
 
 	dev_name = dev_name ? dev_name : getenv("TSLIB_TSDEVICE");
 
@@ -137,8 +129,6 @@ struct tsdev *ts_setup(const char *dev_name, int nonblock)
 		}
 	}
 
-#if HAVE_DIRENT_H
-#if HAVE_UNISTD_H
 #if defined (__linux__)
 	if (!ts) {
 		fname = scan_devices();
@@ -149,8 +139,6 @@ struct tsdev *ts_setup(const char *dev_name, int nonblock)
 		free(fname);
 	}
 #endif /* __linux__ */
-#endif /* unistd.h */
-#endif /* dirent.h */
 
 	/* if detected try to configure it */
 	if (ts && ts_config(ts) != 0) {
