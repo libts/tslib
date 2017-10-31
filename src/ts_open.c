@@ -39,23 +39,23 @@ static void print_host_os(void)
 	       version->package_version, version->version_num);
 
 #if defined (__linux__)
-	printf("Host OS: Linux\n");
+	printf("Host OS: Linux");
 #elif defined (__FreeBSD__)
-	printf("Host OS: FreeBSD\n");
+	printf("Host OS: FreeBSD");
 #elif defined (__OpenBSD__)
-	printf("Host OS: OpenBSD\n");
+	printf("Host OS: OpenBSD");
 #elif defined (__GNU__) && defined (__MACH__)
-	printf("Host OS: Hurd\n");
+	printf("Host OS: Hurd");
 #elif defined (__HAIKU__)
-	printf("Host OS: Haiku\n");
+	printf("Host OS: Haiku");
 #elif defined (__BEOS__)
-	printf("Host OS: BeOS\n");
+	printf("Host OS: BeOS");
 #elif defined (WIN32)
-	printf("Host OS: Windows\n");
+	printf("Host OS: Windows");
 #elif defined (__APPLE__) && defined (__MACH__)
-	printf("Host OS: Darwin\n");
+	printf("Host OS: Darwin");
 #else
-	printf("Host OS: unknown\n");
+	printf("Host OS: unknown");
 #endif
 }
 #endif /* DEBUG */
@@ -69,6 +69,7 @@ struct tsdev *ts_open(const char *name, int nonblock)
 
 #ifdef DEBUG
 	print_host_os();
+	printf(", trying to open %s\n", name);
 #endif
 
 	if (nonblock) {

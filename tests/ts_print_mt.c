@@ -76,8 +76,6 @@ static int errfn(const char *fmt, va_list ap)
 static int openfn(const char *path, int flags,
 		  void *user_data __attribute__((unused)))
 {
-	printf("ts_print_mt: opening %s\n", path);
-
 	return open(path, flags);
 }
 

@@ -58,8 +58,8 @@ If the default touchscreen device cannot be found, set the
 \fBTSLIB_TSDEVICE\fR
 environment variable to the touchscreen device to use\&.
 .sp
-Default:
-/dev/input/event0
+Default when using ts_setup():
+We try to open /dev/input/ts, /dev/input/touchscreen and /dev/touchscreen/ucb1x00 and on Linux, we then scan /dev/input/event* for the first device with property INPUT_PROP_DIRECT.
 .RE
 .PP
 \fBTSLIB_CONSOLEDEVICE\fR

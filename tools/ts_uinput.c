@@ -54,12 +54,18 @@
 #define GREEN   "\033[32m"
 #define BLUE    "\033[34m"
 
-#define BITS_PER_LONG (sizeof(long) * 8)
+#define BITS_PER_BYTE           8
+#define BITS_PER_LONG           (sizeof(long) * BITS_PER_BYTE)
 #define NBITS(x) ((((x)-1)/BITS_PER_LONG)+1)
 #define OFF(x)  ((x)%BITS_PER_LONG)
 #define BIT(x)  (1UL<<OFF(x))
 #define LONG(x) ((x)/BITS_PER_LONG)
 #define test_bit(bit, array)	((array[LONG(bit)] >> OFF(bit)) & 1)
+
+#define DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
+#define BIT_MASK(nr)            (1UL << ((nr) % BITS_PER_LONG))
+#define BIT_WORD(nr)            ((nr) / BITS_PER_LONG)
+#define BITS_TO_LONGS(nr)       DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
 
 #define DEFAULT_UINPUT_NAME "ts_uinput"
 
@@ -536,6 +542,130 @@ static char *fetch_device_node(const char *path)
 	return devnode;
 }
 
+/* --- start src/ts_setup.c plus reporting the chosen input device --- */
+
+#define DEV_INPUT_EVENT "/dev/input"
+#define EVENT_DEV_NAME "event"
+
+static char* scan_devices(void)
+{
+	struct dirent **namelist;
+	int i, ndev;
+	char *filename = NULL;
+	int have_touchscreen = 0;
+	long propbit[BITS_TO_LONGS(INPUT_PROP_MAX)] = {0};
+
+	ndev = scandir(DEV_INPUT_EVENT, &namelist, is_event_device, alphasort);
+	if (ndev <= 0)
+		return NULL;
+
+	for (i = 0; i < ndev; i++) {
+		char fname[64];
+		int fd = -1;
+
+		snprintf(fname, sizeof(fname),
+			 "%s/%s", DEV_INPUT_EVENT, namelist[i]->d_name);
+		fd = open(fname, O_RDONLY);
+		if (fd < 0)
+			continue;
+
+		if ((ioctl(fd, EVIOCGPROP(sizeof(propbit)), propbit) < 0) ||
+			!(propbit[BIT_WORD(INPUT_PROP_DIRECT)] &
+				  BIT_MASK(INPUT_PROP_DIRECT)) ) {
+			continue;
+		} else {
+			have_touchscreen = 1;
+		}
+
+		close(fd);
+		free(namelist[i]);
+
+                if (have_touchscreen) {
+			filename = malloc(strlen(DEV_INPUT_EVENT) +
+					  strlen(EVENT_DEV_NAME) +
+					  3);
+			if (!filename)
+				return NULL;
+
+	                sprintf(filename, "%s/%s%d",
+				DEV_INPUT_EVENT, EVENT_DEV_NAME,
+				i);
+		}
+
+		return filename;
+	}
+
+	return NULL;
+}
+
+static char *ts_name_default[] = {
+		"/dev/input/ts",
+		"/dev/input/touchscreen",
+		"/dev/touchscreen/ucb1x00",
+		NULL
+};
+
+#define EVENTNAME_LEN 15
+
+static struct tsdev *ts_setup_ext(char *dev_name, int nonblock,
+				  char **dev_input_event)
+{
+	char **defname;
+	struct tsdev *ts = NULL;
+	char *found = NULL;
+	int scanned = 0;
+
+	*dev_input_event = malloc(strlen(DEV_INPUT_EVENT) + EVENTNAME_LEN);
+	if (!*dev_input_event)
+		return NULL;
+
+	dev_name = dev_name ? dev_name : getenv("TSLIB_TSDEVICE");
+
+	if (dev_name != NULL) {
+		found = dev_name;
+		goto open;
+	}
+
+	defname = &ts_name_default[0];
+	while (*defname != NULL) {
+		ts = ts_open(*defname, nonblock);
+		if (ts != NULL) {
+			found = *defname;
+			goto opened;
+		}
+
+		++defname;
+	}
+
+	found = scan_devices();
+	if (!found) {
+		return NULL;
+	} else {
+		goto open;
+		scanned = 1;
+	}
+
+open:
+	ts = ts_open(found, nonblock);
+opened:
+	if (strlen(found) >= strlen(DEV_INPUT_EVENT) + EVENTNAME_LEN)
+		return NULL;
+
+	sprintf(*dev_input_event, "%s", found);
+
+	if (scanned)
+		free(found);
+
+	/* if detected try to configure it */
+	if (ts && ts_config(ts) != 0) {
+		ts_close(ts);
+		return NULL;
+	}
+
+	return ts;
+}
+/* --- end src/ts_setup.c ---*/
+
 int main(int argc, char **argv)
 {
 	struct data_t data = {
@@ -554,6 +684,7 @@ int main(int argc, char **argv)
 	};
 	int i, j;
 	unsigned short run_daemon = 0;
+	char *dev_input_name = NULL;
 
 	while (1) {
 		const struct option long_options[] = {
@@ -663,17 +794,26 @@ int main(int argc, char **argv)
 		       GREEN "%s" RESET "\n",
 		       getenv("TSLIB_FBDEVICE"));
 
-	if (!data.input_name) {
-		if (getenv("TSLIB_TSDEVICE")) {
-			data.input_name = getenv("TSLIB_TSDEVICE");
-		} else {
-			fprintf(stderr, RED DEFAULT_UINPUT_NAME
-				": no input device specified" RESET "\n");
-			goto out;
-		}
+	/* non-blocking for one read in order to verify reading and fail before forking */
+	data.ts = ts_setup_ext(data.input_name, 1, &dev_input_name);
+	if (!data.ts || !dev_input_name) {
+		perror("ts_setup_ext");
+		goto out;
 	}
 
-	data.fd_input = open(data.input_name, O_RDWR);
+	if (process(&data, data.s_array, data.slots, TS_READ_WHOLE_SAMPLES))
+		goto out;
+
+	ts_close(data.ts);
+
+	/* blocking setup for production run */
+	data.ts = ts_setup_ext(data.input_name, 0, &dev_input_name);
+	if (!data.ts || !dev_input_name) {
+		perror("ts_setup_ext");
+		goto out;
+	}
+
+	data.fd_input = open(dev_input_name, O_RDWR);
 	if (data.fd_input == -1) {
 		perror("open");
 		goto out;
@@ -682,7 +822,7 @@ int main(int argc, char **argv)
 	if (data.verbose)
 		printf(DEFAULT_UINPUT_NAME
 		       ": using input device " GREEN "%s" RESET "\n",
-		       data.input_name);
+		       dev_input_name);
 
 	if (setup_uinput(&data, &data.slots)) {
 		goto out;
@@ -740,35 +880,6 @@ int main(int argc, char **argv)
 		}
 	}
 
-	/* non-blocking for one test run in order to verify reading and fail before forking */
-	data.ts = ts_open(data.input_name, 1);
-	if (!data.ts) {
-		perror("ts_open");
-		goto out;
-	}
-
-	if (ts_config(data.ts)) {
-		perror("ts_config");
-		goto out;
-	}
-
-	if (process(&data, data.s_array, data.slots, TS_READ_WHOLE_SAMPLES))
-		goto out;
-
-	ts_close(data.ts);
-
-	/* blocking setup for production run */
-	data.ts = ts_open(data.input_name, 0);
-	if (!data.ts) {
-		perror("ts_open");
-		goto out;
-	}
-
-	if (ts_config(data.ts)) {
-		perror("ts_config");
-		goto out;
-	}
-
 	if (run_daemon) {
 		#if UINPUT_VERSION >= 4
 			char name[64];
@@ -810,6 +921,9 @@ int main(int argc, char **argv)
 	}
 
 out:
+	if (dev_input_name)
+		free(dev_input_name);
+
 	cleanup(&data);
 
 	return errno;

@@ -51,10 +51,9 @@ will try to use following devices:
 .br
 /dev/input/touchscreen,
 .br
-/dev/input/event0 or
-.br
 /dev/touchscreen/ucb1x00.
 .RE
+After that we ts_setup() scans /dev/input/event* for the first device with property INPUT_PROP_DIRECT.
 
 .SH RETURN VALUE
 A pointer to the opened
