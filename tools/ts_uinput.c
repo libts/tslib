@@ -572,12 +572,12 @@ static char* scan_devices(void)
 		if ((ioctl(fd, EVIOCGPROP(sizeof(propbit)), propbit) < 0) ||
 			!(propbit[BIT_WORD(INPUT_PROP_DIRECT)] &
 				  BIT_MASK(INPUT_PROP_DIRECT)) ) {
+			close(fd);
 			continue;
 		} else {
 			have_touchscreen = 1;
 		}
 
-		close(fd);
 		free(namelist[i]);
 
                 if (have_touchscreen) {
@@ -641,15 +641,19 @@ static struct tsdev *ts_setup_ext(char *dev_name, int nonblock,
 	if (!found) {
 		return NULL;
 	} else {
-		goto open;
 		scanned = 1;
+		goto open;
 	}
 
 open:
 	ts = ts_open(found, nonblock);
 opened:
-	if (strlen(found) >= strlen(DEV_INPUT_EVENT) + EVENTNAME_LEN)
+	if (strlen(found) >= strlen(DEV_INPUT_EVENT) + EVENTNAME_LEN) {
+		if (ts)
+			ts_close(ts);
+
 		return NULL;
+	}
 
 	sprintf(*dev_input_event, "%s", found);
 
@@ -685,6 +689,9 @@ int main(int argc, char **argv)
 	int i, j;
 	unsigned short run_daemon = 0;
 	char *dev_input_name = NULL;
+	int ret;
+	struct ts_sample_mt *testsample;
+	struct ts_sample_mt **testsample_p;
 
 	while (1) {
 		const struct option long_options[] = {
@@ -801,10 +808,26 @@ int main(int argc, char **argv)
 		goto out;
 	}
 
-	if (process(&data, data.s_array, data.slots, TS_READ_WHOLE_SAMPLES))
+	testsample_p = calloc(1, sizeof(struct ts_sample_mt *));
+	if (!testsample_p)
 		goto out;
+	testsample = calloc(1, sizeof(struct ts_sample_mt));
+	if (!testsample) {
+		free(testsample_p);
+		goto out;
+	}
+	testsample_p[0] = testsample;
+
+	ret = ts_read_mt(data.ts, testsample_p, 1, 1);
+	if (ret < 0 && ret != -EAGAIN) {
+		free(testsample);
+		free(testsample_p);
+		goto out;
+	}
 
 	ts_close(data.ts);
+	free(testsample);
+	free(testsample_p);
 
 	/* blocking setup for production run */
 	data.ts = ts_setup_ext(data.input_name, 0, &dev_input_name);
