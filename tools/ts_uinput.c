@@ -689,6 +689,9 @@ int main(int argc, char **argv)
 	int i, j;
 	unsigned short run_daemon = 0;
 	char *dev_input_name = NULL;
+	int ret;
+	struct ts_sample_mt testsample;
+	struct ts_sample_mt **testsample_p;
 
 	while (1) {
 		const struct option long_options[] = {
@@ -805,10 +808,17 @@ int main(int argc, char **argv)
 		goto out;
 	}
 
-	if (process(&data, data.s_array, data.slots, TS_READ_WHOLE_SAMPLES))
+	testsample_p = calloc(1, sizeof(struct ts_sample_mt *));
+	if (!testsample_p)
+		goto out;
+	testsample_p[0] = &testsample;
+
+	ret = ts_read_mt(data.ts, testsample_p, 1, 1);
+	if (ret < 0 && ret != -EAGAIN)
 		goto out;
 
 	ts_close(data.ts);
+	free(testsample_p);
 
 	/* blocking setup for production run */
 	data.ts = ts_setup_ext(data.input_name, 0, &dev_input_name);
