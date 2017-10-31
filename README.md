@@ -301,6 +301,19 @@ Parameters:
 	Number of events to drop before release
 
 
+### module: lowpass
+  Simple lowpass exponential averaging filtering module.
+
+Parameters:
+* `factor`
+
+	floating point value between 0 and 1
+* `threshold`
+
+	x or y minimum distance between two samples to start applying the
+        filter.
+
+
 ### module:	variance
   Variance filter. Tries to do it's best in order to filter out random noise
   coming from touchscreen ADC's. This is achieved by limiting the sample

@@ -12,6 +12,7 @@ This release includes libts version 0.8.1 and the following changes:
  * `module_raw ucb1x00`
  Users of those modules must enable them, like `./configure --enable-arctic2`
 * Automatic touchscreen device detection for Linux (if not defined by the user)
+* New filter plugin "lowpass"
 
 This release includes the following bugfixes:
 * 93ac81d autoconf: disable dependency tracking by default (fixes out-of-source builds)
