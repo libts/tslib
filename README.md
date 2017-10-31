@@ -199,7 +199,7 @@ for example (yet).
   recorded and saved by the [`ts_calibrate`](https://manpages.debian.org/unstable/libts0/ts_calibrate.1.en.html) tool. It's the only module that reads
   a configuration file.
 
-Parameters:
+Parameters (usually not needed):
 * `xyswap`
 
 	interchange the X and Y co-ordinates -- no longer used or needed
@@ -215,6 +215,8 @@ Parameters:
 
 	value to divide the pressure value by
 
+Example: `module linear`
+
 
 ### module: median
   The median filter reduces noise in the samples' coordinate values. It is
@@ -225,6 +227,8 @@ Parameters:
 * `depth`
 
 	Number of samples to apply the median filter to
+
+Example: `module median depth=5`
 
 
 ### module: pthres
@@ -239,6 +243,8 @@ Parameters:
 * `pmax`
 
 	Maximum pressure value for a sample to be valid.
+
+Example: `pthres pmin=10`
 
 
 ### module: iir
@@ -258,6 +264,8 @@ Parameters:
 
 	denominator of the smoothing fraction
 
+Example: `module iir N=6 D=10`
+
 
 ### module: dejitter
   Removes jitter on the X and Y co-ordinates. This is achieved by applying a
@@ -275,6 +283,8 @@ Parameters:
 	precise anyway; so if quick motion is detected the module just
 	discards the backlog and simply copies input to output.
 
+Example: `module dejitter delta=100`
+
 
 ### module: debounce
   Simple debounce mechanism that drops input events for the specified time
@@ -286,6 +296,8 @@ Parameters:
 
 	drop events up to this number of milliseconds after the last
 	release event.
+
+Example: `module debounce drop_threshold=40`
 
 
 ### module: skip
@@ -299,6 +311,8 @@ Parameters:
 * `ntail`
 
 	Number of events to drop before release
+
+Example: `module skip nhead=2 ntail=1`
 
 
 ### module: lowpass
