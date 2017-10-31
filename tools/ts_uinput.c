@@ -575,6 +575,7 @@ static char* scan_devices(void)
 			close(fd);
 			continue;
 		} else {
+			close(fd);
 			have_touchscreen = 1;
 		}
 
