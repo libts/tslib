@@ -572,12 +572,12 @@ static char* scan_devices(void)
 		if ((ioctl(fd, EVIOCGPROP(sizeof(propbit)), propbit) < 0) ||
 			!(propbit[BIT_WORD(INPUT_PROP_DIRECT)] &
 				  BIT_MASK(INPUT_PROP_DIRECT)) ) {
+			close(fd);
 			continue;
 		} else {
 			have_touchscreen = 1;
 		}
 
-		close(fd);
 		free(namelist[i]);
 
                 if (have_touchscreen) {
@@ -641,15 +641,19 @@ static struct tsdev *ts_setup_ext(char *dev_name, int nonblock,
 	if (!found) {
 		return NULL;
 	} else {
-		goto open;
 		scanned = 1;
+		goto open;
 	}
 
 open:
 	ts = ts_open(found, nonblock);
 opened:
-	if (strlen(found) >= strlen(DEV_INPUT_EVENT) + EVENTNAME_LEN)
+	if (strlen(found) >= strlen(DEV_INPUT_EVENT) + EVENTNAME_LEN) {
+		if (ts)
+			ts_close(ts);
+
 		return NULL;
+	}
 
 	sprintf(*dev_input_event, "%s", found);
 
