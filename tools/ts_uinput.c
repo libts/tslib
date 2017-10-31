@@ -690,7 +690,7 @@ int main(int argc, char **argv)
 	unsigned short run_daemon = 0;
 	char *dev_input_name = NULL;
 	int ret;
-	struct ts_sample_mt testsample;
+	struct ts_sample_mt *testsample;
 	struct ts_sample_mt **testsample_p;
 
 	while (1) {
@@ -811,13 +811,22 @@ int main(int argc, char **argv)
 	testsample_p = calloc(1, sizeof(struct ts_sample_mt *));
 	if (!testsample_p)
 		goto out;
-	testsample_p[0] = &testsample;
+	testsample = calloc(1, sizeof(struct ts_sample_mt));
+	if (!testsample) {
+		free(testsample_p);
+		goto out;
+	}
+	testsample_p[0] = testsample;
 
 	ret = ts_read_mt(data.ts, testsample_p, 1, 1);
-	if (ret < 0 && ret != -EAGAIN)
+	if (ret < 0 && ret != -EAGAIN) {
+		free(testsample);
+		free(testsample_p);
 		goto out;
+	}
 
 	ts_close(data.ts);
+	free(testsample);
 	free(testsample_p);
 
 	/* blocking setup for production run */
