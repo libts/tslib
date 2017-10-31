@@ -307,11 +307,14 @@ Parameters:
 Parameters:
 * `factor`
 
-	floating point value between 0 and 1
+	floating point value between 0 and 1; for example 0.2 for more smoothing
+	or 0.8 for less.
 * `threshold`
 
 	x or y minimum distance between two samples to start applying the
         filter.
+
+Example: `module lowpass factor=0.5 threshold=1`
 
 
 ### module:	variance
