@@ -315,6 +315,39 @@ Similar to what the variance filter does, the median filter suppresses spikes in
 \fBdepth\fR
 .sp
 Number of samples to apply the median filter to.
+
+.RE
+.RE
+.PP
+\fBlowpass\fR
+.RS 4
+simple exponential averaging lowpass filter
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBfactor\fR
+.sp
+floating point values betwenn 0 and 1
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBthreshold\fR
+.sp
+x or y minimum distance between two samples to start applying the filter
+
 .RE
 .RE
 .PP

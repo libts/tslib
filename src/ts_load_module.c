@@ -76,6 +76,9 @@ static const struct tslib_module_desc tslib_modules[] = {
 #ifdef TSLIB_STATIC_LINEAR_H2200_MODULE
 	{ "linear_h2200", linear_h2200_mod_init },
 #endif
+#ifdef TSLIB_STATIC_LOWPASS_MODULE
+	{ "lowpass", lowpass_mod_init },
+#endif
 #ifdef TSLIB_STATIC_MEDIAN_MODULE
 	{ "median", median_mod_init },
 #endif

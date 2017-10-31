@@ -65,6 +65,12 @@ else
 IIR_MODULE =
 endif
 
+if ENABLE_LOWPASS_MODULE
+IIR_MODULE = lowpass.la
+else
+IIR_MODULE =
+endif
+
 if ENABLE_UCB1X00_MODULE
 UCB1X00_MODULE = ucb1x00.la
 else
@@ -165,6 +171,7 @@ pluginexec_LTLIBRARIES = \
 	$(DEBOUNCE_MODULE) \
 	$(SKIP_MODULE) \
 	$(IIR_MODULE) \
+	$(LOWPASS_MODULE) \
 	$(UCB1X00_MODULE) \
 	$(CORGI_MODULE) \
 	$(COLLIE_MODULE) \
@@ -243,6 +250,13 @@ if WINDOWS
 iir_la_LDFLAGS		+= -no-undefined
 endif
 iir_la_LIBADD		= $(top_builddir)/src/libts.la
+
+lowpass_la_SOURCES	= lowpass.c
+lowpass_la_LDFLAGS	= -module $(LTVSN)
+if WINDOWS
+lowpass_la_LDFLAGS	+= -no-undefined
+endif
+lowpass_la_LIBADD	= $(top_builddir)/src/libts.la
 
 # hw access
 corgi_la_SOURCES	= corgi-raw.c

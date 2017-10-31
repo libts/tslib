@@ -141,7 +141,8 @@ make distclean
 	--enable-variance=static \
 	--enable-dejitter=static \
 	--enable-linear=static \
-	--enable-linear-h2200=static
+	--enable-linear-h2200=static \
+	--enable-lowpass=static
 
 make -j${NUMCPUS}
 make clean
