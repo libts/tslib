@@ -44,7 +44,7 @@ tslib (using `ts_setup()`) tries to automatically find your touchscreen input
 device.:
 
     TSLIB_TSDEVICE          Touchscreen device file name.
-                            Default: automatic detection (ts_setup() on Linux)
+                            Default:                automatic detection (on Linux)
 
     TSLIB_CALIBFILE         Calibration file.
                             Default:                ${sysconfdir}/pointercal
@@ -55,11 +55,14 @@ device.:
     TSLIB_PLUGINDIR         Plugin directory.
                             Default:                ${datadir}/plugins
 
-    TSLIB_CONSOLEDEVICE     Console device.
+    TSLIB_CONSOLEDEVICE     Console device. (not needed when using --with-sdl2)
                             Default:                /dev/tty
 
     TSLIB_FBDEVICE          Framebuffer device.
                             Default:                /dev/fb0
+
+As you can see, basically there's only `TSLIB_FBDEVICE` that doesn't have
+automatically set defaults depending on your system.
 
 ### configure tslib
 This is just an example `/etc/ts.conf` file. Touch samples flow from top to
