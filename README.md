@@ -106,8 +106,8 @@ reboot, and you should instantly have your `ts.conf` filters running, without
 configuring anything else yourself.
 
 ### use the filtered result in your system (ts_uinput method)
-**TL;DR:** Use `tools/ts_uinput_start.sh` and use `/dev/input/ts_uinput` as your evdev
-device.
+**TL;DR:** Run `tools/ts_uinput_start.sh` during startup and use
+`/dev/input/ts_uinput` as your evdev input device.
 
 
 tslib tries to automatically find your touchscreen device in `/dev/input/event*`
@@ -736,6 +736,8 @@ platforms [here](https://martinkepplinger.com/tslib/packages/).
 Please help porting missing programs!
 
 ## touchscreen hardware support
+**TL;DR:** On Linux, use `module_raw input`
+
 For mostly historical reasons, tslib includes device specific `module_raw` userspace
 drivers.
 The [ts.conf man page](https://manpages.debian.org/unstable/libts0/ts.conf.5.en.html)
