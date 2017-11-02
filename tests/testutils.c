@@ -152,3 +152,12 @@ void ts_flush (struct tsdev *ts)
 	if (read (ts_fd (ts), buffer, TS_BUFFER_MAX) == -1)
 		fprintf(stderr, "ts_flush read error\n");
 }
+
+void print_ascii_logo(void)
+{
+	printf("                 _       _ _ _\n");
+	printf("                | |_ ___| (_) |__\n");
+	printf("                | __/ __| | | '_ \\\n");
+	printf("                | |_\\__ \\ | | |_) |\n");
+	printf("                 \\__|___/_|_|_.__/\n\n");
+}
