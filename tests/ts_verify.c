@@ -554,10 +554,18 @@ int main(int argc, char **argv)
 	run_tests(&data);
 
 	data.tsconf = fopen(CONFFILE, "a+");
+	fprintf(data.tsconf, "module lowpass\n");
+	fclose(data.tsconf);
+	printf("======================================================\n");
+	printf("input_raw -> skip -> pthres -> debounce -> median -> dejitter -> lowpass\n");
+
+	run_tests(&data);
+
+	data.tsconf = fopen(CONFFILE, "a+");
 	fprintf(data.tsconf, "module linear\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
-	printf("input_raw -> skip -> pthres -> debounce -> median -> dejitter -> linear\n");
+	printf("input_raw -> skip -> pthres -> debounce -> median -> dejitter -> lowpass -> linear\n");
 
 	run_tests(&data);
 
