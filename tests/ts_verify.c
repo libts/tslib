@@ -508,8 +508,6 @@ int main(int argc, char **argv)
 	printf("                 \\__|___/_|_|_.__/\n\n");
 	printf("tslib %s / libts ABI version %d (0x%06X)\n",
 		ver->package_version, ver->version_num >> 16, ver->version_num);
-	printf("======================================================\n");
-	printf("input_raw\n");
 
 	run_tests(&data);
 
@@ -517,7 +515,7 @@ int main(int argc, char **argv)
 	fprintf(data.tsconf, "module skip nhead=1 ntail=1\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
-	printf("input_raw -> skip\n");
+	printf("skip\n");
 
 	run_tests(&data);
 
@@ -525,7 +523,7 @@ int main(int argc, char **argv)
 	fprintf(data.tsconf, "module pthres pmin=20\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
-	printf("input_raw -> skip -> pthres\n");
+	printf("skip -> pthres\n");
 
 	run_tests(&data);
 
@@ -533,7 +531,7 @@ int main(int argc, char **argv)
 	fprintf(data.tsconf, "module debounce drop_threshold=40\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
-	printf("input_raw -> skip -> pthres -> debounce\n");
+	printf("skip -> pthres -> debounce\n");
 
 	run_tests(&data);
 
@@ -541,7 +539,7 @@ int main(int argc, char **argv)
 	fprintf(data.tsconf, "module median depth=7\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
-	printf("input_raw -> skip -> pthres -> debounce -> median\n");
+	printf("skip -> pthres -> debounce -> median\n");
 
 	run_tests(&data);
 
@@ -549,7 +547,7 @@ int main(int argc, char **argv)
 	fprintf(data.tsconf, "module dejitter delta=100\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
-	printf("input_raw -> skip -> pthres -> debounce -> median -> dejitter\n");
+	printf("skip -> pthres -> debounce -> median -> dejitter\n");
 
 	run_tests(&data);
 
@@ -557,7 +555,7 @@ int main(int argc, char **argv)
 	fprintf(data.tsconf, "module lowpass\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
-	printf("input_raw -> skip -> pthres -> debounce -> median -> dejitter -> lowpass\n");
+	printf("skip -> pthres -> debounce -> median -> dejitter -> lowpass\n");
 
 	run_tests(&data);
 
@@ -565,7 +563,7 @@ int main(int argc, char **argv)
 	fprintf(data.tsconf, "module linear\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
-	printf("input_raw -> skip -> pthres -> debounce -> median -> dejitter -> lowpass -> linear\n");
+	printf("skip -> pthres -> debounce -> median -> dejitter -> lowpass -> linear\n");
 
 	run_tests(&data);
 
