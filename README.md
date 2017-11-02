@@ -38,10 +38,8 @@ Apart from building the latest tarball release, running
 [OpenSUSE](https://software.opensuse.org/package/tslib)
 and their package management.
 
-### environment variables
-You only need the variables in case the following defaults don't fit. On Linux,
-tslib (using `ts_setup()`) tries to automatically find your touchscreen input
-device.:
+### environment variables (optional)
+You may override defaults. In most cases you won't need to do so though:
 
     TSLIB_TSDEVICE          Touchscreen device file name.
                             Default:                automatic detection (on Linux)
@@ -60,9 +58,6 @@ device.:
 
     TSLIB_FBDEVICE          Framebuffer device.
                             Default:                /dev/fb0
-
-As you can see, basically there's only `TSLIB_FBDEVICE` that doesn't have
-automatically set defaults depending on your system.
 
 ### configure tslib
 This is just an example `/etc/ts.conf` file. Touch samples flow from top to
@@ -116,44 +111,44 @@ device.
 
 
 tslib tries to automatically find your touchscreen device in `/dev/input/event*`
-on Linux. Use it via `ts_uinput`:
+on Linux. Now make `ts_uinput` use it, instead of your graphical environment
+directly:
 
     # ts_uinput -d -v
 
 `-d` makes the program return and run as a daemon in the background. `-v` makes
 it print the __new__ `/dev/input/eventX` device node before returning.
 
-You can use **evdev** drivers now. For *Qt5* for example you'd
-probably set something like this:
+Now make your graphical environmen use that new event device, using **evdev**
+drivers.
+
+* For *Qt5* for example you'd probably set something like this:
 
     QT_QPA_GENERIC_PLUGINS=evdevtouch:/dev/input/eventX
     QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS=/dev/input/eventX:rotate=0
 
-For *X11* you'd probably edit your `xorg.conf` `Section "InputDevice"` for your
+* For *X11* you'd probably edit your `xorg.conf` `Section "InputDevice"` for your
 touchscreen to have
 
     Option "Device" "/dev/input/eventX"
 
-For *Wayland*, you'd make libinput use the new `/dev/input/eventX` and so on.
+* For *Wayland*, you'd make libinput use the new `/dev/input/eventX` and so on.
 Please see your system's documentation on how to use a specific evdev input device.
-
-Remember to set your environment and configuration for `ts_uinput`, just like you
-did for `ts_calibrate` or `ts_test_mt`.
 
 Let's recap the data flow here:
 
-    driver --> raw read --> filter --> filter(s) --> ts_uinput (ts_read_mt())  --> libevdev read  --> GUI app
-               module       module     module(s)     daemon                        e.g. in libinput
+    driver --> raw read --> filter --> filter(s) --> ts_uinput --> libevdev read  --> GUI app/toolkit
+               module       module     module(s)     daemon        e.g. in libinput
 
 #### symlink to /dev/input/ts_uinput
-Again, /dev/input/event numbers are not persistent. In order to know in advance,
-*what* enumerated input device file is created by `ts_uinput`, you can, among
-other thing:
+/dev/input/event numbers are not persistent. In order to know in advance,
+*what* enumerated input device file is created by `ts_uinput`, you can use
+a symlink:
 
 * use the included `tools/ts_uinput_start.sh` script that starts
   `ts_uinput -d -v` and creates the symlink `/dev/input/ts_uinput` for you, or
 
-* if you're using *udev and systemd*, create the following udev rule, for
+* if you're using *systemd*, create the following udev rule, for
   example `/etc/udev/rules.d/98-touchscreen.rules`:
 
       SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{name}=="ts_uinput", SYMLINK+="input/ts_uinput"
