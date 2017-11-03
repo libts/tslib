@@ -205,13 +205,13 @@ Parameters (usually not needed):
 
 * `pressure_offset`
 
-	offset applied to the pressure value
+	offset applied to the pressure value. Default: 0
 * `pressure_mul`
 
-	factor to multiply the pressure value with
+	factor to multiply the pressure value with. Default: 1.
 * `pressure_div`
 
-	value to divide the pressure value by
+	value to divide the pressure value by. Default: 1.
 
 Example: `module linear`
 
@@ -224,7 +224,7 @@ Example: `module linear`
 Parameters:
 * `depth`
 
-	Number of samples to apply the median filter to
+	Number of samples to apply the median filter to. Default: 3.
 
 Example: `module median depth=5`
 
@@ -237,10 +237,10 @@ Example: `module median depth=5`
 Parameters:
 * `pmin`
 
-	Minimum pressure value for a sample to be valid.
+	Minimum pressure value for a sample to be valid. Default: 1.
 * `pmax`
 
-	Maximum pressure value for a sample to be valid.
+	Maximum pressure value for a sample to be valid. Default: (`INT_MAX`).
 
 Example: `pthres pmin=10`
 
@@ -257,10 +257,10 @@ Example: `pthres pmin=10`
 Parameters:
 * `N`
 
-	numerator of the smoothing fraction
+	numerator of the smoothing fraction. Default: 0.
 * `D`
 
-	denominator of the smoothing fraction
+	denominator of the smoothing fraction. Default: 1.
 
 Example: `module iir N=6 D=10`
 
@@ -279,7 +279,7 @@ Parameters:
 	defines the 'quick motion' threshold. If the pen moves quick, it
 	is not feasible to smooth pen motion, besides quick motion is not
 	precise anyway; so if quick motion is detected the module just
-	discards the backlog and simply copies input to output.
+	discards the backlog and simply copies input to output. Default: 100.
 
 Example: `module dejitter delta=100`
 
@@ -293,7 +293,7 @@ Parameters:
 * `drop_threshold`
 
 	drop events up to this number of milliseconds after the last
-	release event.
+	release event. Default: 0.
 
 Example: `module debounce drop_threshold=40`
 
@@ -305,10 +305,10 @@ Example: `module debounce drop_threshold=40`
 Parameters:
 * `nhead`
 
-	Number of events to drop after pressure
+	Number of events to drop after pressure. Default: 1.
 * `ntail`
 
-	Number of events to drop before release
+	Number of events to drop before release. Default: 1.
 
 Example: `module skip nhead=2 ntail=1`
 
@@ -320,11 +320,11 @@ Parameters:
 * `factor`
 
 	floating point value between 0 and 1; for example 0.2 for more smoothing
-	or 0.8 for less.
+	or 0.8 for less. Default: 0.4.
 * `threshold`
 
 	x or y minimum distance between two samples to start applying the
-        filter.
+        filter. Default: 2.
 
 Example: `module lowpass factor=0.5 threshold=1`
 
