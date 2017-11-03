@@ -7,7 +7,7 @@
 # C library for filtering touchscreen events
 
 tslib consists of the library _libts_ and tools that help you _calibrate_ and
-_use it_ in your environment. There's a [short introductory presentation from 2017](https://fosdem.org/2017/schedule/event/tslib/).
+_use it_ in your environment.
 
 ## contact
 If you have problems, questions, ideas or suggestions, please contact us by
