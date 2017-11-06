@@ -6,7 +6,7 @@
  *
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
- * 
+ *
  * Very stupid lowpass dejittering filter
  */
 #include <errno.h>
