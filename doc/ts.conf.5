@@ -139,7 +139,7 @@ Linear scaling module, primarily used for conversion of touch screen co\-ordinat
 .\}
 \fBxyswap\fR
 .sp
-Interchange the X and Y co\-ordinates \-\- no longer used or needed if the new linear calibration utility ts_calibrate is used\&.
+Interchange the X and Y co\-ordinates \-\- no longer used or needed if the new linear calibration utility ts_calibrate is used.
 .RE
 .sp
 .RS 4
@@ -152,7 +152,7 @@ Interchange the X and Y co\-ordinates \-\- no longer used or needed if the new l
 .\}
 \fBpressure_offset\fR
 .sp
-Offset applied to the pressure value.
+Offset applied to the pressure value. Default: 0.
 .RE
 .sp
 .RS 4
@@ -165,7 +165,7 @@ Offset applied to the pressure value.
 .\}
 \fBpressure_mul\fR
 .sp
-Factor to multiply the pressure value with.
+Factor to multiply the pressure value with. Default: 1.
 .RE
 .sp
 .RS 4
@@ -178,7 +178,7 @@ Factor to multiply the pressure value with.
 .\}
 \fBpressure_div\fR
 .sp
-Value to divide the pressure value by.
+Value to divide the pressure value by. Default: 1.
 
 .RE
 .RE
@@ -200,7 +200,7 @@ smoothing in the form of a fraction (N/D).
 .\}
 \fBN\fR
 .sp
-numerator of the smoothing fraction
+numerator of the smoothing fraction. Default: 0.
 .RE
 .sp
 .RS 4
@@ -213,7 +213,7 @@ numerator of the smoothing fraction
 .\}
 \fBD\fR
 .sp
-denominator of the smoothing fraction
+denominator of the smoothing fraction. Default: 1.
 .RE
 .RE
 .PP
@@ -231,7 +231,7 @@ Pressure threshold filter. Given a release is always pressure 0 and a press is a
 .\}
 \fBpmin\fR
 .sp
-Minimum pressure value for a sample to be valid.
+Minimum pressure value for a sample to be valid. Default: 1.
 .RE
 .sp
 .RS 4
@@ -244,7 +244,7 @@ Minimum pressure value for a sample to be valid.
 .\}
 \fBpmax\fR
 .sp
-Maximum pressure value for a sample to be valid.
+Maximum pressure value for a sample to be valid. Default: INT_MAX.
 
 .RE
 .RE
@@ -263,7 +263,7 @@ Simple debounce mechanism that drops input events for the specified time after a
 .\}
 \fBdrop_threshold\fR
 .sp
-drop events up to this number of milliseconds after the last release event.
+drop events up to this number of milliseconds after the last release event. Default: 0.
 
 .RE
 .RE
@@ -282,7 +282,7 @@ Skip nhead samples after press and ntail samples before release. This should hel
 .\}
 \fBnhead\fR
 .sp
-Number of events to drop after pressure.
+Number of events to drop after pressure. Default: 1.
 .RE
 .sp
 .RS 4
@@ -295,7 +295,7 @@ Number of events to drop after pressure.
 .\}
 \fBntail\fR
 .sp
-Number of events to drop before release.
+Number of events to drop before release. Default: 1.
 
 .RE
 .RE
@@ -314,7 +314,7 @@ Similar to what the variance filter does, the median filter suppresses spikes in
 .\}
 \fBdepth\fR
 .sp
-Number of samples to apply the median filter to.
+Number of samples to apply the median filter to. Default: 3.
 
 .RE
 .RE
@@ -333,7 +333,7 @@ simple exponential averaging lowpass filter
 .\}
 \fBfactor\fR
 .sp
-floating point values betwenn 0 and 1
+floating point values betwenn 0 and 1. Default: 0.4.
 .RE
 .sp
 .RS 4
@@ -346,7 +346,7 @@ floating point values betwenn 0 and 1
 .\}
 \fBthreshold\fR
 .sp
-x or y minimum distance between two samples to start applying the filter
+x or y minimum distance between two samples to start applying the filter. Default: 2.
 
 .RE
 .RE
