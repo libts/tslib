@@ -61,6 +61,7 @@ struct ts_verify {
 	FILE *tsconf;
 
 	struct ts_sample_mt **samp_mt;
+	struct ts_sample *samp_read;
 	int32_t slots;
 	uint8_t nr;
 	uint16_t read_mt_run_count;
@@ -211,11 +212,19 @@ static int ts_verify_read_mt_1(struct ts_verify *data, int nr,
 static int ts_verify_read_1(struct ts_verify *data, int nr,
 			    int nonblocking, int raw)
 {
-	struct ts_sample samp[nr];
 	int ret;
+
+	if (!data->samp_read) {
+		data->samp_read = calloc(nr, sizeof(struct ts_sample));
+		if (!data->samp_read) {
+			perror("calloc");
+			return errno;
+		}
+	}
 
 	data->ts = ts_setup(data->tsdevice, nonblocking);
 	if (!data->ts) {
+		free(data->samp_read);
 		perror("ts_setup");
 		return errno;
 	}
@@ -223,16 +232,16 @@ static int ts_verify_read_1(struct ts_verify *data, int nr,
 	/* blocking */
 	if (nonblocking != 1) {
 		if (raw == 0)
-			ret = ts_read(data->ts, samp, nr);
+			ret = ts_read(data->ts, data->samp_read, nr);
 		else
-			ret = ts_read_raw(data->ts, samp, nr);
+			ret = ts_read_raw(data->ts, data->samp_read, nr);
 	/*non blocking*/
 	} else {
 		while (1) {
 			if (raw == 0)
-				ret = ts_read(data->ts, samp, nr);
+				ret = ts_read(data->ts, data->samp_read, nr);
 			else
-				ret = ts_read_raw(data->ts, samp, nr);
+				ret = ts_read_raw(data->ts, data->samp_read, nr);
 
 	/* yeah that's lame but that's pretty much the only way it's used out there. it's deprecated anyways  */
 			if (ret == nr)
@@ -241,6 +250,8 @@ static int ts_verify_read_1(struct ts_verify *data, int nr,
 	}
 
 	ts_close(data->ts);
+	free(data->samp_read);
+	data->samp_read = NULL;
 
 	return ret;
 }
@@ -440,6 +451,7 @@ int main(int argc, char **argv)
 		.tsdevice = NULL,
 		.slots = 1,
 		.samp_mt = NULL,
+		.samp_read = NULL,
 		.verbose = 0,
 		.read_fail_count = 0,	
 		.read_mt_fail_count = 0,
