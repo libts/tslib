@@ -5,7 +5,9 @@
  *
  *  Copyright (C) 2004 Michael Opdenacker <michaelo@handhelds.org>
  *
- * This file is placed under the LGPL.
+ * This file is placed under the GPL.
+ *
+ * SPDX-License-Identifier: GPL-2.0+
  *
  *
  * Misc utils for ts test programs
