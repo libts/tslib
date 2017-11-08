@@ -18,6 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with ts_test_mt.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * SPDX-License-Identifier: GPL-2.0+
+ *
  *
  * Basic multitouch test program for the libts library.
  */

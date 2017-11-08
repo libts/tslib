@@ -6,6 +6,8 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
+ * SPDX-License-Identifier: LGPL-2.1
+ *
  *
  * Return the file descriptor for a touchscreen device.
  */

@@ -18,6 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with ts_print_mt.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * SPDX-License-Identifier: GPL-2.0+
+ *
  *
  * Just prints touchscreen events -- does not paint them on framebuffer
  */

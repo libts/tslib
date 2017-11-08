@@ -15,6 +15,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this tool.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-2.0+
  */
 
 #include <SDL2/SDL.h>

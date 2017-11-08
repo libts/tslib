@@ -5,6 +5,8 @@
  *
  * This file is placed under the GPL.  Please see the file
  * COPYING for more details.
+ *
+ * SPDX-License-Identifier: GPL-2.0+
  */
 #include <stdio.h>
 #include <stdlib.h>

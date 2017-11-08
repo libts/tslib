@@ -6,6 +6,9 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
+ * SPDX-License-Identifier: LGPL-2.1
+ *
+ *
  * Interface for setting parameters for the core library
  */
 #include "config.h"

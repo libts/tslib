@@ -19,6 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with ts_uinput.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * SPDX-License-Identifier: GPL-2.0+
+ *
  *
  * ts_uinput daemon to generate (single- and multitouch) input events
  * taken from tslib multitouch samples. It's a userspace evdev driver

@@ -8,6 +8,9 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
+ * SPDX-License-Identifier: LGPL-2.1
+ *
+ *
  * Median filter incomming data. For some theory, see
  * https://en.wikipedia.org/wiki/Median_filter
  */

@@ -5,6 +5,8 @@
  *
  *  This file is subject to the terms and conditions of the GNU General Public
  *  License.  See the file COPYING for more details.
+ *
+ * SPDX-License-Identifier: GPL-2.0+
  */
 
 #ifndef _VIDEO_FONT_H

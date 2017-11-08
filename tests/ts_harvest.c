@@ -6,6 +6,8 @@
  * This file is placed under the GPL.  Please see the file
  * COPYING for more details.
  *
+ * SPDX-License-Identifier: GPL-2.0+
+ *
  *
  * Program to harvest hundreds of raw touchscreen coordinates
  * Useful for linearizing non linear touchscreens as found in the h2200 device

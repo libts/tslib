@@ -7,6 +7,9 @@
  * This file is placed under the LGPL.  Please see the file COPYING for more
  * details.
  *
+ * SPDX-License-Identifier: LGPL-2.1
+ *
+ *
  * Usage:
  *   module_raw waveshare vid_pid=<vendorID>:<productID> len=<raw_data_len>
  */

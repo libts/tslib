@@ -8,6 +8,9 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
+ * SPDX-License-Identifier: LGPL-2.1
+ *
+ *
  * Plugin for the cy8mrln touchscreen of the Palm Pre/Pre Plus/Pre 2 devices.
  */
 

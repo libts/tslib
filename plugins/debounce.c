@@ -7,6 +7,8 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
+ * SPDX-License-Identifier: LGPL-2.1
+ *
  *
  * Problem: An intended single-tap by the user should be understood as
  * such. Be it because of the touch device's properties or an unintended
