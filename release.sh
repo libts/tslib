@@ -1,12 +1,10 @@
 #!/bin/bash
-
+# SPDX-License-Identifier: GPL-2.0+
+#
 # Copyright (C) 2017, Martin Kepplinger <martink@posteo.de>
-
-# This software is licensed as described in the file COPYING, which
-# you should have received as part of this distribution.
-
+#
+#
 # Script to build release-archives with. This requires a checkout from git.
-
 # WARNING: This script is very dangerous! It may delete any untracked files.
 
 set -e

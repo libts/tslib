@@ -1,4 +1,5 @@
 #!/bin/bash
+# SPDX-License-Identifier: GPL-2.0+
 set -e
 
 RED='\033[0;31m'
