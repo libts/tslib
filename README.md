@@ -1,6 +1,4 @@
-
-
-![logo](website/tslib_logo_web.jpg?raw=true)
+![logo](website/logo.svg)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/11027/badge.svg)](https://scan.coverity.com/projects/tslib)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/752/badge)](https://bestpractices.coreinfrastructure.org/projects/752)
 
