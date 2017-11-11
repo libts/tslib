@@ -138,29 +138,29 @@ Let's recap the data flow here:
     driver --> raw read --> filter --> filter(s) --> ts_uinput --> libevdev read  --> GUI app/toolkit
                module       module     module(s)     daemon        e.g. in libinput
 
-#### symlink to /dev/input/ts_uinput
+#### symlink /dev/input/ts_uinput to the new event file
 /dev/input/event numbers are not persistent. In order to know in advance,
 *what* enumerated input device file is created by `ts_uinput`, you can use
 a symlink:
 
 * use the included `tools/ts_uinput_start.sh` script that starts
-  `ts_uinput -d -v` and creates the symlink `/dev/input/ts_uinput` for you, or
+  `ts_uinput -d -v` and creates the symlink called `/dev/input/ts_uinput` for
+  you, or
 
 * if you're using *systemd*, create the following udev rule, for
   example `/etc/udev/rules.d/98-touchscreen.rules`:
 
       SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{name}=="ts_uinput", SYMLINK+="input/ts_uinput"
 
-  in case you have to use non-standard paths, create a file containing the
-  environment or tslib, like `/etc/ts.env`
+#### running as systemd service (optional)
+in case you have to use non-default paths, create a file containing the
+environment for tslib, like `/etc/ts.env`
 
-      TSLIB_TSDEVICE=/dev/input/ts
       TSLIB_CALIBFILE=/etc/pointercal
       TSLIB_CONFFILE=/etc/ts.conf
       TSLIB_PLUGINDIR=/usr/lib/ts
-      TSLIB_FBDEVICE=/dev/fb0
 
-  and create a systemd service file, like `/usr/lib/systemd/system/ts_uinput.service`
+and create a systemd service file, like `/usr/lib/systemd/system/ts_uinput.service`
 
       [Unit]
       Description=touchscreen input
@@ -175,11 +175,11 @@ a symlink:
       [Install]
       WantedBy=multi-user.target
 
-  and
+and
 
       #systemctl enable ts_uinput
 
-  will enable it permanently.
+will enable it permanently.
 
 ### other operating systems
 There is no tool that we know of that reads tslib samples and uses the
