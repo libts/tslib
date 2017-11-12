@@ -615,6 +615,7 @@ that get called in the chain of filters.
 | --- | --- |
 |`TSLIB_VERSION_MT` | 1.10 |
 |`TSLIB_VERSION_OPEN_RESTRICTED` | 1.13 |
+|`TSLIB_VERSION_EVENTPATH` | 1.15 |
 |`TSLIB_MT_VALID` | 1.13 |
 |`TSLIB_MT_VALID_TOOL` | 1.13 |
 |`ts_libversion` | 1.10 |
