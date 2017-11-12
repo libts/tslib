@@ -55,6 +55,8 @@ int ts_close(struct tsdev *ts)
 		ret = close(ts->fd);
 	}
 
+	free(ts->eventpath);
+
 	free(ts);
 
 	return ret;

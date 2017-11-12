@@ -110,9 +110,16 @@ struct tsdev *ts_open(const char *name, int nonblock)
 	if (ts->fd == -1)
 		goto free;
 
+	ts->eventpath = strdup(name);
+	if (!ts->eventpath)
+		goto free;
+
 	return ts;
 
 free:
+	if (ts->eventpath)
+		free(ts->eventpath);
+
 	free(ts);
 	return NULL;
 }
