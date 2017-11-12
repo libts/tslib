@@ -75,12 +75,6 @@ static int errfn(const char *fmt, va_list ap)
 	return vfprintf(stderr, fmt, ap);
 }
 
-static int openfn(const char *path, int flags,
-		  void *user_data __attribute__((unused)))
-{
-	return open(path, flags);
-}
-
 int main(int argc, char **argv)
 {
 	struct tsdev *ts;
@@ -166,11 +160,6 @@ int main(int argc, char **argv)
 
 	ts_error_fn = errfn;
 
-#ifdef TSLIB_VERSION_OPEN_RESTRICTED
-	if (ver->features & TSLIB_VERSION_OPEN_RESTRICTED)
-		ts_open_restricted = openfn;
-#endif
-
 	if (non_blocking)
 		ts = ts_setup(tsdevice, 1);
 	else
@@ -180,6 +169,8 @@ int main(int argc, char **argv)
 		perror("ts_setup");
 		return errno;
 	}
+
+	printf("libts %06X opened device %s\n", ver->version_num, ts_get_eventpath(ts));
 
 #ifdef TS_HAVE_EVDEV
 	if (ioctl(ts_fd(ts), EVIOCGABS(ABS_MT_SLOT), &slot) < 0) {
