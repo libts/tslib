@@ -181,6 +181,9 @@ int main(int argc, char **argv)
 		return errno;
 	}
 
+	printf("libts %06X opened device %s\n",
+	       ver->version_num, ts_get_eventpath(ts));
+
 #ifdef TS_HAVE_EVDEV
 	if (ioctl(ts_fd(ts), EVIOCGABS(ABS_MT_SLOT), &slot) < 0) {
 		perror("ioctl EVIOGABS");
