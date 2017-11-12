@@ -1,3 +1,10 @@
+tslib 1.15 - tba
+================================
+
+This release includes libts version 0.9.0 and the following changes:
+* New ts_get_eventpath() API to learn the opened device file path
+
+
 tslib 1.14 - released 2017-11-12
 ================================
 

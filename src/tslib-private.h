@@ -22,6 +22,7 @@ extern "C" {
 
 struct tsdev {
 	int fd;
+	char *eventpath;
 	struct tslib_module_info *list;
 	/* points to position in 'list' where raw reads
 	 * come from.  default is the position of the

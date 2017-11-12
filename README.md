@@ -414,6 +414,7 @@ Check out our tests directory for examples how to use it.
 [`int (*ts_error_fn)(const char *fmt, va_list ap)`](https://manpages.debian.org/unstable/libts0/ts_error_fn.3.en.html)  
 [`int (*ts_open_restricted)(const char *path, int flags, void *user_data)`](https://manpages.debian.org/unstable/libts0/ts_open_restricted.3.en.html)  
 [`void (*ts_close_restricted)(int fd, void *user_data)`](https://manpages.debian.org/unstable/libts0/ts_close_restricted.3.en.html)  
+[`ts_get_eventpath()`](https://manpages.debian.org/unstable/libts0/ts_get_eventpath.3.en.html)  
 
 
 ### using libts
@@ -633,6 +634,7 @@ that get called in the chain of filters.
 |`ts_read_raw` | 1.0 |
 |`ts_read_raw_mt` | 1.3 |
 |`tslib_parse_vars` | 1.0 |
+|`ts_get_eventpath` | 1.15 |
 
 
 ***
