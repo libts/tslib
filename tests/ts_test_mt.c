@@ -135,6 +135,7 @@ int main(int argc, char **argv)
 	short verbose = 0;
 
 	const char *tsdevice = NULL;
+	char slot_info[64];
 
 	signal(SIGSEGV, sig);
 	signal(SIGINT, sig);
@@ -271,6 +272,11 @@ int main(int argc, char **argv)
 	buttons [2].text = "Quit";
 
 	refresh_screen ();
+
+	snprintf(slot_info, sizeof(slot_info),
+		 "%d touch contacts supported (%s)",
+		 max_slots, user_slots ? "user" : "driver");
+	put_string(2, yres - 14, slot_info, 2);
 
 	while (1) {
 		int ret;
