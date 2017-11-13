@@ -3,6 +3,7 @@ tslib 1.15 - tba
 
 This release includes libts version 0.9.0 and the following changes:
 * New ts_get_eventpath() API to learn the opened device file path
+* ts_test_mt shows the number of supported concurrent touch contacts
 
 This release includes the following bugfixes:
 * 47fb616 ts_test_mt: avoid a flickering cross in the center
