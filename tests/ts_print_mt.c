@@ -18,6 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with ts_print_mt.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * SPDX-License-Identifier: GPL-2.0+
+ *
  *
  * Just prints touchscreen events -- does not paint them on framebuffer
  */
@@ -178,6 +180,9 @@ int main(int argc, char **argv)
 		perror("ts_setup");
 		return errno;
 	}
+
+	printf("libts %06X opened device %s\n",
+	       ver->version_num, ts_get_eventpath(ts));
 
 #ifdef TS_HAVE_EVDEV
 	if (ioctl(ts_fd(ts), EVIOCGABS(ABS_MT_SLOT), &slot) < 0) {

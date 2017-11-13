@@ -6,6 +6,8 @@
  * This file is placed under the GPL.  Please see the file
  * COPYING for more details.
  *
+ * SPDX-License-Identifier: GPL-2.0+
+ *
  *
  * Common functions for the test programs
  */
@@ -151,4 +153,13 @@ void ts_flush (struct tsdev *ts)
 	static char buffer[TS_BUFFER_MAX];
 	if (read (ts_fd (ts), buffer, TS_BUFFER_MAX) == -1)
 		fprintf(stderr, "ts_flush read error\n");
+}
+
+void print_ascii_logo(void)
+{
+	printf("                 _       _ _ _\n");
+	printf("                | |_ ___| (_) |__\n");
+	printf("                | __/ __| | | '_ \\\n");
+	printf("                | |_\\__ \\ | | |_) |\n");
+	printf("                 \\__|___/_|_|_.__/\n\n");
 }

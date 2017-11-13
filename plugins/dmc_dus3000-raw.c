@@ -1,5 +1,7 @@
 /*
  * Copyright 2017 Andreas Hartmetz <ahartmetz@gmail.com>
+ *
+ * SPDX-License-Identifier: LGPL-2.1
  */
 
 /*

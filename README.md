@@ -1,13 +1,11 @@
-
-
-![logo](website/tslib_logo_web.jpg?raw=true)
+![logo](website/logo.svg)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/11027/badge.svg)](https://scan.coverity.com/projects/tslib)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/752/badge)](https://bestpractices.coreinfrastructure.org/projects/752)
 
 # C library for filtering touchscreen events
 
 tslib consists of the library _libts_ and tools that help you _calibrate_ and
-_use it_ in your environment. There's a [short introductory presentation from 2017](https://fosdem.org/2017/schedule/event/tslib/).
+_use it_ in your environment.
 
 ## contact
 If you have problems, questions, ideas or suggestions, please contact us by
@@ -38,13 +36,11 @@ Apart from building the latest tarball release, running
 [OpenSUSE](https://software.opensuse.org/package/tslib)
 and their package management.
 
-### environment variables
-You only need the variables in case the following defaults don't fit. On Linux,
-tslib (using `ts_setup()`) tries to automatically find your touchscreen input
-device.:
+### environment variables (optional)
+You may override defaults. In most cases you won't need to do so though:
 
     TSLIB_TSDEVICE          Touchscreen device file name.
-                            Default: automatic detection (ts_setup() on Linux)
+                            Default:                automatic detection (on Linux)
 
     TSLIB_CALIBFILE         Calibration file.
                             Default:                ${sysconfdir}/pointercal
@@ -55,7 +51,7 @@ device.:
     TSLIB_PLUGINDIR         Plugin directory.
                             Default:                ${datadir}/plugins
 
-    TSLIB_CONSOLEDEVICE     Console device.
+    TSLIB_CONSOLEDEVICE     Console device. (not needed when using --with-sdl2)
                             Default:                /dev/tty
 
     TSLIB_FBDEVICE          Framebuffer device.
@@ -108,63 +104,63 @@ reboot, and you should instantly have your `ts.conf` filters running, without
 configuring anything else yourself.
 
 ### use the filtered result in your system (ts_uinput method)
-**TL;DR:** Use `tools/ts_uinput_start.sh` and use `/dev/input/ts_uinput` as your evdev
-device.
+**TL;DR:** Run `tools/ts_uinput_start.sh` during startup and use
+`/dev/input/ts_uinput` as your evdev input device.
 
 
 tslib tries to automatically find your touchscreen device in `/dev/input/event*`
-on Linux. Use it via `ts_uinput`:
+on Linux. Now make `ts_uinput` use it, instead of your graphical environment
+directly:
 
     # ts_uinput -d -v
 
 `-d` makes the program return and run as a daemon in the background. `-v` makes
 it print the __new__ `/dev/input/eventX` device node before returning.
 
-You can use **evdev** drivers now. For *Qt5* for example you'd
-probably set something like this:
+Now make your graphical environmen use that new event device, using **evdev**
+drivers.
+
+* For *Qt5* for example you'd probably set something like this:
 
     QT_QPA_GENERIC_PLUGINS=evdevtouch:/dev/input/eventX
     QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS=/dev/input/eventX:rotate=0
 
-For *X11* you'd probably edit your `xorg.conf` `Section "InputDevice"` for your
+* For *X11* you'd probably edit your `xorg.conf` `Section "InputDevice"` for your
 touchscreen to have
 
     Option "Device" "/dev/input/eventX"
 
-For *Wayland*, you'd make libinput use the new `/dev/input/eventX` and so on.
+* For *Wayland*, you'd make libinput use the new `/dev/input/eventX` and so on.
 Please see your system's documentation on how to use a specific evdev input device.
-
-Remember to set your environment and configuration for `ts_uinput`, just like you
-did for `ts_calibrate` or `ts_test_mt`.
 
 Let's recap the data flow here:
 
-    driver --> raw read --> filter --> filter(s) --> ts_uinput (ts_read_mt())  --> libevdev read  --> GUI app
-               module       module     module(s)     daemon                        e.g. in libinput
+    driver --> raw read --> filter --> filter(s) --> ts_uinput --> libevdev read  --> GUI app/toolkit
+               module       module     module(s)     daemon        e.g. in libinput
 
-#### symlink to /dev/input/ts_uinput
-Again, /dev/input/event numbers are not persistent. In order to know in advance,
-*what* enumerated input device file is created by `ts_uinput`, you can, among
-other thing:
+#### symlink /dev/input/ts_uinput to the new event file
+/dev/input/event numbers are not persistent. In order to know in advance,
+*what* enumerated input device file is created by `ts_uinput`, you can use
+a symlink:
 
 * use the included `tools/ts_uinput_start.sh` script that starts
-  `ts_uinput -d -v` and creates the symlink `/dev/input/ts_uinput` for you, or
+  `ts_uinput -d -v` and creates the symlink called `/dev/input/ts_uinput` for
+  you, or
 
-* if you're using *udev and systemd*, create the following udev rule, for
+* if you're using *systemd*, create the following udev rule, for
   example `/etc/udev/rules.d/98-touchscreen.rules`:
 
       SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{name}=="ts_uinput", SYMLINK+="input/ts_uinput"
 
-  in case you have to use non-standard paths, create a file containing the
-  environment or tslib, like `/etc/ts.env`
+#### running as systemd service (optional)
+in case you have to use non-default paths, create a file containing the
+environment for tslib, like `/etc/ts.env`
 
-      TSLIB_TSDEVICE=/dev/input/ts
       TSLIB_CALIBFILE=/etc/pointercal
       TSLIB_CONFFILE=/etc/ts.conf
       TSLIB_PLUGINDIR=/usr/lib/ts
-      TSLIB_FBDEVICE=/dev/fb0
 
-  and create a systemd service file, like `/usr/lib/systemd/system/ts_uinput.service`
+and create a systemd service file, like `/usr/lib/systemd/system/ts_uinput.service`
 
       [Unit]
       Description=touchscreen input
@@ -179,11 +175,11 @@ other thing:
       [Install]
       WantedBy=multi-user.target
 
-  and
+and
 
       #systemctl enable ts_uinput
 
-  will enable it permanently.
+will enable it permanently.
 
 ### other operating systems
 There is no tool that we know of that reads tslib samples and uses the
@@ -207,13 +203,13 @@ Parameters (usually not needed):
 
 * `pressure_offset`
 
-	offset applied to the pressure value
+	offset applied to the pressure value. Default: 0
 * `pressure_mul`
 
-	factor to multiply the pressure value with
+	factor to multiply the pressure value with. Default: 1.
 * `pressure_div`
 
-	value to divide the pressure value by
+	value to divide the pressure value by. Default: 1.
 
 Example: `module linear`
 
@@ -226,7 +222,7 @@ Example: `module linear`
 Parameters:
 * `depth`
 
-	Number of samples to apply the median filter to
+	Number of samples to apply the median filter to. Default: 3.
 
 Example: `module median depth=5`
 
@@ -239,10 +235,10 @@ Example: `module median depth=5`
 Parameters:
 * `pmin`
 
-	Minimum pressure value for a sample to be valid.
+	Minimum pressure value for a sample to be valid. Default: 1.
 * `pmax`
 
-	Maximum pressure value for a sample to be valid.
+	Maximum pressure value for a sample to be valid. Default: (`INT_MAX`).
 
 Example: `pthres pmin=10`
 
@@ -259,10 +255,10 @@ Example: `pthres pmin=10`
 Parameters:
 * `N`
 
-	numerator of the smoothing fraction
+	numerator of the smoothing fraction. Default: 0.
 * `D`
 
-	denominator of the smoothing fraction
+	denominator of the smoothing fraction. Default: 1.
 
 Example: `module iir N=6 D=10`
 
@@ -281,7 +277,7 @@ Parameters:
 	defines the 'quick motion' threshold. If the pen moves quick, it
 	is not feasible to smooth pen motion, besides quick motion is not
 	precise anyway; so if quick motion is detected the module just
-	discards the backlog and simply copies input to output.
+	discards the backlog and simply copies input to output. Default: 100.
 
 Example: `module dejitter delta=100`
 
@@ -295,7 +291,7 @@ Parameters:
 * `drop_threshold`
 
 	drop events up to this number of milliseconds after the last
-	release event.
+	release event. Default: 0.
 
 Example: `module debounce drop_threshold=40`
 
@@ -307,10 +303,10 @@ Example: `module debounce drop_threshold=40`
 Parameters:
 * `nhead`
 
-	Number of events to drop after pressure
+	Number of events to drop after pressure. Default: 1.
 * `ntail`
 
-	Number of events to drop before release
+	Number of events to drop before release. Default: 1.
 
 Example: `module skip nhead=2 ntail=1`
 
@@ -322,11 +318,11 @@ Parameters:
 * `factor`
 
 	floating point value between 0 and 1; for example 0.2 for more smoothing
-	or 0.8 for less.
+	or 0.8 for less. Default: 0.4.
 * `threshold`
 
 	x or y minimum distance between two samples to start applying the
-        filter.
+        filter. Default: 2.
 
 Example: `module lowpass factor=0.5 threshold=1`
 
@@ -418,6 +414,7 @@ Check out our tests directory for examples how to use it.
 [`int (*ts_error_fn)(const char *fmt, va_list ap)`](https://manpages.debian.org/unstable/libts0/ts_error_fn.3.en.html)  
 [`int (*ts_open_restricted)(const char *path, int flags, void *user_data)`](https://manpages.debian.org/unstable/libts0/ts_open_restricted.3.en.html)  
 [`void (*ts_close_restricted)(int fd, void *user_data)`](https://manpages.debian.org/unstable/libts0/ts_close_restricted.3.en.html)  
+[`ts_get_eventpath()`](https://manpages.debian.org/unstable/libts0/ts_get_eventpath.3.en.html)  
 
 
 ### using libts
@@ -618,6 +615,7 @@ that get called in the chain of filters.
 | --- | --- |
 |`TSLIB_VERSION_MT` | 1.10 |
 |`TSLIB_VERSION_OPEN_RESTRICTED` | 1.13 |
+|`TSLIB_VERSION_EVENTPATH` | 1.15 |
 |`TSLIB_MT_VALID` | 1.13 |
 |`TSLIB_MT_VALID_TOOL` | 1.13 |
 |`ts_libversion` | 1.10 |
@@ -637,6 +635,7 @@ that get called in the chain of filters.
 |`ts_read_raw` | 1.0 |
 |`ts_read_raw_mt` | 1.3 |
 |`tslib_parse_vars` | 1.0 |
+|`ts_get_eventpath` | 1.15 |
 
 
 ***
@@ -738,6 +737,8 @@ platforms [here](https://martinkepplinger.com/tslib/packages/).
 Please help porting missing programs!
 
 ## touchscreen hardware support
+**TL;DR:** On Linux, use `module_raw input`
+
 For mostly historical reasons, tslib includes device specific `module_raw` userspace
 drivers.
 The [ts.conf man page](https://manpages.debian.org/unstable/libts0/ts.conf.5.en.html)

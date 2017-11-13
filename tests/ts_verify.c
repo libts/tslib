@@ -18,6 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with ts_verify.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * SPDX-License-Identifier: GPL-2.0+
+ *
  *
  * This program includes random tests of tslib's API
  */
@@ -61,6 +63,7 @@ struct ts_verify {
 	FILE *tsconf;
 
 	struct ts_sample_mt **samp_mt;
+	struct ts_sample *samp_read;
 	int32_t slots;
 	uint8_t nr;
 	uint16_t read_mt_run_count;
@@ -211,11 +214,19 @@ static int ts_verify_read_mt_1(struct ts_verify *data, int nr,
 static int ts_verify_read_1(struct ts_verify *data, int nr,
 			    int nonblocking, int raw)
 {
-	struct ts_sample samp[nr];
 	int ret;
+
+	if (!data->samp_read) {
+		data->samp_read = calloc(nr, sizeof(struct ts_sample));
+		if (!data->samp_read) {
+			perror("calloc");
+			return errno;
+		}
+	}
 
 	data->ts = ts_setup(data->tsdevice, nonblocking);
 	if (!data->ts) {
+		free(data->samp_read);
 		perror("ts_setup");
 		return errno;
 	}
@@ -223,16 +234,16 @@ static int ts_verify_read_1(struct ts_verify *data, int nr,
 	/* blocking */
 	if (nonblocking != 1) {
 		if (raw == 0)
-			ret = ts_read(data->ts, samp, nr);
+			ret = ts_read(data->ts, data->samp_read, nr);
 		else
-			ret = ts_read_raw(data->ts, samp, nr);
+			ret = ts_read_raw(data->ts, data->samp_read, nr);
 	/*non blocking*/
 	} else {
 		while (1) {
 			if (raw == 0)
-				ret = ts_read(data->ts, samp, nr);
+				ret = ts_read(data->ts, data->samp_read, nr);
 			else
-				ret = ts_read_raw(data->ts, samp, nr);
+				ret = ts_read_raw(data->ts, data->samp_read, nr);
 
 	/* yeah that's lame but that's pretty much the only way it's used out there. it's deprecated anyways  */
 			if (ret == nr)
@@ -241,6 +252,8 @@ static int ts_verify_read_1(struct ts_verify *data, int nr,
 	}
 
 	ts_close(data->ts);
+	free(data->samp_read);
+	data->samp_read = NULL;
 
 	return ret;
 }
@@ -440,6 +453,7 @@ int main(int argc, char **argv)
 		.tsdevice = NULL,
 		.slots = 1,
 		.samp_mt = NULL,
+		.samp_read = NULL,
 		.verbose = 0,
 		.read_fail_count = 0,	
 		.read_mt_fail_count = 0,
@@ -508,8 +522,6 @@ int main(int argc, char **argv)
 	printf("                 \\__|___/_|_|_.__/\n\n");
 	printf("tslib %s / libts ABI version %d (0x%06X)\n",
 		ver->package_version, ver->version_num >> 16, ver->version_num);
-	printf("======================================================\n");
-	printf("input_raw\n");
 
 	run_tests(&data);
 
@@ -517,7 +529,7 @@ int main(int argc, char **argv)
 	fprintf(data.tsconf, "module skip nhead=1 ntail=1\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
-	printf("input_raw -> skip\n");
+	printf("skip\n");
 
 	run_tests(&data);
 
@@ -525,7 +537,7 @@ int main(int argc, char **argv)
 	fprintf(data.tsconf, "module pthres pmin=20\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
-	printf("input_raw -> skip -> pthres\n");
+	printf("skip -> pthres\n");
 
 	run_tests(&data);
 
@@ -533,7 +545,7 @@ int main(int argc, char **argv)
 	fprintf(data.tsconf, "module debounce drop_threshold=40\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
-	printf("input_raw -> skip -> pthres -> debounce\n");
+	printf("skip -> pthres -> debounce\n");
 
 	run_tests(&data);
 
@@ -541,7 +553,7 @@ int main(int argc, char **argv)
 	fprintf(data.tsconf, "module median depth=7\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
-	printf("input_raw -> skip -> pthres -> debounce -> median\n");
+	printf("skip -> pthres -> debounce -> median\n");
 
 	run_tests(&data);
 
@@ -549,7 +561,15 @@ int main(int argc, char **argv)
 	fprintf(data.tsconf, "module dejitter delta=100\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
-	printf("input_raw -> skip -> pthres -> debounce -> median -> dejitter\n");
+	printf("skip -> pthres -> debounce -> median -> dejitter\n");
+
+	run_tests(&data);
+
+	data.tsconf = fopen(CONFFILE, "a+");
+	fprintf(data.tsconf, "module lowpass\n");
+	fclose(data.tsconf);
+	printf("======================================================\n");
+	printf("skip -> pthres -> debounce -> median -> dejitter -> lowpass\n");
 
 	run_tests(&data);
 
@@ -557,7 +577,7 @@ int main(int argc, char **argv)
 	fprintf(data.tsconf, "module linear\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
-	printf("input_raw -> skip -> pthres -> debounce -> median -> dejitter -> linear\n");
+	printf("skip -> pthres -> debounce -> median -> dejitter -> lowpass -> linear\n");
 
 	run_tests(&data);
 

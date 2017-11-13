@@ -13,6 +13,8 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
+ * SPDX-License-Identifier: LGPL-2.1
+ *
  *
  * Read raw pressure, x, y, and timestamp from a touchscreen device.
  */

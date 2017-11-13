@@ -15,6 +15,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this tool.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-2.0+
  */
 
 #include <SDL2/SDL.h>
@@ -35,11 +37,8 @@ static void help(void)
 {
 	struct ts_lib_version_data *ver = ts_libversion();
 
-	printf("                 _       _ _ _\n");
-	printf("                | |_ ___| (_) |__\n");
-	printf("                | __/ __| | | '_ \\\n");
-	printf("                | |_\\__ \\ | | |_) |\n");
-	printf("                 \\__|___/_|_|_.__/\n\n");
+	print_ascii_logo();
+
 	printf("tslib %s / libts ABI version %d (0x%06X)\n",
 		ver->package_version, ver->version_num >> 16, ver->version_num);
 	printf("\n");

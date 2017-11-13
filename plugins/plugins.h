@@ -1,3 +1,6 @@
+/*
+ * SPDX-License-Identifier: LGPL-2.1
+ */
 #define TSLIB_DECLARE_MODULE(name) \
 	TSAPI struct tslib_module_info *name##_mod_init(struct tsdev *dev, const char *params)
 

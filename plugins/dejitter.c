@@ -7,6 +7,8 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
+ * SPDX-License-Identifier: LGPL-2.1
+ *
  *
  * Problem: some touchscreens read the X/Y values from ADC with a
  * great level of noise in their lowest bits. This produces "jitter"

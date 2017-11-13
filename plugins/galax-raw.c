@@ -5,11 +5,13 @@
  * 2009.05 Fred Salabartan
  *
  * Add support for version 0100 by Oskari Rauta <oskari.rauta@gmail.com> 2013
- *
  * Modify by Jean-Baptiste Théou <jean-baptiste.theou@vodalys.com> (2013)
  *
  * This file is placed under the LGPL. Please see the file
  * COPYING for more details.
+ *
+ * SPDX-License-Identifier: LGPL-2.1
+ *
  *
  * Plugin for "eGalax Inc. Touch" (using usbhid driver)
  * (Vendor=0eef Product=0001 Version=0112/210/0100)

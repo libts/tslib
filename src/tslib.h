@@ -21,6 +21,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  *  USA
  *
+ * SPDX-License-Identifier: LGPL-2.1
+ *
  *
  * Touch screen library interface definitions.
  */
@@ -105,6 +107,7 @@ struct ts_lib_version_data {
 
 #define TSLIB_VERSION_MT		(1 << 0)	/* multitouch support */
 #define TSLIB_VERSION_OPEN_RESTRICTED	(1 << 1)	/* ts_open_restricted() */
+#define TSLIB_VERSION_EVENTPATH		(1 << 2)	/* ts_get_eventpath() */
 
 enum ts_param {
 	TS_SCREEN_RES = 0,		/* 2 integer args, x and y */
@@ -209,6 +212,11 @@ TSAPI struct ts_module_conf *ts_conf_get(struct tsdev *ts, const char *path);
  * Write the list of modules to ts.conf
  */
 TSAPI int ts_conf_set(struct tsdev *ts, const char *path, struct ts_module_conf *conf);
+
+/*
+ * This function returns the path to the opened touchscreen input device file.
+ */
+TSAPI char *ts_get_eventpath(struct tsdev *tsdev);
 
 #ifdef __cplusplus
 }

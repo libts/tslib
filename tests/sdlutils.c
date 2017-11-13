@@ -15,6 +15,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this tool.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-2.0+
  */
 
 #include <SDL2/SDL.h>
@@ -166,3 +168,11 @@ void getxy(struct tsdev *ts, int *x, int *y)
 	}
 }
 
+void print_ascii_logo(void)
+{
+	printf("                 _       _ _ _\n");
+	printf("                | |_ ___| (_) |__\n");
+	printf("                | __/ __| | | '_ \\\n");
+	printf("                | |_\\__ \\ | | |_) |\n");
+	printf("                 \\__|___/_|_|_.__/\n\n");
+}

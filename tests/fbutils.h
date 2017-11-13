@@ -8,6 +8,7 @@
  * This file is placed under the GPL.  Please see the
  * file COPYING for details.
  *
+ * SPDX-License-Identifier: GPL-2.0+
  */
 
 #ifndef _FBUTILS_H

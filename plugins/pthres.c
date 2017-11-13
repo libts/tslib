@@ -11,6 +11,9 @@
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
  *
+ * SPDX-License-Identifier: LGPL-2.1
+ *
+ *
  * Ensure a release is always pressure 0, and that a press is always >=1.
  */
 #include <stdlib.h>

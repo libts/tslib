@@ -19,6 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with ts_uinput.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * SPDX-License-Identifier: GPL-2.0+
+ *
  *
  * ts_uinput daemon to generate (single- and multitouch) input events
  * taken from tslib multitouch samples. It's a userspace evdev driver
@@ -542,135 +544,6 @@ static char *fetch_device_node(const char *path)
 	return devnode;
 }
 
-/* --- start src/ts_setup.c plus reporting the chosen input device --- */
-
-#define DEV_INPUT_EVENT "/dev/input"
-#define EVENT_DEV_NAME "event"
-
-static char* scan_devices(void)
-{
-	struct dirent **namelist;
-	int i, ndev;
-	char *filename = NULL;
-	int have_touchscreen = 0;
-	long propbit[BITS_TO_LONGS(INPUT_PROP_MAX)] = {0};
-
-	ndev = scandir(DEV_INPUT_EVENT, &namelist, is_event_device, alphasort);
-	if (ndev <= 0)
-		return NULL;
-
-	for (i = 0; i < ndev; i++) {
-		char fname[64];
-		int fd = -1;
-
-		snprintf(fname, sizeof(fname),
-			 "%s/%s", DEV_INPUT_EVENT, namelist[i]->d_name);
-		fd = open(fname, O_RDONLY);
-		if (fd < 0)
-			continue;
-
-		if ((ioctl(fd, EVIOCGPROP(sizeof(propbit)), propbit) < 0) ||
-			!(propbit[BIT_WORD(INPUT_PROP_DIRECT)] &
-				  BIT_MASK(INPUT_PROP_DIRECT)) ) {
-			close(fd);
-			continue;
-		} else {
-			close(fd);
-			have_touchscreen = 1;
-		}
-
-		free(namelist[i]);
-
-                if (have_touchscreen) {
-			filename = malloc(strlen(DEV_INPUT_EVENT) +
-					  strlen(EVENT_DEV_NAME) +
-					  3);
-			if (!filename)
-				return NULL;
-
-	                sprintf(filename, "%s/%s%d",
-				DEV_INPUT_EVENT, EVENT_DEV_NAME,
-				i);
-		}
-
-		return filename;
-	}
-
-	return NULL;
-}
-
-static char *ts_name_default[] = {
-		"/dev/input/ts",
-		"/dev/input/touchscreen",
-		"/dev/touchscreen/ucb1x00",
-		NULL
-};
-
-#define EVENTNAME_LEN 15
-
-static struct tsdev *ts_setup_ext(char *dev_name, int nonblock,
-				  char **dev_input_event)
-{
-	char **defname;
-	struct tsdev *ts = NULL;
-	char *found = NULL;
-	int scanned = 0;
-
-	*dev_input_event = malloc(strlen(DEV_INPUT_EVENT) + EVENTNAME_LEN);
-	if (!*dev_input_event)
-		return NULL;
-
-	dev_name = dev_name ? dev_name : getenv("TSLIB_TSDEVICE");
-
-	if (dev_name != NULL) {
-		found = dev_name;
-		goto open;
-	}
-
-	defname = &ts_name_default[0];
-	while (*defname != NULL) {
-		ts = ts_open(*defname, nonblock);
-		if (ts != NULL) {
-			found = *defname;
-			goto opened;
-		}
-
-		++defname;
-	}
-
-	found = scan_devices();
-	if (!found) {
-		return NULL;
-	} else {
-		scanned = 1;
-		goto open;
-	}
-
-open:
-	ts = ts_open(found, nonblock);
-opened:
-	if (strlen(found) >= strlen(DEV_INPUT_EVENT) + EVENTNAME_LEN) {
-		if (ts)
-			ts_close(ts);
-
-		return NULL;
-	}
-
-	sprintf(*dev_input_event, "%s", found);
-
-	if (scanned)
-		free(found);
-
-	/* if detected try to configure it */
-	if (ts && ts_config(ts) != 0) {
-		ts_close(ts);
-		return NULL;
-	}
-
-	return ts;
-}
-/* --- end src/ts_setup.c ---*/
-
 int main(int argc, char **argv)
 {
 	struct data_t data = {
@@ -803,9 +676,9 @@ int main(int argc, char **argv)
 		       getenv("TSLIB_FBDEVICE"));
 
 	/* non-blocking for one read in order to verify reading and fail before forking */
-	data.ts = ts_setup_ext(data.input_name, 1, &dev_input_name);
-	if (!data.ts || !dev_input_name) {
-		perror("ts_setup_ext");
+	data.ts = ts_setup(data.input_name, 1);
+	if (!data.ts) {
+		perror("ts_setup");
 		goto out;
 	}
 
@@ -831,11 +704,15 @@ int main(int argc, char **argv)
 	free(testsample_p);
 
 	/* blocking setup for production run */
-	data.ts = ts_setup_ext(data.input_name, 0, &dev_input_name);
-	if (!data.ts || !dev_input_name) {
-		perror("ts_setup_ext");
+	data.ts = ts_setup(data.input_name, 0);
+	if (!data.ts) {
+		perror("ts_setup");
 		goto out;
 	}
+
+	dev_input_name = ts_get_eventpath(data.ts);
+	if (!dev_input_name)
+		goto out;
 
 	data.fd_input = open(dev_input_name, O_RDWR);
 	if (data.fd_input == -1) {

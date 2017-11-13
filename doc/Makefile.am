@@ -22,4 +22,5 @@ dist_man_MANS = \
 	ts_fd.3 \
 	ts_error_fn.3 \
 	ts_open_restricted.3 \
-	ts_close_restricted.3
+	ts_close_restricted.3 \
+	ts_get_eventpath.3

@@ -1,4 +1,11 @@
-tslib 1.14 - tbd
+tslib 1.15 - tba
+================================
+
+This release includes libts version 0.9.0 and the following changes:
+* New ts_get_eventpath() API to learn the opened device file path
+
+
+tslib 1.14 - released 2017-11-12
 ================================
 
 This release includes libts version 0.8.1 and the following changes:
@@ -13,6 +20,7 @@ This release includes libts version 0.8.1 and the following changes:
  Users of those modules must enable them, like `./configure --enable-arctic2`
 * Automatic touchscreen device detection for Linux (if not defined by the user)
 * New filter plugin "lowpass"
+* SPDX license identifiers in all C source files
 
 This release includes the following bugfixes:
 * 93ac81d autoconf: disable dependency tracking by default (fixes out-of-source builds)

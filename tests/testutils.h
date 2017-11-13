@@ -5,7 +5,9 @@
  *
  *  Copyright (C) 2004 Michael Opdenacker <michaelo@handhelds.org>
  *
- * This file is placed under the LGPL.
+ * This file is placed under the GPL.
+ *
+ * SPDX-License-Identifier: GPL-2.0+
  *
  *
  * Misc utils for ts test programs
@@ -28,5 +30,6 @@ void button_draw(struct ts_button *button);
 int button_handle(struct ts_button *button, int x, int y, unsigned int pressure);
 void getxy(struct tsdev *ts, int *x, int *y);
 void ts_flush (struct tsdev *ts);
+void print_ascii_logo(void);
 
 #endif /* _TESTUTILS_H */
