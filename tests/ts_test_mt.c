@@ -113,6 +113,10 @@ static void help(void)
 	printf("\n");
 }
 
+#define CROSS_VISIBLE 0x00001000
+#define CROSS_SHOW 0x00000008
+#define DRAWING 0x80000000
+
 int main(int argc, char **argv)
 {
 	struct tsdev *ts;
@@ -275,10 +279,13 @@ int main(int argc, char **argv)
 		for (j = 0; j < max_slots; j++) {
 			if ((mode & 15) != 1) { /* not in draw mode */
 				/* Hide slots > 0 if released */
-				if (j > 0 && (mode_mt[j] & 0x00000008))
+				if (j > 0 && !(mode_mt[j] & CROSS_SHOW))
 					continue;
 
-				put_cross(x[j], y[j], 2 | XORMODE);
+				if (!(mode_mt[j] & CROSS_VISIBLE))
+					put_cross(x[j], y[j], 2 | XORMODE);
+
+				mode_mt[j] |= CROSS_VISIBLE;
 			}
 		}
 
@@ -287,10 +294,13 @@ int main(int argc, char **argv)
 		/* Hide it */
 		for (j = 0; j < max_slots; j++) {
 			if ((mode & 15) != 1) { /* not in draw mode */
-				if (j > 0 && (mode_mt[j] & 0x00000008))
+				if (j > 0 && !(mode_mt[j] & CROSS_SHOW) &&
+				    !(mode_mt[j] & CROSS_VISIBLE))
 					continue;
 
 				put_cross(x[j], y[j], 2 | XORMODE);
+
+				mode_mt[j] &= ~CROSS_VISIBLE;
 			}
 		}
 
@@ -316,11 +326,11 @@ int main(int argc, char **argv)
 						  samp_mt[0][j].pressure)) {
 					switch (i) {
 					case 0:
-						mode = 0;
+						mode = 0x0;
 						refresh_screen();
 						break;
 					case 1:
-						mode = 1;
+						mode = 0x1;
 						refresh_screen();
 						break;
 					case 2:
@@ -340,19 +350,19 @@ int main(int argc, char **argv)
 			}
 
 			if (samp_mt[0][j].pressure > 0) {
-				if (mode == 0x80000001) { /* draw mode while drawing */
-					if (mode_mt[j] == 0x80000000) /* slot while drawing */
+				if (mode & DRAWING && mode & 0x1) { /* draw mode while drawing */
+					if (mode_mt[j] & DRAWING) /* slot while drawing */
 						line (x[j], y[j], samp_mt[0][j].x, samp_mt[0][j].y, 2);
 				}
 				x[j] = samp_mt[0][j].x;
 				y[j] = samp_mt[0][j].y;
-				mode |= 0x80000000;
-				mode_mt[j] |= 0x80000000;
-				mode_mt[j] &= ~0x00000008;
+				mode |= DRAWING;
+				mode_mt[j] |= DRAWING;
+				mode_mt[j] |= CROSS_SHOW;
 			} else {
-				mode &= ~0x80000000;
-				mode_mt[j] &= ~0x80000000;
-				mode_mt[j] |= 0x00000008; /* hide the cross */
+				mode &= ~DRAWING;
+				mode_mt[j] &= ~DRAWING;
+				mode_mt[j] &= ~CROSS_SHOW; /* hide the cross */
 			}
 			if (quit_pressed)
 				goto out;
