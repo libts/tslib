@@ -76,6 +76,10 @@ filters, using [`ts_test_mt`](https://manpages.debian.org/unstable/libts0/ts_tes
 
 ![ts_test_mt](doc/screenshots/ts_test_mt.png?raw=true)
 
+On the bottom left of the screen, you see the available concurrent touch contacts
+supported, and whether it's because the driver says so, or ts_test_mt was started
+with the `-j` commandline option to overwrite it.
+
 ### environment variables (optional)
 You may override defaults. In most cases you won't need to do so though:
 
