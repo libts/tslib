@@ -113,6 +113,15 @@ static void help(void)
 	printf("\n");
 }
 
+void print_slot_info(char *slot_info, size_t len, int32_t max_slots,
+		     int32_t user_slots)
+{
+	snprintf(slot_info, len,
+		 "%d touch contacts supported (%s)",
+		 max_slots, user_slots ? "user" : "driver");
+	put_string(2, yres - 14, slot_info, 2);
+}
+
 #define CROSS_VISIBLE 0x00001000
 #define CROSS_SHOW 0x00000008
 #define DRAWING 0x80000000
@@ -272,11 +281,7 @@ int main(int argc, char **argv)
 	buttons [2].text = "Quit";
 
 	refresh_screen ();
-
-	snprintf(slot_info, sizeof(slot_info),
-		 "%d touch contacts supported (%s)",
-		 max_slots, user_slots ? "user" : "driver");
-	put_string(2, yres - 14, slot_info, 2);
+	print_slot_info(slot_info, sizeof(slot_info), max_slots, user_slots);
 
 	while (1) {
 		int ret;
@@ -334,10 +339,18 @@ int main(int argc, char **argv)
 					case 0:
 						mode = 0x0;
 						refresh_screen();
+						print_slot_info(slot_info,
+								sizeof(slot_info),
+								max_slots,
+								user_slots);
 						break;
 					case 1:
 						mode = 0x1;
 						refresh_screen();
+						print_slot_info(slot_info,
+								sizeof(slot_info),
+								max_slots,
+								user_slots);
 						break;
 					case 2:
 						quit_pressed = 1;
