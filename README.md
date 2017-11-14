@@ -36,27 +36,6 @@ Apart from building the latest tarball release, running
 [OpenSUSE](https://software.opensuse.org/package/tslib)
 and their package management.
 
-### environment variables (optional)
-You may override defaults. In most cases you won't need to do so though:
-
-    TSLIB_TSDEVICE          Touchscreen device file name.
-                            Default:                automatic detection (on Linux)
-
-    TSLIB_CALIBFILE         Calibration file.
-                            Default:                ${sysconfdir}/pointercal
-
-    TSLIB_CONFFILE          Config file.
-                            Default:                ${sysconfdir}/ts.conf
-
-    TSLIB_PLUGINDIR         Plugin directory.
-                            Default:                ${datadir}/plugins
-
-    TSLIB_CONSOLEDEVICE     Console device. (not needed when using --with-sdl2)
-                            Default:                /dev/tty
-
-    TSLIB_FBDEVICE          Framebuffer device.
-                            Default:                /dev/fb0
-
 ### configure tslib
 This is just an example `/etc/ts.conf` file. Touch samples flow from top to
 bottom. Each line specifies one module and it's parameters. Modules are
@@ -96,6 +75,27 @@ filters, using [`ts_test_mt`](https://manpages.debian.org/unstable/libts0/ts_tes
     # ts_test_mt
 
 ![ts_test_mt](doc/screenshots/ts_test_mt.png?raw=true)
+
+### environment variables (optional)
+You may override defaults. In most cases you won't need to do so though:
+
+    TSLIB_TSDEVICE          Touchscreen device file name.
+                            Default:                automatic detection (on Linux)
+
+    TSLIB_CALIBFILE         Calibration file.
+                            Default:                ${sysconfdir}/pointercal
+
+    TSLIB_CONFFILE          Config file.
+                            Default:                ${sysconfdir}/ts.conf
+
+    TSLIB_PLUGINDIR         Plugin directory.
+                            Default:                ${datadir}/plugins
+
+    TSLIB_CONSOLEDEVICE     Console device. (not needed when using --with-sdl2)
+                            Default:                /dev/tty
+
+    TSLIB_FBDEVICE          Framebuffer device.
+                            Default:                /dev/fb0
 
 ### use the filtered result in your system (X.org method)
 If you're using X.org graphical X server, things should be very easy. Install
