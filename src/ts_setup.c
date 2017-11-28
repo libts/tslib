@@ -19,7 +19,7 @@
 #include <errno.h>
 #include <string.h>
 
-#if defined (__linux__) 
+#if defined (__linux__)
 #include <dirent.h>
 #include <stdio.h>
 #include <string.h>
@@ -40,11 +40,12 @@
 #define BITS_PER_LONG           (sizeof(long) * BITS_PER_BYTE)
 #define BITS_TO_LONGS(nr)       DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
 
-static int is_event_device(const struct dirent *dir) {
+static int is_event_device(const struct dirent *dir)
+{
 	return strncmp(EVENT_DEV_NAME, dir->d_name, 5) == 0;
 }
 
-static char* scan_devices(void)
+static char *scan_devices(void)
 {
 	struct dirent **namelist;
 	int i, ndev;
@@ -72,7 +73,7 @@ static char* scan_devices(void)
 
 		if ((ioctl(fd, EVIOCGPROP(sizeof(propbit)), propbit) < 0) ||
 			!(propbit[BIT_WORD(INPUT_PROP_DIRECT)] &
-				  BIT_MASK(INPUT_PROP_DIRECT)) ) {
+				  BIT_MASK(INPUT_PROP_DIRECT))) {
 			continue;
 		} else {
 			have_touchscreen = 1;
@@ -81,14 +82,14 @@ static char* scan_devices(void)
 		close(fd);
 		free(namelist[i]);
 
-                if (have_touchscreen) {
+		if (have_touchscreen) {
 			filename = malloc(strlen(DEV_INPUT_EVENT) +
 					  strlen(EVENT_DEV_NAME) +
 					  3);
 			if (!filename)
 				return NULL;
 
-	                sprintf(filename, "%s/%s%d",
+			sprintf(filename, "%s/%s%d",
 				DEV_INPUT_EVENT, EVENT_DEV_NAME,
 				i);
 		}
