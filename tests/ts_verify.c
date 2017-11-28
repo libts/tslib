@@ -455,7 +455,7 @@ int main(int argc, char **argv)
 		.samp_mt = NULL,
 		.samp_read = NULL,
 		.verbose = 0,
-		.read_fail_count = 0,	
+		.read_fail_count = 0,
 		.read_mt_fail_count = 0,
 		.read_run_count = 0,
 		.read_mt_run_count = 0,
