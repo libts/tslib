@@ -154,7 +154,8 @@ int main(int argc, char **argv)
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "hi:", long_options, &option_index);
+		int c = getopt_long(argc, argv, "hi:", long_options,
+				    &option_index);
 
 		errno = 0;
 		if (c == -1)
@@ -175,6 +176,7 @@ int main(int argc, char **argv)
 
 		if (errno) {
 			char str[9];
+
 			sprintf(str, "option ?");
 			str[7] = c & 0xff;
 			perror(str);
