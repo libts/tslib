@@ -60,7 +60,7 @@ static int linear_read(struct tslib_module_info *info, struct ts_sample *samp,
 				samp->x, samp->y, samp->pressure);
 		#endif /* DEBUG */
 			xtemp = samp->x; ytemp = samp->y;
-			samp->x = 	(lin->a[2] +
+			samp->x =	(lin->a[2] +
 					lin->a[0]*xtemp +
 					lin->a[1]*ytemp) / lin->a[6];
 			samp->y =	(lin->a[5] +
@@ -77,6 +77,7 @@ static int linear_read(struct tslib_module_info *info, struct ts_sample *samp,
 					  * lin->p_mult) / lin->p_div;
 			if (lin->swap_xy) {
 				int tmp = samp->x;
+
 				samp->x = samp->y;
 				samp->y = tmp;
 			}
@@ -141,6 +142,7 @@ static int linear_read_mt(struct tslib_module_info *info,
 						 lin->p_div;
 			if (lin->swap_xy) {
 				int tmp = samp[nr][i].x;
+
 				samp[nr][i].x = samp[nr][i].y;
 				samp[nr][i].y = tmp;
 			}
