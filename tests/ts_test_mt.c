@@ -59,11 +59,10 @@
 # define ABS_MT_SLOT             0x2f    /* MT slot being modified */
 #endif
 
-static int palette[] =
-{
+static int palette[] = {
 	0x000000, 0xffe080, 0xffffff, 0xe0c0a0, 0x304050, 0x80b8c0
 };
-#define NR_COLORS (int)(sizeof (palette) / sizeof (palette [0]))
+#define NR_COLORS (int)(sizeof (palette) / sizeof (palette[0]))
 
 #define NR_BUTTONS 3
 static struct ts_button buttons[NR_BUTTONS];
@@ -81,12 +80,13 @@ static void refresh_screen(void)
 {
 	int i;
 
-	fillrect (0, 0, xres - 1, yres - 1, 0);
-	put_string_center (xres/2, yres/4,   "Multitouch test program", 1);
-	put_string_center (xres/2, yres/4+20,"Touch screen to move crosshairs", 2);
+	fillrect(0, 0, xres - 1, yres - 1, 0);
+	put_string_center(xres / 2, yres / 4, "Multitouch test program", 1);
+	put_string_center(xres / 2, yres / 4 + 20,
+			  "Touch screen to move crosshairs", 2);
 
 	for (i = 0; i < NR_BUTTONS; i++)
-		button_draw (&buttons [i]);
+		button_draw(&buttons[i]);
 }
 
 static void help(void)
@@ -203,6 +203,7 @@ int main(int argc, char **argv)
 
 		if (errno) {
 			char str[9];
+
 			sprintf(str, "option ?");
 			str[7] = c & 0xff;
 			perror(str);
@@ -261,26 +262,26 @@ int main(int argc, char **argv)
 		goto out;
 
 	for (i = 0; i < max_slots; i++) {
-		x[i] = xres/2;
-		y[i] = yres/2;
+		x[i] = xres / 2;
+		y[i] = yres / 2;
 	}
 
 	for (i = 0; i < NR_COLORS; i++)
-		setcolor (i, palette [i]);
+		setcolor(i, palette[i]);
 
 	/* Initialize buttons */
-	memset (&buttons, 0, sizeof (buttons));
-	buttons [0].w = buttons [1].w = buttons [2].w = xres / 4;
-	buttons [0].h = buttons [1].h = buttons [2].h = 20;
-	buttons [0].x = 0;
-	buttons [1].x = (3 * xres) / 8;
-	buttons [2].x = (3 * xres) / 4;
-	buttons [0].y = buttons [1].y = buttons [2].y = 10;
-	buttons [0].text = "Drag";
-	buttons [1].text = "Draw";
-	buttons [2].text = "Quit";
+	memset(&buttons, 0, sizeof(buttons));
+	buttons[0].w = buttons[1].w = buttons[2].w = xres / 4;
+	buttons[0].h = buttons[1].h = buttons[2].h = 20;
+	buttons[0].x = 0;
+	buttons[1].x = (3 * xres) / 8;
+	buttons[2].x = (3 * xres) / 4;
+	buttons[0].y = buttons[1].y = buttons[2].y = 10;
+	buttons[0].text = "Drag";
+	buttons[1].text = "Draw";
+	buttons[2].text = "Quit";
 
-	refresh_screen ();
+	refresh_screen();
 	print_slot_info(slot_info, sizeof(slot_info), max_slots, user_slots);
 
 	while (1) {
@@ -371,7 +372,7 @@ int main(int argc, char **argv)
 			if (samp_mt[0][j].pressure > 0) {
 				if (mode & DRAWING && mode & 0x1) { /* draw mode while drawing */
 					if (mode_mt[j] & DRAWING) /* slot while drawing */
-						line (x[j], y[j], samp_mt[0][j].x, samp_mt[0][j].y, 2);
+						line(x[j], y[j], samp_mt[0][j].x, samp_mt[0][j].y, 2);
 				}
 				x[j] = samp_mt[0][j].x;
 				y[j] = samp_mt[0][j].y;
