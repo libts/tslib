@@ -123,6 +123,7 @@ int main(int argc, char **argv)
 
 		if (errno) {
 			char str[9];
+
 			sprintf(str, "option ?");
 			str[7] = c & 0xff;
 			perror(str);
@@ -210,17 +211,17 @@ int main(int argc, char **argv)
 					samp_mt[0][i].x,
 					samp_mt[0][i].y,
 					samp_mt[0][i].pressure);
-                        }
+			}
 		}
 
 		SDL_PollEvent(&ev);
 		switch (ev.type) {
-			case SDL_KEYDOWN:
-			case SDL_QUIT:
-				SDL_ShowCursor(SDL_ENABLE);
-				SDL_DestroyWindow(sdlWindow);
-				SDL_Quit();
-				goto out;
+		case SDL_KEYDOWN:
+		case SDL_QUIT:
+			SDL_ShowCursor(SDL_ENABLE);
+			SDL_DestroyWindow(sdlWindow);
+			SDL_Quit();
+			goto out;
 		}
 
 		SDL_RenderPresent(sdlRenderer);
