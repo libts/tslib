@@ -407,9 +407,8 @@ static int setup_uinput(struct data_t *data, int *max_slots)
 							uidev.absmax[j] = absinfo.maximum;
 						}
 
-						if (j == ABS_MT_SLOT) {
+						if (j == ABS_MT_SLOT)
 							*max_slots = absinfo.maximum + 1 - absinfo.minimum;
-						}
 					} else if (i == EV_SYN) {
 						if (j == SYN_MT_REPORT)
 							data->mt_type_a = 1;
@@ -516,7 +515,8 @@ static void cleanup(struct data_t *data)
 }
 
 /* directly from libevdev (LGPL) */
-static int is_event_device(const struct dirent *dent) {
+static int is_event_device(const struct dirent *dent)
+{
 	return strncmp("event", dent->d_name, 5) == 0;
 }
 
@@ -622,6 +622,7 @@ int main(int argc, char **argv)
 
 		if (errno) {
 			char str[9];
+
 			sprintf(str, "option ?");
 			str[7] = c & 0xff;
 			perror(str);
@@ -629,7 +630,8 @@ int main(int argc, char **argv)
 	}
 
 	/* if we run as a daemon, we don't print all debug output. we print
-	 * the input device node before returning. */
+	 * the input device node before returning.
+	 */
 	if (data.verbose && run_daemon) {
 		data.verbose = 0;
 		data.verbose_daemon = 1;
@@ -782,33 +784,33 @@ int main(int argc, char **argv)
 	}
 
 	if (run_daemon) {
-		#if UINPUT_VERSION >= 4
-			char name[64];
-			int ret = ioctl(data.fd_uinput,
-					UI_GET_SYSNAME(sizeof(name)),
-					name);
-			if (ret >= 0) {
-				if (data.verbose_daemon) {
-					char buf[sizeof(SYS_INPUT_DIR) + sizeof(name)] = SYS_INPUT_DIR;
-					char *devnode;
+	#if UINPUT_VERSION >= 4
+		char name[64];
+		int ret = ioctl(data.fd_uinput,
+				UI_GET_SYSNAME(sizeof(name)),
+				name);
+		if (ret >= 0) {
+			if (data.verbose_daemon) {
+				char buf[sizeof(SYS_INPUT_DIR) + sizeof(name)] = SYS_INPUT_DIR;
+				char *devnode;
 
-					snprintf(&buf[strlen(SYS_INPUT_DIR)], sizeof(name), "%s", name);
-					devnode = fetch_device_node(buf);
-					if (devnode)
-						fprintf(stdout, "%s\n", devnode);
-				} else {
-					fprintf(stdout, "%s\n", name);
-				}
-
-				fflush(stdout);
+				snprintf(&buf[strlen(SYS_INPUT_DIR)], sizeof(name), "%s", name);
+				devnode = fetch_device_node(buf);
+				if (devnode)
+					fprintf(stdout, "%s\n", devnode);
 			} else {
-				perror("ioctl UI_GET_SYSNAME");
-				goto out;
+				fprintf(stdout, "%s\n", name);
 			}
-		#else
-			fprintf(stderr, DEFAULT_UINPUT_NAME
-			": See the kernel log for the device number\n");
-		#endif
+
+			fflush(stdout);
+		} else {
+			perror("ioctl UI_GET_SYSNAME");
+			goto out;
+		}
+	#else
+		fprintf(stderr, DEFAULT_UINPUT_NAME
+		": See the kernel log for the device number\n");
+	#endif
 		if (daemon(0, 0) == -1) {
 			perror("error starting daemon");
 			goto out;
