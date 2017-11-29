@@ -142,7 +142,6 @@ struct tslib_input {
 /* List of actual devices we enumerate. For the device selection,
  * see get_special_device()
  */
-#define EGALAX_VERSION_112 1
 #define EGALAX_VERSION_210 2
 
 static int get_special_device(struct tslib_input *i)
@@ -178,9 +177,6 @@ static int get_special_device(struct tslib_input *i)
 			 * in the kernel! They have quirks over there.
 			 */
 			switch (id.version) {
-			case 0x0112:
-				i->special_device = EGALAX_VERSION_112;
-				break;
 			case 0x0210:
 				i->special_device = EGALAX_VERSION_210;
 				break;
@@ -404,19 +400,7 @@ static int ts_input_read(struct tslib_module_info *inf,
 				}
 				break;
 			case EV_ABS:
-				if (i->special_device == EGALAX_VERSION_112) {
-					switch (ev.code) {
-					case ABS_X+2:
-						i->current_x = ev.value;
-						break;
-					case ABS_Y+2:
-						i->current_y = ev.value;
-						break;
-					case ABS_PRESSURE:
-						i->current_p = ev.value;
-						break;
-					}
-				} else if (i->special_device == EGALAX_VERSION_210) {
+				if (i->special_device == EGALAX_VERSION_210) {
 					switch (ev.code) {
 					case ABS_X:
 						i->current_x = ev.value;
@@ -841,28 +825,6 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 					} else {
 						i->slot = i->ev[it].value;
 						i->buf[total][i->slot].slot = i->ev[it].value;
-						i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
-					}
-					break;
-				case ABS_X+2:
-					if (i->special_device == EGALAX_VERSION_112) {
-						/* this is ABS_Z wrongly used as ABS_X here */
-						if (i->mt && i->buf[total][i->slot].valid & TSLIB_MT_VALID)
-							break;
-
-						i->buf[total][i->slot].x = i->ev[it].value;
-						i->buf[total][i->slot].tv = i->ev[it].time;
-						i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
-					}
-					break;
-				case ABS_Y+2:
-					if (i->special_device == EGALAX_VERSION_112) {
-						/* this is ABS_RX wrongly used as ABS_Y here */
-						if (i->mt && i->buf[total][i->slot].valid & TSLIB_MT_VALID)
-							break;
-
-						i->buf[total][i->slot].y = i->ev[it].value;
-						i->buf[total][i->slot].tv = i->ev[it].time;
 						i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
 					}
 					break;
