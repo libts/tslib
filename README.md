@@ -218,6 +218,22 @@ Parameters (usually not needed):
 Example: `module linear`
 
 
+### module: invert
+  Invert values in X and/or Y direction around the given value.
+  There are no default values. If specified, a value has to be
+  set. If one axis is not specified, it's simply untouched.
+
+Parameters:
+* `x0`
+
+	X-axis (horizontal) value around which to invert.
+* `y0`
+
+	Y-axis (vertical) value around which to invert.
+
+Example: `module invert y0=640` (Y-axis inverted for 640 screen height, X-axis untouched)
+
+
 ### module: median
   The median filter reduces noise in the samples' coordinate values. It is
   able to filter undesired single large jumps in the signal. For some

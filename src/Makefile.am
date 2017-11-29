@@ -64,6 +64,10 @@ if ENABLE_STATIC_VARIANCE_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/variance.c
 endif
 
+if ENABLE_STATIC_INVERT_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/invert.c
+endif
+
 if ENABLE_STATIC_LOWPASS_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/lowpass.c
 endif

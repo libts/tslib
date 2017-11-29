@@ -136,6 +136,7 @@ make distclean
 	--enable-debounce=static \
 	--enable-median=static \
 	--enable-iir=static \
+	--enable-invert=static \
 	--enable-variance=static \
 	--enable-dejitter=static \
 	--enable-linear=static \

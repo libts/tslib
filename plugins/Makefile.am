@@ -59,6 +59,12 @@ else
 SKIP_MODULE =
 endif
 
+if ENABLE_INVERT_MODULE
+INVERT_MODULE = invert.la
+else
+INVERT_MODULE =
+endif
+
 if ENABLE_IIR_MODULE
 IIR_MODULE = iir.la
 else
@@ -170,6 +176,7 @@ pluginexec_LTLIBRARIES = \
 	$(PTHRES_MODULE) \
 	$(DEBOUNCE_MODULE) \
 	$(SKIP_MODULE) \
+	$(INVERT_MODULE) \
 	$(IIR_MODULE) \
 	$(LOWPASS_MODULE) \
 	$(UCB1X00_MODULE) \
@@ -243,6 +250,13 @@ if WINDOWS
 linear_h2200_la_LDFLAGS	+= -no-undefined
 endif
 linear_h2200_la_LIBADD	= $(top_builddir)/src/libts.la
+
+invert_la_SOURCES	= invert.c
+invert_la_LDFLAGS	= -module $(LTVSN)
+if WINDOWS
+invert_la_LDFLAGS	+= -no-undefined
+endif
+invert_la_LIBADD	= $(top_builddir)/src/libts.la
 
 iir_la_SOURCES		= iir.c
 iir_la_LDFLAGS		= -module $(LTVSN)

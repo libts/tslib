@@ -72,6 +72,9 @@ static const struct tslib_module_desc tslib_modules[] = {
 #ifdef TSLIB_STATIC_INPUT_MODULE
 	{ "input", input_mod_init },
 #endif
+#ifdef TSLIB_STATIC_INVERT_MODULE
+	{ "invert", invert_mod_init },
+#endif
 #ifdef TSLIB_STATIC_LINEAR_MODULE
 	{ "linear", linear_mod_init },
 #endif
