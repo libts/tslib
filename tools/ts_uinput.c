@@ -118,6 +118,7 @@ struct data_t {
 	int slots;
 	unsigned short uinput_version;
 	short mt_type_a;
+	unsigned short nofb;
 };
 
 static void help(void)
@@ -146,6 +147,7 @@ static void help(void)
 	printf("  -i, --idev          touchscreen's input device\n");
 	printf("  -f, --fbdev         touchscreen's framebuffer device\n");
 	printf("  -s, --slots         override available concurrent touch contacts\n");
+	printf("  -b, --nofb          read screen resolution from the input dev, not the framebuffer device.\n");
 	printf("\n");
 	printf("See the manpage for further details.\n");
 }
@@ -321,18 +323,90 @@ static int send_touch_events(struct data_t *data, struct ts_sample_mt **s,
 	return 0;
 }
 
+static int get_abs_max_fb(struct data_t *data, int *max_x, int *max_y)
+{
+	struct fb_var_screeninfo fbinfo;
+
+	if (ioctl(data->fd_fb, FBIOGET_VSCREENINFO, &fbinfo) < 0) {
+		perror("ioctl FBIOGET_VSCREENINFO");
+		return errno;
+	}
+
+	*max_x = fbinfo.xres - 1;
+	*max_y = fbinfo.yres - 1;
+
+	return 0;
+}
+
+static int get_abs_max_input(struct data_t *data, int *max_x, int *max_y)
+{
+	long absbit[BITS_TO_LONGS(ABS_CNT)];
+	struct input_absinfo absinfo;
+	int abs_x_only;
+
+	if (ioctl(data->fd_input, EVIOCGBIT(EV_ABS, sizeof(absbit)), absbit) < 0) {
+		perror("ioctl EVIOCGBIT");
+		return errno;
+	}
+
+	if (!(absbit[BIT_WORD(ABS_MT_POSITION_X)] & BIT_MASK(ABS_MT_POSITION_X)) ||
+	    !(absbit[BIT_WORD(ABS_MT_POSITION_Y)] & BIT_MASK(ABS_MT_POSITION_Y))) {
+		if (!(absbit[BIT_WORD(ABS_X)] & BIT_MASK(ABS_X)) ||
+		    !(absbit[BIT_WORD(ABS_Y)] & BIT_MASK(ABS_Y))) {
+			return errno;
+		} else {
+			abs_x_only = 1;
+		}
+	} else {
+		abs_x_only = 0;
+	}
+
+	if (abs_x_only) {
+		if (ioctl(data->fd_input, EVIOCGABS(ABS_X), &absinfo) < 0) {
+			perror("ioctl EVIOCGABS");
+			return errno;
+		}
+		*max_x = absinfo.maximum;
+
+		if (ioctl(data->fd_input, EVIOCGABS(ABS_Y), &absinfo) < 0) {
+			perror("ioctl EVIOCGABS");
+			return errno;
+		}
+		*max_y = absinfo.maximum;
+	} else {
+		if (ioctl(data->fd_input, EVIOCGABS(ABS_MT_POSITION_X), &absinfo) < 0) {
+			perror("ioctl EVIOCGABS");
+			return errno;
+		}
+		*max_x = absinfo.maximum;
+
+		if (ioctl(data->fd_input, EVIOCGABS(ABS_MT_POSITION_Y), &absinfo) < 0) {
+			perror("ioctl EVIOCGABS");
+			return errno;
+		}
+		*max_y = absinfo.maximum;
+	}
+
+	return 0;
+}
+
 static int setup_uinput(struct data_t *data, int *max_slots)
 {
 	struct uinput_user_dev uidev;
 	unsigned long bit[EV_MAX][NBITS(KEY_MAX)];
 	int i, j;
 	struct input_absinfo absinfo;
-	struct fb_var_screeninfo fbinfo;
+	int max_x = 0;
+	int max_y = 0;
+	int ret;
 
-	if (ioctl(data->fd_fb, FBIOGET_VSCREENINFO, &fbinfo) < 0) {
-		perror("ioctl FBIOGET_VSCREENINFO");
-		goto err;
-	}
+	if (data->nofb)
+		ret = get_abs_max_input(data, &max_x, &max_y);
+	else
+		ret = get_abs_max_fb(data, &max_x, &max_y);
+
+	if (ret)
+		return ret;
 
 	data->fd_uinput = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
 	if (data->fd_uinput == -1) {
@@ -392,16 +466,16 @@ static int setup_uinput(struct data_t *data, int *max_slots)
 
 						if (j == ABS_X) {
 							uidev.absmin[ABS_X] = 0;
-							uidev.absmax[ABS_X] = fbinfo.xres - 1;
+							uidev.absmax[ABS_X] = max_x;
 						} else if (j == ABS_Y) {
 							uidev.absmin[ABS_Y] = 0;
-							uidev.absmax[ABS_Y] = fbinfo.yres - 1;
+							uidev.absmax[ABS_Y] = max_y;
 						} else if (j == ABS_MT_POSITION_X) {
 							uidev.absmin[ABS_MT_POSITION_X] = 0;
-							uidev.absmax[ABS_MT_POSITION_X] = fbinfo.xres - 1;
+							uidev.absmax[ABS_MT_POSITION_X] = max_x;
 						} else if (j == ABS_MT_POSITION_Y) {
 							uidev.absmin[ABS_MT_POSITION_Y] = 0;
-							uidev.absmax[ABS_MT_POSITION_Y] = fbinfo.yres - 1;
+							uidev.absmax[ABS_MT_POSITION_Y] = max_y;
 						} else {
 							uidev.absmin[j] = absinfo.minimum;
 							uidev.absmax[j] = absinfo.maximum;
@@ -559,6 +633,7 @@ int main(int argc, char **argv)
 		.slots = 1,
 		.mt_type_a = 0,
 		.verbose_daemon = 0,
+		.nofb = 0,
 	};
 	int i, j;
 	unsigned short run_daemon = 0;
@@ -576,10 +651,11 @@ int main(int argc, char **argv)
 			{ "idev",         required_argument, NULL, 'i' },
 			{ "fbdev",        required_argument, NULL, 'f' },
 			{ "slots",        required_argument, NULL, 's' },
+			{ "nofb",         no_argument,       NULL, 'b' },
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "dhn:f:i:vs:", long_options,
+		int c = getopt_long(argc, argv, "dhn:f:i:vs:b", long_options,
 				    &option_index);
 
 		if (c == -1)
@@ -597,6 +673,10 @@ int main(int argc, char **argv)
 
 		case 'v':
 			data.verbose = 1;
+			break;
+
+		case 'b':
+			data.nofb = 1;
 			break;
 
 		case 'd':
