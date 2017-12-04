@@ -39,8 +39,8 @@ and their package management.
 ### configure tslib
 This is just an example `/etc/ts.conf` file. Touch samples flow from top to
 bottom. Each line specifies one module and it's parameters. Modules are
-processed in order. Use _one_ module_raw that accesses your device, followed
-by any combination of filter modules.
+processed in order. Use _one_ module_raw on top, that accesses your device,
+followed by any combination of filter modules.
 
     module_raw input
     module median depth=3
@@ -48,7 +48,9 @@ by any combination of filter modules.
     module linear
 
 see the [section below](#filter-modules) for available filters and their
-parameters.
+parameters. On Linux, your first commented-in line should always be
+`module_raw input` which offers one optional parameter: `grab_events=1`
+if you want it to execute EVIOCGRAB on the device.
 
 With this configuration file, we end up with the following data flow
 through the library:
@@ -139,8 +141,8 @@ Please see your system's documentation on how to use a specific evdev input devi
 
 Let's recap the data flow here:
 
-    driver --> raw read --> filter --> filter(s) --> ts_uinput --> libevdev read  --> GUI app/toolkit
-               module       module     module(s)     daemon        e.g. in libinput
+    driver --> raw read --> filter(s) ... --> ts_uinput --> libevdev read  --> GUI app/toolkit
+               module       module(s) ...     daemon        e.g. in libinput
 
 #### symlink /dev/input/ts_uinput to the new event file
 /dev/input/event numbers are not persistent. In order to know in advance,
