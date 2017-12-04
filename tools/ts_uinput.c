@@ -735,7 +735,7 @@ int main(int argc, char **argv)
 		sprintf(data.uinput_name, DEFAULT_UINPUT_NAME);
 	}
 
-	if (!data.fb_name) {
+	if (!data.fb_name && !data.nofb) {
 		if (getenv("TSLIB_FBDEVICE")) {
 			data.fb_name = getenv("TSLIB_FBDEVICE");
 		} else {
