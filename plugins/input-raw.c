@@ -634,13 +634,12 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 			case EV_KEY:
 				switch (i->ev[it].code) {
 				case BTN_TOUCH:
-				case BTN_LEFT:
-					if (i->ev[it].code == BTN_TOUCH) {
-						i->buf[total][i->slot].pen_down = i->ev[it].value;
-						i->buf[total][i->slot].tv = i->ev[it].time;
-						if (i->ev[it].value == 0)
-							pen_up = 1;
-					}
+					i->buf[total][i->slot].pen_down = i->ev[it].value;
+					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
+					if (i->ev[it].value == 0)
+						pen_up = 1;
+
 					break;
 				}
 				break;
