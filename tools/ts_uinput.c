@@ -103,6 +103,8 @@
 #define UINPUT_VERSION	2
 #endif
 
+static char *defaultfbdevice = "/dev/fb0";
+
 struct data_t {
 	int fd_uinput;
 	int fd_input;
@@ -735,27 +737,25 @@ int main(int argc, char **argv)
 		sprintf(data.uinput_name, DEFAULT_UINPUT_NAME);
 	}
 
-	if (!data.fb_name && !data.nofb) {
-		if (getenv("TSLIB_FBDEVICE")) {
-			data.fb_name = getenv("TSLIB_FBDEVICE");
-		} else {
-			fprintf(stderr, RED DEFAULT_UINPUT_NAME
-				": no framebuffer device specified"
-				RESET "\n");
+	if (!data.nofb) {
+		if (!data.fb_name) {
+			if (getenv("TSLIB_FBDEVICE"))
+				data.fb_name = getenv("TSLIB_FBDEVICE");
+			else
+				data.fb_name = defaultfbdevice;
+		}
+
+		data.fd_fb = open(data.fb_name, O_RDWR);
+		if (data.fd_fb == -1) {
+			perror("open");
 			goto out;
 		}
-	}
 
-	data.fd_fb = open(data.fb_name, O_RDWR);
-	if (data.fd_fb == -1) {
-		perror("open");
-		goto out;
+		if (data.verbose)
+			printf(DEFAULT_UINPUT_NAME ": using framebuffer device "
+			       GREEN "%s" RESET "\n",
+			       data.fb_name);
 	}
-
-	if (data.verbose)
-		printf(DEFAULT_UINPUT_NAME ": using framebuffer device "
-		       GREEN "%s" RESET "\n",
-		       getenv("TSLIB_FBDEVICE"));
 
 	/* non-blocking for one read in order to verify reading and fail before forking */
 	data.ts = ts_setup(data.input_name, 1);
