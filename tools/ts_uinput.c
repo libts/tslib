@@ -168,7 +168,7 @@ static int send_touch_events(struct data_t *data, struct ts_sample_mt **s,
 		       sizeof(struct input_event) * MAX_CODES_PER_SLOT * max_slots);
 
 		for (i = 0; i < max_slots; i++) {
-			if (s[j][i].pen_down == 1 || s[j][i].pen_down == 0) {
+			if (i > 0 && (s[j][i].pen_down == 1 || s[j][i].pen_down == 0)) {
 				data->ev[c].time = s[j][i].tv;
 				data->ev[c].type = EV_KEY;
 				data->ev[c].code = BTN_TOUCH;
@@ -209,6 +209,14 @@ static int send_touch_events(struct data_t *data, struct ts_sample_mt **s,
 				data->ev[c].code = ABS_PRESSURE;
 				data->ev[c].value = s[j][i].pressure;
 				c++;
+
+				if (s[j][i].pen_down == 1 || s[j][i].pen_down == 0) {
+					data->ev[c].time = s[j][i].tv;
+					data->ev[c].type = EV_KEY;
+					data->ev[c].code = BTN_TOUCH;
+					data->ev[c].value = s[j][i].pen_down;
+					c++;
+				}
 			}
 
 			data->ev[c].time = s[j][i].tv;
