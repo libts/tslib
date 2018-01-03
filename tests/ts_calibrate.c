@@ -37,6 +37,19 @@ typedef struct {
 	int a[7];
 } calibration;
 
+unsigned int getticks()
+{
+	static struct timeval ticks = {0};
+	static unsigned int cling = 0;
+
+	gettimeofday(&ticks, NULL);
+	cling = ticks.tv_sec * 1000;
+	cling += ticks.tv_usec / 1000;
+	
+	return cling;
+}
+
+
 static void sig(int sig)
 {
 	close_framebuffer();
@@ -119,10 +132,11 @@ static int perform_calibration(calibration *cal)
 	return 1;
 }
 
+static int last_x = -1, last_y = 0;
+
 static void get_sample(struct tsdev *ts, calibration *cal,
 		       int index, int x, int y, char *name)
 {
-	static int last_x = -1, last_y;
 
 	if (last_x != -1) {
 #define NR_STEPS 10
@@ -205,6 +219,7 @@ int main(int argc, char **argv)
 	char cal_buffer[256];
 	char *calfile = NULL;
 	unsigned int i, len;
+	unsigned int tick = 0;
 
 	signal(SIGSEGV, sig);
 	signal(SIGINT, sig);
@@ -271,18 +286,36 @@ int main(int argc, char **argv)
 
 	printf("xres = %d, yres = %d\n", xres, yres);
 
-	/* Clear the buffer */
-	clearbuf(ts);
+redocalibration:
 
-	get_sample(ts, &cal, 0, 50,        50,        "Top left");
+	last_x = -1;
+	last_y = 0;
+
+	// Clear the buffer
 	clearbuf(ts);
-	get_sample(ts, &cal, 1, xres - 50, 50,        "Top right");
+	tick = getticks();
+	get_sample (ts, &cal, 0, 50,        50,        "Top left");
+	if(getticks() - tick < 500) goto redocalibration;
+
 	clearbuf(ts);
-	get_sample(ts, &cal, 2, xres - 50, yres - 50, "Bot right");
+	tick = getticks();
+	get_sample (ts, &cal, 1, xres - 50, 50,        "Top right");
+	if(getticks() - tick < 500) goto redocalibration;
+
 	clearbuf(ts);
-	get_sample(ts, &cal, 3, 50,        yres - 50, "Bot left");
+	tick = getticks();
+	get_sample (ts, &cal, 2, xres - 50, yres - 50, "Bot right");
+	if(getticks() - tick < 500) goto redocalibration;
+
 	clearbuf(ts);
-	get_sample(ts, &cal, 4, xres / 2,  yres / 2,  "Center");
+	tick = getticks();
+	get_sample (ts, &cal, 3, 50,        yres - 50, "Bot left");
+	if(getticks() - tick < 500) goto redocalibration;
+
+	clearbuf(ts);
+	tick = getticks();
+	get_sample (ts, &cal, 4, xres / 2,  yres / 2,  "Center");
+	if(getticks() - tick < 500) goto redocalibration;
 
 	if (perform_calibration (&cal)) {
 		printf("Calibration constants: ");
