@@ -648,13 +648,6 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 				case SYN_REPORT:
 					if (pen_up && i->no_pressure) {
 						for (k = 0; k < max_slots; k++) {
-							if (i->buf[total][k].x != 0 ||
-							    i->buf[total][k].y != 0 ||
-							    i->buf[total][k].pressure != 0)
-								i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
-
-							i->buf[total][k].x = 0;
-							i->buf[total][k].y = 0;
 							i->buf[total][k].pressure = 0;
 						}
 					}
