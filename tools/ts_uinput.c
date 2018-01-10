@@ -171,7 +171,7 @@ static int send_touch_events(struct data_t *data, struct ts_sample_mt **s,
 			if (!(s[j][i].valid & TSLIB_MT_VALID))
 				continue;
 
-			if (s[j][i].pen_down == 1 || s[j][i].pen_down == 0) {
+			if (s[j][i].pen_down == 1) {
 				data->ev[c].time = s[j][i].tv;
 				data->ev[c].type = EV_KEY;
 				data->ev[c].code = BTN_TOUCH;
@@ -302,6 +302,15 @@ static int send_touch_events(struct data_t *data, struct ts_sample_mt **s,
 				data->ev[c].value = 0;
 				c++;
 			}
+
+			if (s[j][i].pen_down == 0) {
+				data->ev[c].time = s[j][i].tv;
+				data->ev[c].type = EV_KEY;
+				data->ev[c].code = BTN_TOUCH;
+				data->ev[c].value = s[j][i].pen_down;
+				c++;
+			}
+
 		}
 
 		if (c > 0) {
