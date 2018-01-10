@@ -11,6 +11,7 @@ This release includes the following bugfixes:
 * 47fb616 ts_test_mt: avoid a flickering cross in the center
 * 249d814 input-raw: remove eGalax version 0112 workaround
 * 6975733 input-raw: mark BTN_TOUCH code valid
+* fbeabc6 input-raw: fix pen_up for non-pressure devices
 
 
 tslib 1.14 - released 2017-11-12
