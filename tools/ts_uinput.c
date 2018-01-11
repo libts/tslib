@@ -494,9 +494,6 @@ static int setup_uinput(struct data_t *data, int *max_slots)
 
 						if (j == ABS_MT_SLOT)
 							*max_slots = absinfo.maximum + 1 - absinfo.minimum;
-					} else if (i == EV_SYN) {
-						if (j == SYN_MT_REPORT)
-							data->mt_type_a = 1;
 					}
 				}
 			}
