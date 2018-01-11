@@ -301,8 +301,12 @@ static int check_fd(struct tslib_input *i)
 	/* remember whether we have a multitouch type A device */
 	if (i->mt && synbit[BIT_WORD(SYN_MT_REPORT)] & BIT_MASK(SYN_MT_REPORT) &&
 	    !(absbit[BIT_WORD(ABS_MT_SLOT)] & BIT_MASK(ABS_MT_SLOT)) &&
-	    !(absbit[BIT_WORD(ABS_MT_TRACKING_ID)] & BIT_MASK(ABS_MT_TRACKING_ID)))
+	    !(absbit[BIT_WORD(ABS_MT_TRACKING_ID)] & BIT_MASK(ABS_MT_TRACKING_ID))) {
 		i->type_a = 1;
+	#ifdef DEBUG
+		printf("tslib: We have a multitouch type A device\n");
+	#endif
+	}
 
 	if (i->grab_events == GRAB_EVENTS_WANTED) {
 		if (ioctl(ts->fd, EVIOCGRAB, (void *)1)) {
