@@ -85,12 +85,11 @@ read -p "           Press enter to continue"
 echo "======================================================"
 
 ./autogen.sh
-./configure --disable-dependency-tracking
+./configure
 make distclean
 
 # Linux all modules build test
-./configure --disable-dependency-tracking \
-	--enable-cy8mrln-palmpre \
+./configure --enable-cy8mrln-palmpre \
 	--enable-dmc_dus3000 \
 	--enable-galax \
 	--enable-arctic2 \
@@ -107,16 +106,14 @@ make clean
 make distclean
 
 # Linux SDL2 build test
-./configure --disable-dependency-tracking \
-	--with-sdl2
+./configure --with-sdl2
 
 make -j${NUMCPUS}
 make clean
 make distclean
 
 # static build test
-./configure --disable-dependency-tracking \
-	--disable-shared --enable-static \
+./configure --disable-shared --enable-static \
 	--enable-input=static \
 	--enable-arctic2=static \
 	--enable-collie=static \
