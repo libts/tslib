@@ -262,7 +262,7 @@ Parameters:
 
 	Maximum pressure value for a sample to be valid. Default: (`INT_MAX`).
 
-Example: `pthres pmin=10`
+Example: `module pthres pmin=10`
 
 
 ### module: iir
