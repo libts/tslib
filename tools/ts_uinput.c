@@ -158,8 +158,7 @@ static void help(void)
 static int send_touch_events(struct data_t *data, struct ts_sample_mt **s,
 			     int nr, int max_slots)
 {
-	int i;
-	int j;
+	int i, j, k;
 	int c = 0;
 
 	for (j = 0; j < nr; j++) {
@@ -319,12 +318,12 @@ static int send_touch_events(struct data_t *data, struct ts_sample_mt **s,
 			data->ev[c].code = SYN_REPORT;
 			data->ev[c].value = 0;
 
-
-			if (write(data->fd_uinput,
-				  data->ev,
-				  sizeof(struct input_event) * (c + 1)) < 0) {
-				perror("write");
-				return errno;
+			for(k = 0; k <= c; k++) {
+				if (write(data->fd_uinput, &data->ev[k],
+					  sizeof(struct input_event)) == -1) {
+					perror("write");
+					return errno;
+				}
 			}
 		}
 
