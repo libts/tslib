@@ -123,12 +123,11 @@ directly:
 `-d` makes the program return and run as a daemon in the background. `-v` makes
 it print the __new__ `/dev/input/eventX` device node before returning.
 
-Now make your graphical environmen use that new event device, using **evdev**
+Now make your graphical environment use that new input device, using **evdev**
 drivers.
 
 * For *Qt5* for example you'd probably set something like this:
 
-    QT_QPA_GENERIC_PLUGINS=evdevtouch:/dev/input/eventX
     QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS=/dev/input/eventX:rotate=0
 
 * For *X11* you'd probably edit your `xorg.conf` `Section "InputDevice"` for your
@@ -136,8 +135,8 @@ touchscreen to have
 
     Option "Device" "/dev/input/eventX"
 
-* For *Wayland*, you'd make libinput use the new `/dev/input/eventX` and so on.
-Please see your system's documentation on how to use a specific evdev input device.
+Please consult your input system's documentation on how to use a specific
+evdev input device.
 
 Let's recap the data flow here:
 
