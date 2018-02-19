@@ -1,3 +1,9 @@
+tslib 1.16 - released tba
+================================
+This release includes the following bugfixes:
+* efcba6e ts_uinput: (fix for Android) write only one input_event at a time
+
+
 tslib 1.15 - released 2018-01-11
 ================================
 
