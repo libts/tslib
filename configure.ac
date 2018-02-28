@@ -112,11 +112,11 @@ TSLIB_CHECK_MODULE([variance], [yes], [Enable building of variance filter])
 TSLIB_CHECK_MODULE([input], [yes], [Enable building of generic input raw module (Linux /dev/input/eventN support)])
 
 # userspace device drivers, enabled by default (may become disabled by default in the future)
-TSLIB_CHECK_MODULE([tatung], [yes], [Enable building of tatung raw module (Tatung Webpad support)])
 TSLIB_CHECK_MODULE([touchkit], [yes], [Enable building of serial TouchKit raw module (Linux /dev/ttySX support)])
 TSLIB_CHECK_MODULE([waveshare], [yes], [Enable building of WaveShare raw module (Linux /dev/hidrawN support)])
 
 # userspace device drivers, disabled by default
+TSLIB_CHECK_MODULE([tatung], [no], [Enable building of tatung raw module (Tatung Webpad support)])
 TSLIB_CHECK_MODULE([ucb1x00], [no], [Enable building of ucb1x00 raw module (UCB1x00 support)])
 TSLIB_CHECK_MODULE([mk712], [no], [Enable building of mk712 raw module (Hi tachi support)])
 TSLIB_CHECK_MODULE([h3600], [no], [Enable building of h3600 raw module (HP iPaq H3600 support)])
