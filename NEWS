@@ -6,6 +6,7 @@ This release includes libts version 0.9.1 and the following changes:
 
 This release includes the following bugfixes:
 * efcba6e ts_uinput: (fix for Android) write only one input_event at a time
+* e63f33f invert: fix ts_read() iteration over multiple samples
 
 
 tslib 1.15 - released 2018-01-11
