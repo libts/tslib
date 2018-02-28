@@ -41,6 +41,8 @@ static int invert_read(struct tslib_module_info *info, struct ts_sample *samp, i
 
 		if (ctx->invert_y)
 			samp->y = ctx->y0 - samp->y;
+
+		count++;
 	}
 	return count;
 }
