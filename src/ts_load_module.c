@@ -90,6 +90,9 @@ static const struct tslib_module_desc tslib_modules[] = {
 #ifdef TSLIB_STATIC_MK712_MODULE
 	{ "mk712", mk712_mod_init },
 #endif
+#ifdef TSLIB_STATIC_ONE_WIRE_TS_INPUT_MODULE
+	{ "one-wire-ts-input", one_wire_ts_input_mod_init },
+#endif
 #ifdef TSLIB_STATIC_PTHRES_MODULE
 	{ "pthres", pthres_mod_init },
 #endif

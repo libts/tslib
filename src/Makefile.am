@@ -120,6 +120,9 @@ if ENABLE_STATIC_WAVESHARE_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/waveshare-raw.c
 endif
 
+if ENABLE_STATIC_ONE_WIRE_TS_INPUT_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/one-wire-ts-input-raw.c
+endif
 
 if ENABLE_STATIC_DMC_DUS3000_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/dmc_dus3000-raw.c

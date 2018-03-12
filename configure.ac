@@ -128,6 +128,7 @@ TSLIB_CHECK_MODULE([arctic2], [no], [Enable building of arctic2 raw module (IBM 
 TSLIB_CHECK_MODULE([dmc_dus3000], [no], [Enable building of dmc_dus3000 raw module (DMC DUS Series support)])
 TSLIB_CHECK_MODULE([cy8mrln-palmpre], [no], [Enable building of cy8mrln-palmpre raw module])
 TSLIB_CHECK_MODULE([galax], [no], [Enable building of HID USB eGalax raw module (Linux /dev/hiddevN support)])
+TSLIB_CHECK_MODULE([one-wire-ts-input], [no], [Enable building of FriendlyARM one-wire raw module])
 
 AC_MSG_CHECKING([where to place modules])
 AC_ARG_WITH(plugindir,

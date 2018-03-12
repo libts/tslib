@@ -168,6 +168,12 @@ else
 WAVESHARE_MODULE =
 endif
 
+if ENABLE_ONE_WIRE_TS_INPUT_MODULE
+ONE_WIRE_TS_INPUT_MODULE = one_wire_ts_input.la
+else
+ONE_WIRE_TS_INPUT_MODULE =
+endif
+
 pluginexec_LTLIBRARIES = \
 	$(LINEAR_MODULE) \
 	$(DEJITTER_MODULE) \
@@ -193,6 +199,7 @@ pluginexec_LTLIBRARIES = \
 	$(GALAX_MODULE) \
 	$(TOUCHKIT_MODULE) \
 	$(CY8MRLN_PALMPRE_MODULE) \
+	$(ONE_WIRE_TS_INPUT_MODULE) \
 	$(WAVESHARE_MODULE)
   
 variance_la_SOURCES	= variance.c
@@ -318,3 +325,7 @@ cy8mrln_palmpre_la_LIBADD  = $(top_builddir)/src/libts.la
 waveshare_la_SOURCES	= waveshare-raw.c
 waveshare_la_LDFLAGS	= -module $(LTVSN)
 waveshare_la_LIBADD	= $(top_builddir)/src/libts.la
+
+one_wire_ts_input_la_SOURCES	= one-wire-ts-input-raw.c
+one_wire_ts_input_la_LDFLAGS	= -module $(LTVSN)
+one_wire_ts_input_la_LIBADD	= $(top_builddir)/src/libts.la
