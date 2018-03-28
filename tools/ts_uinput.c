@@ -894,7 +894,8 @@ int main(int argc, char **argv)
 		}
 	#else
 		fprintf(stderr, DEFAULT_UINPUT_NAME
-		": See the kernel log for the device number\n");
+			": kernel with uinput version < 4 is not supported\n");
+		goto out;
 	#endif
 		if (daemon(0, 0) == -1) {
 			perror("error starting daemon");
