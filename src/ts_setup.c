@@ -62,7 +62,7 @@ static char *scan_devices(void)
 		return NULL;
 
 	for (i = 0; i < ndev; i++) {
-		char fname[64];
+		char fname[512];
 		int fd = -1;
 
 		snprintf(fname, sizeof(fname),
@@ -85,7 +85,7 @@ static char *scan_devices(void)
 		if (have_touchscreen) {
 			filename = malloc(strlen(DEV_INPUT_EVENT) +
 					  strlen(EVENT_DEV_NAME) +
-					  3);
+					  12);
 			if (!filename)
 				return NULL;
 
