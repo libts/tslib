@@ -719,6 +719,7 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 					 */
 					if (i->mt && i->buf[total][i->slot].valid & TSLIB_MT_VALID)
 						break;
+					// fall through
 				case ABS_MT_POSITION_X:
 					i->buf[total][i->slot].x = i->ev[it].value;
 					i->buf[total][i->slot].tv = i->ev[it].time;
@@ -727,6 +728,7 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 				case ABS_Y:
 					if (i->mt && i->buf[total][i->slot].valid & TSLIB_MT_VALID)
 						break;
+					// fall through
 				case ABS_MT_POSITION_Y:
 					i->buf[total][i->slot].y = i->ev[it].value;
 					i->buf[total][i->slot].tv = i->ev[it].time;
@@ -735,6 +737,7 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 				case ABS_PRESSURE:
 					if (i->mt && i->buf[total][i->slot].valid & TSLIB_MT_VALID)
 						break;
+					// fall through
 				case ABS_MT_PRESSURE:
 					i->buf[total][i->slot].pressure = i->ev[it].value;
 					i->buf[total][i->slot].tv = i->ev[it].time;
