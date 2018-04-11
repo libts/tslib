@@ -1,3 +1,9 @@
+/*
+ * tslib/plugins/one-wire-ts-input-raw.c
+ *
+ * source: http://www.friendlyarm.net/forum/topic/3366
+ * SPDX-License-Identifier: LGPL-2.1
+ */
 #include <termios.h>
 #include <stdio.h>
 #include <unistd.h>

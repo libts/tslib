@@ -90,6 +90,7 @@ make distclean
 
 # Linux all modules build test
 ./configure --enable-cy8mrln-palmpre \
+	--enable-one-wire-ts-input \
 	--enable-dmc_dus3000 \
 	--enable-galax \
 	--enable-arctic2 \
@@ -120,6 +121,7 @@ make distclean
 	--enable-collie=static \
 	--enable-corgi=static \
 	--enable-cy8mrln-palmpre=static \
+	--enable-one-wire-ts-input=static \
 	--enable-dmc_dus3000=static \
 	--enable-dmc=static \
 	--enable-galax=static \
