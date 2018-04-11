@@ -3,6 +3,7 @@ tslib 1.16 - released tba
 This release includes libts version 0.9.1 and the following changes:
 * `module_raw tatung` is now disabled in the default build config. Users must
   `./configure --enable-tatung` if they rely on it.
+* new `module_raw one_wire_ts_input` for FriedlyARM devices
 
 This release includes the following bugfixes:
 * efcba6e ts_uinput: (fix for Android) write only one input_event at a time
