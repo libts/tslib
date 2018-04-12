@@ -94,6 +94,8 @@ static char *scan_devices(void)
 				i);
 		}
 
+		free(namelist);
+
 		return filename;
 	}
 
