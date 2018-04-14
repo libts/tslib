@@ -18,6 +18,7 @@
 #include <sys/utsname.h>
 #include <time.h>
 
+#include "config.h"
 #include "tslib-private.h"
 
 static int misc_read(struct tslib_module_info *inf, struct ts_sample *samp,
@@ -104,5 +105,5 @@ TSAPI struct tslib_module_info *one_wire_ts_input_mod_init(__attribute__ ((unuse
 }
 
 #ifndef TSLIB_STATIC_ONE_WIRE_TS_INPUT_MODULE
-TSLIB_MODULE_INIT(one_wire_ts_input_mod_init);
+	TSLIB_MODULE_INIT(one_wire_ts_input_mod_init);
 #endif
