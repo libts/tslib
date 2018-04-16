@@ -419,6 +419,7 @@ with different parameters).
 The API is documented in our man pages in the doc directory.
 Check out our tests directory for examples how to use it.
 
+[`tslib_version()`](https://manpages.debian.org/unstable/libts0/tslib_version.3.en.html)  
 [`ts_libversion()`](https://manpages.debian.org/unstable/libts0/ts_libversion.3.en.html)  
 [`ts_open()`](https://manpages.debian.org/unstable/libts0/ts_open.3.en.html)  
 [`ts_config()`](https://manpages.debian.org/unstable/libts0/ts_config.3.en.html)  
@@ -639,6 +640,7 @@ that get called in the chain of filters.
 |`TSLIB_VERSION_EVENTPATH` | 1.15 |
 |`TSLIB_MT_VALID` | 1.13 |
 |`TSLIB_MT_VALID_TOOL` | 1.13 |
+|`tslib_version` | 1.16 |
 |`ts_libversion` | 1.10 |
 |`ts_close` | 1.0 |
 |`ts_config` | 1.0 |

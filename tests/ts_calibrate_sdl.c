@@ -35,12 +35,8 @@
 
 static void help(void)
 {
-	struct ts_lib_version_data *ver = ts_libversion();
-
 	print_ascii_logo();
-
-	printf("tslib %s / libts ABI version %d (0x%06X)\n",
-		ver->package_version, ver->version_num >> 16, ver->version_num);
+	printf("%s\n", tslib_version());
 	printf("\n");
 	printf("Usage: ts_calibrate [-i <device>]\n");
 	printf("\n");

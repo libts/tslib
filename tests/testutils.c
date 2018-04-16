@@ -164,11 +164,7 @@ void print_ascii_logo(void)
 	printf("                 \\__|___/_|_|_.__/\n\n");
 }
 
-/* remember our library version value is 24 bit. 8 bit per library version */
 void print_version(void)
 {
-	struct ts_lib_version_data *ver = ts_libversion();
-
-	printf("tslib %s / libts ABI version %d (0x%06X)\n",
-		ver->package_version, ver->version_num >> 16, ver->version_num);
+	printf("%s\n", tslib_version());
 }

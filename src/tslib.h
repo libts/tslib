@@ -199,6 +199,11 @@ TSAPI struct ts_lib_version_data *ts_libversion(void);
  */
 TSAPI char *ts_get_eventpath(struct tsdev *tsdev);
 
+/*
+ * This simply returns tslib's version string
+ */
+TSAPI char *tslib_version(void);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

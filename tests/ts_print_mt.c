@@ -57,15 +57,12 @@
 
 static void usage(char **argv)
 {
-	struct ts_lib_version_data *ver = ts_libversion();
-
 	printf("                 _       _ _ _\n");
 	printf("                | |_ ___| (_) |__\n");
 	printf("                | __/ __| | | '_ \\\n");
 	printf("                | |_\\__ \\ | | |_) |\n");
 	printf("                 \\__|___/_|_|_.__/\n\n");
-	printf("tslib %s / libts ABI version %d (0x%06X)\n",
-		ver->package_version, ver->version_num >> 16, ver->version_num);
+	printf("%s\n", tslib_version());
 	printf("\n");
 	printf("Usage: %s [--raw] [--non-blocking] [-s samples] [-i <device>] [-j <slots>]\n", argv[0]);
 }
