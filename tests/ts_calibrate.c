@@ -105,12 +105,9 @@ static void clearbuf(struct tsdev *ts)
 
 static void help(void)
 {
-	struct ts_lib_version_data *ver = ts_libversion();
-
 	print_ascii_logo();
+	print_version();
 
-	printf("tslib %s / libts ABI version %d (0x%06X)\n",
-		ver->package_version, ver->version_num >> 16, ver->version_num);
 	printf("\n");
 	printf("Usage: ts_calibrate [-r <rotate_value>]\n");
 	printf("\n");

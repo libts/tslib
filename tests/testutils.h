@@ -31,5 +31,6 @@ int button_handle(struct ts_button *button, int x, int y, unsigned int pressure)
 void getxy(struct tsdev *ts, int *x, int *y);
 void ts_flush(struct tsdev *ts);
 void print_ascii_logo(void);
+void print_version(void);
 
 #endif /* _TESTUTILS_H */
