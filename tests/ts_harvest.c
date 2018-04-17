@@ -16,6 +16,8 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
+#include <getopt.h>
+#include <errno.h>
 
 #include "tslib.h"
 #include "fbutils.h"
@@ -55,8 +57,38 @@ static void ts_harvest_put_cross(int x, int y, unsigned colidx)
 	line(x, y + 2, x, y + 10, colidx);
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
+	while (1) {
+		const struct option long_options[] = {
+			{ "version",      no_argument,       NULL, 'v' },
+		};
+
+		int option_index = 0;
+		int c = getopt_long(argc, argv, "v", long_options, &option_index);
+
+		errno = 0;
+		if (c == -1)
+			break;
+
+		switch (c) {
+		case 'v':
+			print_version();
+			return 0;
+
+		default:
+			return 0;
+		}
+
+		if (errno) {
+			char str[9];
+
+			sprintf(str, "option ?");
+			str[7] = c & 0xff;
+			perror(str);
+		}
+	}
+
 	struct tsdev *ts;
 	int x_ts, y_ts, x_incr, y_incr;
 	unsigned int x, y, xres_half, yres_half, x_new, y_new;
