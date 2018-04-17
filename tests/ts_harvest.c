@@ -79,14 +79,6 @@ int main(int argc, char **argv)
 		default:
 			return 0;
 		}
-
-		if (errno) {
-			char str[9];
-
-			sprintf(str, "option ?");
-			str[7] = c & 0xff;
-			perror(str);
-		}
 	}
 
 	struct tsdev *ts;

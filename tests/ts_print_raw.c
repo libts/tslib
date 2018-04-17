@@ -60,14 +60,6 @@ int main(int argc, char **argv)
 			usage();
 			return 0;
 		}
-
-		if (errno) {
-			char str[9];
-
-			sprintf(str, "option ?");
-			str[7] = c & 0xff;
-			perror(str);
-		}
 	}
 
 	ts = ts_setup(NULL, 0);
