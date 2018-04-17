@@ -22,7 +22,7 @@
 static void usage(char **argv)
 {
 	ts_print_ascii_logo(16);
-	printf("%s\n", tslib_version());
+	printf("%s", tslib_version());
 	printf("\n");
 	printf("Usage: %s [--raw]\n", argv[0]);
 	printf("\n");

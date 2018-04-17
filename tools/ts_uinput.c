@@ -126,7 +126,7 @@ struct data_t {
 static void help(void)
 {
 	ts_print_ascii_logo(16);
-	printf("%s\n", tslib_version());
+	printf("%s", tslib_version());
 	printf("\n");
 	printf("Starts tslib instance listening to given event <device>, creates a virtual\n");
 	printf("input event device with given <name> using 'uinput', then continually reads\n");

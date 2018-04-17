@@ -22,7 +22,7 @@
 static void usage(void)
 {
 	ts_print_ascii_logo(16);
-	printf("%s\n", tslib_version());
+	printf("%s", tslib_version());
 	printf("\n");
 	printf("-h --help\n");
 	printf("                print this help text\n");
