@@ -58,7 +58,7 @@
 static void usage(char **argv)
 {
 	ts_print_ascii_logo(16);
-	printf("%s\n", tslib_version());
+	printf("%s", tslib_version());
 	printf("\n");
 	printf("Usage: %s [--raw] [--non-blocking] [-s <samples>] [-i <device>]\n",
 		argv[0]);

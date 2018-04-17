@@ -19,7 +19,7 @@
 static void usage(char **argv)
 {
 	ts_print_ascii_logo(16);
-	printf("%s\n", tslib_version());
+	printf("%s", tslib_version());
 	printf("\n");
 	printf("Usage: %s device_name wait_for_sec\n", argv[0]);
 	printf("\tdevice_name  - tdevice to probe, example /dev/input/event0\n");

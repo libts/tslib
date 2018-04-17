@@ -157,5 +157,5 @@ void ts_flush(struct tsdev *ts)
 
 void print_version(void)
 {
-	printf("%s\n", tslib_version());
+	printf("%s", tslib_version());
 }

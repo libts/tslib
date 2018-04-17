@@ -61,7 +61,7 @@ int main(int argc, char **argv)
 			break;
 
 		case 'v':
-			printf("%s\n", tslib_version());
+			printf("%s", tslib_version());
 			return 0;
 
 		case 'h':

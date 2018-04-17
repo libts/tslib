@@ -49,7 +49,7 @@
 static void help(void)
 {
 	ts_print_ascii_logo(16);
-	printf("%s\n", tslib_version());
+	printf("%s", tslib_version());
 	printf("\n");
 	printf("Usage: ts_test_mt [-v] [-i <device>] [-j <slots>]\n");
 	printf("\n");

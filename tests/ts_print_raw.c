@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 
 		switch (c) {
 		case 'v':
-			printf("%s\n", tslib_version());
+			printf("%s", tslib_version());
 			return 0;
 
 		case 'h':
