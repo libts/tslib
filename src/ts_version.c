@@ -68,5 +68,7 @@ char *tslib_version(void)
 		"tslib %s / libts ABI version %d (0x%06X)",
 		ver->package_version, ver->version_num >> 16, ver->version_num);
 
+	initialized = 1;
+
 	return version;
 }
