@@ -54,7 +54,7 @@ static void refresh_screen(void)
 
 static void help(void)
 {
-	print_ascii_logo();
+	ts_print_ascii_logo(16);
 	print_version();
 	printf("\n");
 	printf("Usage: ts_test [-r <rotate_value>]\n");

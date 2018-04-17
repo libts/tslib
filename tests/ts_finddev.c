@@ -18,11 +18,7 @@
 
 static void usage(char **argv)
 {
-	printf("                 _       _ _ _\n");
-	printf("                | |_ ___| (_) |__\n");
-	printf("                | __/ __| | | '_ \\\n");
-	printf("                | |_\\__ \\ | | |_) |\n");
-	printf("                 \\__|___/_|_|_.__/\n\n");
+	ts_print_ascii_logo(16);
 	printf("%s\n", tslib_version());
 	printf("\n");
 	printf("Usage: %s device_name wait_for_sec\n", argv[0]);

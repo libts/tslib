@@ -1,0 +1,42 @@
+.\" Copyright (c) 2018, Martin Kepplinger <martink@posteo.de>
+.\"
+.\" %%%LICENSE_START(GPLv2+_DOC_FULL)
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, see
+.\" <http://www.gnu.org/licenses/>.
+.\" %%%LICENSE_END
+.\"
+.TH TS_PRINT_ASCII_LOGO 3  "" "" "tslib"
+.SH NAME
+ts_print_ascii_logo \- print tslib's logo to stdout
+.SH SYNOPSIS
+.nf
+.B #include <tslib.h>
+.sp
+.BI "void ts_print_ascii_logo(unsinged int pos);"
+.sp
+.fi
+
+.SH DESCRIPTION
+.BR ts_print_ascii_logo ()
+This function prints tslib's logo to stdout. It prepends pos spaces before it.
+
+.SH SEE ALSO
+.BR ts_setup (3),
+.BR ts_read (3),
+.BR ts.conf (5)

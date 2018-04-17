@@ -166,12 +166,3 @@ void getxy(struct tsdev *ts, int *x, int *y)
 			*y = (samp[middle-1].y + samp[middle].y) / 2;
 	}
 }
-
-void print_ascii_logo(void)
-{
-	printf("                 _       _ _ _\n");
-	printf("                | |_ ___| (_) |__\n");
-	printf("                | __/ __| | | '_ \\\n");
-	printf("                | |_\\__ \\ | | |_) |\n");
-	printf("                 \\__|___/_|_|_.__/\n\n");
-}

@@ -57,11 +57,7 @@
 
 static void usage(char **argv)
 {
-	printf("                 _       _ _ _\n");
-	printf("                | |_ ___| (_) |__\n");
-	printf("                | __/ __| | | '_ \\\n");
-	printf("                | |_\\__ \\ | | |_) |\n");
-	printf("                 \\__|___/_|_|_.__/\n\n");
+	ts_print_ascii_logo(16);
 	printf("%s\n", tslib_version());
 	printf("\n");
 	printf("Usage: %s [--raw] [--non-blocking] [-s samples] [-i <device>] [-j <slots>]\n", argv[0]);

@@ -204,6 +204,11 @@ TSAPI char *ts_get_eventpath(struct tsdev *tsdev);
  */
 TSAPI char *tslib_version(void);
 
+/*
+ * This prints tslib's logo to stdout, with pos preceding spaces
+ */
+TSAPI void ts_print_ascii_logo(unsigned int pos);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

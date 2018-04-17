@@ -437,6 +437,7 @@ Check out our tests directory for examples how to use it.
 [`int (*ts_open_restricted)(const char *path, int flags, void *user_data)`](https://manpages.debian.org/unstable/libts0/ts_open_restricted.3.en.html)  
 [`void (*ts_close_restricted)(int fd, void *user_data)`](https://manpages.debian.org/unstable/libts0/ts_close_restricted.3.en.html)  
 [`ts_get_eventpath()`](https://manpages.debian.org/unstable/libts0/ts_get_eventpath.3.en.html)  
+[`ts_print_ascii_logo()`](https://manpages.debian.org/unstable/libts0/ts_print_ascii_logo.3.en.html)  
 
 
 ### using libts
@@ -641,6 +642,7 @@ that get called in the chain of filters.
 |`TSLIB_MT_VALID` | 1.13 |
 |`TSLIB_MT_VALID_TOOL` | 1.13 |
 |`tslib_version` | 1.16 |
+|`ts_print_ascii_logo` | 1.16 |
 |`ts_libversion` | 1.10 |
 |`ts_close` | 1.0 |
 |`ts_config` | 1.0 |

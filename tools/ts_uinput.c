@@ -125,11 +125,7 @@ struct data_t {
 
 static void help(void)
 {
-	printf("                 _       _ _ _\n");
-	printf("                | |_ ___| (_) |__\n");
-	printf("                | __/ __| | | '_ \\\n");
-	printf("                | |_\\__ \\ | | |_) |\n");
-	printf("                 \\__|___/_|_|_.__/\n\n");
+	ts_print_ascii_logo(16);
 	printf("%s\n", tslib_version());
 	printf("\n");
 	printf("Starts tslib instance listening to given event <device>, creates a virtual\n");

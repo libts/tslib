@@ -105,7 +105,7 @@ static void clearbuf(struct tsdev *ts)
 
 static void help(void)
 {
-	print_ascii_logo();
+	ts_print_ascii_logo(16);
 	print_version();
 
 	printf("\n");

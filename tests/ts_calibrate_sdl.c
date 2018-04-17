@@ -35,7 +35,7 @@
 
 static void help(void)
 {
-	print_ascii_logo();
+	ts_print_ascii_logo(16);
 	printf("%s\n", tslib_version());
 	printf("\n");
 	printf("Usage: ts_calibrate [-i <device>]\n");

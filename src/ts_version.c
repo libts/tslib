@@ -72,3 +72,26 @@ char *tslib_version(void)
 
 	return version;
 }
+
+static void print_spaces(unsigned int nr)
+{
+	unsigned int i;
+
+	for (i = 0; i < nr; i++) {
+		printf(" ");
+	}
+}
+
+void ts_print_ascii_logo(unsigned int pos)
+{
+	print_spaces(pos);
+	printf(" _       _ _ _\n");
+	print_spaces(pos);
+	printf("| |_ ___| (_) |__\n");
+	print_spaces(pos);
+	printf("| __/ __| | | '_ \\\n");
+	print_spaces(pos);
+	printf("| |_\\__ \\ | | |_) |\n");
+	print_spaces(pos);
+	printf(" \\__|___/_|_|_.__/\n");
+}

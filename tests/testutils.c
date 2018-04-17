@@ -155,15 +155,6 @@ void ts_flush(struct tsdev *ts)
 		fprintf(stderr, "ts_flush read error\n");
 }
 
-void print_ascii_logo(void)
-{
-	printf("                 _       _ _ _\n");
-	printf("                | |_ ___| (_) |__\n");
-	printf("                | __/ __| | | '_ \\\n");
-	printf("                | |_\\__ \\ | | |_) |\n");
-	printf("                 \\__|___/_|_|_.__/\n\n");
-}
-
 void print_version(void)
 {
 	printf("%s\n", tslib_version());
