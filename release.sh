@@ -71,6 +71,11 @@ if [ ! "${branch}" = "master" ] ; then
 	exit 1
 fi
 
+
+datestamp=`date +"%F"`
+sed -i -e "s/^#define LIBTS_DATESTAMP .*/#define LIBTS_DATESTAMP \"$datestamp\"/g" \
+ src/ts_version.c
+
 if git diff-index --quiet HEAD --; then
 	# no changes
 	echo "there are no uncommitted changes (version bump)"

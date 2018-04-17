@@ -17,6 +17,8 @@
 #include "config.h"
 #include "tslib.h"
 
+#define LIBTS_DATESTAMP "[unreleased]"
+
 static struct ts_lib_version_data version_data = {
 	PACKAGE_VERSION,
 	0x000000,	/* version_num calculated below */
@@ -65,8 +67,9 @@ char *tslib_version(void)
 		return version;
 
 	snprintf(version, sizeof(version),
-		"tslib %s / libts ABI version %d (0x%06X)",
-		ver->package_version, ver->version_num >> 16, ver->version_num);
+		"tslib %s / libts ABI version %d (0x%06X)\nRelease-Date: %s\n",
+		ver->package_version, ver->version_num >> 16, ver->version_num,
+		LIBTS_DATESTAMP);
 
 	initialized = 1;
 
