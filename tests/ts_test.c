@@ -57,12 +57,17 @@ static void help(void)
 	ts_print_ascii_logo(16);
 	print_version();
 	printf("\n");
-	printf("Usage: ts_test [-r <rotate_value>]\n");
+	printf("Usage: ts_test [-r <rotate_value>] [--version] [--help]\n");
 	printf("\n");
+	printf("-r --rotate\n");
 	printf("        <rotate_value> 0 ... no rotation; 0 degree (default)\n");
 	printf("                       1 ... clockwise orientation; 90 degrees\n");
 	printf("                       2 ... upside down orientation; 180 degrees\n");
 	printf("                       3 ... counterclockwise orientation; 270 degrees\n");
+	printf("-h --help\n");
+	printf("                       print this help test\n");
+	printf("-v --version\n");
+	printf("                       print version information only\n");
 	printf("\n");
 	printf("Example (Linux): ts_test -r $(cat /sys/class/graphics/fbcon/rotate)\n");
 	printf("\n");
@@ -84,10 +89,11 @@ int main(int argc, char **argv)
 		const struct option long_options[] = {
 			{ "help",         no_argument,       NULL, 'h' },
 			{ "rotate",       required_argument, NULL, 'r' },
+			{ "version",      no_argument,       NULL, 'v' },
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "hr:", long_options, &option_index);
+		int c = getopt_long(argc, argv, "hvr:", long_options, &option_index);
 
 		errno = 0;
 		if (c == -1)
@@ -96,6 +102,10 @@ int main(int argc, char **argv)
 		switch (c) {
 		case 'h':
 			help();
+			return 0;
+
+		case 'v':
+			print_version();
 			return 0;
 
 		case 'r':
