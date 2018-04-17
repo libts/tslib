@@ -25,6 +25,8 @@ static struct ts_lib_version_data version_data = {
 	0		/* features */
 	| TSLIB_VERSION_MT
 	| TSLIB_VERSION_OPEN_RESTRICTED
+	| TSLIB_VERSION_EVENTPATH
+	| TSLIB_VERSION_VERSION
 	,
 };
 
