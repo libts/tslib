@@ -14,13 +14,61 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <getopt.h>
+#include <errno.h>
 
 #include "tslib.h"
 
+static void usage(void)
+{
+	ts_print_ascii_logo(16);
+	printf("%s\n", tslib_version());
+	printf("\n");
+	printf("-h --help\n");
+	printf("                print this help text\n");
+	printf("-v --version\n");
+	printf("                print version information only\n");
+}
 
-int main(void)
+int main(int argc, char **argv)
 {
 	struct tsdev *ts;
+
+	while (1) {
+		const struct option long_options[] = {
+			{ "version",      no_argument,       NULL, 'v' },
+			{ "help",         no_argument,       NULL, 'h' },
+		};
+
+		int option_index = 0;
+		int c = getopt_long(argc, argv, "vh", long_options, &option_index);
+
+		errno = 0;
+		if (c == -1)
+			break;
+
+		switch (c) {
+		case 'v':
+			printf("%s\n", tslib_version());
+			return 0;
+
+		case 'h':
+			usage();
+			return 0;
+
+		default:
+			usage();
+			return 0;
+		}
+
+		if (errno) {
+			char str[9];
+
+			sprintf(str, "option ?");
+			str[7] = c & 0xff;
+			perror(str);
+		}
+	}
 
 	ts = ts_setup(NULL, 0);
 	if (!ts) {
