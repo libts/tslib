@@ -1,9 +1,10 @@
-tslib 1.16 - released tba
+tslib 1.16 - released 2018-04-19
 ================================
 This release includes libts version 0.9.1 and the following changes:
 * `module_raw tatung` is now disabled in the default build config. Users must
   `./configure --enable-tatung` if they rely on it.
-* new `module_raw one-wire-ts-input` for FriedlyARM devices
+* new `module_raw one-wire-ts-input` for FriedlyARM devices (disabled by
+  default)
 * simple tslib_version() function to get the version string
 
 This release includes the following bugfixes:
