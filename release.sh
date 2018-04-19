@@ -173,5 +173,5 @@ gpg -b -a tslib-${version}.tar.bz2
 
 sed -i -e "s/^#define LIBTS_DATESTAMP .*/#define LIBTS_DATESTAMP \"[unreleased]\"/g" \
  src/ts_version.c
-sed -i -e "s/"${version}/"${version}+"/g" configure.ac
+sed -i -e "s/"${version}"/"${version}+"/g" configure.ac
 git commit -a -m "tslib ${version}+"
