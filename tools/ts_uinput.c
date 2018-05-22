@@ -103,6 +103,8 @@
 #define UINPUT_VERSION	2
 #endif
 
+#define UINPUT_VERSION_HAVE_SYSNAME 4
+
 static char *defaultfbdevice = "/dev/fb0";
 
 struct data_t {
@@ -594,6 +596,7 @@ static int is_event_device(const struct dirent *dent)
 	return strncmp("event", dent->d_name, 5) == 0;
 }
 
+#if UINPUT_VERSION >= UINPUT_VERSION_HAVE_SYSNAME
 /* directly from libevdev (LGPL) */
 static char *fetch_device_node(const char *path)
 {
@@ -617,6 +620,55 @@ static char *fetch_device_node(const char *path)
 
 	return devnode;
 }
+#else
+/* return the /dev/input/eventX path of the created device */
+static char *get_new_path(struct data_t *data)
+{
+	struct dirent **namelist;
+	const char *path = "/dev/input/";
+	int ndev;
+	int fd;
+	char buf[256];
+	int ret;
+	char *devnode = NULL;
+
+	ndev = scandir(path, &namelist, is_event_device, alphasort);
+	if (ndev <= 0)
+		return NULL;
+
+	while (ndev--) {
+		if (asprintf(&devnode, "/dev/input/%s", namelist[ndev]->d_name) == -1) {
+			devnode = NULL;
+			break;
+		}
+
+		fd = open(devnode, O_RDWR);
+		if (fd == -1)
+			return NULL;
+
+		ret = ioctl(fd, EVIOCGNAME(sizeof(buf) - 1), buf);
+		if (ret < 0) {
+			close(fd);
+			free(devnode);
+			break;
+		}
+
+		ret = strncmp(buf, data->uinput_name, strlen(data->uinput_name));
+		if (ret == 0) {
+			close(fd);
+			free(namelist[ndev]);
+			break;
+		}
+
+		close(fd);
+		free(namelist[ndev]);
+		free(devnode);
+	}
+
+	free(namelist);
+	return devnode;
+}
+#endif /* UINPUT_VERSION >= 4 */
 
 int main(int argc, char **argv)
 {
@@ -820,25 +872,28 @@ int main(int argc, char **argv)
 
 	if (data.verbose) {
 		printf(DEFAULT_UINPUT_NAME ": running uinput version %d\n", UINPUT_VERSION);
-		#if UINPUT_VERSION >= 4
-			char name[64];
-			int ret = ioctl(data.fd_uinput,
-					UI_GET_SYSNAME(sizeof(name)),
-					name);
-			if (ret >= 0) {
-				char buf[sizeof(SYS_INPUT_DIR) + sizeof(name)] = SYS_INPUT_DIR;
-				char *devnode;
+		char *devnode;
+	#if UINPUT_VERSION >= UINPUT_VERSION_HAVE_SYSNAME
+		char name[64];
+		int ret = ioctl(data.fd_uinput,
+				UI_GET_SYSNAME(sizeof(name)),
+				name);
+		if (ret >= 0) {
+			char buf[sizeof(SYS_INPUT_DIR) + sizeof(name)] = SYS_INPUT_DIR;
 
-				snprintf(&buf[strlen(SYS_INPUT_DIR)], sizeof(name), "%s", name);
-				fprintf(stdout, "created %s\n", buf);
-				devnode = fetch_device_node(buf);
-				if (devnode)
-					fprintf(stdout, "%s\n", devnode);
-			}
-		#else
-			fprintf(stderr, DEFAULT_UINPUT_NAME
-				": See the kernel log for the device number\n");
-		#endif
+			snprintf(&buf[strlen(SYS_INPUT_DIR)], sizeof(name), "%s", name);
+			fprintf(stdout, "created %s\n", buf);
+			devnode = fetch_device_node(buf);
+			if (devnode)
+				fprintf(stdout, "%s\n", devnode);
+		}
+	#else
+		devnode = get_new_path(&data);
+		if (!devnode)
+			goto out;
+
+		fprintf(stdout, "%s\n", devnode);
+	#endif
 	}
 
 	data.ev = malloc(sizeof(struct input_event) * MAX_CODES_PER_SLOT * data.slots);
@@ -862,34 +917,38 @@ int main(int argc, char **argv)
 	}
 
 	if (run_daemon) {
-	#if UINPUT_VERSION >= 4
+		char *devnode;
+	#if UINPUT_VERSION >= UINPUT_VERSION_HAVE_SYSNAME
 		char name[64];
 		int ret = ioctl(data.fd_uinput,
 				UI_GET_SYSNAME(sizeof(name)),
 				name);
-		if (ret >= 0) {
-			if (data.verbose_daemon) {
-				char buf[sizeof(SYS_INPUT_DIR) + sizeof(name)] = SYS_INPUT_DIR;
-				char *devnode;
-
-				snprintf(&buf[strlen(SYS_INPUT_DIR)], sizeof(name), "%s", name);
-				devnode = fetch_device_node(buf);
-				if (devnode)
-					fprintf(stdout, "%s\n", devnode);
-			} else {
-				fprintf(stdout, "%s\n", name);
-			}
-
-			fflush(stdout);
-		} else {
+		if (ret < 0) {
 			perror("ioctl UI_GET_SYSNAME");
 			goto out;
 		}
+
+		if (data.verbose_daemon) {
+			char buf[sizeof(SYS_INPUT_DIR) + sizeof(name)] = SYS_INPUT_DIR;
+
+			snprintf(&buf[strlen(SYS_INPUT_DIR)], sizeof(name), "%s", name);
+			devnode = fetch_device_node(buf);
+			if (devnode)
+				fprintf(stdout, "%s\n", devnode);
+		} else {
+			fprintf(stdout, "%s\n", name);
+		}
 	#else
-		fprintf(stderr, DEFAULT_UINPUT_NAME
-			": kernel with uinput version < 4 is not supported\n");
-		goto out;
+		if (data.verbose_daemon) {
+			devnode = get_new_path(&data);
+			if (!devnode)
+				goto out;
+
+			fprintf(stdout, "%s\n", devnode);
+		}
 	#endif
+		fflush(stdout);
+
 		if (daemon(0, 0) == -1) {
 			perror("error starting daemon");
 			goto out;
