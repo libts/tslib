@@ -569,9 +569,6 @@ static void cleanup(struct data_t *data)
 	if (data->ev)
 		free(data->ev);
 
-	if (data->ts)
-		ts_close(data->ts);
-
 	if (data->fd_uinput > 0) {
 		ret = ioctl(data->fd_uinput, UI_DEV_DESTROY);
 		if (ret == -1)
