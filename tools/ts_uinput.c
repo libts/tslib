@@ -103,6 +103,10 @@
 #define UINPUT_VERSION	2
 #endif
 
+#ifndef UI_GET_SYSNAME
+#define UI_GET_SYSNAME(len)     _IOC(_IOC_READ, UINPUT_IOCTL_BASE, 44, len)
+#endif
+
 #define UINPUT_VERSION_HAVE_SYSNAME 4
 
 static char *defaultfbdevice = "/dev/fb0";
