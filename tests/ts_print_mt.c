@@ -69,7 +69,7 @@ static void usage(char **argv)
 	printf("-n --non-blocking\n");
 	printf("                tests non-blocking read and loops\n");
 	printf("-i --idev\n");
-	printf("                explicitely choose the touch input device\n");
+	printf("                explicitly choose the touch input device\n");
 	printf("                overriding TSLIB_TSDEVICE\n");
 	printf("-s --samples\n");
 	printf("                number of samples to request ts_read_mt() to\n");
