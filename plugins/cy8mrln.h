@@ -114,7 +114,7 @@ enum{
 	WOT_SCANRATE_128HZ
 };
 
-/* WOT MIN & MAX configuraton value for scan rate
+/* WOT MIN & MAX configuration value for scan rate
  * NB: min. value is max freq and
  *     max. value is min freq.
  */
