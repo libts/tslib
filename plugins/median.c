@@ -11,7 +11,7 @@
  * SPDX-License-Identifier: LGPL-2.1
  *
  *
- * Median filter incomming data. For some theory, see
+ * Median filter incoming data. For some theory, see
  * https://en.wikipedia.org/wiki/Median_filter
  */
 
@@ -171,7 +171,7 @@ static int median_read(struct tslib_module_info *inf, struct ts_sample *samp,
 
 			if ((cpress == 0)  && (c->withsamples != 0)) {
 				/* We have penup. Flush the line we now must
-				 * wait for c->size / 2 samples untill we get
+				 * wait for c->size / 2 samples until we get
 				 * valid data again
 				 */
 				memset(c->delay,
@@ -299,7 +299,7 @@ static int median_read_mt(struct tslib_module_info *inf,
 
 			if ((cpress == 0) && (c->withsamples_mt[j] != 0)) {
 				/* We have penup. Flush the line we now must
-				 * wait for c->size / 2 samples untill we get
+				 * wait for c->size / 2 samples until we get
 				 * valid data again
 				 */
 				memset(c->delay_mt[j],
