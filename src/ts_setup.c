@@ -32,6 +32,14 @@
 #define DEV_INPUT_EVENT "/dev/input"
 #define EVENT_DEV_NAME "event"
 
+/* for old kernel headers */
+#ifndef INPUT_PROP_MAX
+# define INPUT_PROP_MAX			0x1f
+#endif
+#ifndef INPUT_PROP_DIRECT
+# define INPUT_PROP_DIRECT		0x01
+#endif
+
 #define DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
 #define BIT(nr)                 (1UL << (nr))
 #define BIT_MASK(nr)            (1UL << ((nr) % BITS_PER_LONG))
