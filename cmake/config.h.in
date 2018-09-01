@@ -1,0 +1,4 @@
+#cmakedefine PACKAGE_VERSION "@PACKAGE_VERSION@"
+#cmakedefine HAVE_LIBDL "@HAVE_LIBDL@"
+#cmakedefine HAVE_STRSEP "@HAVE_STRSEP@"
+#cmakedefine HAVE_UNISTD_H "@HAVE_UNISTD_H@"
