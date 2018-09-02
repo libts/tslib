@@ -681,6 +681,33 @@ of libts. Here's an example for this:
 This should result in a `libts.a` of roughly 50 kilobytes, ready for using
 calibration (linear filter) and the infinite impulse response filter in ts.conf.
 
+### CMake
+
+Alternatively you can use CMake to build the project.
+To create an build in the project tree:
+
+    mkdir build && cd build
+    cmake ../
+    cmake --build .
+
+In the cmakes configure step you can for example pass `-Dstatic-input=ON`,
+in order to add input plugin into the core tslib. You can disable and enable modules 
+with flags `-Denable-<module>=ON/OFF`. By default cmake builds the core library as static; 
+In order to build it as sharedm, pass flag `-DBUILD_SHARED_LIBS=ON` on the configure line.
+
+#### Using tslib in client apps
+
+The following is a minimal example how to use tslib built with CMake in your client app. 
+Linking against `tslib::input` will add required include directories and link libraries to the build file.
+Add all the plugins you need on the target_link_libraries line using convention `tslib::<module>`. 
+
+    cmake_minimum_required(VERSION 3.10)
+    project(tslib_client)
+    find_package(tslib 1.16)
+    add_executable(tslib_client main.c)
+    target_link_libraries(tslib_client PUBLIC tslib::input)
+	
+
 ### portable `ts_calibrate` and `ts_test_mt` using SDL2
 
 In case you cannot draw to the framebuffer directly, there is an __experimental__
