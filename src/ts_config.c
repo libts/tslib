@@ -137,7 +137,7 @@ int ts_config(struct tsdev *ts)
 			break;
 		}
 		if (ret != 0) {
-			ts_error("Couldnt load module %s\n", module_name);
+			ts_error("Couldn't load module %s\n", module_name);
 			break;
 		}
 	}

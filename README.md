@@ -480,6 +480,7 @@ This is a complete example program, similar to `ts_print_mt.c`:
     #include <fcntl.h>
     #include <sys/time.h>
     #include <unistd.h>
+    #include <errno.h>
 
     #include <tslib.h>
 
@@ -491,7 +492,6 @@ This is a complete example program, similar to `ts_print_mt.c`:
         struct tsdev *ts;
         char *tsdevice = NULL;
         struct ts_sample_mt **samp_mt = NULL;
-        struct input_absinfo slot;
         int ret, i, j;
 
         ts = ts_setup(tsdevice, 0);
@@ -525,7 +525,7 @@ This is a complete example program, similar to `ts_print_mt.c`:
                 for (j = 0; j < ret; j++) {
                 	for (i = 0; i < SLOTS; i++) {
 			#ifdef TSLIB_MT_VALID
-				if (!(samp_mt[j][i].valid & TSLIB_MT_VALID)
+				if (!(samp_mt[j][i].valid & TSLIB_MT_VALID))
 					continue;
 			#else
 				if (samp_mt[j][i].valid < 1)
