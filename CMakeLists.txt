@@ -17,7 +17,7 @@ project(tslib)
 set(PACKAGE_VERSION 1.16)
 set(tslib_extras_dir ${CMAKE_INSTALL_PREFIX}/etc)
 set(TS_POINTERCAL ${tslib_extras_dir}/pointercal)
-set(TS_CONF ${tslib_extras_dir}/etc/ts.conf)
+set(TS_CONF ${tslib_extras_dir}/ts.conf)
 
 add_subdirectory(src)
 add_subdirectory(plugins)
