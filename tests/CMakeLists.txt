@@ -23,7 +23,7 @@ function(TSLIB_ADD_TEST_ON_PLATFORMS test_name)
 			if (${with-sdl})
 				target_link_libraries(${test_name} PUBLIC SDL2)
 			endif()
-			list(APPEND tslib_tests ${test_name} PARENT_SCOPE)
+			set(tslib_tests ${tslib_tests} ${test_name} PARENT_SCOPE)
 			break()
 		endif()
 	endforeach()
@@ -74,7 +74,6 @@ TSLIB_ADD_TEST_ON_PLATFORMS(ts_test_mt   UNIX ${WIN32_WITH_SDL})
 TSLIB_ADD_TEST_ON_PLATFORMS(ts_calibrate UNIX ${WIN32_WITH_SDL})
 TSLIB_ADD_TEST_ON_PLATFORMS(ts_test   	 ${UNIX_WITHOUT_SDL})
 TSLIB_ADD_TEST_ON_PLATFORMS(ts_verify    ${LINUX})
-
 
 install(TARGETS ${tslib_tests}
 	RUNTIME DESTINATION "bin")
