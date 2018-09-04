@@ -689,23 +689,25 @@ To create an build in the project tree:
     mkdir build && cd build
     cmake ../
     cmake --build .
+    cmake -P cmake_install.cmake
 
-In the cmakes configure step you can for example pass `-Dstatic-input=ON`,
-in order to add input plugin into the core tslib. You can disable and enable modules 
-with flags `-Denable-<module>=ON/OFF`. By default cmake builds the core library as static; 
-In order to build it as sharedm, pass flag `-DBUILD_SHARED_LIBS=ON` on the configure line.
+By default the core tslib is built as a shared library.
+In order to build it as static, add `-DBUILD_SHARED_LIBS=OFF` to the configure line.
+
+Also the plugins are by default built as shared.  Add `-Dstatic-<module>=ON` to the configuration step to
+build plugin statically into the core tslib. To disable and enable modules, 
+use flags: `-Denable-<module>=ON/OFF`.
 
 #### Using tslib in client apps
 
 The following is a minimal example how to use tslib built with CMake in your client app. 
-Linking against `tslib::input` will add required include directories and link libraries to the build file.
-Add all the plugins you need on the target_link_libraries line using convention `tslib::<module>`. 
+Adding `tslib::tslib` as a link target will add required dependencies and include directories generated build files.
 
     cmake_minimum_required(VERSION 3.10)
     project(tslib_client)
     find_package(tslib 1.16)
     add_executable(tslib_client main.c)
-    target_link_libraries(tslib_client PUBLIC tslib::input)
+    target_link_libraries(tslib_client PUBLIC tslib::tslib)
 	
 
 ### portable `ts_calibrate` and `ts_test_mt` using SDL2
