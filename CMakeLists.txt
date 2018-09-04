@@ -14,6 +14,9 @@ cmake_policy(SET CMP0057 NEW)
 
 project(tslib)
 
+option(BUILD_SHARED_LIBS "ON:  tslib is build as shared; 
+			  OFF: tslib is build as static" ON)
+
 set(PACKAGE_VERSION 1.16)
 set(tslib_extras_dir ${CMAKE_INSTALL_PREFIX}/etc)
 set(TS_POINTERCAL ${tslib_extras_dir}/pointercal)
