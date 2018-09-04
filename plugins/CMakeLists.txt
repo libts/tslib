@@ -72,7 +72,6 @@ TSLIB_CHECK_MODULE(one-wire-ts-input OFF "Enable building of FriendlyARM one-wir
 
 #install plugins and add to export set
 install(TARGETS ${plugin_targets} 
-	EXPORT tslibTargets
 	OPTIONAL
 	LIBRARY DESTINATION lib/ts)
 
