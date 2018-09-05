@@ -41,6 +41,11 @@ set(tslib_core_src  ts_attach.c
 add_library(tslib ${tslib_core_src})
 set_property(TARGET tslib PROPERTY POSITION_INDEPENDENT_CODE ON)
 
+math(EXPR LIBTS_MAJOR "${LIBTS_VERSION_CURRENT} - ${LIBTS_VERSION_AGE}")
+set_target_properties(tslib PROPERTIES VERSION ${LIBTS_MAJOR}.${LIBTS_VERSION_AGE}.${LIBTS_VERSION_REVISION}
+                                       SOVERSION ${LIBTS_MAJOR} )
+
+
 if (WIN32)
 	target_compile_definitions(tslib PRIVATE _CRT_SECURE_NO_WARNINGS)
 endif (WIN32)
