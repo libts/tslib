@@ -480,6 +480,7 @@ This is a complete example program, similar to `ts_print_mt.c`:
     #include <fcntl.h>
     #include <sys/time.h>
     #include <unistd.h>
+    #include <errno.h>
 
     #include <tslib.h>
 
@@ -491,7 +492,6 @@ This is a complete example program, similar to `ts_print_mt.c`:
         struct tsdev *ts;
         char *tsdevice = NULL;
         struct ts_sample_mt **samp_mt = NULL;
-        struct input_absinfo slot;
         int ret, i, j;
 
         ts = ts_setup(tsdevice, 0);
@@ -525,7 +525,7 @@ This is a complete example program, similar to `ts_print_mt.c`:
                 for (j = 0; j < ret; j++) {
                 	for (i = 0; i < SLOTS; i++) {
 			#ifdef TSLIB_MT_VALID
-				if (!(samp_mt[j][i].valid & TSLIB_MT_VALID)
+				if (!(samp_mt[j][i].valid & TSLIB_MT_VALID))
 					continue;
 			#else
 				if (samp_mt[j][i].valid < 1)
@@ -680,6 +680,35 @@ of libts. Here's an example for this:
 
 This should result in a `libts.a` of roughly 50 kilobytes, ready for using
 calibration (linear filter) and the infinite impulse response filter in ts.conf.
+
+### CMake
+
+Alternatively you can use CMake to build the project.
+To create an build in the project tree:
+
+    mkdir build && cd build
+    cmake ../
+    cmake --build .
+    cmake -P cmake_install.cmake
+
+By default the core tslib is built as a shared library.
+In order to build it as static, add `-DBUILD_SHARED_LIBS=OFF` to the configure line.
+
+Also the plugins are by default built as shared.  Add `-Dstatic-<module>=ON` to the configuration step to
+build plugin statically into the core tslib. To disable and enable modules, 
+use flags: `-Denable-<module>=ON/OFF`.
+
+#### Using tslib in client apps
+
+The following is a minimal example how to use tslib built with CMake in your client app. 
+Adding `tslib::tslib` as a link target will add required dependencies and include directories generated build files.
+
+    cmake_minimum_required(VERSION 3.10)
+    project(tslib_client)
+    find_package(tslib 1.16)
+    add_executable(tslib_client main.c)
+    target_link_libraries(tslib_client PUBLIC tslib::tslib)
+	
 
 ### portable `ts_calibrate` and `ts_test_mt` using SDL2
 
