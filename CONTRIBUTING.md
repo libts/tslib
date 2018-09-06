@@ -88,7 +88,7 @@ The procedure looks like this:
 * be sure to have a stable build system and your private gpg key set up
 * make sure the NEWS file with the changelog and bugfixes is up to date (it should always be).
 * update the THANKS file
-* increment the correct version numbers in configure.ac
+* increment the correct version numbers in configure.ac and CMakeLists.txt
   * `AC_INIT` - includes the tslib package version X.X. usually we increment the minor version
   * `LT_CURRENT` - increment **only if there are API changes** (additions / removals / changes)
   * `LT_REVISION` - increment if anything changed. but if `LT_CURRENT` was incremented, set to 0!
