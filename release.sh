@@ -153,6 +153,14 @@ make clean
 make distclean
 ./autogen-clean.sh
 
+# cmake build test
+rm -rf build
+mkdir build && cd build
+cmake ..
+cmake --build .
+cd ..
+rm -rf build
+
 git clean -d -f
 
 git commit -a -m "tslib ${version}"
