@@ -17,7 +17,7 @@
 #include "config.h"
 #include "tslib.h"
 
-#define LIBTS_DATESTAMP "2018-09-06"
+#define LIBTS_DATESTAMP "[unreleased]"
 
 static struct ts_lib_version_data version_data = {
 	PACKAGE_VERSION,
