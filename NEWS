@@ -6,6 +6,9 @@ This release includes libts version 0.9.2 and the following changes:
 * improved backwards compatibility for ts_uinput and the library
 * added support for cmake build system
 
+This release includes the following bugfixes:
+* f65e5eb median: fix pen_down propagation for read_mt()
+
 
 tslib 1.16 - released 2018-04-19
 ================================
