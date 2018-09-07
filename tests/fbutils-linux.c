@@ -45,6 +45,7 @@ static int32_t bytes_per_pixel;
 static uint32_t transp_mask;
 static uint32_t colormap[256];
 uint32_t xres, yres;
+uint32_t xres_orig, yres_orig;
 int8_t rotation;
 
 static char *defaultfbdevice = "/dev/fb0";
@@ -135,6 +136,10 @@ int open_framebuffer(void)
 		close(fb_fd);
 		return -1;
 	}
+
+	xres_orig = var.xres;
+	yres_orig = var.yres;
+
 	if (rotation & 1) {
 		/* 1 or 3 */
 		y = var.yres;

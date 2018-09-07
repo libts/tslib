@@ -201,6 +201,12 @@ for example (yet).
   a configuration file.
 
 Parameters (usually not needed):
+* `rot`
+
+	overwrite the rotation to apply. clockwise: `rot=1`, upside down:
+	`rot=2`, couter-clockwise: `rot=3`. Default: screen-rotation during
+	`ts_calibrate` calibration.
+
 * `xyswap`
 
 	interchange the X and Y co-ordinates -- no longer used or needed
@@ -216,7 +222,7 @@ Parameters (usually not needed):
 
 	value to divide the pressure value by. Default: 1.
 
-Example: `module linear`
+Example: `module linear rot=0`
 
 
 ### module: invert
@@ -406,10 +412,13 @@ while you are free to play with the parameter values.
 
 ### screen rotation
 The graphical tools support rotating the screen, see
-`ts_calibrate --help` or the man pages for the details. Note that this _only_
-rotates the framebuffer output. Rotating the input samples is a different task
-that has to be done by the linear filter module (re-calibrating or re-loading
-with different parameters).
+`ts_calibrate --help` or the man pages for the details.
+`ts_calibrate` will (in the background) ignore screen rotation
+but will save the current rotation state in the "calibration file"
+`TSLIB_CALIBFILE`. The `linear` filter module will pick that up
+and apply the given rotation. It can be overwritten by using
+the `rot` module parameter: `module linear rot=0` (if your
+toolkit or higher level application does rotation).
 
 ***
 

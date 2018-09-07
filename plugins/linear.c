@@ -40,6 +40,9 @@ struct tslib_linear {
 	/* Screen resolution at the time when calibration was performed */
 	unsigned int cal_res_x;
 	unsigned int cal_res_y;
+
+	/* Rotation. Forced or from calibration time */
+	unsigned int rot;
 };
 
 static int linear_read(struct tslib_module_info *info, struct ts_sample *samp,
@@ -146,6 +149,28 @@ static int linear_read_mt(struct tslib_module_info *info,
 				samp[nr][i].x = samp[nr][i].y;
 				samp[nr][i].y = tmp;
 			}
+
+			switch (lin->rot) {
+			int rot_tmp;
+			case 0:
+				break;
+			case 1:
+				rot_tmp = samp[nr][i].x;
+				samp[nr][i].x = samp[nr][i].y;
+				samp[nr][i].y = lin->cal_res_x - rot_tmp -1 ;
+				break;
+			case 2:
+				samp[nr][i].x = lin->cal_res_x - samp[nr][i].x - 1;
+				samp[nr][i].y = lin->cal_res_y - samp[nr][i].y - 1;
+				break;
+			case 3:
+				rot_tmp = samp[nr][i].x;
+				samp[nr][i].x = lin->cal_res_y - samp[nr][i].y - 1;
+				samp[nr][i].y = rot_tmp ;
+				break;
+			default:
+				break;
+			}
 		}
 	}
 
@@ -214,11 +239,35 @@ static int linear_p_div(struct tslib_module_info *inf, char *str,
 	return 0;
 }
 
+static int linear_rot(struct tslib_module_info *inf, char *str,
+			__attribute__ ((unused)) void *data)
+{
+	struct tslib_linear *lin = (struct tslib_linear *)inf;
+	unsigned long rot = strtoul(str, NULL, 0);
+
+	if (rot == ULONG_MAX && errno == ERANGE)
+		return -1;
+
+	switch (rot) {
+	case 0:
+	case 1:
+	case 2:
+	case 3:
+		lin->rot = rot;
+		break;
+	default:
+		return -1;
+	}
+
+	return 0;
+}
+
 static const struct tslib_vars linear_vars[] = {
 	{ "xyswap",	(void *)1, linear_xyswap },
 	{ "pressure_offset", NULL, linear_p_offset},
 	{ "pressure_mul", NULL, linear_p_mult},
 	{ "pressure_div", NULL, linear_p_div},
+	{ "rot", NULL, linear_rot},
 };
 
 #define NR_VARS (sizeof(linear_vars) / sizeof(linear_vars[0]))
@@ -251,6 +300,7 @@ TSAPI struct tslib_module_info *linear_mod_init(__attribute__ ((unused)) struct 
 	lin->p_mult   = 1;
 	lin->p_div    = 1;
 	lin->swap_xy  = 0;
+	lin->rot = 0;
 
 	/*
 	 * Check calibration file
@@ -273,6 +323,17 @@ TSAPI struct tslib_module_info *linear_mod_init(__attribute__ ((unused)) struct 
 		if (!fscanf(pcal_fd, "%d %d", &lin->cal_res_x, &lin->cal_res_y))
 			fprintf(stderr,
 				"LINEAR: Couldn't read resolution values\n");
+
+		if (!fscanf(pcal_fd, "%d", &lin->rot)) {
+#ifdef DEBUG
+			printf("LINEAR: Couldn't read rotation value\n");
+#endif
+		} else {
+#ifdef DEBUG
+			printf("LINEAR: Reading rotation %d from calibfile\n",
+				lin->rot);
+#endif
+		}
 
 #ifdef DEBUG
 		printf("Linear calibration constants: ");

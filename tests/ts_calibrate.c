@@ -211,6 +211,14 @@ int main(int argc, char **argv)
 	/* Clear the buffer */
 	clearbuf(ts);
 
+	/* ignore rotation for calibration. only save it.*/
+	int rotation_temp = rotation;
+	int xres_temp = xres;
+	int yres_temp = yres;
+	rotation = 0;
+	xres = xres_orig;
+	yres = yres_orig;
+
 	get_sample(ts, &cal, 0, 50,        50,        "Top left");
 	clearbuf(ts);
 	get_sample(ts, &cal, 1, xres - 50, 50,        "Top right");
@@ -219,7 +227,11 @@ int main(int argc, char **argv)
 	clearbuf(ts);
 	get_sample(ts, &cal, 3, 50,        yres - 50, "Bot left");
 	clearbuf(ts);
-	get_sample(ts, &cal, 4, xres / 2,  yres / 2,  "Center");
+	get_sample(ts, &cal, 4, xres_orig / 2,  yres_orig / 2,  "Center");
+
+	rotation = rotation_temp;
+	xres = xres_temp;
+	yres = yres_temp;
 
 	if (perform_calibration (&cal)) {
 		printf("Calibration constants: ");
@@ -240,10 +252,10 @@ int main(int argc, char **argv)
 			exit(1);
 		}
 
-		len = sprintf(cal_buffer, "%d %d %d %d %d %d %d %d %d",
+		len = sprintf(cal_buffer, "%d %d %d %d %d %d %d %d %d %d",
 			      cal.a[1], cal.a[2], cal.a[0],
 			      cal.a[4], cal.a[5], cal.a[3], cal.a[6],
-			      xres, yres);
+			      xres_orig, yres_orig, rotation);
 		if (write(cal_fd, cal_buffer, len) == -1) {
 			perror("write");
 			close_framebuffer();
