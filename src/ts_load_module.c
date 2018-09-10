@@ -69,6 +69,9 @@ static const struct tslib_module_desc tslib_modules[] = {
 #ifdef TSLIB_STATIC_IIR_MODULE
 	{ "iir", iir_mod_init },
 #endif
+#ifdef TSLIB_STATIC_INPUT_EVDEV_MODULE
+	{ "input_evdev", input_evdev_mod_init },
+#endif
 #ifdef TSLIB_STATIC_INPUT_MODULE
 	{ "input", input_mod_init },
 #endif

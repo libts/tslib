@@ -8,13 +8,13 @@
 #
 #
 
-AM_CFLAGS		= -DTS_POINTERCAL=\"@TS_POINTERCAL@\" $(DEBUGFLAGS) $(LIBFLAGS) $(VIS_CFLAGS)
+AM_CFLAGS		= -DTS_POINTERCAL=\"@TS_POINTERCAL@\" $(DEBUGFLAGS) $(LIBFLAGS) $(VIS_CFLAGS) $(LIBEVDEV_CFLAGS)
 LDADD			= -rpath $(PLUGIN_DIR)
 AM_CPPFLAGS		= -I$(top_srcdir)/src
   
 #LTVSN			= -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 LTVSN			= -avoid-version
-LIBS			=
+LIBS			= $(LIBEVDEV_LIBS)
 pluginexecdir		= $(PLUGIN_DIR)
   
 if ENABLE_LINEAR_MODULE
@@ -137,6 +137,12 @@ else
 INPUT_MODULE =
 endif
 
+if ENABLE_INPUT_EVDEV_MODULE
+INPUT_EVDEV_MODULE = input_evdev.la
+else
+INPUT_EVDEV_MODULE =
+endif
+
 if ENABLE_GALAX_MODULE
 GALAX_MODULE = galax.la
 else
@@ -196,6 +202,7 @@ pluginexec_LTLIBRARIES = \
 	$(DMC_DUS3000_MODULE) \
 	$(H2200_LINEAR_MODULE) \
 	$(INPUT_MODULE) \
+	$(INPUT_EVDEV_MODULE) \
 	$(GALAX_MODULE) \
 	$(TOUCHKIT_MODULE) \
 	$(CY8MRLN_PALMPRE_MODULE) \
@@ -310,6 +317,10 @@ dmc_dus3000_la_LDFLAGS	= -module $(LTVSN)
 input_la_SOURCES	= input-raw.c
 input_la_LDFLAGS	= -module $(LTVSN)
 input_la_LIBADD		= $(top_builddir)/src/libts.la
+
+input_evdev_la_SOURCES	= input-evdev-raw.c
+input_evdev_la_LDFLAGS	= -module $(LTVSN)
+input_evdev_la_LIBADD	= $(top_builddir)/src/libts.la
 
 galax_la_SOURCES = galax-raw.c
 galax_la_LDFLAGS = -module $(LTVSN)

@@ -18,5 +18,13 @@ if test "x$enable_module" = "xstatic" ; then
 		separate shared library which is dlopen()-ed at runtime)
 fi
 
+if test "$1" = "input-evdev" ; then
+	if test "x$enable_module" = "xyes" ; then
+		PKG_CHECK_MODULES(LIBEVDEV, [libevdev >= 0.4], [], [AC_MSG_ERROR([input-evdev needs libevdev])])
+	elif test "x$enable_module" = "xstatic" ; then
+		PKG_CHECK_MODULES(LIBEVDEV, [libevdev >= 0.4], [], [AC_MSG_ERROR([input-evdev needs libevdev])])
+	fi
+fi
+
 m4_popdef([UP])
 ])
