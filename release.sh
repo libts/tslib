@@ -106,6 +106,7 @@ make distclean
 	--enable-linear-h2200 \
 	--enable-mk712 \
 	--enable-tatung \
+	--enable-input-evdev \
 	--enable-ucb1x00
 
 make -j"${NUMCPUS}"

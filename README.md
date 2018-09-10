@@ -814,4 +814,5 @@ If you use one of those, please `./configure --enable-...` it explicitely.
 
 It is strongly recommended to have a real device driver for your system
 and use a generic access `module_raw` of tslib. For Linux ([evdev](https://en.wikipedia.org/wiki/Evdev))
-this is called `input`.
+this is called `input`. There is an equivalent experimental module that needs libevdev
+installed: `module_raw input_evdev`.
