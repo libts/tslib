@@ -31,6 +31,8 @@
 #include "testutils.h"
 #include "ts_calibrate.h"
 
+#define CROSS_BOUND_DIST	50
+
 static int palette[] = {
 	0x000000, 0xffe080, 0xffffff, 0xe0c0a0
 };
@@ -219,13 +221,13 @@ int main(int argc, char **argv)
 	xres = xres_orig;
 	yres = yres_orig;
 
-	get_sample(ts, &cal, 0, 50,        50,        "Top left");
+	get_sample(ts, &cal, 0, CROSS_BOUND_DIST,        CROSS_BOUND_DIST,        "Top left");
 	clearbuf(ts);
-	get_sample(ts, &cal, 1, xres - 50, 50,        "Top right");
+	get_sample(ts, &cal, 1, xres - CROSS_BOUND_DIST, CROSS_BOUND_DIST,        "Top right");
 	clearbuf(ts);
-	get_sample(ts, &cal, 2, xres - 50, yres - 50, "Bot right");
+	get_sample(ts, &cal, 2, xres - CROSS_BOUND_DIST, yres - CROSS_BOUND_DIST, "Bot right");
 	clearbuf(ts);
-	get_sample(ts, &cal, 3, 50,        yres - 50, "Bot left");
+	get_sample(ts, &cal, 3, CROSS_BOUND_DIST,        yres - CROSS_BOUND_DIST, "Bot left");
 	clearbuf(ts);
 	get_sample(ts, &cal, 4, xres_orig / 2,  yres_orig / 2,  "Center");
 
