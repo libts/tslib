@@ -123,6 +123,7 @@ make distclean
 # static build test
 ./configure --disable-shared --enable-static \
 	--enable-input=static \
+	--enable-input-evdev=static \
 	--enable-arctic2=static \
 	--enable-collie=static \
 	--enable-corgi=static \

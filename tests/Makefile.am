@@ -44,7 +44,7 @@ bin_PROGRAMS		= ts_print ts_print_raw ts_finddev ts_print_mt
 endif
 
 ts_test_SOURCES		= ts_test.c testutils.c testutils.h fbutils.h font_8x8.c font_8x16.c font.h
-ts_test_LDADD		= $(top_builddir)/src/libts.la
+ts_test_LDADD		= $(top_builddir)/src/libts.la $(LIBEVDEV_LIBS)
 if FREEBSD
 ts_test_SOURCES		+= fbutils-bsd.c
 else
@@ -53,10 +53,10 @@ endif
 
 if SDL
 ts_test_mt_SOURCES	= ts_test_mt_sdl.c sdlutils.c sdlutils.h
-ts_test_mt_LDADD	= $(top_builddir)/src/libts.la -lSDL2
+ts_test_mt_LDADD	= $(top_builddir)/src/libts.la -lSDL2 $(LIBEVDEV_LIBS)
 else
 ts_test_mt_SOURCES	= ts_test_mt.c testutils.c testutils.h fbutils.h font_8x8.c font_8x16.c font.h
-ts_test_mt_LDADD	= $(top_builddir)/src/libts.la
+ts_test_mt_LDADD	= $(top_builddir)/src/libts.la $(LIBEVDEV_LIBS)
 if FREEBSD
 ts_test_mt_SOURCES	+= fbutils-bsd.c
 else
@@ -65,23 +65,23 @@ endif
 endif
 
 ts_print_SOURCES	= ts_print.c
-ts_print_LDADD		= $(top_builddir)/src/libts.la
+ts_print_LDADD		= $(top_builddir)/src/libts.la $(LIBEVDEV_LIBS)
 
 ts_print_mt_SOURCES	= ts_print_mt.c
-ts_print_mt_LDADD	= $(top_builddir)/src/libts.la
+ts_print_mt_LDADD	= $(top_builddir)/src/libts.la $(LIBEVDEV_LIBS)
 
 ts_verify_SOURCES	= ts_verify.c
-ts_verify_LDADD		= $(top_builddir)/src/libts.la
+ts_verify_LDADD		= $(top_builddir)/src/libts.la $(LIBEVDEV_LIBS)
 
 ts_print_raw_SOURCES	= ts_print_raw.c
-ts_print_raw_LDADD	= $(top_builddir)/src/libts.la
+ts_print_raw_LDADD	= $(top_builddir)/src/libts.la $(LIBEVDEV_LIBS)
 
 if SDL
 ts_calibrate_SOURCES	= ts_calibrate_sdl.c ts_calibrate.h ts_calibrate_common.c sdlutils.c sdlutils.h
-ts_calibrate_LDADD	= $(top_builddir)/src/libts.la -lSDL2
+ts_calibrate_LDADD	= $(top_builddir)/src/libts.la -lSDL2 $(LIBEVDEV_LIBS)
 else
 ts_calibrate_SOURCES	= ts_calibrate.c ts_calibrate.h ts_calibrate_common.c fbutils.h testutils.c testutils.h font_8x8.c font_8x16.c font.h
-ts_calibrate_LDADD	= $(top_builddir)/src/libts.la
+ts_calibrate_LDADD	= $(top_builddir)/src/libts.la $(LIBEVDEV_LIBS)
 if FREEBSD
 ts_calibrate_SOURCES	+= fbutils-bsd.c
 else
@@ -90,7 +90,7 @@ endif
 endif
 
 ts_harvest_SOURCES	= ts_harvest.c fbutils.h testutils.c testutils.h font_8x8.c font_8x16.c font.h
-ts_harvest_LDADD	= $(top_builddir)/src/libts.la
+ts_harvest_LDADD	= $(top_builddir)/src/libts.la $(LIBEVDEV_LIBS)
 if FREEBSD
 ts_harvest_SOURCES	+= fbutils-bsd.c
 else
@@ -98,4 +98,4 @@ ts_harvest_SOURCES	+= fbutils-linux.c
 endif
 
 ts_finddev_SOURCES      = ts_finddev.c
-ts_finddev_LDADD        = $(top_builddir)/src/libts.la
+ts_finddev_LDADD        = $(top_builddir)/src/libts.la $(LIBEVDEV_LIBS)

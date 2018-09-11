@@ -8,8 +8,10 @@
 #
 #
 
-AM_CFLAGS	 = -DPLUGIN_DIR=\"@PLUGIN_DIR@\" -DTS_CONF=\"@TS_CONF@\" -DTS_POINTERCAL=\"@TS_POINTERCAL@\" \
-		   $(DEBUGFLAGS) $(LIBFLAGS) $(VIS_CFLAGS)
+AM_CFLAGS	 = -DPLUGIN_DIR=\"@PLUGIN_DIR@\" -DTS_CONF=\"@TS_CONF@\" \
+		   -DTS_POINTERCAL=\"@TS_POINTERCAL@\" \
+		   $(DEBUGFLAGS) $(LIBFLAGS) $(VIS_CFLAGS) \
+		   $(LIBEVDEV_CFLAGS)
 
 noinst_HEADERS   = tslib-private.h tslib-filter.h
 include_HEADERS  = tslib.h
