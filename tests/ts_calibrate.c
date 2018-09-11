@@ -47,10 +47,27 @@ static void sig(int sig)
 	exit(1);
 }
 
+static unsigned int getticks()
+{
+	static struct timeval ticks = {0};
+	static unsigned int val = 0;
+
+	gettimeofday(&ticks, NULL);
+	val = ticks.tv_sec * 1000;
+	val += ticks.tv_usec / 1000;
+
+	return val;
+}
+
 static void get_sample(struct tsdev *ts, calibration *cal,
-		       int index, int x, int y, char *name)
+		       int index, int x, int y, char *name, short redo)
 {
 	static int last_x = -1, last_y;
+
+	if (redo) {
+		last_x = -1;
+		last_y = 0;
+	}
 
 	if (last_x != -1) {
 #define NR_STEPS 10
@@ -118,6 +135,8 @@ static void help(void)
 	printf("                       1 ... clockwise orientation; 90 degrees\n");
 	printf("                       2 ... upside down orientation; 180 degrees\n");
 	printf("                       3 ... counterclockwise orientation; 270 degrees\n");
+	printf("-t --min_interval\n");
+	printf("                       minimum time in ms between touch presses\n");
 	printf("-h --help\n");
 	printf("                       print this help text\n");
 	printf("-v --version\n");
@@ -138,6 +157,8 @@ int main(int argc, char **argv)
 	char cal_buffer[256];
 	char *calfile = NULL;
 	unsigned int i, len;
+	unsigned int tick = 0;
+	unsigned int min_interval = 0;
 
 	signal(SIGSEGV, sig);
 	signal(SIGINT, sig);
@@ -148,10 +169,11 @@ int main(int argc, char **argv)
 			{ "help",         no_argument,       NULL, 'h' },
 			{ "rotate",       required_argument, NULL, 'r' },
 			{ "version",      no_argument,       NULL, 'v' },
+			{ "min_interval", required_argument, NULL, 't' },
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "hvr:", long_options, &option_index);
+		int c = getopt_long(argc, argv, "hvr:t:", long_options, &option_index);
 
 		errno = 0;
 		if (c == -1)
@@ -171,6 +193,14 @@ int main(int argc, char **argv)
 			rotation = atoi(optarg);
 			if (rotation < 0 || rotation > 3) {
 				help();
+				return 0;
+			}
+			break;
+
+		case 't':
+			min_interval = atoi(optarg);
+			if (min_interval > 10000) {
+				fprintf(stderr, "Minimum interval too long\n");
 				return 0;
 			}
 			break;
@@ -221,15 +251,68 @@ int main(int argc, char **argv)
 	xres = xres_orig;
 	yres = yres_orig;
 
-	get_sample(ts, &cal, 0, CROSS_BOUND_DIST,        CROSS_BOUND_DIST,        "Top left");
+	short redo = 0;
+
+redocalibration:
+	tick = getticks();
+	get_sample(ts, &cal, 0, CROSS_BOUND_DIST,        CROSS_BOUND_DIST,        "Top left", redo);
+	redo = 0;
+	if (getticks() - tick < min_interval) {
+		redo = 1;
+	#ifdef DEBUG
+		printf("ts_calibrate: time before touch press < %dms. restarting.\n",
+			min_interval);
+	#endif
+		goto redocalibration;
+	}
 	clearbuf(ts);
-	get_sample(ts, &cal, 1, xres - CROSS_BOUND_DIST, CROSS_BOUND_DIST,        "Top right");
+
+	tick = getticks();
+	get_sample(ts, &cal, 1, xres - CROSS_BOUND_DIST, CROSS_BOUND_DIST,        "Top right", redo);
+	if (getticks() - tick < min_interval) {
+		redo = 1;
+	#ifdef DEBUG
+		printf("ts_calibrate: time before touch press < %dms. restarting.\n",
+			min_interval);
+	#endif
+		goto redocalibration;
+	}
 	clearbuf(ts);
-	get_sample(ts, &cal, 2, xres - CROSS_BOUND_DIST, yres - CROSS_BOUND_DIST, "Bot right");
+
+	tick = getticks();
+	get_sample(ts, &cal, 2, xres - CROSS_BOUND_DIST, yres - CROSS_BOUND_DIST, "Bot right", redo);
+	if (getticks() - tick < min_interval) {
+		redo = 1;
+	#ifdef DEBUG
+		printf("ts_calibrate: time before touch press < %dms. restarting.\n",
+			min_interval);
+	#endif
+		goto redocalibration;
+	}
 	clearbuf(ts);
-	get_sample(ts, &cal, 3, CROSS_BOUND_DIST,        yres - CROSS_BOUND_DIST, "Bot left");
+
+	tick = getticks();
+	get_sample(ts, &cal, 3, CROSS_BOUND_DIST,        yres - CROSS_BOUND_DIST, "Bot left", redo);
+	if (getticks() - tick < min_interval) {
+		redo = 1;
+	#ifdef DEBUG
+		printf("ts_calibrate: time before touch press < %dms. restarting.\n",
+			min_interval);
+	#endif
+		goto redocalibration;
+	}
 	clearbuf(ts);
-	get_sample(ts, &cal, 4, xres_orig / 2,  yres_orig / 2,  "Center");
+
+	tick = getticks();
+	get_sample(ts, &cal, 4, xres_orig / 2,  yres_orig / 2,  "Center", redo);
+	if (getticks() - tick < min_interval) {
+		redo = 1;
+	#ifdef DEBUG
+		printf("ts_calibrate: time before touch press < %dms. restarting.\n",
+			min_interval);
+	#endif
+		goto redocalibration;
+	}
 
 	rotation = rotation_temp;
 	xres = xres_temp;
