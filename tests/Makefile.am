@@ -8,6 +8,8 @@
 #
 #
 
+EXTRA_DIST		= CMakeLists.txt
+
 AM_CFLAGS               = -DTS_POINTERCAL=\"@TS_POINTERCAL@\" $(DEBUGFLAGS)
 AM_CPPFLAGS		= -I$(top_srcdir)/src
 

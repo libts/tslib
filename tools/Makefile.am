@@ -10,7 +10,7 @@
 
 if ENABLE_TOOLS
 if LINUX
-EXTRA_DIST		= ts_uinput_start.sh
+EXTRA_DIST		= ts_uinput_start.sh CMakeLists.txt
 AM_CFLAGS               = -DTS_POINTERCAL=\"@TS_POINTERCAL@\" $(DEBUGFLAGS)
 AM_CPPFLAGS		= -I$(top_srcdir)/src
 

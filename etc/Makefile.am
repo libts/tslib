@@ -10,4 +10,4 @@
 
 sysconf_DATA		= ts.conf
 
-EXTRA_DIST		= $(sysconf_DATA)
+EXTRA_DIST		= $(sysconf_DATA) CMakeLists.txt

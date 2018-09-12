@@ -10,7 +10,7 @@
 #
 
 SUBDIRS		= etc src plugins tests tools doc
-EXTRA_DIST	= autogen.sh README.md m4/external
+EXTRA_DIST	= autogen.sh README.md m4/external CMakeLists.txt cmake
 DISTCLEANFILES = $(PACKAGE).pc
 
 ACLOCAL_AMFLAGS = -I m4/internal -I m4/external

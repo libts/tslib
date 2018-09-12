@@ -8,6 +8,8 @@
 #
 #
 
+EXTRA_DIST	 = CMakeLists.txt
+
 AM_CFLAGS	 = -DPLUGIN_DIR=\"@PLUGIN_DIR@\" -DTS_CONF=\"@TS_CONF@\" \
 		   -DTS_POINTERCAL=\"@TS_POINTERCAL@\" \
 		   $(DEBUGFLAGS) $(LIBFLAGS) $(VIS_CFLAGS) \
