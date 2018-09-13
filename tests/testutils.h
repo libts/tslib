@@ -29,6 +29,7 @@ struct ts_button {
 void button_draw(struct ts_button *button);
 int button_handle(struct ts_button *button, int x, int y, unsigned int pressure);
 void getxy(struct tsdev *ts, int *x, int *y);
+void getxy_validate(struct tsdev *ts, int *x, int *y);
 void ts_flush(struct tsdev *ts);
 void print_version(void);
 

@@ -19,6 +19,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -32,9 +33,11 @@
 #include "ts_calibrate.h"
 
 #define CROSS_BOUND_DIST	50
+#define VALIDATE_BOUNDARY_MIN	10
+#define VALIDATE_LOOPS_DEFAULT	3
 
 static int palette[] = {
-	0x000000, 0xffe080, 0xffffff, 0xe0c0a0
+	0x000000, 0xffe080, 0xffffff, 0xe0c0a0, 0xff0000, 0x00ff00
 };
 #define NR_COLORS (sizeof(palette) / sizeof(palette[0]))
 
@@ -96,6 +99,101 @@ static void get_sample(struct tsdev *ts, calibration *cal,
 	printf("%s : X = %4d Y = %4d\n", name, cal->x[index], cal->y[index]);
 }
 
+static int validate_sample(struct tsdev *ts, int x, int y, char *name,
+			   int boundary)
+{
+	static int last_x = -1, last_y;
+	int read_x, read_y;
+	int ret;
+
+	if (last_x != -1) {
+#define NR_STEPS 10
+		int dx = ((x - last_x) << 16) / NR_STEPS;
+		int dy = ((y - last_y) << 16) / NR_STEPS;
+		int i;
+
+		last_x <<= 16;
+		last_y <<= 16;
+		for (i = 0; i < NR_STEPS; i++) {
+			put_cross(last_x >> 16, last_y >> 16, 2 | XORMODE);
+			usleep(1000);
+			put_cross(last_x >> 16, last_y >> 16, 2 | XORMODE);
+			last_x += dx;
+			last_y += dy;
+		}
+	}
+
+	put_cross(x, y, 2 | XORMODE);
+	getxy_validate(ts, &read_x, &read_y);
+
+	if ((read_x > x - boundary) && (read_x < x + boundary) &&
+	    (read_y > y - boundary) && (read_y < y + boundary)) {
+		ret = 0;
+	} else {
+		ret = -1;
+	}
+	put_cross(x, y, 2 | XORMODE);
+
+	last_x = x;
+	last_y = y;
+
+	printf("%s : X = %4d(%4d) Y = %4d(%4d) %s\n",
+	       name, read_x, x, read_y, y,
+	       ret ? "fail" : "pass");
+
+	return ret;
+}
+
+static int ts_validate(struct tsdev *ts, int boundary, unsigned int loops)
+{
+	int ret;
+	char textbuf[64];
+	int random_x, random_y;
+	unsigned int i;
+
+	if (boundary < VALIDATE_BOUNDARY_MIN) {
+		boundary = VALIDATE_BOUNDARY_MIN;
+		fprintf(stderr, "Boundary too small. Using %d\n",
+			boundary);
+	}
+
+	if (loops == 0)
+		loops = VALIDATE_LOOPS_DEFAULT;
+
+	snprintf(textbuf, sizeof(textbuf),
+		 "Validate touchscreen calibration with boundary %d.",
+		 boundary);
+
+	put_string_center(xres / 2, yres / 4, textbuf, 1);
+	put_string_center(xres / 2, yres / 4 + 20,
+			  "Touch crosshair to validate", 2);
+
+	for (i = 0; i < loops; i++) {
+		srand(time(NULL));
+		random_x = rand() % xres;
+		random_y = rand() % yres;
+		ret = validate_sample(ts, random_x, random_y, "random", boundary);
+		if (ret)
+			goto done;
+	}
+
+done:
+	fillrect(0, 0, xres - 1, yres - 1, 0);
+	put_string_center(xres / 2, yres / 4, textbuf, 1);
+
+	if (!ret) {
+		printf("Validation passed.\n");
+		put_string_center(xres / 2, yres / 4 + 20,
+				  "Validation passed", 5);
+	} else {
+		printf("Validation failed.\n");
+		put_string_center(xres / 2, yres / 4 + 20,
+				  "Validation failed", 4);
+	}
+
+	return ret;
+}
+
 static void clearbuf(struct tsdev *ts)
 {
 	int fd = ts_fd(ts);
@@ -137,6 +235,12 @@ static void help(void)
 	printf("                       3 ... counterclockwise orientation; 270 degrees\n");
 	printf("-t --min_interval\n");
 	printf("                       minimum time in ms between touch presses\n");
+	printf("-c --validate\n");
+	printf("                       validate the current calibration\n");
+	printf("-b --boundary\n");
+	printf("                       boundary criteria in validation mode\n");
+	printf("-l --loops\n");
+	printf("                       number of crosses to touch in validation mode\n");
 	printf("-h --help\n");
 	printf("                       print this help text\n");
 	printf("-v --version\n");
@@ -159,6 +263,9 @@ int main(int argc, char **argv)
 	unsigned int i, len;
 	unsigned int tick = 0;
 	unsigned int min_interval = 0;
+	int boundary = 0;
+	unsigned int validate_loops = 0;
+	short validate_only = 0;
 
 	signal(SIGSEGV, sig);
 	signal(SIGINT, sig);
@@ -170,10 +277,13 @@ int main(int argc, char **argv)
 			{ "rotate",       required_argument, NULL, 'r' },
 			{ "version",      no_argument,       NULL, 'v' },
 			{ "min_interval", required_argument, NULL, 't' },
+			{ "validate",     no_argument,       NULL, 'c' },
+			{ "boundary",     required_argument, NULL, 'b' },
+			{ "loop",         required_argument, NULL, 'l' },
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "hvr:t:", long_options, &option_index);
+		int c = getopt_long(argc, argv, "hvr:t:cb:l:", long_options, &option_index);
 
 		errno = 0;
 		if (c == -1)
@@ -205,6 +315,30 @@ int main(int argc, char **argv)
 			}
 			break;
 
+		case 'c':
+			validate_only = 1;
+			break;
+
+		case 'b':
+			if (!validate_only) {
+				fprintf(stderr, "--boundary is only available with --validate\n");
+				help();
+				return 0;
+			}
+
+			boundary = atoi(optarg);
+			break;
+
+		case 'l':
+			if (!validate_only) {
+				fprintf(stderr, "--loop is only available with --validate\n");
+				help();
+				return 0;
+			}
+
+			validate_loops = atoi(optarg);
+			break;
+
 		default:
 			help();
 			return 0;
@@ -232,6 +366,9 @@ int main(int argc, char **argv)
 
 	for (i = 0; i < NR_COLORS; i++)
 		setcolor(i, palette[i]);
+
+	if (validate_only)
+		return ts_validate(ts, boundary, validate_loops);
 
 	put_string_center(xres / 2, yres / 4,
 			  "Touchscreen calibration utility", 1);

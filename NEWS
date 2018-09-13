@@ -5,6 +5,7 @@ This release includes libts version 0.9.3 and the following changes:
 * support for screen-rotation in ts_calibrate and linear module
 * add experimental module_raw input_evdev that needs libevdev
 * new ts_calibrate --min_interval option to avoid inaccurate calibration
+* add ts_calibrate --validate functionality to verify the calibration
 
 
 tslib 1.17 - released 2018-09-06

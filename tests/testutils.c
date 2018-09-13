@@ -141,6 +141,39 @@ void getxy(struct tsdev *ts, int *x, int *y)
 	}
 }
 
+void getxy_validate(struct tsdev *ts, int *x, int *y)
+{
+#define MAX_SAMPLES 128
+	struct ts_sample samp[MAX_SAMPLES];
+	int index;
+
+	do {
+		if (ts_read(ts, &samp[0], 1) < 0) {
+			perror("ts_read");
+			close_framebuffer();
+			exit(1);
+		}
+	} while (samp[0].pressure == 0);
+
+	/* Now collect up to MAX_SAMPLES touches into the samp array. */
+	index = 0;
+	do {
+		if (index < MAX_SAMPLES-1)
+			index++;
+		if (ts_read(ts, &samp[index], 1) < 0) {
+			perror("ts_read");
+			close_framebuffer();
+			exit(1);
+		}
+	} while (samp[index].pressure > 0);
+	printf("Took %d samples...\n", index);
+
+	if (x)
+		*x = samp[index - 1].x;
+	if (y)
+		*y = samp[index - 1].y;
+}
+
 void ts_flush(struct tsdev *ts)
 {
 	/* Read all unread touchscreen data,
