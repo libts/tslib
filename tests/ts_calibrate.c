@@ -151,9 +151,10 @@ static int ts_validate(struct tsdev *ts, int boundary, unsigned int loops)
 	int random_x, random_y;
 	unsigned int i;
 
-	if (boundary < VALIDATE_BOUNDARY_MIN) {
+	if (boundary < VALIDATE_BOUNDARY_MIN ||
+	    boundary > (int)xres || boundary > (int)yres) {
 		boundary = VALIDATE_BOUNDARY_MIN;
-		fprintf(stderr, "Boundary too small. Using %d\n",
+		fprintf(stderr, "Boundary out of range. Using %d\n",
 			boundary);
 	}
 
@@ -263,7 +264,7 @@ int main(int argc, char **argv)
 	unsigned int i, len;
 	unsigned int tick = 0;
 	unsigned int min_interval = 0;
-	int boundary = 0;
+	int boundary = VALIDATE_BOUNDARY_MIN;
 	unsigned int validate_loops = 0;
 	short validate_only = 0;
 
