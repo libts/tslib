@@ -517,7 +517,7 @@ static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample
 	int ret, valid_samples = 0;
 	struct ts_sample *p = samp;
 
-	/* initalize all samples with proper values */
+	/* initialize all samples with proper values */
 	memset(p, '\0', nr * sizeof (*p));
 
 	cy8mrln_info = container_of(info, struct tslib_cy8mrln_palmpre, module);
@@ -709,7 +709,7 @@ TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init(struct tsdev *dev, cons
 		return NULL;
 	}
 
-	/* We need the intial values the touchscreen repots with no touch input for
+	/* We need the initial values the touchscreen repots with no touch input for
 	 * later use */
 	do {
 		ret = read(dev->fd, &input, sizeof(input));

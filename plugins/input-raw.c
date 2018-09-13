@@ -142,7 +142,6 @@ struct tslib_input {
 /* List of actual devices we enumerate. For the device selection,
  * see get_special_device()
  */
-#define EGALAX_VERSION_112 1
 #define EGALAX_VERSION_210 2
 
 static int get_special_device(struct tslib_input *i)
@@ -178,9 +177,6 @@ static int get_special_device(struct tslib_input *i)
 			 * in the kernel! They have quirks over there.
 			 */
 			switch (id.version) {
-			case 0x0112:
-				i->special_device = EGALAX_VERSION_112;
-				break;
 			case 0x0210:
 				i->special_device = EGALAX_VERSION_210;
 				break;
@@ -305,8 +301,12 @@ static int check_fd(struct tslib_input *i)
 	/* remember whether we have a multitouch type A device */
 	if (i->mt && synbit[BIT_WORD(SYN_MT_REPORT)] & BIT_MASK(SYN_MT_REPORT) &&
 	    !(absbit[BIT_WORD(ABS_MT_SLOT)] & BIT_MASK(ABS_MT_SLOT)) &&
-	    !(absbit[BIT_WORD(ABS_MT_TRACKING_ID)] & BIT_MASK(ABS_MT_TRACKING_ID)))
+	    !(absbit[BIT_WORD(ABS_MT_TRACKING_ID)] & BIT_MASK(ABS_MT_TRACKING_ID))) {
 		i->type_a = 1;
+	#ifdef DEBUG
+		printf("tslib: We have a multitouch type A device\n");
+	#endif
+	}
 
 	if (i->grab_events == GRAB_EVENTS_WANTED) {
 		if (ioctl(ts->fd, EVIOCGRAB, (void *)1)) {
@@ -404,19 +404,7 @@ static int ts_input_read(struct tslib_module_info *inf,
 				}
 				break;
 			case EV_ABS:
-				if (i->special_device == EGALAX_VERSION_112) {
-					switch (ev.code) {
-					case ABS_X+2:
-						i->current_x = ev.value;
-						break;
-					case ABS_Y+2:
-						i->current_y = ev.value;
-						break;
-					case ABS_PRESSURE:
-						i->current_p = ev.value;
-						break;
-					}
-				} else if (i->special_device == EGALAX_VERSION_210) {
+				if (i->special_device == EGALAX_VERSION_210) {
 					switch (ev.code) {
 					case ABS_X:
 						i->current_x = ev.value;
@@ -650,13 +638,12 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 			case EV_KEY:
 				switch (i->ev[it].code) {
 				case BTN_TOUCH:
-				case BTN_LEFT:
-					if (i->ev[it].code == BTN_TOUCH) {
-						i->buf[total][i->slot].pen_down = i->ev[it].value;
-						i->buf[total][i->slot].tv = i->ev[it].time;
-						if (i->ev[it].value == 0)
-							pen_up = 1;
-					}
+					i->buf[total][i->slot].pen_down = i->ev[it].value;
+					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
+					if (i->ev[it].value == 0)
+						pen_up = 1;
+
 					break;
 				}
 				break;
@@ -665,13 +652,6 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 				case SYN_REPORT:
 					if (pen_up && i->no_pressure) {
 						for (k = 0; k < max_slots; k++) {
-							if (i->buf[total][k].x != 0 ||
-							    i->buf[total][k].y != 0 ||
-							    i->buf[total][k].pressure != 0)
-								i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
-
-							i->buf[total][k].x = 0;
-							i->buf[total][k].y = 0;
 							i->buf[total][k].pressure = 0;
 						}
 					}
@@ -739,6 +719,7 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 					 */
 					if (i->mt && i->buf[total][i->slot].valid & TSLIB_MT_VALID)
 						break;
+					// fall through
 				case ABS_MT_POSITION_X:
 					i->buf[total][i->slot].x = i->ev[it].value;
 					i->buf[total][i->slot].tv = i->ev[it].time;
@@ -747,6 +728,7 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 				case ABS_Y:
 					if (i->mt && i->buf[total][i->slot].valid & TSLIB_MT_VALID)
 						break;
+					// fall through
 				case ABS_MT_POSITION_Y:
 					i->buf[total][i->slot].y = i->ev[it].value;
 					i->buf[total][i->slot].tv = i->ev[it].time;
@@ -755,6 +737,7 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 				case ABS_PRESSURE:
 					if (i->mt && i->buf[total][i->slot].valid & TSLIB_MT_VALID)
 						break;
+					// fall through
 				case ABS_MT_PRESSURE:
 					i->buf[total][i->slot].pressure = i->ev[it].value;
 					i->buf[total][i->slot].tv = i->ev[it].time;
@@ -841,28 +824,6 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 					} else {
 						i->slot = i->ev[it].value;
 						i->buf[total][i->slot].slot = i->ev[it].value;
-						i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
-					}
-					break;
-				case ABS_X+2:
-					if (i->special_device == EGALAX_VERSION_112) {
-						/* this is ABS_Z wrongly used as ABS_X here */
-						if (i->mt && i->buf[total][i->slot].valid & TSLIB_MT_VALID)
-							break;
-
-						i->buf[total][i->slot].x = i->ev[it].value;
-						i->buf[total][i->slot].tv = i->ev[it].time;
-						i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
-					}
-					break;
-				case ABS_Y+2:
-					if (i->special_device == EGALAX_VERSION_112) {
-						/* this is ABS_RX wrongly used as ABS_Y here */
-						if (i->mt && i->buf[total][i->slot].valid & TSLIB_MT_VALID)
-							break;
-
-						i->buf[total][i->slot].y = i->ev[it].value;
-						i->buf[total][i->slot].tv = i->ev[it].time;
 						i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
 					}
 					break;

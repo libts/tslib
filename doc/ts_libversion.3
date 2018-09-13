@@ -55,6 +55,12 @@ can have one or more bits set. The currently defined bits are:
 .RS 4
 .BR TSLIB_VERSION_MT
 tslib filters support multitouch ts_read_mt() and there is at least one raw access module supporting it (currently evdev input)
+.BR TSLIB_VERSION_OPEN_RESTRICTED
+ts_open_restricted and ts_close_restricted function pointers are available to implement
+.BR TSLIB_VERSION_EVENTPATH
+ts_get_eventpath() is available since tslib can auto-detect a device
+.BR TSLIB_VERSION_VERSION
+simple tslib_version() and ts_print_ascii_logo() are available
 .RE
 .SH RETURN VALUE
 This function returns a pointer to a static copy of the version info struct.

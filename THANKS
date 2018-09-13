@@ -37,7 +37,9 @@ Sergei Poselenov <sposelenov@emcraft.com>
 Simon Busch <morphis@gravedo.de>
 Teresa Gamez <T.Gamez@phytec.de>
 Thomas Zimmermann <zimmermann@vdm-design.de>
+Tuomo Rinne <tuomo.rinne@gmail.com>
 Wolfram Sang <w.sang@pengutronix.de>
+xoduddk123 <xoduddk123@naver.com>
 
 Not everything had been done the clean git way, so there are more people
 who helped writing tslib. At least we know of the following:
@@ -62,5 +64,6 @@ Clayton Craft <clayton@craftyguy.net>
 Kevin Liu <kevin@potatofrom.space>
 Rolf Eike Beer <eb@emlix.com>
 Ravi Chandarana <ravichandarana@rocketmail.com>
+Bin Wang <wangbinxiaoji@gmail.com>
 
 	Thanks for your contribution to tslib!

@@ -36,7 +36,43 @@ ts_calibrate \- A test program to calibrate a touch screen used by tslib\&.
 \fB\-r, \-\-rotate [value]\fR
 .sp
 .RS 4
-Rotate the screen. value is 0 for 0 degree, 1 for 90 degrees (CW), 2 for 180 degrees (upside down) and 3 for 270 degrees (CCW).
+Rotate the screen. value is 0 for 0 degree, 1 for 90 degrees (CW), 2 for 180 degrees (upside down) and 3 for 270 degrees (CCW). This value will be added to the calibration config file TSLIB_CALIBFILE and picked up from the linear filter module from there. It can be changed by a linear module parameter.
+.RE
+.PP
+
+.sp
+.sp
+\fB\-t, \-\-min_interval\fR
+.sp
+.RS 4
+The time in milliseconds that has to pass before a crosshair is pressed by the user. This may be useful to avoid insanely fast or accidentally wrong taps and thus inaccurate calibration. Default: 0.
+.RE
+.PP
+
+.sp
+.sp
+\fB\-c, \-\-validate\fR
+.sp
+.RS 4
+Validate the calibration. Make sure the linear module is configured in ts.conf so that the current calibration is applied. In this mode, crosses are displayed at random locations on screen and touches are evaluated against their positions. In this mode the \-\-loops and \-\-boundary options are available.
+.RE
+.PP
+
+.sp
+.sp
+\fB\-b, \-\-boundary\fR
+.sp
+.RS 4
+Validation boundary in pixels. Available only when \-\-validate is used. This defines how strict the validation should be. It's the the distance that an evaluated touch input is allowed to be apart from a cross to still pass the validation. If this boundary is crossed, validation fails. Default: 10.
+.RE
+.PP
+
+.sp
+.sp
+\fB\-l, \-\-loops\fR
+.sp
+.RS 4
+Number of loops in validation mode. Available only when \-\-validate is used. This defines how many crosses should be touched and evaluated. Default: 3.
 .RE
 .PP
 

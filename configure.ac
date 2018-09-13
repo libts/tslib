@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT([tslib], [1.14], [tslib@lists.infradead.org], [tslib], [http://tslib.org])
+AC_INIT([tslib], [1.17+], [tslib@lists.infradead.org], [tslib], [http://tslib.org])
 # AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE([dist-bzip2 dist-xz subdir-objects])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES(yes)]) # use silent rules where available - automake 1.11
@@ -90,8 +90,6 @@ AC_FUNC_SELECT_ARGTYPES
 AC_TYPE_SIGNAL
 AC_FUNC_STAT
 AC_FUNC_VPRINTF
-AC_FUNC_MALLOC
-AC_FUNC_REALLOC
 AC_CHECK_FUNCS([gettimeofday memmove memset munmap select strcasecmp strchr strdup strtoul strtol strsep])
 AM_CONDITIONAL(HAVE_STRSEP, test x$HAVE_STRSEP = xyes)
 
@@ -105,6 +103,7 @@ TSLIB_CHECK_MODULE([median], [yes], [Enable building of median filter])
 TSLIB_CHECK_MODULE([pthres], [yes], [Enable building of pthres filter])
 TSLIB_CHECK_MODULE([skip], [yes], [Enable building of skip filter])
 TSLIB_CHECK_MODULE([lowpass], [yes], [Enable building of lowpass filter])
+TSLIB_CHECK_MODULE([invert], [yes], [Enable building of invert filter])
 TSLIB_CHECK_MODULE([variance], [yes], [Enable building of variance filter])
 
 # hardware access modules
@@ -113,11 +112,12 @@ TSLIB_CHECK_MODULE([variance], [yes], [Enable building of variance filter])
 TSLIB_CHECK_MODULE([input], [yes], [Enable building of generic input raw module (Linux /dev/input/eventN support)])
 
 # userspace device drivers, enabled by default (may become disabled by default in the future)
-TSLIB_CHECK_MODULE([tatung], [yes], [Enable building of tatung raw module (Tatung Webpad support)])
 TSLIB_CHECK_MODULE([touchkit], [yes], [Enable building of serial TouchKit raw module (Linux /dev/ttySX support)])
 TSLIB_CHECK_MODULE([waveshare], [yes], [Enable building of WaveShare raw module (Linux /dev/hidrawN support)])
 
 # userspace device drivers, disabled by default
+TSLIB_CHECK_MODULE([input-evdev], [no], [Enable building of generic evdev input module (Linux /dev/input/eventN support)])
+TSLIB_CHECK_MODULE([tatung], [no], [Enable building of tatung raw module (Tatung Webpad support)])
 TSLIB_CHECK_MODULE([ucb1x00], [no], [Enable building of ucb1x00 raw module (UCB1x00 support)])
 TSLIB_CHECK_MODULE([mk712], [no], [Enable building of mk712 raw module (Hi tachi support)])
 TSLIB_CHECK_MODULE([h3600], [no], [Enable building of h3600 raw module (HP iPaq H3600 support)])
@@ -129,6 +129,7 @@ TSLIB_CHECK_MODULE([arctic2], [no], [Enable building of arctic2 raw module (IBM 
 TSLIB_CHECK_MODULE([dmc_dus3000], [no], [Enable building of dmc_dus3000 raw module (DMC DUS Series support)])
 TSLIB_CHECK_MODULE([cy8mrln-palmpre], [no], [Enable building of cy8mrln-palmpre raw module])
 TSLIB_CHECK_MODULE([galax], [no], [Enable building of HID USB eGalax raw module (Linux /dev/hiddevN support)])
+TSLIB_CHECK_MODULE([one-wire-ts-input], [no], [Enable building of FriendlyARM one-wire raw module])
 
 AC_MSG_CHECKING([where to place modules])
 AC_ARG_WITH(plugindir,
@@ -185,11 +186,11 @@ AS_IF([test "x$with_sdl2" = "xyes"], [
 
 # libts Library versioning
 # increment if the interface changed
-LT_CURRENT=8
+LT_CURRENT=9
 # increment if anything changed. set to 0 if current was incremented!
-LT_REVISION=1
+LT_REVISION=2
 # increment if the interface change is backwards compatible (an addition). set to 0 if not.
-LT_AGE=8
+LT_AGE=9
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)

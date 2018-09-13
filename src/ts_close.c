@@ -49,11 +49,10 @@ int ts_close(struct tsdev *ts)
 		info = next;
 	}
 
-	if (ts_close_restricted) {
+	if (ts_close_restricted)
 		ts_close_restricted(ts->fd, NULL);
-	} else {
+	else
 		ret = close(ts->fd);
-	}
 
 	free(ts->eventpath);
 

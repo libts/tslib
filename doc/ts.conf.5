@@ -137,6 +137,19 @@ Linear scaling module, primarily used for conversion of touch screen co\-ordinat
 .sp -1
 .IP \(bu 2.3
 .\}
+\fBrot\fR
+.sp
+Rotation of touch coorinates. 0=no, 1=CW, 2=UD, 3=CCW. Default: the screen-rotation that was used with ts_calibrate (-r option).
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
 \fBxyswap\fR
 .sp
 Interchange the X and Y co\-ordinates \-\- no longer used or needed if the new linear calibration utility ts_calibrate is used.
@@ -319,6 +332,38 @@ Number of samples to apply the median filter to. Default: 3.
 .RE
 .RE
 .PP
+\fBinvert\fR
+.RS 4
+Invert values in X and/or Y direction around a given value.
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBx0\fR
+.sp
+X-axis (horizontal) value around which to invert. Default: 0.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBy0\fR
+.sp
+Y-axis (horizontal) value around which to invert. Default: 0.
+
+.RE
+.RE
+.PP
 \fBlowpass\fR
 .RS 4
 simple exponential averaging lowpass filter
@@ -417,7 +462,7 @@ T{
 T}	Hitachi Webpad	.	Linux, BSD, Hurd, Haiku	no	--enable-mk712
 T{
 .BR tatung
-T}	Tatung Webpad	.	Linux, BSD, Hurd, Haiku	no	enabled by default
+T}	Tatung Webpad	.	Linux, BSD, Hurd, Haiku	no	--enable-tatung
 T{
 .BR touchkit
 T}	Touchkit SAT4000UR	RS232	Linux, BSD, Hurd	no	enabled by default
@@ -430,6 +475,12 @@ T}	Waveshare Touchscreens	/dev/hidrawX	Linux	no	enabled by default
 T{
 .BR cy8mrln_palmpre
 T}	in Palm Pre/Pre Plus/Pre 2	.	Linux	no	--enable-cy8mrln-palmpre
+T{
+.BR one_wire_ts_input
+T}	FriendlyARM one-wire touch screen	.	Linux	no	--enable-one-wire-ts-input
+T{
+.BR input_evdev
+T}	Linux evdev drivers (libevdev)	.	Linux	yes	--enable-input-evdev
 .TE
 .SH "SEE ALSO"
 .BR ts_calibrate (1),

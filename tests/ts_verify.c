@@ -76,10 +76,7 @@ struct ts_verify {
 
 static void usage(char **argv)
 {
-	struct ts_lib_version_data *ver = ts_libversion();
-
-	printf("tslib %s\n", ver->package_version);
-	printf("\n");
+	printf("%s\n", tslib_version());
 	printf("Usage: %s [--idev <device>] [--verbose]\n", argv[0]);
 }
 
@@ -455,7 +452,7 @@ int main(int argc, char **argv)
 		.samp_mt = NULL,
 		.samp_read = NULL,
 		.verbose = 0,
-		.read_fail_count = 0,	
+		.read_fail_count = 0,
 		.read_mt_fail_count = 0,
 		.read_run_count = 0,
 		.read_mt_run_count = 0,
@@ -463,7 +460,6 @@ int main(int argc, char **argv)
 		.nr_of_iterations = 6,
 		.tsconf = NULL,
 	};
-	struct ts_lib_version_data *ver = ts_libversion();
 
 	while (1) {
 		const struct option long_options[] = {
@@ -515,13 +511,7 @@ int main(int argc, char **argv)
 		return errno;
 
 
-	printf("                 _       _ _ _\n");
-	printf("                | |_ ___| (_) |__\n");
-	printf("                | __/ __| | | '_ \\\n");
-	printf("                | |_\\__ \\ | | |_) |\n");
-	printf("                 \\__|___/_|_|_.__/\n\n");
-	printf("tslib %s / libts ABI version %d (0x%06X)\n",
-		ver->package_version, ver->version_num >> 16, ver->version_num);
+	printf("%s\n", tslib_version());
 
 	run_tests(&data);
 
@@ -574,10 +564,18 @@ int main(int argc, char **argv)
 	run_tests(&data);
 
 	data.tsconf = fopen(CONFFILE, "a+");
+	fprintf(data.tsconf, "module invert\n");
+	fclose(data.tsconf);
+	printf("======================================================\n");
+	printf("skip -> pthres -> debounce -> median -> dejitter -> lowpass -> invert\n");
+
+	run_tests(&data);
+
+	data.tsconf = fopen(CONFFILE, "a+");
 	fprintf(data.tsconf, "module linear\n");
 	fclose(data.tsconf);
 	printf("======================================================\n");
-	printf("skip -> pthres -> debounce -> median -> dejitter -> lowpass -> linear\n");
+	printf("skip -> pthres -> debounce -> median -> dejitter -> lowpass -> invert -> linear\n");
 
 	run_tests(&data);
 

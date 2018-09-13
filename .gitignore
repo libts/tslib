@@ -41,4 +41,5 @@ tests/ts_test_mt
 tests/ts_verify
 compile
 *.exe
+INSTALL
 

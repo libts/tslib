@@ -148,8 +148,130 @@ static int waveshare_read(struct tslib_module_info *inf, struct ts_sample *samp,
 	return nr;
 }
 
+static int waveshare_read_mt(struct tslib_module_info *inf,
+			     struct ts_sample_mt **samp, int max_slots, int nr)
+{
+	struct tslib_input *i = (struct tslib_input *)inf;
+	struct tsdev *ts = inf->dev;
+	static short reopen = 1;
+	struct stat devstat;
+	struct hidraw_devinfo info;
+	char name_buf[512];
+	int cnt;
+	short found = 0;
+	struct tsdev *ts_tmp;
+	char *buf;
+	int ret;
+	int count = 0;
+
+	if (max_slots > 1) {
+	#ifdef DEBUG
+		printf("WAVESHARE: only one slot supported\n");
+	#endif
+		max_slots = 1;
+	}
+
+	if (reopen == 1) {
+		reopen = 0;
+
+		if (i->vendor > 0 && i->product > 0) {
+#ifdef DEBUG
+			fprintf(stderr,
+				"waveshare: searching for device using hidraw...\n");
+#endif
+			for (cnt = 0; cnt < HIDRAW_MAX_DEVICES; cnt++) {
+				snprintf(name_buf, sizeof(name_buf),
+					 "/dev/hidraw%d", cnt);
+#ifdef DEBUG
+				fprintf(stderr,
+					"waveshare: device: %s\n", name_buf);
+#endif
+				ret = stat(name_buf, &devstat);
+				if (ret < 0)
+					continue;
+
+				ts_tmp = ts_open(name_buf, 0);
+				if (!ts_tmp)
+					continue;
+
+#ifdef DEBUG
+				fprintf(stderr, "  opened\n");
+#endif
+				ret = ioctl(ts_tmp->fd, HIDIOCGRAWINFO, &info);
+				if (ret < 0) {
+					ts_close(ts_tmp);
+					continue;
+				}
+
+				info.vendor &= 0xFFFF;
+				info.product &= 0xFFFF;
+#ifdef DEBUG
+				fprintf(stderr,
+					"  vid=%04X, pid=%04X\n",
+					info.vendor, info.product);
+#endif
+
+				if (i->vendor == info.vendor &&
+				    i->product == info.product) {
+					close(ts->fd);
+
+					ts->fd = ts_tmp->fd;
+					found = 1;
+#ifdef DEBUG
+					fprintf(stderr, "  correct device\n");
+#endif
+					ts_close(ts_tmp);
+					break;
+				}
+
+				ts_close(ts_tmp);
+			} /* for HIDRAW_MAX_DEVICES */
+
+			if (found == 0)
+				return -1;
+		} /* vid/pid set */
+	} /* reopen */
+
+	buf = alloca(i->len * nr);
+
+	ret = read(ts->fd, buf, i->len * nr);
+	if (ret > 0) {
+		while (ret >= (int) i->len) {
+	/*
+	  0000271: aa01 00e4 0139 bb01 01e0 0320 01e0 0320 01e0 0320 01e0 0320 cc  .....9..... ... ... ... .
+
+	  "aa" is start of the command,
+	  "01" means clicked, while
+	  "00" means unclicked.
+	  "00e4" and "0139" is the X,Y position (HEX).
+	  "bb" is start of multi-touch,
+	  and the following bytes are the position of each point.
+	 */
+			samp[count][0].pressure = buf[1] & 0xff;
+			samp[count][0].x = ((buf[2] & 0xff) << 8) | (buf[3] & 0xff);
+			samp[count][0].y = ((buf[4] & 0xff) << 8) | (buf[5] & 0xff);
+			samp[count][0].valid |= TSLIB_MT_VALID;
+			gettimeofday(&samp[count][0].tv, NULL);
+		#ifdef DEBUG
+			fprintf(stderr, "waveshare raw: %d %d %d\n",
+				samp[count][0].x, samp[count][0].y, samp[count][0].pressure);
+			fprintf(stderr, "%x %x %x %x %x %x\n",
+				buf[0], buf[1], buf[2], buf[3], buf[4], buf[5]);
+		#endif
+			count++;
+			buf += i->len;
+			ret -= i->len;
+		}
+	} else {
+		return -1;
+	}
+
+	return nr;
+}
+
 static const struct tslib_ops waveshare_ops = {
 	.read = waveshare_read,
+	.read_mt = waveshare_read_mt,
 };
 
 static int parse_vid_pid(struct tslib_module_info *inf, char *str, void *data)

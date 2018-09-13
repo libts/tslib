@@ -8,13 +8,14 @@
 #
 #
 
+EXTRA_DIST		= CMakeLists.txt
+
 AM_CFLAGS		= -DTS_POINTERCAL=\"@TS_POINTERCAL@\" $(DEBUGFLAGS) $(LIBFLAGS) $(VIS_CFLAGS)
 LDADD			= -rpath $(PLUGIN_DIR)
 AM_CPPFLAGS		= -I$(top_srcdir)/src
   
 #LTVSN			= -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 LTVSN			= -avoid-version
-LIBS			=
 pluginexecdir		= $(PLUGIN_DIR)
   
 if ENABLE_LINEAR_MODULE
@@ -57,6 +58,12 @@ if ENABLE_SKIP_MODULE
 SKIP_MODULE = skip.la
 else
 SKIP_MODULE =
+endif
+
+if ENABLE_INVERT_MODULE
+INVERT_MODULE = invert.la
+else
+INVERT_MODULE =
 endif
 
 if ENABLE_IIR_MODULE
@@ -131,6 +138,12 @@ else
 INPUT_MODULE =
 endif
 
+if ENABLE_INPUT_EVDEV_MODULE
+INPUT_EVDEV_MODULE = input_evdev.la
+else
+INPUT_EVDEV_MODULE =
+endif
+
 if ENABLE_GALAX_MODULE
 GALAX_MODULE = galax.la
 else
@@ -162,6 +175,12 @@ else
 WAVESHARE_MODULE =
 endif
 
+if ENABLE_ONE_WIRE_TS_INPUT_MODULE
+ONE_WIRE_TS_INPUT_MODULE = one_wire_ts_input.la
+else
+ONE_WIRE_TS_INPUT_MODULE =
+endif
+
 pluginexec_LTLIBRARIES = \
 	$(LINEAR_MODULE) \
 	$(DEJITTER_MODULE) \
@@ -170,6 +189,7 @@ pluginexec_LTLIBRARIES = \
 	$(PTHRES_MODULE) \
 	$(DEBOUNCE_MODULE) \
 	$(SKIP_MODULE) \
+	$(INVERT_MODULE) \
 	$(IIR_MODULE) \
 	$(LOWPASS_MODULE) \
 	$(UCB1X00_MODULE) \
@@ -183,9 +203,11 @@ pluginexec_LTLIBRARIES = \
 	$(DMC_DUS3000_MODULE) \
 	$(H2200_LINEAR_MODULE) \
 	$(INPUT_MODULE) \
+	$(INPUT_EVDEV_MODULE) \
 	$(GALAX_MODULE) \
 	$(TOUCHKIT_MODULE) \
 	$(CY8MRLN_PALMPRE_MODULE) \
+	$(ONE_WIRE_TS_INPUT_MODULE) \
 	$(WAVESHARE_MODULE)
   
 variance_la_SOURCES	= variance.c
@@ -244,6 +266,13 @@ linear_h2200_la_LDFLAGS	+= -no-undefined
 endif
 linear_h2200_la_LIBADD	= $(top_builddir)/src/libts.la
 
+invert_la_SOURCES	= invert.c
+invert_la_LDFLAGS	= -module $(LTVSN)
+if WINDOWS
+invert_la_LDFLAGS	+= -no-undefined
+endif
+invert_la_LIBADD	= $(top_builddir)/src/libts.la
+
 iir_la_SOURCES		= iir.c
 iir_la_LDFLAGS		= -module $(LTVSN)
 if WINDOWS
@@ -290,6 +319,11 @@ input_la_SOURCES	= input-raw.c
 input_la_LDFLAGS	= -module $(LTVSN)
 input_la_LIBADD		= $(top_builddir)/src/libts.la
 
+input_evdev_la_SOURCES	= input-evdev-raw.c
+input_evdev_la_LDFLAGS	= -module $(LTVSN)
+input_evdev_la_LIBADD	= $(top_builddir)/src/libts.la $(LIBEVDEV_LIBS)
+input_evdev_la_CFLAGS	= $(LIBEVDEV_CFLAGS)
+
 galax_la_SOURCES = galax-raw.c
 galax_la_LDFLAGS = -module $(LTVSN)
 galax_la_LIBADD = $(top_builddir)/src/libts.la
@@ -304,3 +338,7 @@ cy8mrln_palmpre_la_LIBADD  = $(top_builddir)/src/libts.la
 waveshare_la_SOURCES	= waveshare-raw.c
 waveshare_la_LDFLAGS	= -module $(LTVSN)
 waveshare_la_LIBADD	= $(top_builddir)/src/libts.la
+
+one_wire_ts_input_la_SOURCES	= one-wire-ts-input-raw.c
+one_wire_ts_input_la_LDFLAGS	= -module $(LTVSN)
+one_wire_ts_input_la_LIBADD	= $(top_builddir)/src/libts.la

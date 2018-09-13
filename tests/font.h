@@ -13,11 +13,11 @@
 #define _VIDEO_FONT_H
 
 struct fbcon_font_desc {
-    int idx;
-    char *name;
-    int width, height;
-    unsigned char *data;
-    int pref;
+	int idx;
+	char *name;
+	int width, height;
+	unsigned char *data;
+	int pref;
 };
 
 #define VGA8x8_IDX	0

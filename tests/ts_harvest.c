@@ -16,13 +16,14 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
+#include <getopt.h>
+#include <errno.h>
 
 #include "tslib.h"
 #include "fbutils.h"
 #include "testutils.h"
 
-static int palette [] =
-{
+static int palette[] = {
 	0x000000, 0xffe080, 0xffffff, 0xe0c0a0, 0x304050, 0x80b8c0
 };
 
@@ -48,15 +49,38 @@ static void refresh_screen(void)
 	fillrect (0, 0, xres - 1, yres - 1, 0);
 }
 
-static void ts_harvest_put_cross (int x, int y, unsigned colidx)
+static void ts_harvest_put_cross(int x, int y, unsigned colidx)
 {
-        line (x - 10, y, x - 2, y, colidx);
-        line (x + 2, y, x + 10, y, colidx);
-        line (x, y - 10, x, y - 2, colidx);
-        line (x, y + 2, x, y + 10, colidx);
-}                                                                                                              
-int main(void)
+	line(x - 10, y, x - 2, y, colidx);
+	line(x + 2, y, x + 10, y, colidx);
+	line(x, y - 10, x, y - 2, colidx);
+	line(x, y + 2, x, y + 10, colidx);
+}
+
+int main(int argc, char **argv)
 {
+	while (1) {
+		const struct option long_options[] = {
+			{ "version",      no_argument,       NULL, 'v' },
+		};
+
+		int option_index = 0;
+		int c = getopt_long(argc, argv, "v", long_options, &option_index);
+
+		errno = 0;
+		if (c == -1)
+			break;
+
+		switch (c) {
+		case 'v':
+			print_version();
+			return 0;
+
+		default:
+			return 0;
+		}
+	}
+
 	struct tsdev *ts;
 	int x_ts, y_ts, x_incr, y_incr;
 	unsigned int x, y, xres_half, yres_half, x_new, y_new;
@@ -81,20 +105,20 @@ int main(void)
 	}
 
 	for (i = 0; i < NR_COLORS; i++)
-		setcolor (i, palette [i]);
+		setcolor(i, palette [i]);
 
-	refresh_screen ();
-	put_string_center (xres/2, yres*0.1, "Touchscreen harvesting utility", 4);
-	put_string_center (xres/2, yres*0.15, "Touch the crosshair center", 1);
-	put_string_center (xres/2, yres*0.2, "with as much accurary", 1);
-	put_string_center (xres/2, yres*0.25, "as possible", 1);
-	put_string_center (xres/2, yres*0.35, "Touch anywhere to start", 1);
+	refresh_screen();
+	put_string_center(xres/2, yres * 0.1, "Touchscreen harvesting utility", 4);
+	put_string_center(xres/2, yres * 0.15, "Touch the crosshair center", 1);
+	put_string_center(xres/2, yres * 0.2, "with as much accurary", 1);
+	put_string_center(xres/2, yres * 0.25, "as possible", 1);
+	put_string_center(xres/2, yres * 0.35, "Touch anywhere to start", 1);
 
-	getxy (ts, &x_ts, &y_ts);
-	refresh_screen ();
+	getxy(ts, &x_ts, &y_ts);
+	refresh_screen();
 
-	output_fid = fopen ("ts_harvest.out", "w");
-	fprintf (output_fid, "X_expected\tY_expected\tX_measured\tY_measured\n");
+	output_fid = fopen("ts_harvest.out", "w");
+	fprintf(output_fid, "X_expected\tY_expected\tX_measured\tY_measured\n");
 
 	y = 0;
 	y_incr = 1;
@@ -113,14 +137,14 @@ int main(void)
 		 * while a new cross has already been drawn.
 		 */
 
-		usleep (700000);
+		usleep(700000);
 
 		/* Show the cross */
 		ts_harvest_put_cross(x, y, 2 | XORMODE);
 
 		/* Flush the touchscreen */
 
-		ts_flush (ts);
+		ts_flush(ts);
 
 		/* Leave time for the user to see and touch the new location.
 		 * If the pen was still down, (s)he will see that the
@@ -129,12 +153,12 @@ int main(void)
 		 * time to see the cross.
 		 */
 
-		usleep (700000);
+		usleep(700000);
 
 		/* Get a point */
 
-		getxy (ts, &x_ts, &y_ts);
-		fprintf (output_fid, "%d\t%d\t%d\t%d\n", x, y, x_ts, y_ts);
+		getxy(ts, &x_ts, &y_ts);
+		fprintf(output_fid, "%d\t%d\t%d\t%d\n", x, y, x_ts, y_ts);
 
 		/* Hide the cross */
 
@@ -174,14 +198,14 @@ int main(void)
            y = y_new;
 	}
 
-	fclose (output_fid);
+	fclose(output_fid);
 
-	refresh_screen ();
-	put_string_center (xres/2, yres*0.75, "Thank you (pfooh!)", 1);
-	put_string_center (xres/2, yres*0.80, "Output saved to ts_harvest.out", 1);
-	put_string_center (xres/2, yres*0.85, "Touch anywhere to quit", 4);
-	getxy (ts, &x_ts, &y_ts);
-	refresh_screen ();
+	refresh_screen();
+	put_string_center(xres/2, yres*0.75, "Thank you (pfooh!)", 1);
+	put_string_center(xres/2, yres*0.80, "Output saved to ts_harvest.out", 1);
+	put_string_center(xres/2, yres*0.85, "Touch anywhere to quit", 4);
+	getxy(ts, &x_ts, &y_ts);
+	refresh_screen();
 	close_framebuffer();
 	ts_close(ts);
 	return 0;

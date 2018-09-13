@@ -22,27 +22,26 @@
 #include "testutils.h"
 
 /* [inactive] border fill text [active] border fill text */
-static int button_palette [6] =
-{
-        1, 4, 2,
-        1, 5, 0
+static int button_palette[6] = {
+	1, 4, 2,
+	1, 5, 0
 };
 
-void button_draw (struct ts_button *button)
+void button_draw(struct ts_button *button)
 {
 	int s = (button->flags & BUTTON_ACTIVE) ? 3 : 0;
 
 	rect(button->x, button->y, button->x + button->w,
-	     button->y + button->h, button_palette [s]);
+	     button->y + button->h, button_palette[s]);
 	fillrect(button->x + 1, button->y + 1,
 		 button->x + button->w - 2,
-		 button->y + button->h - 2, button_palette [s + 1]);
+		 button->y + button->h - 2, button_palette[s + 1]);
 	put_string_center(button->x + button->w / 2,
 			  button->y + button->h / 2,
-			  button->text, button_palette [s + 2]);
+			  button->text, button_palette[s + 2]);
 }
 
-int button_handle (struct ts_button *button, int x, int y, unsigned int p)
+int button_handle(struct ts_button *button, int x, int y, unsigned int p)
 {
 	int inside = (x >= button->x) && (y >= button->y) &&
 		     (x < button->x + button->w) &&
@@ -52,33 +51,34 @@ int button_handle (struct ts_button *button, int x, int y, unsigned int p)
 		if (inside) {
 			if (!(button->flags & BUTTON_ACTIVE)) {
 				button->flags |= BUTTON_ACTIVE;
-				button_draw (button);
+				button_draw(button);
 			}
 		} else if (button->flags & BUTTON_ACTIVE) {
 			button->flags &= ~BUTTON_ACTIVE;
-			button_draw (button);
+			button_draw(button);
 		}
 	} else if (button->flags & BUTTON_ACTIVE) {
 		button->flags &= ~BUTTON_ACTIVE;
-		button_draw (button);
+		button_draw(button);
 		return 1;
 	}
 
 	return 0;
 }
 
-static int sort_by_x(const void* a, const void *b)
+static int sort_by_x(const void *a, const void *b)
 {
 	return (((struct ts_sample *)a)->x - ((struct ts_sample *)b)->x);
 }
 
-static int sort_by_y(const void* a, const void *b)
+static int sort_by_y(const void *a, const void *b)
 {
 	return (((struct ts_sample *)a)->y - ((struct ts_sample *)b)->y);
 }
 
 /* Waits for the screen to be touched, averages x and y sample
- * coordinates until the end of contact */
+ * coordinates until the end of contact
+ */
 void getxy(struct tsdev *ts, int *x, int *y)
 {
 #define MAX_SAMPLES 128
@@ -87,11 +87,10 @@ void getxy(struct tsdev *ts, int *x, int *y)
 
 	do {
 		if (ts_read_raw(ts, &samp[0], 1) < 0) {
-			perror("ts_read");
-			close_framebuffer ();
+			perror("ts_read_raw");
+			close_framebuffer();
 			exit(1);
 		}
-		
 	} while (samp[0].pressure == 0);
 
 	/* Now collect up to MAX_SAMPLES touches into the samp array. */
@@ -100,12 +99,12 @@ void getxy(struct tsdev *ts, int *x, int *y)
 		if (index < MAX_SAMPLES-1)
 			index++;
 		if (ts_read_raw(ts, &samp[index], 1) < 0) {
-			perror("ts_read");
-			close_framebuffer ();
+			perror("ts_read_raw");
+			close_framebuffer();
 			exit(1);
 		}
 	} while (samp[index].pressure > 0);
-	printf("Took %d samples...\n",index);
+	printf("Took %d samples...\n", index);
 
 	/*
 	 * At this point, we have samples in indices zero to (index-1)
@@ -142,7 +141,40 @@ void getxy(struct tsdev *ts, int *x, int *y)
 	}
 }
 
-void ts_flush (struct tsdev *ts)
+void getxy_validate(struct tsdev *ts, int *x, int *y)
+{
+#define MAX_SAMPLES 128
+	struct ts_sample samp[MAX_SAMPLES];
+	int index;
+
+	do {
+		if (ts_read(ts, &samp[0], 1) < 0) {
+			perror("ts_read");
+			close_framebuffer();
+			exit(1);
+		}
+	} while (samp[0].pressure == 0);
+
+	/* Now collect up to MAX_SAMPLES touches into the samp array. */
+	index = 0;
+	do {
+		if (index < MAX_SAMPLES-1)
+			index++;
+		if (ts_read(ts, &samp[index], 1) < 0) {
+			perror("ts_read");
+			close_framebuffer();
+			exit(1);
+		}
+	} while (samp[index].pressure > 0);
+	printf("Took %d samples...\n", index);
+
+	if (x)
+		*x = samp[index - 1].x;
+	if (y)
+		*y = samp[index - 1].y;
+}
+
+void ts_flush(struct tsdev *ts)
 {
 	/* Read all unread touchscreen data,
 	 * so that we are sure that the next data that we read
@@ -151,15 +183,12 @@ void ts_flush (struct tsdev *ts)
 
 #define TS_BUFFER_MAX 32768
 	static char buffer[TS_BUFFER_MAX];
-	if (read (ts_fd (ts), buffer, TS_BUFFER_MAX) == -1)
+
+	if (read(ts_fd(ts), buffer, TS_BUFFER_MAX) == -1)
 		fprintf(stderr, "ts_flush read error\n");
 }
 
-void print_ascii_logo(void)
+void print_version(void)
 {
-	printf("                 _       _ _ _\n");
-	printf("                | |_ ___| (_) |__\n");
-	printf("                | __/ __| | | '_ \\\n");
-	printf("                | |_\\__ \\ | | |_) |\n");
-	printf("                 \\__|___/_|_|_.__/\n\n");
+	printf("%s", tslib_version());
 }

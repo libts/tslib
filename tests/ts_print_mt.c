@@ -57,17 +57,31 @@
 
 static void usage(char **argv)
 {
-	struct ts_lib_version_data *ver = ts_libversion();
-
-	printf("                 _       _ _ _\n");
-	printf("                | |_ ___| (_) |__\n");
-	printf("                | __/ __| | | '_ \\\n");
-	printf("                | |_\\__ \\ | | |_) |\n");
-	printf("                 \\__|___/_|_|_.__/\n\n");
-	printf("tslib %s / libts ABI version %d (0x%06X)\n",
-		ver->package_version, ver->version_num >> 16, ver->version_num);
+	ts_print_ascii_logo(16);
+	printf("%s", tslib_version());
 	printf("\n");
-	printf("Usage: %s [--raw] [--non-blocking] [-s samples] [-i <device>] [-j <slots>]\n", argv[0]);
+	printf("Usage: %s [--raw] [--non-blocking] [-s <samples>] [-i <device>]\n",
+		argv[0]);
+	printf("\n");
+	printf("-r --raw\n");
+	printf("                don't apply filter modules. use what module_raw\n");
+	printf("                delivers directly.\n");
+	printf("-n --non-blocking\n");
+	printf("                tests non-blocking read and loops\n");
+	printf("-i --idev\n");
+	printf("                explicitly choose the touch input device\n");
+	printf("                overriding TSLIB_TSDEVICE\n");
+	printf("-s --samples\n");
+	printf("                number of samples to request ts_read_mt() to\n");
+	printf("		get before proceding\n");
+	printf("-j --slots\n");
+	printf("                set the number of concurrently available touch\n");
+	printf("                points. This overrides multitouch slots for\n");
+	printf("                testing purposes.\n");
+	printf("-h --help\n");
+	printf("                print this help text\n");
+	printf("-v --version\n");
+	printf("                print version information only\n");
 }
 
 static int errfn(const char *fmt, va_list ap)
@@ -109,10 +123,11 @@ int main(int argc, char **argv)
 			{ "non-blocking", no_argument,       NULL, 'n' },
 			{ "raw",          no_argument,       NULL, 'r' },
 			{ "slots",        required_argument, NULL, 'j' },
+			{ "version",      no_argument,       NULL, 'v' },
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "hi:s:nrj:", long_options, &option_index);
+		int c = getopt_long(argc, argv, "hvi:s:nrj:", long_options, &option_index);
 
 		errno = 0;
 		if (c == -1)
@@ -121,6 +136,10 @@ int main(int argc, char **argv)
 		switch (c) {
 		case 'h':
 			usage(argv);
+			return 0;
+
+		case 'v':
+			printf("%s\n", tslib_version());
 			return 0;
 
 		case 'i':
@@ -158,6 +177,7 @@ int main(int argc, char **argv)
 
 		if (errno) {
 			char str[9];
+
 			sprintf(str, "option ?");
 			str[7] = c & 0xff;
 			perror(str);

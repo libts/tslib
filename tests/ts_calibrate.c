@@ -19,6 +19,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -31,8 +32,12 @@
 #include "testutils.h"
 #include "ts_calibrate.h"
 
+#define CROSS_BOUND_DIST	50
+#define VALIDATE_BOUNDARY_MIN	10
+#define VALIDATE_LOOPS_DEFAULT	3
+
 static int palette[] = {
-	0x000000, 0xffe080, 0xffffff, 0xe0c0a0
+	0x000000, 0xffe080, 0xffffff, 0xe0c0a0, 0xff0000, 0x00ff00
 };
 #define NR_COLORS (sizeof(palette) / sizeof(palette[0]))
 
@@ -45,10 +50,27 @@ static void sig(int sig)
 	exit(1);
 }
 
+static unsigned int getticks()
+{
+	static struct timeval ticks = {0};
+	static unsigned int val = 0;
+
+	gettimeofday(&ticks, NULL);
+	val = ticks.tv_sec * 1000;
+	val += ticks.tv_usec / 1000;
+
+	return val;
+}
+
 static void get_sample(struct tsdev *ts, calibration *cal,
-		       int index, int x, int y, char *name)
+		       int index, int x, int y, char *name, short redo)
 {
 	static int last_x = -1, last_y;
+
+	if (redo) {
+		last_x = -1;
+		last_y = 0;
+	}
 
 	if (last_x != -1) {
 #define NR_STEPS 10
@@ -75,6 +97,101 @@ static void get_sample(struct tsdev *ts, calibration *cal,
 	last_y = cal->yfb[index] = y;
 
 	printf("%s : X = %4d Y = %4d\n", name, cal->x[index], cal->y[index]);
+}
+
+static int validate_sample(struct tsdev *ts, int x, int y, char *name,
+			   int boundary)
+{
+	static int last_x = -1, last_y;
+	int read_x, read_y;
+	int ret;
+
+	if (last_x != -1) {
+#define NR_STEPS 10
+		int dx = ((x - last_x) << 16) / NR_STEPS;
+		int dy = ((y - last_y) << 16) / NR_STEPS;
+		int i;
+
+		last_x <<= 16;
+		last_y <<= 16;
+		for (i = 0; i < NR_STEPS; i++) {
+			put_cross(last_x >> 16, last_y >> 16, 2 | XORMODE);
+			usleep(1000);
+			put_cross(last_x >> 16, last_y >> 16, 2 | XORMODE);
+			last_x += dx;
+			last_y += dy;
+		}
+	}
+
+	put_cross(x, y, 2 | XORMODE);
+	getxy_validate(ts, &read_x, &read_y);
+
+	if ((read_x > x - boundary) && (read_x < x + boundary) &&
+	    (read_y > y - boundary) && (read_y < y + boundary)) {
+		ret = 0;
+	} else {
+		ret = -1;
+	}
+	put_cross(x, y, 2 | XORMODE);
+
+	last_x = x;
+	last_y = y;
+
+	printf("%s : X = %4d(%4d) Y = %4d(%4d) %s\n",
+	       name, read_x, x, read_y, y,
+	       ret ? "fail" : "pass");
+
+	return ret;
+}
+
+static int ts_validate(struct tsdev *ts, int boundary, unsigned int loops)
+{
+	int ret;
+	char textbuf[64];
+	int random_x, random_y;
+	unsigned int i;
+
+	if (boundary < VALIDATE_BOUNDARY_MIN) {
+		boundary = VALIDATE_BOUNDARY_MIN;
+		fprintf(stderr, "Boundary too small. Using %d\n",
+			boundary);
+	}
+
+	if (loops == 0)
+		loops = VALIDATE_LOOPS_DEFAULT;
+
+	snprintf(textbuf, sizeof(textbuf),
+		 "Validate touchscreen calibration with boundary %d.",
+		 boundary);
+
+	put_string_center(xres / 2, yres / 4, textbuf, 1);
+	put_string_center(xres / 2, yres / 4 + 20,
+			  "Touch crosshair to validate", 2);
+
+	for (i = 0; i < loops; i++) {
+		srand(time(NULL));
+		random_x = rand() % xres;
+		random_y = rand() % yres;
+		ret = validate_sample(ts, random_x, random_y, "random", boundary);
+		if (ret)
+			goto done;
+	}
+
+done:
+	fillrect(0, 0, xres - 1, yres - 1, 0);
+	put_string_center(xres / 2, yres / 4, textbuf, 1);
+
+	if (!ret) {
+		printf("Validation passed.\n");
+		put_string_center(xres / 2, yres / 4 + 20,
+				  "Validation passed", 5);
+	} else {
+		printf("Validation failed.\n");
+		put_string_center(xres / 2, yres / 4 + 20,
+				  "Validation failed", 4);
+	}
+
+	return ret;
 }
 
 static void clearbuf(struct tsdev *ts)
@@ -105,19 +222,29 @@ static void clearbuf(struct tsdev *ts)
 
 static void help(void)
 {
-	struct ts_lib_version_data *ver = ts_libversion();
+	ts_print_ascii_logo(16);
+	print_version();
 
-	print_ascii_logo();
-
-	printf("tslib %s / libts ABI version %d (0x%06X)\n",
-		ver->package_version, ver->version_num >> 16, ver->version_num);
 	printf("\n");
-	printf("Usage: ts_calibrate [-r <rotate_value>]\n");
+	printf("Usage: ts_calibrate [-r <rotate_value>] [--version]\n");
 	printf("\n");
+	printf("-r --rotate\n");
 	printf("        <rotate_value> 0 ... no rotation; 0 degree (default)\n");
 	printf("                       1 ... clockwise orientation; 90 degrees\n");
 	printf("                       2 ... upside down orientation; 180 degrees\n");
 	printf("                       3 ... counterclockwise orientation; 270 degrees\n");
+	printf("-t --min_interval\n");
+	printf("                       minimum time in ms between touch presses\n");
+	printf("-c --validate\n");
+	printf("                       validate the current calibration\n");
+	printf("-b --boundary\n");
+	printf("                       boundary criteria in validation mode\n");
+	printf("-l --loops\n");
+	printf("                       number of crosses to touch in validation mode\n");
+	printf("-h --help\n");
+	printf("                       print this help text\n");
+	printf("-v --version\n");
+	printf("                       print version information only\n");
 	printf("\n");
 	printf("Example (Linux): ts_calibrate -r $(cat /sys/class/graphics/fbcon/rotate)\n");
 	printf("\n");
@@ -134,6 +261,11 @@ int main(int argc, char **argv)
 	char cal_buffer[256];
 	char *calfile = NULL;
 	unsigned int i, len;
+	unsigned int tick = 0;
+	unsigned int min_interval = 0;
+	int boundary = 0;
+	unsigned int validate_loops = 0;
+	short validate_only = 0;
 
 	signal(SIGSEGV, sig);
 	signal(SIGINT, sig);
@@ -143,10 +275,15 @@ int main(int argc, char **argv)
 		const struct option long_options[] = {
 			{ "help",         no_argument,       NULL, 'h' },
 			{ "rotate",       required_argument, NULL, 'r' },
+			{ "version",      no_argument,       NULL, 'v' },
+			{ "min_interval", required_argument, NULL, 't' },
+			{ "validate",     no_argument,       NULL, 'c' },
+			{ "boundary",     required_argument, NULL, 'b' },
+			{ "loop",         required_argument, NULL, 'l' },
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "hr:", long_options, &option_index);
+		int c = getopt_long(argc, argv, "hvr:t:cb:l:", long_options, &option_index);
 
 		errno = 0;
 		if (c == -1)
@@ -157,6 +294,10 @@ int main(int argc, char **argv)
 			help();
 			return 0;
 
+		case 'v':
+			print_version();
+			return 0;
+
 		case 'r':
 			/* extern in fbutils.h */
 			rotation = atoi(optarg);
@@ -164,6 +305,38 @@ int main(int argc, char **argv)
 				help();
 				return 0;
 			}
+			break;
+
+		case 't':
+			min_interval = atoi(optarg);
+			if (min_interval > 10000) {
+				fprintf(stderr, "Minimum interval too long\n");
+				return 0;
+			}
+			break;
+
+		case 'c':
+			validate_only = 1;
+			break;
+
+		case 'b':
+			if (!validate_only) {
+				fprintf(stderr, "--boundary is only available with --validate\n");
+				help();
+				return 0;
+			}
+
+			boundary = atoi(optarg);
+			break;
+
+		case 'l':
+			if (!validate_only) {
+				fprintf(stderr, "--loop is only available with --validate\n");
+				help();
+				return 0;
+			}
+
+			validate_loops = atoi(optarg);
 			break;
 
 		default:
@@ -194,6 +367,9 @@ int main(int argc, char **argv)
 	for (i = 0; i < NR_COLORS; i++)
 		setcolor(i, palette[i]);
 
+	if (validate_only)
+		return ts_validate(ts, boundary, validate_loops);
+
 	put_string_center(xres / 2, yres / 4,
 			  "Touchscreen calibration utility", 1);
 	put_string_center(xres / 2, yres / 4 + 20,
@@ -204,15 +380,80 @@ int main(int argc, char **argv)
 	/* Clear the buffer */
 	clearbuf(ts);
 
-	get_sample(ts, &cal, 0, 50,        50,        "Top left");
+	/* ignore rotation for calibration. only save it.*/
+	int rotation_temp = rotation;
+	int xres_temp = xres;
+	int yres_temp = yres;
+	rotation = 0;
+	xres = xres_orig;
+	yres = yres_orig;
+
+	short redo = 0;
+
+redocalibration:
+	tick = getticks();
+	get_sample(ts, &cal, 0, CROSS_BOUND_DIST,        CROSS_BOUND_DIST,        "Top left", redo);
+	redo = 0;
+	if (getticks() - tick < min_interval) {
+		redo = 1;
+	#ifdef DEBUG
+		printf("ts_calibrate: time before touch press < %dms. restarting.\n",
+			min_interval);
+	#endif
+		goto redocalibration;
+	}
 	clearbuf(ts);
-	get_sample(ts, &cal, 1, xres - 50, 50,        "Top right");
+
+	tick = getticks();
+	get_sample(ts, &cal, 1, xres - CROSS_BOUND_DIST, CROSS_BOUND_DIST,        "Top right", redo);
+	if (getticks() - tick < min_interval) {
+		redo = 1;
+	#ifdef DEBUG
+		printf("ts_calibrate: time before touch press < %dms. restarting.\n",
+			min_interval);
+	#endif
+		goto redocalibration;
+	}
 	clearbuf(ts);
-	get_sample(ts, &cal, 2, xres - 50, yres - 50, "Bot right");
+
+	tick = getticks();
+	get_sample(ts, &cal, 2, xres - CROSS_BOUND_DIST, yres - CROSS_BOUND_DIST, "Bot right", redo);
+	if (getticks() - tick < min_interval) {
+		redo = 1;
+	#ifdef DEBUG
+		printf("ts_calibrate: time before touch press < %dms. restarting.\n",
+			min_interval);
+	#endif
+		goto redocalibration;
+	}
 	clearbuf(ts);
-	get_sample(ts, &cal, 3, 50,        yres - 50, "Bot left");
+
+	tick = getticks();
+	get_sample(ts, &cal, 3, CROSS_BOUND_DIST,        yres - CROSS_BOUND_DIST, "Bot left", redo);
+	if (getticks() - tick < min_interval) {
+		redo = 1;
+	#ifdef DEBUG
+		printf("ts_calibrate: time before touch press < %dms. restarting.\n",
+			min_interval);
+	#endif
+		goto redocalibration;
+	}
 	clearbuf(ts);
-	get_sample(ts, &cal, 4, xres / 2,  yres / 2,  "Center");
+
+	tick = getticks();
+	get_sample(ts, &cal, 4, xres_orig / 2,  yres_orig / 2,  "Center", redo);
+	if (getticks() - tick < min_interval) {
+		redo = 1;
+	#ifdef DEBUG
+		printf("ts_calibrate: time before touch press < %dms. restarting.\n",
+			min_interval);
+	#endif
+		goto redocalibration;
+	}
+
+	rotation = rotation_temp;
+	xres = xres_temp;
+	yres = yres_temp;
 
 	if (perform_calibration (&cal)) {
 		printf("Calibration constants: ");
@@ -233,10 +474,10 @@ int main(int argc, char **argv)
 			exit(1);
 		}
 
-		len = sprintf(cal_buffer, "%d %d %d %d %d %d %d %d %d",
+		len = sprintf(cal_buffer, "%d %d %d %d %d %d %d %d %d %d",
 			      cal.a[1], cal.a[2], cal.a[0],
 			      cal.a[4], cal.a[5], cal.a[3], cal.a[6],
-			      xres, yres);
+			      xres_orig, yres_orig, rotation);
 		if (write(cal_fd, cal_buffer, len) == -1) {
 			perror("write");
 			close_framebuffer();

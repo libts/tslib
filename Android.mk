@@ -11,12 +11,15 @@ LOCAL_SRC_FILES := \
         src/ts_config.c \
         src/ts_error.c \
         src/ts_fd.c \
+        src/ts_get_eventpath.c \
         src/ts_load_module.c \
         src/ts_open.c \
         src/ts_option.c \
         src/ts_parse_vars.c \
         src/ts_read.c \
-        src/ts_read_raw.c
+        src/ts_read_raw.c \
+	src/ts_setup.c \
+	src/ts_version.c
 
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/src/
 LOCAL_CFLAGS := -DTS_CONF=\"/system/etc/ts.conf\"
@@ -193,6 +196,24 @@ LOCAL_MODULE_TAGS := optional
 include $(BUILD_SHARED_LIBRARY)
 
 
+# plugin: invert
+include $(CLEAR_VARS)
+
+LOCAL_PRELINK_MODULE := false
+
+LOCAL_SRC_FILES := plugins/invert.c
+
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/src/
+
+LOCAL_SHARED_LIBRARIES := libdl \
+                        libts
+
+LOCAL_MODULE := ts/plugins/invert
+LOCAL_MODULE_TAGS := optional
+
+include $(BUILD_SHARED_LIBRARY)
+
+
 # ts_calibrate
 include $(CLEAR_VARS)
 
@@ -200,6 +221,7 @@ LOCAL_SRC_FILES :=  tests/testutils.c \
         tests/fbutils-linux.c \
         tests/font_8x8.c \
         tests/font_8x16.c \
+        tests/ts_calibrate_common.c \
         tests/ts_calibrate.c
 
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/src/

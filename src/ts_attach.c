@@ -44,6 +44,7 @@ int __ts_attach_raw(struct tsdev *ts, struct tslib_module_info *info)
 		return 0;
 	}
 
+	/* FIXME coding style */
 	for (next = ts->list, prev = next;
 	     next != NULL && next != prev_list;
 	     next = prev->next, prev = next);

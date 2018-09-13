@@ -1,4 +1,4 @@
 #!/bin/sh
 
-autoreconf -f -i -I $(pwd)/m4
+autoreconf -f -i -I "$(pwd)"/m4
 exit $?

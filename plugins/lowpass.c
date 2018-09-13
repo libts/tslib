@@ -25,8 +25,8 @@
 
 struct tslib_lowpass {
 	struct tslib_module_info module;
-        struct ts_sample last;
-        struct ts_sample ideal;
+	struct ts_sample last;
+	struct ts_sample ideal;
 	struct ts_sample_mt *last_mt;
 	struct ts_sample_mt *ideal_mt;
 	int slots;
@@ -50,32 +50,32 @@ static int lowpass_read(struct tslib_module_info *info, struct ts_sample *samp, 
 
 		if (current.pressure == 0) {
 			var->flags |= VAR_PENUP;
-			samp [count++] = current;
+			samp[count++] = current;
 		} else if (var->flags & VAR_PENUP) {
 			var->flags &= ~VAR_PENUP;
 			var->last = current;
-			samp [count++] = current;
+			samp[count++] = current;
 		} else {
 			var->ideal = current;
 
 			var->ideal.x = var->last.x;
 			delta = current.x - var->last.x;
-			if (delta <= var->threshold && 
+			if (delta <= var->threshold &&
 					delta >= -var->threshold)
 				delta = 0;
 			delta *= var->factor;
 			var->ideal.x += delta;
-			
+
 			var->ideal.y = var->last.y;
 			delta = current.y - var->last.y;
-			if (delta <= var->threshold && 
+			if (delta <= var->threshold &&
 					delta >= -var->threshold)
 				delta = 0;
 			delta *= var->factor;
 			var->ideal.y += delta;
 
 			var->last = var->ideal;
-			samp [count++] = var->ideal;
+			samp[count++] = var->ideal;
 		}
 	}
 	return count;
@@ -189,11 +189,10 @@ static int lowpass_fini(struct tslib_module_info *info)
 
 	free(info);
 
-        return 0;
+	return 0;
 }
 
-static const struct tslib_ops lowpass_ops =
-{
+static const struct tslib_ops lowpass_ops = {
 	.read		= lowpass_read,
 	.read_mt	= lowpass_read_mt,
 	.fini		= lowpass_fini,
@@ -225,8 +224,8 @@ static int lowpass_factor(struct tslib_module_info *inf, char *str, void *data)
 	return 0;
 }
 
-static int lowpass_threshold(struct tslib_module_info *inf, char *str, 
-		void *data)
+static int lowpass_threshold(struct tslib_module_info *inf, char *str,
+			     void *data)
 {
 	struct tslib_lowpass *var = (struct tslib_lowpass *)inf;
 	long result;
@@ -234,7 +233,7 @@ static int lowpass_threshold(struct tslib_module_info *inf, char *str,
 
 	result = strtol(str, NULL, 0);
 	if (errno == ERANGE)
-	       return -1;
+		return -1;
 
 	errno = err;
 
@@ -251,8 +250,7 @@ static int lowpass_threshold(struct tslib_module_info *inf, char *str,
 	return 0;
 }
 
-static const struct tslib_vars lowpass_vars[] =
-{
+static const struct tslib_vars lowpass_vars[] = {
 	{ "factor",	(void *)1, lowpass_factor },
 	{ "threshold",  (void *)1, lowpass_threshold },
 };
@@ -268,7 +266,7 @@ TSAPI struct tslib_module_info *lowpass_mod_init(__attribute__ ((unused)) struct
 	if (var == NULL)
 		return NULL;
 
-	memset(var, 0, sizeof *var);
+	memset(var, 0, sizeof(*var));
 	var->module.ops = &lowpass_ops;
 
 	var->factor = 0.4;

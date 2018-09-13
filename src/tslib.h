@@ -108,6 +108,7 @@ struct ts_lib_version_data {
 #define TSLIB_VERSION_MT		(1 << 0)	/* multitouch support */
 #define TSLIB_VERSION_OPEN_RESTRICTED	(1 << 1)	/* ts_open_restricted() */
 #define TSLIB_VERSION_EVENTPATH		(1 << 2)	/* ts_get_eventpath() */
+#define TSLIB_VERSION_VERSION		(1 << 3)	/* tslib_version() */
 
 enum ts_param {
 	TS_SCREEN_RES = 0,		/* 2 integer args, x and y */
@@ -217,6 +218,16 @@ TSAPI int ts_conf_set(struct tsdev *ts, const char *path, struct ts_module_conf 
  * This function returns the path to the opened touchscreen input device file.
  */
 TSAPI char *ts_get_eventpath(struct tsdev *tsdev);
+
+/*
+ * This simply returns tslib's version string
+ */
+TSAPI char *tslib_version(void);
+
+/*
+ * This prints tslib's logo to stdout, with pos preceding spaces
+ */
+TSAPI void ts_print_ascii_logo(unsigned int pos);
 
 #ifdef __cplusplus
 }

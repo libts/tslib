@@ -69,8 +69,14 @@ static const struct tslib_module_desc tslib_modules[] = {
 #ifdef TSLIB_STATIC_IIR_MODULE
 	{ "iir", iir_mod_init },
 #endif
+#ifdef TSLIB_STATIC_INPUT_EVDEV_MODULE
+	{ "input_evdev", input_evdev_mod_init },
+#endif
 #ifdef TSLIB_STATIC_INPUT_MODULE
 	{ "input", input_mod_init },
+#endif
+#ifdef TSLIB_STATIC_INVERT_MODULE
+	{ "invert", invert_mod_init },
 #endif
 #ifdef TSLIB_STATIC_LINEAR_MODULE
 	{ "linear", linear_mod_init },
@@ -86,6 +92,9 @@ static const struct tslib_module_desc tslib_modules[] = {
 #endif
 #ifdef TSLIB_STATIC_MK712_MODULE
 	{ "mk712", mk712_mod_init },
+#endif
+#ifdef TSLIB_STATIC_ONE_WIRE_TS_INPUT_MODULE
+	{ "one_wire_ts_input", one_wire_ts_input_mod_init },
 #endif
 #ifdef TSLIB_STATIC_PTHRES_MODULE
 	{ "pthres", pthres_mod_init },

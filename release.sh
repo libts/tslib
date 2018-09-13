@@ -54,7 +54,7 @@ else
 fi
 
 # Version number sanity check
-if grep ${version} configure.ac
+if grep "${version}" configure.ac
 then
        echo "configurations seems ok"
 else
@@ -71,6 +71,11 @@ if [ ! "${branch}" = "master" ] ; then
 	exit 1
 fi
 
+
+datestamp=$(date +"%F")
+sed -i -e "s/^#define LIBTS_DATESTAMP .*/#define LIBTS_DATESTAMP \"$datestamp\"/g" \
+ src/ts_version.c
+
 if git diff-index --quiet HEAD --; then
 	# no changes
 	echo "there are no uncommitted changes (version bump)"
@@ -81,16 +86,16 @@ echo "    are you fine with the following version bump?"
 echo "======================================================"
 git diff
 echo "======================================================"
-read -p "           Press enter to continue"
+read -r -p "           Press enter to continue"
 echo "======================================================"
 
 ./autogen.sh
-./configure --disable-dependency-tracking
+./configure
 make distclean
 
 # Linux all modules build test
-./configure --disable-dependency-tracking \
-	--enable-cy8mrln-palmpre \
+./configure --enable-cy8mrln-palmpre \
+	--enable-one-wire-ts-input \
 	--enable-dmc_dus3000 \
 	--enable-galax \
 	--enable-arctic2 \
@@ -100,28 +105,30 @@ make distclean
 	--enable-h3600 \
 	--enable-linear-h2200 \
 	--enable-mk712 \
+	--enable-tatung \
+	--enable-input-evdev \
 	--enable-ucb1x00
 
-make -j${NUMCPUS}
+make -j"${NUMCPUS}"
 make clean
 make distclean
 
 # Linux SDL2 build test
-./configure --disable-dependency-tracking \
-	--with-sdl2
+./configure --with-sdl2
 
-make -j${NUMCPUS}
+make -j"${NUMCPUS}"
 make clean
 make distclean
 
 # static build test
-./configure --disable-dependency-tracking \
-	--disable-shared --enable-static \
+./configure --disable-shared --enable-static \
 	--enable-input=static \
+	--enable-input-evdev=static \
 	--enable-arctic2=static \
 	--enable-collie=static \
 	--enable-corgi=static \
 	--enable-cy8mrln-palmpre=static \
+	--enable-one-wire-ts-input=static \
 	--enable-dmc_dus3000=static \
 	--enable-dmc=static \
 	--enable-galax=static \
@@ -136,32 +143,45 @@ make distclean
 	--enable-debounce=static \
 	--enable-median=static \
 	--enable-iir=static \
+	--enable-invert=static \
 	--enable-variance=static \
 	--enable-dejitter=static \
 	--enable-linear=static \
 	--enable-linear-h2200=static \
 	--enable-lowpass=static
 
-make -j${NUMCPUS}
+make -j"${NUMCPUS}"
 make clean
 make distclean
 ./autogen-clean.sh
 
+# cmake build test
+rm -rf build
+mkdir build && cd build
+cmake ..
+cmake --build .
+cd ..
+rm -rf build
+
 git clean -d -f
 
 git commit -a -m "tslib ${version}"
-git tag -s ${version} -m "tslib ${version}"
+git tag -s "${version}" -m "tslib ${version}"
 
 ./autogen.sh && ./configure && make distcheck
-sha256sum tslib-${version}.tar.xz > tslib-${version}.tar.xz.sha256
-sha256sum tslib-${version}.tar.gz > tslib-${version}.tar.gz.sha256
-sha256sum tslib-${version}.tar.bz2 > tslib-${version}.tar.bz2.sha256
+sha256sum tslib-"${version}".tar.xz > tslib-"${version}".tar.xz.sha256
+sha256sum tslib-"${version}".tar.gz > tslib-"${version}".tar.gz.sha256
+sha256sum tslib-"${version}".tar.bz2 > tslib-"${version}".tar.bz2.sha256
 
-sha512sum tslib-${version}.tar.xz > tslib-${version}.tar.xz.sha512
-sha512sum tslib-${version}.tar.gz > tslib-${version}.tar.gz.sha512
-sha512sum tslib-${version}.tar.bz2 > tslib-${version}.tar.bz2.sha512
+sha512sum tslib-"${version}".tar.xz > tslib-"${version}".tar.xz.sha512
+sha512sum tslib-"${version}".tar.gz > tslib-"${version}".tar.gz.sha512
+sha512sum tslib-"${version}".tar.bz2 > tslib-"${version}".tar.bz2.sha512
 
-gpg -b -a tslib-${version}.tar.xz
-gpg -b -a tslib-${version}.tar.gz
-gpg -b -a tslib-${version}.tar.bz2
+gpg -b -a tslib-"${version}".tar.xz
+gpg -b -a tslib-"${version}".tar.gz
+gpg -b -a tslib-"${version}".tar.bz2
 
+sed -i -e "s/^#define LIBTS_DATESTAMP .*/#define LIBTS_DATESTAMP \"[unreleased]\"/g" \
+ src/ts_version.c
+sed -i -e "s/${version}/${version}+/g" configure.ac CMakeLists.txt
+git commit -a -m "tslib ${version}+"

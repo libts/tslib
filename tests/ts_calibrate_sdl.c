@@ -35,12 +35,8 @@
 
 static void help(void)
 {
-	struct ts_lib_version_data *ver = ts_libversion();
-
-	print_ascii_logo();
-
-	printf("tslib %s / libts ABI version %d (0x%06X)\n",
-		ver->package_version, ver->version_num >> 16, ver->version_num);
+	ts_print_ascii_logo(16);
+	printf("%s\n", tslib_version());
 	printf("\n");
 	printf("Usage: ts_calibrate [-i <device>]\n");
 	printf("\n");
@@ -154,7 +150,8 @@ int main(int argc, char **argv)
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "hi:", long_options, &option_index);
+		int c = getopt_long(argc, argv, "hi:", long_options,
+				    &option_index);
 
 		errno = 0;
 		if (c == -1)
@@ -175,6 +172,7 @@ int main(int argc, char **argv)
 
 		if (errno) {
 			char str[9];
+
 			sprintf(str, "option ?");
 			str[7] = c & 0xff;
 			perror(str);

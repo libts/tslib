@@ -8,8 +8,12 @@
 #
 #
 
-AM_CFLAGS	 = -DPLUGIN_DIR=\"@PLUGIN_DIR@\" -DTS_CONF=\"@TS_CONF@\" -DTS_POINTERCAL=\"@TS_POINTERCAL@\" \
-		   $(DEBUGFLAGS) $(LIBFLAGS) $(VIS_CFLAGS)
+EXTRA_DIST	 = CMakeLists.txt
+
+AM_CFLAGS	 = -DPLUGIN_DIR=\"@PLUGIN_DIR@\" -DTS_CONF=\"@TS_CONF@\" \
+		   -DTS_POINTERCAL=\"@TS_POINTERCAL@\" \
+		   $(DEBUGFLAGS) $(LIBFLAGS) $(VIS_CFLAGS) \
+		   $(LIBEVDEV_CFLAGS)
 
 noinst_HEADERS   = tslib-private.h tslib-filter.h
 include_HEADERS  = tslib.h
@@ -66,6 +70,10 @@ if ENABLE_STATIC_VARIANCE_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/variance.c
 endif
 
+if ENABLE_STATIC_INVERT_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/invert.c
+endif
+
 if ENABLE_STATIC_LOWPASS_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/lowpass.c
 endif
@@ -76,6 +84,10 @@ endif
 
 if ENABLE_STATIC_INPUT_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/input-raw.c
+endif
+
+if ENABLE_STATIC_INPUT_EVDEV_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/input-evdev-raw.c
 endif
 
 if ENABLE_STATIC_UCB1X00_MODULE
@@ -118,6 +130,9 @@ if ENABLE_STATIC_WAVESHARE_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/waveshare-raw.c
 endif
 
+if ENABLE_STATIC_ONE_WIRE_TS_INPUT_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/one-wire-ts-input-raw.c
+endif
 
 if ENABLE_STATIC_DMC_DUS3000_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/dmc_dus3000-raw.c
