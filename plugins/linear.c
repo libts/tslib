@@ -84,6 +84,28 @@ static int linear_read(struct tslib_module_info *info, struct ts_sample *samp,
 				samp->x = samp->y;
 				samp->y = tmp;
 			}
+
+			switch (lin->rot) {
+			int rot_tmp;
+			case 0:
+				break;
+			case 1:
+				rot_tmp = samp->x;
+				samp->x = samp->y;
+				samp->y = lin->cal_res_x - rot_tmp - 1;
+				break;
+			case 2:
+				samp->x = lin->cal_res_x - samp->x - 1;
+				samp->y = lin->cal_res_y - samp->y - 1;
+				break;
+			case 3:
+				rot_tmp = samp->x;
+				samp->x = lin->cal_res_y - samp->y - 1;
+				samp->y = rot_tmp ;
+				break;
+			default:
+				break;
+			}
 		}
 	}
 
