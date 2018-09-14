@@ -50,8 +50,11 @@ struct ts_module_conf *ts_conf_get(struct tsdev *ts, const char *path)
 		goto fail;
 
 	for (i = 0; i < MAX_LINES; i++) {
-		if (!modulebuf[i])
+		if (!modulebuf[i][0])
 			continue;
+	#ifdef DEBUG
+		printf("ts_conf_get: module found at line %d\n", i);
+	#endif
 
 		conf_next = calloc(1, sizeof(struct ts_module_conf));
 		if (!conf_next)

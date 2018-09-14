@@ -47,23 +47,30 @@ static void usage(char **argv)
 
 static void print_conf(struct ts_module_conf *conf)
 {
-#if 0
+#if 1
 	int forward = 0;
 	struct ts_module_conf *conf_tmp;
 
-	conf_tmp = conf;
+	if (conf->next && !conf->prev)
+		forward = 1;
 
-	while (conf_tmp) {
-		printf("ts_conf test: module %s %s\n", conf_tmp->name, conf_tmp->params);
+	if (conf->prev && !conf->next)
+		forward = 0;
 
-		if (conf_tmp->next)
-			forward = 1;
+	printf("ts_conf test: module %s\n", conf->name);
 
-		conf_tmp = conf_tmp->next;
-
-		if (!forward)
-			conf_tmp = conf_tmp->prev;
+	if (forward) {
+		while (conf->next) {
+			conf = conf->next;
+			printf("ts_conf test: module %s\n", conf->name);
+		}
+	} else {
+		while (conf->prev) {
+			conf = conf->prev;
+			printf("ts_conf test: module %s\n", conf->name);
+		}
 	}
+
 #endif
 }
 
