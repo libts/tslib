@@ -45,16 +45,39 @@ static void usage(char **argv)
 		argv[0]);
 }
 
+static void print_conf(struct ts_module_conf *conf)
+{
+#if 0
+	int forward = 0;
+	struct ts_module_conf *conf_tmp;
+
+	conf_tmp = conf;
+
+	while (conf_tmp) {
+		printf("ts_conf test: module %s %s\n", conf_tmp->name, conf_tmp->params);
+
+		if (conf_tmp->next)
+			forward = 1;
+
+		conf_tmp = conf_tmp->next;
+
+		if (!forward)
+			conf_tmp = conf_tmp->prev;
+	}
+#endif
+}
+
 static int menu(struct tsdev *ts)
 {
 	int choice;
 	int ret = 0;
+	struct ts_module_conf *conf;
 
 	printf("tslib filter configuration program\n");
 	do {
 		printf("\n");
-		printf("1. reload modules from ts.conf\n");
-		printf("2. print ts.conf\n");
+		printf("1. reload ts.conf\n");
+		printf("2. read and print ts.conf\n");
 		printf("3. Exit\n");
 		scanf("%d",&choice);
 
@@ -65,6 +88,8 @@ static int menu(struct tsdev *ts)
 				goto done;
 			break;
 		case 2:
+			conf = ts_conf_get(ts, NULL);
+			print_conf(conf);
 			break;
 		case 3:
 			printf("Goodbye\n");

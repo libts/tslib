@@ -39,6 +39,7 @@ int __ts_attach_raw(struct tsdev *ts, struct tslib_module_info *info);
 int ts_load_module(struct tsdev *dev, const char *module, const char *params);
 int ts_load_module_raw(struct tsdev *dev, const char *module, const char *params);
 int ts_error(const char *fmt, ...);
+int ts_config_ro(struct tsdev *ts, char **conffile_modules, char **conffile_params);
 
 #ifdef __cplusplus
 }
