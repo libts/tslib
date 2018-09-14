@@ -1,7 +1,7 @@
 /*
  *  tslib/src/ts_config_filter.c
  *
- *  Copyright (C) 2017 Martin Kepplinger.
+ *  Copyright (C) 2018 Martin Kepplinger.
  *
  * This file is placed under the LGPL.  Please see the file
  * COPYING for more details.
@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include "tslib-private.h"
 
-/* return a list of structs. Each struct is one commented-in module */
+/* return a ordered list of structs. Each struct is one commented-in module */
 struct ts_module_conf *ts_conf_get(struct tsdev *ts, const char *path)
 {
 	/* config file read */

@@ -14,35 +14,35 @@ AM_CFLAGS               = -DTS_POINTERCAL=\"@TS_POINTERCAL@\" $(DEBUGFLAGS)
 AM_CPPFLAGS		= -I$(top_srcdir)/src
 
 if HAIKU
-bin_PROGRAMS		= ts_print ts_print_raw ts_finddev ts_print_mt
+bin_PROGRAMS		= ts_print ts_print_raw ts_finddev ts_print_mt ts_conf
 endif
 
 if WINDOWS
 if SDL
-bin_PROGRAMS		= ts_print ts_print_raw ts_print_mt ts_calibrate ts_test_mt
+bin_PROGRAMS		= ts_print ts_print_raw ts_print_mt ts_conf ts_calibrate ts_test_mt
 else
-bin_PROGRAMS		= ts_print ts_print_raw ts_print_mt
+bin_PROGRAMS		= ts_print ts_print_raw ts_print_mt ts_conf
 endif
 endif
 
 if LINUX
 if SDL
-bin_PROGRAMS		= ts_test_mt ts_calibrate ts_print ts_print_mt ts_print_raw ts_finddev ts_verify
+bin_PROGRAMS		= ts_test_mt ts_calibrate ts_print ts_conf ts_print_mt ts_print_raw ts_finddev ts_verify
 else
-bin_PROGRAMS		= ts_test ts_test_mt ts_calibrate ts_print ts_print_mt ts_print_raw ts_harvest ts_finddev ts_verify
+bin_PROGRAMS		= ts_test ts_test_mt ts_calibrate ts_conf ts_print ts_print_mt ts_print_raw ts_harvest ts_finddev ts_verify
 endif
 endif
 
 if FREEBSD
 if SDL
-bin_PROGRAMS		= ts_test_mt ts_calibrate ts_print ts_print_mt ts_print_raw ts_finddev
+bin_PROGRAMS		= ts_test_mt ts_calibrate ts_print ts_print_mt ts_conf ts_print_raw ts_finddev
 else
-bin_PROGRAMS		= ts_test ts_test_mt ts_calibrate ts_print ts_print_mt ts_print_raw ts_harvest ts_finddev
+bin_PROGRAMS		= ts_test ts_test_mt ts_calibrate ts_print ts_print_mt ts_conf ts_print_raw ts_harvest ts_finddev
 endif
 endif
 
 if HURD
-bin_PROGRAMS		= ts_print ts_print_raw ts_finddev ts_print_mt
+bin_PROGRAMS		= ts_print ts_print_raw ts_finddev ts_print_mt ts_conf
 endif
 
 ts_test_SOURCES		= ts_test.c testutils.c testutils.h fbutils.h font_8x8.c font_8x16.c font.h
@@ -101,3 +101,6 @@ endif
 
 ts_finddev_SOURCES      = ts_finddev.c
 ts_finddev_LDADD        = $(top_builddir)/src/libts.la $(LIBEVDEV_LIBS)
+
+ts_conf_SOURCES		= ts_conf.c
+ts_conf_LDADD		= $(top_builddir)/src/libts.la $(LIBEVDEV_LIBS)
