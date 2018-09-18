@@ -118,8 +118,9 @@ enum ts_param {
 struct ts_module_conf {
 	char *name;
 	char *params;
-	int active;			/* is the module currently running?
-					 * if not, ts_reconfig() might be necessary. */
+	int raw;
+	int nr;
+
 	struct ts_module_conf *next;
 	struct ts_module_conf *prev;
 };
@@ -207,12 +208,12 @@ TSAPI struct ts_lib_version_data *ts_libversion(void);
 /*
  * Get the list of (commented-in) ts.conf module lines (as structs)
  */
-TSAPI struct ts_module_conf *ts_conf_get(struct tsdev *ts, const char *path);
+TSAPI struct ts_module_conf *ts_conf_get(struct tsdev *ts);
 
 /*
  * Write the list of modules to ts.conf
  */
-TSAPI int ts_conf_set(struct tsdev *ts, const char *path, struct ts_module_conf *conf);
+TSAPI int ts_conf_set(struct tsdev *ts, struct ts_module_conf *conf);
 
 /*
  * This function returns the path to the opened touchscreen input device file.

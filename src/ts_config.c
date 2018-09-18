@@ -51,7 +51,8 @@ static void discard_null_tokens(char **p, char **tokPtr)
 	}
 }
 
-static int __ts_config(struct tsdev *ts, char **conffile_modules, char **conffile_params)
+static int __ts_config(struct tsdev *ts, char **conffile_modules,
+		       char **conffile_params, int *raw)
 {
 	char buf[BUF_SIZE], *p;
 	FILE *f;
@@ -150,6 +151,9 @@ static int __ts_config(struct tsdev *ts, char **conffile_modules, char **conffil
 				sprintf(conffile_modules[line], module_name);
 				if (conffile_params)
 					sprintf(conffile_params[line], p);
+
+				if (raw)
+					raw[line] = 1;
 			}
 		} else {
 			ts_error("%s: Unrecognised option %s:%d:%s\n",
@@ -175,14 +179,15 @@ static int __ts_config(struct tsdev *ts, char **conffile_modules, char **conffil
 	return ret;
 }
 
-int ts_config_ro(struct tsdev *ts, char **conffile_modules, char **conffile_params)
+int ts_config_ro(struct tsdev *ts, char **conffile_modules,
+		 char **conffile_params, int *raw)
 {
-	return __ts_config(ts, conffile_modules, conffile_params);
+	return __ts_config(ts, conffile_modules, conffile_params, raw);
 }
 
 int ts_config(struct tsdev *ts)
 {
-	return __ts_config(ts, NULL, NULL);
+	return __ts_config(ts, NULL, NULL, NULL);
 }
 
 int ts_reconfig(struct tsdev *ts)

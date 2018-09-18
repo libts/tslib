@@ -45,11 +45,40 @@ static void usage(char **argv)
 		argv[0]);
 }
 
+static void print_module_line(struct ts_module_conf *conf)
+{
+	if (conf->raw)
+		printf("ts_conf: RAW access module: %s " YELLOW "%s" RESET "\n",
+			conf->name, conf->params);
+	else
+		printf("ts_conf: module Nr. %d: %s " YELLOW "%s" RESET "\n",
+			conf->nr, conf->name, conf->params);
+}
+
 static void print_conf(struct ts_module_conf *conf)
 {
-#if 1
+	if (conf->next && !conf->prev) {
+		while (conf) {
+			print_module_line(conf);
+			conf = conf->next;
+		}
+	} else if (conf->prev && !conf->next) {
+		while (conf) {
+			print_module_line(conf);
+			conf = conf->prev;
+		}
+	}
+}
+
+static void edit_params(struct ts_module_conf *conf)
+{
 	int forward = 0;
-	struct ts_module_conf *conf_tmp;
+	int choice;
+	char buf[1024];
+
+	print_conf(conf);
+	printf("Write parameters for module Nr.: ");
+	scanf("%d", &choice);
 
 	if (conf->next && !conf->prev)
 		forward = 1;
@@ -57,35 +86,160 @@ static void print_conf(struct ts_module_conf *conf)
 	if (conf->prev && !conf->next)
 		forward = 0;
 
-	printf("ts_conf test: module %s\n", conf->name);
-
 	if (forward) {
-		while (conf->next) {
+		while (conf) {
+			if (conf->nr == choice) {
+				printf("%s\n", conf->params);
+				scanf("%s", buf);
+				sprintf(conf->params, "%s", buf);
+			}
 			conf = conf->next;
-			printf("ts_conf test: module %s\n", conf->name);
 		}
 	} else {
-		while (conf->prev) {
+		while (conf) {
+			if (conf->nr == choice) {
+				printf("%s\n", conf->params);
+				scanf("%s", buf);
+				sprintf(conf->params, "%s", buf);
+			}
 			conf = conf->prev;
-			printf("ts_conf test: module %s\n", conf->name);
 		}
 	}
+}
 
-#endif
+static int add_line_after(struct ts_module_conf *conf)
+{
+	struct ts_module_conf *new_filter;
+	struct ts_module_conf *conf_first = NULL;
+	struct ts_module_conf *conf_last = NULL;
+	int nr;
+	int found = 0;
+
+	printf("add module after nr: ");
+	scanf("%d", &nr);
+
+	while (conf) {
+		if (!conf->prev)
+			conf_first = conf;
+
+		conf = conf->prev;
+	}
+	conf = conf_first;
+
+	while (conf) {
+		if (conf->nr == nr) {
+			found = 1;
+			break;
+		}
+		if (!conf->next)
+			conf_last = conf;
+		conf = conf->next;
+	}
+	if (!found) {
+		fprintf(stderr, "ts_conf: module not found\n");
+		return -1;
+	}
+	if (conf_last)
+		conf = conf_last;
+
+	new_filter = calloc(1, sizeof(struct ts_module_conf));
+	if (!new_filter)
+		return -1;
+
+	new_filter->name = calloc(1, 1024);
+	if (!new_filter->name)
+		return -1;
+
+	new_filter->params = calloc(1, 1024);
+	if (!new_filter->params)
+		return -1;
+
+	printf("new module name without parameters: ");
+	scanf("%s", new_filter->name);
+	printf("parameters (Ctrl-D for none): ");
+	scanf("%s", new_filter->params);
+	new_filter->nr = ++nr;
+
+	new_filter->prev = conf;
+	new_filter->next = conf->next;
+	conf->next = new_filter;
+
+	while (conf) {
+		if (conf->prev && conf->nr == conf->prev->nr)
+			conf->nr++;
+		conf = conf->next;
+	}
+
+	return 0;
+}
+
+static void remove_line(struct ts_module_conf *conf)
+{
+	int nr;
+	struct ts_module_conf *conf_first = NULL;
+	struct ts_module_conf *conf_last = NULL;
+	int found = 0;
+
+	printf("remove module nr: ");
+	scanf("%d", &nr);
+
+	while (conf) {
+		if (!conf->prev)
+			conf_first = conf;
+
+		conf = conf->prev;
+	}
+	conf = conf_first;
+	while (conf) {
+		if (conf->nr == nr) {
+			found = 1;
+			break;
+		}
+		if (!conf->next)
+			conf_last = conf;
+		conf = conf->next;
+	}
+	if (!found) {
+		fprintf(stderr, "ts_conf: module not found\n");
+		return;
+	}
+	if (conf_last)
+		conf = conf_last;
+
+
+	if (conf->prev)
+		conf->prev->next = conf->next;
+
+	if (conf->next)
+		conf->next->prev = conf->prev;
+
+	free(conf->name);
+	free(conf->params);
+	free(conf);
+
+	conf = conf_first;
+	while (conf) {
+		if (conf->prev && conf->nr == conf->prev->nr)
+			conf->nr++;
+		conf = conf->next;
+	}
 }
 
 static int menu(struct tsdev *ts)
 {
 	int choice;
 	int ret = 0;
-	struct ts_module_conf *conf;
+	struct ts_module_conf *conf = NULL;
 
-	printf("tslib filter configuration program\n");
+	printf("tslib: edit the configuration file and loaded filters\n");
 	do {
 		printf("\n");
-		printf("1. reload ts.conf\n");
-		printf("2. read and print ts.conf\n");
-		printf("3. Exit\n");
+		printf("1. manually reload ts.conf\n");
+		printf("2. show ts.conf modules\n");
+		printf("3. add one module\n");
+		printf("4. change module parameters\n");
+		printf("5. remove one module\n");
+		printf("6. Exit\n");
 		scanf("%d",&choice);
 
 		switch (choice) {
@@ -95,16 +249,45 @@ static int menu(struct tsdev *ts)
 				goto done;
 			break;
 		case 2:
-			conf = ts_conf_get(ts, NULL);
+			/* TODO destroy or keep */
+			conf = ts_conf_get(ts);
 			print_conf(conf);
 			break;
 		case 3:
+			conf = ts_conf_get(ts);
+			print_conf(conf);
+			if (add_line_after(conf))
+				goto done;
+			ret = ts_conf_set(ts, conf);
+			if (ret < 0)
+				goto done;
+			print_conf(conf);
+			break;
+		case 4:
+			conf = ts_conf_get(ts);
+			print_conf(conf);
+			edit_params(conf);
+			ret = ts_conf_set(ts, conf);
+			if (ret < 0)
+				goto done;
+			print_conf(conf);
+			break;
+		case 5:
+			conf = ts_conf_get(ts);
+			print_conf(conf);
+			remove_line(conf);
+			ret = ts_conf_set(ts, conf);
+			if (ret < 0)
+				goto done;
+			print_conf(conf);
+			break;
+		case 6:
 			printf("Goodbye\n");
 			break;
 		default: printf("Unknown choice.\n");
 			break;
 		}
-	} while (choice != 3);
+	} while (choice != 6);
 
 done:
 	ts_close(ts);
