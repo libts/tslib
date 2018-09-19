@@ -84,17 +84,26 @@ static void edit_params(struct ts_module_conf *conf)
 {
 	int choice;
 	char buf[1024];
+	int ret;
 
 	print_conf(conf);
 	printf("Write parameters for module Nr.: ");
-	scanf("%d", &choice);
+	ret = scanf("%d", &choice);
+	if (ret <= 0) {
+		perror("scanf");
+		return;
+	}
 
 	conf = get_first(conf);
 
 	while (conf) {
 		if (conf->nr == choice) {
 			printf("%s\n", conf->params);
-			scanf("%s", buf);
+			ret = scanf("%s", buf);
+			if (ret <= 0) {
+				perror("scanf");
+				return;
+			}
 			sprintf(conf->params, "%s", buf);
 		}
 		conf = conf->next;
@@ -107,9 +116,14 @@ static int add_line_after(struct ts_module_conf *conf)
 	struct ts_module_conf *conf_last = NULL;
 	int nr;
 	int found = 0;
+	int ret;
 
 	printf("add module after nr: ");
-	scanf("%d", &nr);
+	ret = scanf("%d", &nr);
+	if (ret <= 0) {
+		perror("scanf");
+		return -1;
+	}
 
 	conf = get_first(conf);
 
@@ -135,16 +149,24 @@ static int add_line_after(struct ts_module_conf *conf)
 
 	new_filter->name = calloc(1, 1024);
 	if (!new_filter->name)
-		return -1;
+		goto err;
 
 	new_filter->params = calloc(1, 1024);
 	if (!new_filter->params)
-		return -1;
+		goto err;
 
 	printf("new module name without parameters: ");
-	scanf("%s", new_filter->name);
+	ret = scanf("%s", new_filter->name);
+	if (ret <= 0) {
+		perror("scanf");
+		goto err;
+	}
 	printf("parameters (Ctrl-D for none): ");
-	scanf("%s", new_filter->params);
+	ret = scanf("%s", new_filter->params);
+	if (ret <= 0) {
+		perror("scanf");
+		goto err;
+	}
 	new_filter->nr = ++nr;
 
 	new_filter->prev = conf;
@@ -158,6 +180,17 @@ static int add_line_after(struct ts_module_conf *conf)
 	}
 
 	return 0;
+
+err:
+	if (new_filter) {
+		if (new_filter->name)
+			free(new_filter->name);
+		if (new_filter->params)
+			free(new_filter->params);
+		free(new_filter);
+	}
+
+	return -1;
 }
 
 static void remove_line(struct ts_module_conf *conf)
@@ -166,9 +199,14 @@ static void remove_line(struct ts_module_conf *conf)
 	struct ts_module_conf *conf_first = NULL;
 	struct ts_module_conf *conf_last = NULL;
 	int found = 0;
+	int ret;
 
 	printf("remove module nr: ");
-	scanf("%d", &nr);
+	ret = scanf("%d", &nr);
+	if (ret <= 0) {
+		perror("scanf");
+		return;
+	}
 
 	conf = conf_first = get_first(conf);
 
@@ -222,7 +260,11 @@ static int menu(struct tsdev *ts)
 		printf("4. change module parameters\n");
 		printf("5. remove one module\n");
 		printf("6. Exit\n");
-		scanf("%d",&choice);
+		ret = scanf("%d",&choice);
+		if (ret <= 0) {
+			perror("scanf");
+			return -1;
+		}
 
 		switch (choice) {
 		case 1:
@@ -233,7 +275,7 @@ static int menu(struct tsdev *ts)
 		case 2:
 			conf = ts_conf_get(ts);
 			print_conf(conf);
-			ts_conf_set(ts, conf);
+			ret = ts_conf_set(ts, conf);
 			if (ret < 0)
 				goto done;
 			break;
