@@ -85,7 +85,7 @@ static void edit_params(struct ts_module_conf *conf)
 	int choice;
 	char buf[1024] = { '\0' };
 	int ret;
-	char c;
+	int c;
 
 	print_conf(conf);
 	printf("Write parameters for module Nr.: ");
@@ -117,7 +117,7 @@ static int add_line_after(struct ts_module_conf *conf)
 	int nr;
 	int found = 0;
 	int ret;
-	char c;
+	int c;
 
 	printf("add module after nr: ");
 	ret = scanf("%d", &nr);
