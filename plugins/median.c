@@ -442,7 +442,9 @@ TSAPI struct tslib_module_info *median_mod_init(__attribute__ ((unused)) struct 
 	if (c->delay == NULL) {
 		c->delay = malloc(sizeof(struct ts_sample) * 3);
 		c->size = 3;
+	#ifdef DEBUG
 		printf("Using default size of 3\n");
+	#endif
 	}
 
 	return &(c->module);
