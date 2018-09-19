@@ -114,7 +114,7 @@ static int waveshare_read(struct tslib_module_info *inf, struct ts_sample *samp,
 
 	buf = alloca(i->len * nr);
 
-	ret = read(ts->fd, buf, i->len * nr);
+	ret = read(ts->fd, buf, (size_t) i->len * nr);
 	if (ret > 0) {
 		while (ret >= (int) i->len) {
 	/*
@@ -234,7 +234,7 @@ static int waveshare_read_mt(struct tslib_module_info *inf,
 
 	buf = alloca(i->len * nr);
 
-	ret = read(ts->fd, buf, i->len * nr);
+	ret = read(ts->fd, buf, (size_t) i->len * nr);
 	if (ret > 0) {
 		while (ret >= (int) i->len) {
 	/*
