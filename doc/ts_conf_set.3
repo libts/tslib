@@ -41,6 +41,10 @@ the first line and so on. After writing, ts_reconfig() is called so the
 new modules and parameters are reloaded and applied to the currently
 running program.
 
+Also, the given set of ts_module_conf structs is freed and destroyed here.
+After calling ts_conf_set() one has to use ts_conf_get() again, for a
+different change.
+
 .nf
 struct ts_module_conf {
 	char *name;

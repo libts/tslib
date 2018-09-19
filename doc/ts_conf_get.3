@@ -36,7 +36,8 @@ ts_conf_get \- get a pointer to struct ts_module_conf holding data from the TSLI
 .BR ts_conf_get ()
 This function returns a pointer to a struct ts_module_conf that is part
 of a list of modules listed in the TSLIB_CONFFILE configuration file. ts_conf_get()
-actually reads TSLIB_CONFFILE. One struct represents one line in the file:
+actually reads TSLIB_CONFFILE. One struct represents one line in the file.
+They get allocated for the user here:
 
 .nf
 struct ts_module_conf {
