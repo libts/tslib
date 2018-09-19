@@ -129,6 +129,8 @@ fail:
 		free(modulebuf);
 	if (parambuf)
 		free(parambuf);
+	if (raw)
+		free(raw);
 
 	return NULL;
 }
