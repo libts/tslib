@@ -1,11 +1,12 @@
 
 tslib 1.18 - unreleased
 ================================
-This release includes libts version 0.9.3 and the following changes:
+This release includes libts version 0.10.0 and the following changes:
 * support for screen-rotation in ts_calibrate and linear module
 * add experimental module_raw input_evdev that needs libevdev
 * new ts_calibrate --min_interval option to avoid inaccurate calibration
 * add ts_calibrate --validate functionality to verify the calibration
+* add ts_conf_get() and ts_conf_set() API
 
 
 tslib 1.17 - released 2018-09-06

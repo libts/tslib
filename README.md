@@ -447,6 +447,8 @@ Check out our tests directory for examples how to use it.
 [`void (*ts_close_restricted)(int fd, void *user_data)`](https://manpages.debian.org/unstable/libts0/ts_close_restricted.3.en.html)  
 [`ts_get_eventpath()`](https://manpages.debian.org/unstable/libts0/ts_get_eventpath.3.en.html)  
 [`ts_print_ascii_logo()`](https://manpages.debian.org/unstable/libts0/ts_print_ascii_logo.3.en.html)  
+[`ts_conf_get()`](https://manpages.debian.org/unstable/libts0/ts_conf_get.3.en.html)  
+[`ts_conf_set()`](https://manpages.debian.org/unstable/libts0/ts_conf_set.3.en.html)  
 
 
 ### using libts
@@ -671,6 +673,8 @@ that get called in the chain of filters.
 |`ts_read_raw_mt` | 1.3 |
 |`tslib_parse_vars` | 1.0 |
 |`ts_get_eventpath` | 1.15 |
+|`ts_conf_get` | 1.18 |
+|`ts_conf_set` | 1.18 |
 
 
 ***
