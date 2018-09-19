@@ -83,8 +83,9 @@ static void print_conf(struct ts_module_conf *conf)
 static void edit_params(struct ts_module_conf *conf)
 {
 	int choice;
-	char buf[1024];
+	char buf[1024] = { '\0' };
 	int ret;
+	char c;
 
 	print_conf(conf);
 	printf("Write parameters for module Nr.: ");
@@ -99,11 +100,10 @@ static void edit_params(struct ts_module_conf *conf)
 	while (conf) {
 		if (conf->nr == choice) {
 			printf("%s\n", conf->params);
-			ret = scanf("%s", buf);
-			if (ret <= 0) {
-				perror("scanf");
+			while ((c = getchar()) != '\n' && c != EOF) { }
+			ret = scanf("%[^\n]s", buf);
+			if (ret < 0)
 				return;
-			}
 			sprintf(conf->params, "%s", buf);
 		}
 		conf = conf->next;
@@ -117,6 +117,7 @@ static int add_line_after(struct ts_module_conf *conf)
 	int nr;
 	int found = 0;
 	int ret;
+	char c;
 
 	printf("add module after nr: ");
 	ret = scanf("%d", &nr);
@@ -161,12 +162,11 @@ static int add_line_after(struct ts_module_conf *conf)
 		perror("scanf");
 		goto err;
 	}
-	printf("parameters (Ctrl-D for none): ");
-	ret = scanf("%s", new_filter->params);
-	if (ret <= 0) {
-		perror("scanf");
+	printf("parameters: ");
+	while ((c = getchar()) != '\n' && c != EOF) { }
+	ret = scanf("%[^\n]s", new_filter->params);
+	if (ret < 0)
 		goto err;
-	}
 	new_filter->nr = ++nr;
 
 	new_filter->prev = conf;
