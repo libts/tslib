@@ -1,0 +1,60 @@
+.\" Copyright (c) 2018, Martin Kepplinger <martink@posteo.de>
+.\"
+.\" %%%LICENSE_START(GPLv2+_DOC_FULL)
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, see
+.\" <http://www.gnu.org/licenses/>.
+.\" %%%LICENSE_END
+.\"
+.TH TS_CONF_GET 3  "" "" "tslib"
+.SH NAME
+ts_conf_get \- get a pointer to struct ts_module_conf holding data from the TSLIB_CONFFILE file.
+.SH SYNOPSIS
+.nf
+.B #include <tslib.h>
+.sp
+.BI "struct ts_module_conf *ts_conf_get(struct tsdev *ts);"
+.sp
+.fi
+
+.SH DESCRIPTION
+.BR ts_conf_get ()
+This function returns a pointer to a struct ts_module_conf that is part
+of a list of modules listed in the TSLIB_CONFFILE configuration file. ts_conf_get()
+actually reads TSLIB_CONFFILE. One struct represents one line in the file.
+They get allocated for the user here:
+
+.nf
+struct ts_module_conf {
+	char *name;
+	char *params;
+	int raw;
+	int nr;
+
+	struct ts_module_conf *next;
+	struct ts_module_conf *prev;
+};
+.fi
+
+.RE
+.SH RETURN VALUE
+This function returns a pointer to a struct ts_module_conf.
+
+.SH SEE ALSO
+.BR ts_conf_set (3),
+.BR ts.conf (5)

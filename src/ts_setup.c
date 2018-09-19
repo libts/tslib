@@ -82,6 +82,7 @@ static char *scan_devices(void)
 		if ((ioctl(fd, EVIOCGPROP(sizeof(propbit)), propbit) < 0) ||
 			!(propbit[BIT_WORD(INPUT_PROP_DIRECT)] &
 				  BIT_MASK(INPUT_PROP_DIRECT))) {
+			close(fd);
 			continue;
 		} else {
 			have_touchscreen = 1;
