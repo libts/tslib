@@ -640,11 +640,14 @@ static int cy8mrln_palmpre_update_references(uint16_t references[H_FIELDS * V_FI
 
 static int cy8mrln_palmpre_fini(struct tslib_module_info *info)
 {
-	struct tslib_cy8mrln_palmpre *i = container_of(info, struct tslib_cy8mrln_palmpre, module);
-	if (i->last_valid_samples != NULL) {
-		free (i->last_valid_samples);
-	}
-	free (i);
+	struct tslib_cy8mrln_palmpre *i = container_of(info,
+						struct tslib_cy8mrln_palmpre,
+						module);
+
+	if (i->last_valid_samples != NULL)
+		free(i->last_valid_samples);
+
+	free(i);
 #ifdef DEBUG
 	fprintf(stderr, "finishing cy8mrln_palmpre");
 #endif
