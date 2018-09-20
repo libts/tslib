@@ -7,6 +7,10 @@ This release includes libts version 0.10.0 and the following changes:
 * new ts_calibrate --min_interval option to avoid inaccurate calibration
 * add ts_calibrate --validate functionality to verify the calibration
 * add ts_conf_get() and ts_conf_set() API
+* improved CI
+
+This release includes the following bugfixes:
+* a5b39bf waveshare-raw: avoid possible overflow by casting a multiplication
 
 
 tslib 1.17 - released 2018-09-06
