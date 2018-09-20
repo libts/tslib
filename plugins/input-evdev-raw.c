@@ -166,9 +166,9 @@ static int check_fd(struct tslib_input *i)
 	}
 
 	/*
-	TODO if last_fd != -2
-		libevdev_change_fd() ...
-	*/
+	 * TODO if last_fd != -2
+	 *	libevdev_change_fd() ...
+	 */
 
 	rc = libevdev_new_from_fd(ts->fd, &i->evdev);
 	if (rc < 0) {
