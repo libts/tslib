@@ -107,6 +107,8 @@ static void help(void)
 	printf("                       1 ... clockwise orientation; 90 degrees\n");
 	printf("                       2 ... upside down orientation; 180 degrees\n");
 	printf("                       3 ... counterclockwise orientation; 270 degrees\n");
+	printf("-n --samples\n");
+	printf("                       exit automatically after n samples\n");
 	printf("-h --help\n");
 	printf("                       print this help text\n");
 	printf("-v --verbose\n");
@@ -148,6 +150,8 @@ int main(int argc, char **argv)
 
 	const char *tsdevice = NULL;
 	char slot_info[64];
+	uint32_t samples = 0;
+	uint32_t have_samples = 0;
 
 	signal(SIGSEGV, sig);
 	signal(SIGINT, sig);
@@ -160,10 +164,11 @@ int main(int argc, char **argv)
 			{ "idev",         required_argument, NULL, 'i' },
 			{ "slots",        required_argument, NULL, 'j' },
 			{ "rotate",       required_argument, NULL, 'r' },
+			{ "samples",      required_argument, NULL, 'n' },
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "hi:vj:r:", long_options, &option_index);
+		int c = getopt_long(argc, argv, "hi:vj:r:n:", long_options, &option_index);
 
 		errno = 0;
 		if (c == -1)
@@ -188,6 +193,10 @@ int main(int argc, char **argv)
 				help();
 				return 0;
 			}
+			break;
+
+		case 'n':
+			samples = atoi(optarg);
 			break;
 
 		case 'r':
@@ -289,6 +298,13 @@ int main(int argc, char **argv)
 
 	while (1) {
 		int ret;
+
+		if (samples) {
+			if (samples >= have_samples)
+				goto out;
+
+			have_samples++;
+		}
 
 		/* Show the cross */
 		for (j = 0; j < max_slots; j++) {
