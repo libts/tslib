@@ -74,7 +74,7 @@ Smaller changes can always be done on master and therefore, the master branch
 can always be merged into feature branches, while they are in development.
 
 When a feature branch's work is stable enough, it is simply merged into master.
-We always use `git merge -no-ff`.
+We always use `git merge --no-ff`.
 
 ### release procedure
 A release can be done when either
@@ -127,12 +127,10 @@ set in `AC_INIT` doesn't matter that much.
 ### project organisation for new maintainers
 
 Quick note: always build everything we have. In case we remove modules from
-being built by default, you should always build them. To achieve this on Linux,
-this is right now
+being built by default, you should always build them anyways. To do this on Linux,
+there must be a "all modules" build in the release.sh script.
 
-    ./configure --enable-cy8mrln-palmpre --enable-dmc_dus3000 --enable-galax --enable-arctic2 --enable-corgi --enable-collie --enable-dmc --enable-h3600 --enable-linear-h2200 --enable-mk712 --enable-ucb1x00
-
-Ok. The tslib project currently consists of
+The tslib project currently consists of
 * the [kergoth/tslib](https://github.com/kergoth/tslib) github repository. This
 is the main upstream repository users download from. The
 maintainer of course must have access to it, at least for committing and
@@ -148,7 +146,7 @@ Currently that is Martin Kepplinger. The domain is about 14 Euros per year.
 is currently simply a backup that pulls in every changes from github once a
 day. We want to have it in case github is down. Although it'd be easy to
 move development over to gitlab, it's not easy to have distributors and users
-follow you. So this is currently a backup only. Martin Kepplinger currently
+follow. So this is currently a backup only. Martin Kepplinger currently
 holds the "tslib" gitlab user-account and will hand it over to the new
 maintainer.
 * the [mainling list](http://lists.infradead.org/mailman/listinfo/tslib) at
