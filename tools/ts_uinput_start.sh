@@ -1,4 +1,6 @@
 #!/bin/bash
+# SPDX-License-Identifier: GPL-2.0+
+# Copyright (C) 2017, Martin Kepplinger <martink@posteo.de>
 
 # This starts ts_uinput as a daemon and creates /dev/input/ts_uinput to use
 # as an evdev input device
