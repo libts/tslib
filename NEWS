@@ -11,6 +11,7 @@ This release includes libts version 0.10.0 and the following changes:
 
 This release includes the following bugfixes:
 * a5b39bf waveshare-raw: avoid possible overflow by casting a multiplication
+* cd26eb5 ts_setup: fix a memory leak
 
 
 tslib 1.17 - released 2018-09-06
