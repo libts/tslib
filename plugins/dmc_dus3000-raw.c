@@ -72,7 +72,7 @@ struct tslib_dus3000 {
 	TState state;
 	ssize_t rxPosition;
 	uint8_t rxBuffer[0x110]; // messages with length field have 3 bytes + (contents of length field)
-	                         // bytes (so max 255) + one null byte we add for strings; round that up
+				 // bytes (so max 255) + one null byte we add for strings; round that up
 };
 
 static void dus3000_init_data(struct tslib_dus3000 *d)
@@ -107,8 +107,8 @@ static int send_command(int fd, TTouchMessages id)
 static void dus3000_init_device(struct tslib_dus3000 *d, struct tsdev *dev)
 {
 	const int fd = dev->fd;
-
 	struct termios tty;
+
 	tcgetattr(fd, &tty);
 	tty.c_iflag = IGNBRK | IGNPAR;
 	tty.c_oflag = 0;
@@ -117,8 +117,8 @@ static void dus3000_init_device(struct tslib_dus3000 *d, struct tsdev *dev)
 	tty.c_cc[VTIME] = 0;
 	tty.c_cc[VMIN] = 1;
 	tty.c_cflag = CS8 | CREAD | CLOCAL | HUPCL;
-	cfsetispeed (&tty, B57600);
-	cfsetospeed (&tty, B57600);
+	cfsetispeed(&tty, B57600);
+	cfsetospeed(&tty, B57600);
 	tcsetattr(fd, TCSAFLUSH, &tty);
 
 	// Using XP mode because that's the easiest way to get single-touch without filtering
@@ -141,10 +141,12 @@ static void dus3000_init_device(struct tslib_dus3000 *d, struct tsdev *dev)
 static int read_to_pos(int fd, struct tslib_dus3000 *d, ssize_t pos)
 {
 	ssize_t toRead = pos - d->rxPosition;
-	if (toRead <= 0) {
+
+	if (toRead <= 0)
 		return 1;
-	}
+
 	ssize_t r = read(fd, &d->rxBuffer[d->rxPosition], toRead);
+
 	if (r >= 0) {
 		d->rxPosition += r;
 		return 1;
@@ -163,15 +165,14 @@ static int dus3000_read(struct tslib_module_info *m, struct ts_sample *samples, 
 		// - Read until we have at least four bytes, which is <= minimum reply length and also
 		//   sufficient to determine the final length of all kinds of replies
 		// then... code:
-		if (!read_to_pos(fd, d, 4)) {
+		if (!read_to_pos(fd, d, 4))
 			break;
-		}
 
 		if (d->rxPosition >= 4) {
 			if (d->rxBuffer[0] == 0x01) {
-				if (!read_to_pos(fd, d, 6)) {
+				if (!read_to_pos(fd, d, 6))
 					break;
-				}
+
 				// read finger up / down and coordinates
 				samples[i].pressure = d->rxBuffer[1] ? 255 : 0;
 				samples[i].x = ((int)d->rxBuffer[2]) | (((int)d->rxBuffer[3]) << 8);
@@ -180,11 +181,11 @@ static int dus3000_read(struct tslib_module_info *m, struct ts_sample *samples, 
 				d->rxPosition = 0; // message complete
 
 			} else if (d->rxBuffer[0] == 0x02 && d->rxBuffer[1] == 0x4c) {
-
 				const ssize_t fullRequiredLength = 3 + d->rxBuffer[2];
-				if (!read_to_pos(fd, d, fullRequiredLength)) {
+
+				if (!read_to_pos(fd, d, fullRequiredLength))
 					break;
-				}
+
 				d->rxPosition = 0; // message complete
 
 				switch (d->rxBuffer[3]) {
@@ -279,6 +280,7 @@ TSAPI struct tslib_module_info *dmc_dus3000_mod_init(struct tsdev *dev,
 			    __attribute__ ((unused)) const char *params)
 {
 	struct tslib_dus3000 *d = calloc(1, sizeof(struct tslib_dus3000));
+
 	if (d == NULL)
 		return NULL;
 
