@@ -199,7 +199,7 @@ void setcolor(unsigned colidx, unsigned value)
 		res = value;
 
 	}
-        colormap[colidx] = res;
+	colormap[colidx] = res;
 }
 
 static void __pixel_loc(int32_t x, int32_t y, union multiptr *loc)
@@ -221,7 +221,8 @@ static void __pixel_loc(int32_t x, int32_t y, union multiptr *loc)
 	}
 }
 
-static inline void __setpixel(union multiptr loc, unsigned xormode, unsigned color)
+static inline void __setpixel(union multiptr loc, unsigned int xormode,
+			      unsigned int color)
 {
 	switch (bytes_per_pixel) {
 	case 1:
@@ -257,9 +258,9 @@ static inline void __setpixel(union multiptr loc, unsigned xormode, unsigned col
 	}
 }
 
-void pixel(int x, int y, unsigned colidx)
+void pixel(int x, int y, unsigned int colidx)
 {
-	unsigned xormode;
+	unsigned int xormode;
 	union multiptr loc;
 
 	if ((x < 0) || ((uint32_t)x >= xres) ||
@@ -281,7 +282,7 @@ void pixel(int x, int y, unsigned colidx)
 	__setpixel(loc, xormode, colormap[colidx]);
 }
 
-void line(int x1, int y1, int x2, int y2, unsigned colidx)
+void line(int x1, int y1, int x2, int y2, unsigned int colidx)
 {
 	int tmp;
 	int dx = x2 - x1;
@@ -317,7 +318,7 @@ void line(int x1, int y1, int x2, int y2, unsigned colidx)
 	}
 }
 
-void rect(int x1, int y1, int x2, int y2, unsigned colidx)
+void rect(int x1, int y1, int x2, int y2, unsigned int colidx)
 {
 	line(x1, y1, x2, y1, colidx);
 	line(x2, y1+1, x2, y2-1, colidx);
@@ -325,10 +326,10 @@ void rect(int x1, int y1, int x2, int y2, unsigned colidx)
 	line(x1, y2-1, x1, y1+1, colidx);
 }
 
-void fillrect(int x1, int y1, int x2, int y2, unsigned colidx)
+void fillrect(int x1, int y1, int x2, int y2, unsigned int colidx)
 {
 	int tmp;
-	unsigned xormode;
+	unsigned int xormode;
 	union multiptr loc;
 
 	/* Clipping and sanity checking */
