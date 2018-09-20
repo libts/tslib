@@ -109,6 +109,8 @@ static void help(void)
 	printf("                       3 ... counterclockwise orientation; 270 degrees\n");
 	printf("-n --samples\n");
 	printf("                       exit automatically after n samples\n");
+	printf("-a --altcross\n");
+	printf("                       use an alternative crosshair\n");
 	printf("-h --help\n");
 	printf("                       print this help text\n");
 	printf("-v --verbose\n");
@@ -165,10 +167,11 @@ int main(int argc, char **argv)
 			{ "slots",        required_argument, NULL, 'j' },
 			{ "rotate",       required_argument, NULL, 'r' },
 			{ "samples",      required_argument, NULL, 'n' },
+			{ "altcross",     required_argument, NULL, 'a' },
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "hi:vj:r:n:", long_options, &option_index);
+		int c = getopt_long(argc, argv, "hi:vj:r:n:a:", long_options, &option_index);
 
 		errno = 0;
 		if (c == -1)
@@ -197,6 +200,14 @@ int main(int argc, char **argv)
 
 		case 'n':
 			samples = atoi(optarg);
+			break;
+
+		case 'a':
+			alternative_cross = atoi(optarg);
+			if (alternative_cross < 0 || alternative_cross > 1) {
+				help();
+				return 0;
+			}
 			break;
 
 		case 'r':

@@ -47,6 +47,7 @@ static uint32_t colormap[256];
 uint32_t xres, yres;
 uint32_t xres_orig, yres_orig;
 int8_t rotation;
+int8_t alternative_cross;
 
 static char *defaultfbdevice = "/dev/fb0";
 static char *defaultconsoledevice = "/dev/tty";
@@ -206,21 +207,21 @@ void put_cross(int32_t x, int32_t y, uint32_t colidx)
 	line(x, y - 10, x, y - 2, colidx);
 	line(x, y + 2, x, y + 10, colidx);
 
-#if 1
-	line(x - 6, y - 9, x - 9, y - 9, colidx + 1);
-	line(x - 9, y - 8, x - 9, y - 6, colidx + 1);
-	line(x - 9, y + 6, x - 9, y + 9, colidx + 1);
-	line(x - 8, y + 9, x - 6, y + 9, colidx + 1);
-	line(x + 6, y + 9, x + 9, y + 9, colidx + 1);
-	line(x + 9, y + 8, x + 9, y + 6, colidx + 1);
-	line(x + 9, y - 6, x + 9, y - 9, colidx + 1);
-	line(x + 8, y - 9, x + 6, y - 9, colidx + 1);
-#else
-	line(x - 7, y - 7, x - 4, y - 4, colidx + 1);
-	line(x - 7, y + 7, x - 4, y + 4, colidx + 1);
-	line(x + 4, y - 4, x + 7, y - 7, colidx + 1);
-	line(x + 4, y + 4, x + 7, y + 7, colidx + 1);
-#endif
+	if (!alternative_cross) {
+		line(x - 6, y - 9, x - 9, y - 9, colidx + 1);
+		line(x - 9, y - 8, x - 9, y - 6, colidx + 1);
+		line(x - 9, y + 6, x - 9, y + 9, colidx + 1);
+		line(x - 8, y + 9, x - 6, y + 9, colidx + 1);
+		line(x + 6, y + 9, x + 9, y + 9, colidx + 1);
+		line(x + 9, y + 8, x + 9, y + 6, colidx + 1);
+		line(x + 9, y - 6, x + 9, y - 9, colidx + 1);
+		line(x + 8, y - 9, x + 6, y - 9, colidx + 1);
+	} else if (alternative_cross == 1) {
+		line(x - 7, y - 7, x - 4, y - 4, colidx + 1);
+		line(x - 7, y + 7, x - 4, y + 4, colidx + 1);
+		line(x + 4, y - 4, x + 7, y - 7, colidx + 1);
+		line(x + 4, y + 4, x + 7, y + 7, colidx + 1);
+	}
 }
 
 static void put_char(int32_t x, int32_t y, int32_t c, int32_t colidx)

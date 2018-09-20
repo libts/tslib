@@ -25,6 +25,7 @@
 extern uint32_t xres, yres;
 extern uint32_t xres_orig, yres_orig;
 extern int8_t rotation;
+extern int8_t alternative_cross;
 
 int open_framebuffer(void);
 void close_framebuffer(void);
