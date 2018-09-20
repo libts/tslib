@@ -1,5 +1,6 @@
 ![logo](website/logo.svg)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/11027/badge.svg)](https://scan.coverity.com/projects/tslib)
+[![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/kergoth/tslib.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/kergoth/tslib/context:cpp)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/752/badge)](https://bestpractices.coreinfrastructure.org/projects/752)
 
 # C library for filtering touchscreen events
