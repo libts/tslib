@@ -43,6 +43,7 @@ static unsigned colormap[256];
 
 /* extern */
 uint32_t xres, yres;
+uint32_t xres_orig, yres_orig;
 int8_t rotation;
 int8_t alternative_cross;
 
