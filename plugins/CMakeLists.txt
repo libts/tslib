@@ -56,6 +56,7 @@ TSLIB_CHECK_MODULE(touchkit          ON "Enable building of serial TouchKit raw 
 TSLIB_CHECK_MODULE(waveshare         ON "Enable building of WaveShare raw module (Linux /dev/hidrawN support)" waveshare-raw.c) 
 
 # userspace device drivers, disabled by default
+TSLIB_CHECK_MODULE(input-evdev       OFF "Enable building of generic evdev input module (Linux /dev/input/eventN support)" input-evdev-raw.c) 
 TSLIB_CHECK_MODULE(tatung            OFF "Enable building of tatung raw module (Tatung Webpad support)" tatung-raw.c) 
 TSLIB_CHECK_MODULE(ucb1x00           OFF "Enable building of ucb1x00 raw module (UCB1x00 support)" ucb1x00-raw.c) 
 TSLIB_CHECK_MODULE(mk712             OFF "Enable building of mk712 raw module (Hi tachi support)" mk712-raw.c) 
@@ -69,6 +70,12 @@ TSLIB_CHECK_MODULE(dmc_dus3000       OFF "Enable building of dmc_dus3000 raw mod
 TSLIB_CHECK_MODULE(cy8mrln-palmpre   OFF "Enable building of cy8mrln-palmpre raw module" cy8mrln-palmpre.c)
 TSLIB_CHECK_MODULE(galax             OFF "Enable building of HID USB eGalax raw module (Linux /dev/hiddevN support)" galax-raw.c) 
 TSLIB_CHECK_MODULE(one-wire-ts-input OFF "Enable building of FriendlyARM one-wire raw module" one-wire-ts-input-raw.c)
+
+if (${enable-input-evdev})
+	find_package(PkgConfig)
+	pkg_check_modules(LIBEVDEV REQUIRED IMPORTED_TARGET libevdev>=0.4)
+	target_link_libraries(input-evdev PRIVATE PkgConfig::LIBEVDEV)
+endif()
 
 #install plugins and add to export set
 install(TARGETS ${plugin_targets} 
