@@ -702,6 +702,7 @@ To create an build in the project tree:
 
     mkdir build && cd build
     cmake ../
+    # or adding configuration options: cmake -Denable-input-evdev=ON ../
     cmake --build .
     cmake -P cmake_install.cmake
 
