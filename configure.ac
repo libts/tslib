@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT([tslib], [1.17+], [tslib@lists.infradead.org], [tslib], [http://tslib.org])
+AC_INIT([tslib], [1.18-rc1], [tslib@lists.infradead.org], [tslib], [http://tslib.org])
 # AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE([dist-bzip2 dist-xz subdir-objects])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES(yes)]) # use silent rules where available - automake 1.11
@@ -186,11 +186,11 @@ AS_IF([test "x$with_sdl2" = "xyes"], [
 
 # libts Library versioning
 # increment if the interface changed
-LT_CURRENT=9
+LT_CURRENT=10
 # increment if anything changed. set to 0 if current was incremented!
-LT_REVISION=2
+LT_REVISION=0
 # increment if the interface change is backwards compatible (an addition). set to 0 if not.
-LT_AGE=9
+LT_AGE=10
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
