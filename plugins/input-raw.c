@@ -444,6 +444,10 @@ static int ts_input_read(struct tslib_module_info *inf,
 					case ABS_MT_PRESSURE:
 						i->current_p = ev.value;
 						break;
+					case ABS_MT_TOUCH_MAJOR:
+						if (ev.value == 0)
+							i->current_p = 0;
+						break;
 					case ABS_MT_TRACKING_ID:
 						if (ev.value == -1)
 							i->current_p = 0;
@@ -794,6 +798,8 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 					i->buf[total][i->slot].touch_major = i->ev[it].value;
 					i->buf[total][i->slot].tv = i->ev[it].time;
 					i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
+					if (i->ev[it].value == 0)
+						i->buf[total][i->slot].pressure = 0;
 					break;
 				case ABS_MT_WIDTH_MAJOR:
 					i->buf[total][i->slot].width_major = i->ev[it].value;
