@@ -213,7 +213,7 @@ TSAPI struct ts_module_conf *ts_conf_get(struct tsdev *ts);
 /*
  * Write the list of modules to ts.conf
  */
-TSAPI int ts_conf_set(struct tsdev *ts, struct ts_module_conf *conf);
+TSAPI int ts_conf_set(struct ts_module_conf *conf);
 
 /*
  * This function returns the path to the opened touchscreen input device file.

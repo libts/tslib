@@ -137,7 +137,7 @@ fail:
 	return NULL;
 }
 
-int ts_conf_set(struct tsdev *ts, struct ts_module_conf *conf)
+int ts_conf_set(struct ts_module_conf *conf)
 {
 	FILE *f;
 	short strdup_allocated = 0;
@@ -206,5 +206,5 @@ int ts_conf_set(struct tsdev *ts, struct ts_module_conf *conf)
 		conf = conf_next;
 	}
 
-	return ts_reconfig(ts);
+	return 0;
 }

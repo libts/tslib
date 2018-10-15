@@ -275,7 +275,7 @@ static int menu(struct tsdev *ts)
 		case 2:
 			conf = ts_conf_get(ts);
 			print_conf(conf);
-			ret = ts_conf_set(ts, conf);
+			ret = ts_conf_set(conf);
 			if (ret < 0)
 				goto done;
 			break;
@@ -287,7 +287,11 @@ static int menu(struct tsdev *ts)
 				goto done;
 
 			print_conf(conf);
-			ret = ts_conf_set(ts, conf);
+			ret = ts_conf_set(conf);
+			if (ret < 0)
+				goto done;
+
+			ret = ts_reconfig(ts);
 			if (ret < 0)
 				goto done;
 			break;
@@ -298,7 +302,11 @@ static int menu(struct tsdev *ts)
 			edit_params(conf);
 
 			print_conf(conf);
-			ret = ts_conf_set(ts, conf);
+			ret = ts_conf_set(conf);
+			if (ret < 0)
+				goto done;
+
+			ret = ts_reconfig(ts);
 			if (ret < 0)
 				goto done;
 			break;
@@ -309,7 +317,11 @@ static int menu(struct tsdev *ts)
 			remove_line(conf);
 
 			print_conf(conf);
-			ret = ts_conf_set(ts, conf);
+			ret = ts_conf_set(conf);
+			if (ret < 0)
+				goto done;
+
+			ret = ts_reconfig(ts);
 			if (ret < 0)
 				goto done;
 			break;

@@ -28,7 +28,7 @@ ts_conf_set \- write a new TSLIB_CONFFILE config file and reload it.
 .nf
 .B #include <tslib.h>
 .sp
-.BI "int ts_conf_set(struct tsdev *ts, struct ts_module_conf *conf);"
+.BI "int ts_conf_set(struct ts_module_conf *conf);"
 .sp
 .fi
 
@@ -37,11 +37,11 @@ ts_conf_set \- write a new TSLIB_CONFFILE config file and reload it.
 This function takes a pointer to a struct ts_module_conf. It reads data from
 all linked structs in the list (next and prev pointers) and writes a new
 TSLIB_CONFFILE. The first struct in the list (where prev is NULL) is
-the first line and so on. After writing, ts_reconfig() is called so the
+the first line and so on. After writing, ts_reconfig() has to be called so the
 new modules and parameters are reloaded and applied to the currently
 running program.
 
-Also, the given set of ts_module_conf structs is freed and destroyed here.
+The given set of ts_module_conf structs is freed and destroyed here.
 After calling ts_conf_set() one has to use ts_conf_get() again, for a
 different change.
 
