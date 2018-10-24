@@ -799,7 +799,7 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 				i->buf[total][i->slot].touch_major = ev.value;
 				i->buf[total][i->slot].tv = ev.time;
 				i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
-				if (i->ev[it].value == 0)
+				if (ev.value == 0)
 					i->buf[total][i->slot].pressure = 0;
 				break;
 			case ABS_MT_WIDTH_MAJOR:
