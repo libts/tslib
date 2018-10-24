@@ -20,7 +20,7 @@ set(LIBTS_VERSION_CURRENT 10)
 set(LIBTS_VERSION_REVISION 0)
 set(LIBTS_VERSION_AGE 10)
 
-set(PACKAGE_VERSION 1.18-rc2)
+set(PACKAGE_VERSION 1.18-rc2+)
 set(tslib_extras_dir ${CMAKE_INSTALL_PREFIX}/etc)
 set(TS_POINTERCAL ${tslib_extras_dir}/pointercal)
 set(TS_CONF ${tslib_extras_dir}/ts.conf)
