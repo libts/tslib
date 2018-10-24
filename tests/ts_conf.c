@@ -275,6 +275,11 @@ static int menu(struct tsdev *ts)
 		case 2:
 			conf = ts_conf_get(ts);
 			print_conf(conf);
+
+			/*
+			 * ts_conf_set() frees resouces.
+			 * writing is unnecessarily done too.
+			 */
 			ret = ts_conf_set(conf);
 			if (ret < 0)
 				goto done;
