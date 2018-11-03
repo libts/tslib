@@ -1,5 +1,5 @@
 ![logo](website/logo.svg)
-[![Backers on Open Collective](https://opencollective.com/tslib/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/tslib/sponsors/badge.svg)](#sponsors) [![Coverity Scan Build Status](https://scan.coverity.com/projects/11027/badge.svg)](https://scan.coverity.com/projects/tslib)
+ [![Coverity Scan Build Status](https://scan.coverity.com/projects/11027/badge.svg)](https://scan.coverity.com/projects/tslib)
 [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/kergoth/tslib.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/kergoth/tslib/context:cpp)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/752/badge)](https://bestpractices.coreinfrastructure.org/projects/752)
 
@@ -22,6 +22,7 @@ Visit the [tslib website](http://tslib.org) for an overview of the project.
 * [the libts library](#the-libts-library)
 * [building tslib](#building-tslib)
 * [hardware support](#touchscreen-hardware-support)
+* [contribute](#contributors)
 
 
 ## setup and configure tslib
@@ -824,8 +825,8 @@ installed: `module_raw input_evdev`.
 
 ## Contributors
 
-This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
-<a href="https://github.com/undefined/undefinedgraphs/contributors"><img src="https://opencollective.com/tslib/contributors.svg?width=890&button=false" /></a>
+This project exists [[thanks](THANKS)] to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/kergoth/tslib/contributors"><img src="https://opencollective.com/tslib/contributors.svg?width=890&button=false" /></a>
 
 
 ## Backers
