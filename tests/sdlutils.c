@@ -1,5 +1,5 @@
 /*
- * (C) 2017 Martin Keppligner <martink@posteo.de>
+ * Copyright (C) 2017 Martin Keppligner <martink@posteo.de>
  *
  * This file is part of tslib.
  *

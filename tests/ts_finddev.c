@@ -1,7 +1,7 @@
 /*
  *  tslib/src/ts_finddev.c
  *
- *  Derived from tslib/src/ts_test.c by Douglas Lowder
+ *  Copyright (C) Douglas Lowder
  *
  * This file is placed under the GPL.  Please see the file
  * COPYING for more details.

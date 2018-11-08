@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2017 Martin Keppligner <martink@posteo.de>
+ *
  * SPDX-License-Identifier: GPL-2.0+
  */
 #ifndef _SDLUTILS_H

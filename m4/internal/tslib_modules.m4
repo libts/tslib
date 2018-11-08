@@ -1,3 +1,6 @@
+# Copyright (C) 2018 Martin Kepplinger <martink@posteo.de>
+# Copyright (C) 2005 Christopher Larson
+
 dnl use: TSLIB_CHECK_MODULE(module, default, description)
 AC_DEFUN([TSLIB_CHECK_MODULE],
 [

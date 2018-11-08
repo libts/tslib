@@ -1,3 +1,5 @@
+# Copyright (C) 2005 Christopher Larson
+
 # TS_CXX_SUPPORTS_HIDDEN_VISIBILITY_INLINES
 # ----------
 # Check the C++ compiler for support for -fvisibility-inlines-hidden.

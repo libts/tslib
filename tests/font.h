@@ -1,7 +1,7 @@
 /*
  *  font.h -- `Soft' font definitions
  *
- *  Created 1995 by Geert Uytterhoeven
+ *  Copyright (C) 1995 Geert Uytterhoeven
  *
  *  This file is subject to the terms and conditions of the GNU General Public
  *  License.  See the file COPYING for more details.
