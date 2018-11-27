@@ -89,13 +89,13 @@ struct ts_module_conf *ts_conf_get(struct tsdev *ts)
 		if (!conf_next->name)
 			goto fail;
 
-		sprintf(conf_next->name, modulebuf[i]);
+		sprintf(conf_next->name, "%s", modulebuf[i]);
 
 		conf_next->params = calloc(1, LINE_MAX);
 		if (!conf_next->params)
 			goto fail;
 
-		sprintf(conf_next->params, parambuf[i]);
+		sprintf(conf_next->params, "%s", parambuf[i]);
 
 		conf_next->raw = raw[i];
 
