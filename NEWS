@@ -295,7 +295,7 @@ tslib 1.0 - released 2006-08-16
 
 * plugins/collie.c,plugins/corgi.c: Apply patch from Richard Purdie to
   fix the microseconds field of the timeval struct, as it was
-  inadvertantly holding milliseconds.
+  inadvertently holding milliseconds.
 
 
 tslib - older versions
