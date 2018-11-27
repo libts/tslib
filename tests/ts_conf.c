@@ -277,7 +277,7 @@ static int menu(struct tsdev *ts)
 			print_conf(conf);
 
 			/*
-			 * ts_conf_set() frees resouces.
+			 * ts_conf_set() frees resources.
 			 * writing is unnecessarily done too.
 			 */
 			ret = ts_conf_set(conf);
