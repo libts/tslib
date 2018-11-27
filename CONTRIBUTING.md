@@ -27,12 +27,7 @@ Ideally you send your patches to our
 [mailing list](http://lists.infradead.org/mailman/listinfo/tslib). Over there
 they are discussed and picked up.
 You can also fork the project on github, make your changes and create a pull
-request. Before you send changes, it would be awesome if you checked the
-following:
-* update the NEWS file's changelog if you added a feature
-* update or add man pages if applicable
-* update the README if applicable
-* possibly add a line containing `Fixes #XX` in your git commit message; XX being the github issue's number
+request.
 
 ### module development notes
 For those creating tslib modules, it is important to note a couple things with
@@ -85,7 +80,7 @@ A release can be done when either
 The procedure looks like this:
 
 * run coverity (or any static analysis) and fix new discovered issues
-* at least `git pull && ./autogen.sh && ./configure && make clean && make` on all supported platforms
+* at least `git pull && ./autogen.sh && ./configure && make clean && make` on all supported platforms, all modules configured
 * be sure to have a stable build system and your private gpg key set up
 * make sure the NEWS file with the changelog and bugfixes is up to date (it should always be).
 * update the THANKS file
@@ -126,10 +121,6 @@ set in `AC_INIT` doesn't matter that much.
 * [Linux event codes definitions](https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/include/uapi/linux/input-event-codes.h)
 
 ### project organisation for new maintainers
-
-Quick note: always build everything we have. In case we remove modules from
-being built by default, you should always build them anyways. To do this on Linux,
-there must be a "all modules" build in the release.sh script.
 
 The tslib project currently consists of
 * the [kergoth/tslib](https://github.com/kergoth/tslib) github repository. This
