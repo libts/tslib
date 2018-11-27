@@ -130,9 +130,9 @@ static int __ts_config(struct tsdev *ts, char **conffile_modules,
 				printf("TSLIB_CONFFILE: module %s %s\n",
 					module_name, p);
 			#endif
-				sprintf(conffile_modules[line], module_name);
+				sprintf(conffile_modules[line], "%s", module_name);
 				if (conffile_params)
-					sprintf(conffile_params[line], p);
+					sprintf(conffile_params[line], "%s", p);
 			}
 		} else if (strcasecmp(tok, "module_raw") == 0) {
 		#if !defined HAVE_STRSEP
@@ -148,9 +148,9 @@ static int __ts_config(struct tsdev *ts, char **conffile_modules,
 				printf("TSLIB_CONFFILE: module_raw %s %s\n",
 					module_name, p);
 			#endif
-				sprintf(conffile_modules[line], module_name);
+				sprintf(conffile_modules[line], "%s", module_name);
 				if (conffile_params)
-					sprintf(conffile_params[line], p);
+					sprintf(conffile_params[line], "%s", p);
 
 				if (raw)
 					raw[line] = 1;
