@@ -294,7 +294,7 @@ Example: `module iir N=6 D=10`
 ### module: dejitter
   Removes jitter on the X and Y co-ordinates. This is achieved by applying a
   weighted smoothing filter. The latest samples have most weight; earlier
-  samples have less weight. This allows to achieve 1:1 input->output rate. See
+  samples have less weight. This allows one to achieve 1:1 input->output rate. See
   [Wikipedia](https://en.wikipedia.org/wiki/Jitter#Mitigation) for some
   theory.
 
@@ -459,7 +459,7 @@ in your source files:
     #include <tslib.h>
 
 
-To link with with library, specify `-lts` as an argument to the linker.
+To link with the library, specify `-lts` as an argument to the linker.
 
 #### compiling using autoconf and pkg-config
 On UNIX systems you can use pkg-config to automatically select the appropriate
@@ -771,7 +771,7 @@ __disabled__:
 * `tatung`
 
 Please note that this list may grow over time. If you rely on
-a particular input plugin, you should enable it explicitely. On Linux
+a particular input plugin, you should enable it explicitly. On Linux
 you should only need `input` though.
 
 * GNU / Linux - all (most importantly `input`)
@@ -816,7 +816,7 @@ The [ts.conf man page](https://manpages.debian.org/unstable/libts0/ts.conf.5.en.
 has details on the available `module_raw` drivers; not all of them are listed in the
 default `etc/ts.conf` config file. Those are to be considered workarounds and may get
 disabled in the default configuration in the future.
-If you use one of those, please `./configure --enable-...` it explicitely.
+If you use one of those, please `./configure --enable-...` it explicitly.
 
 It is strongly recommended to have a real device driver for your system
 and use a generic access `module_raw` of tslib. For Linux ([evdev](https://en.wikipedia.org/wiki/Evdev))
