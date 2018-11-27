@@ -59,10 +59,10 @@ read_mt at least all pass.
 We loosely tie to the [Linux coding style](https://www.kernel.org/doc/html/latest/process/coding-style.html)
 
 ### license and copyright
-Our library parts are LGPLv2, Our programs are GPL licensed. When contributing
+Our library parts are LGPLv2, our programs are GPL licensed. When contributing
 or distributing tslib, make sure you comply with the licenses. And please make
 sure you have the right to the code you are contributing yourself. There is no
-other copyright aggreement. You retain your copyright to your code.
+other copyright aggreement. You retain the copyright to your code.
 
 ### branching model
 Simple: our master branch is __not__ to be considered stable! A stable state
@@ -72,7 +72,7 @@ For larger features that aren't in any useful state, there are feature branches
 with random names.
 
 Smaller changes can always be done on master and therefore, the master branch
-can always be merged into feature branches, while they are in development.
+can always be merged into feature branches while they are in development.
 
 When a feature branch's work is stable enough, it is simply merged into master.
 We always use `git merge --no-ff`.
