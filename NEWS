@@ -1,5 +1,5 @@
 
-tslib 1.18 - unreleased
+tslib 1.18 - released 2018-11-27
 ================================
 This release includes libts version 0.10.0 and the following changes:
 * support for screen-rotation in ts_calibrate and linear module
