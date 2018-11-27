@@ -11,9 +11,10 @@ When describing a problem, please always tell us the following:
 
 If tslib can't use your touchscreen device, either by not starting at all or
 by behaving strangely, at least on Linux and BSD it is always helpful if you
-provide the output of the `evtest` program, selecting your original input
-device. `evtest` is most likely available as a package in your OS environment.
-You can always build it from [upstream](https://cgit.freedesktop.org/evtest)
+provide the output of the `evemu-record` program, selecting your original input
+device. `evemu-record` is most likely available as a package in your OS
+environment (as evemu-tools).
+You can always build it from [source](https://www.freedesktop.org/wiki/Evemu/)
 though.
 
 ### what to contribute
