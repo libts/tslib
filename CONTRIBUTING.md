@@ -139,7 +139,7 @@ holds the "kergoth" github account, to give you access.
 * the [tslib.org](http://tslib.org) project page. It is currently registered at
 [easyname](https://www.easyname.com) and is maintained in the website directory.
 This project site must include links to *all parts* of the tslib project.
-That's this list right here. When becoming a new maintainer, preferrably make
+That's this list right here. When becoming a new maintainer, preferably make
 an account at easyname and the old maintainer will transfer the domain to you.
 Currently that is Martin Kepplinger. The domain is about 14 Euros per year.
 * the [tslib/tslib](https://gitlab.com/tslib/tslib) gitlab repository. This
