@@ -1,5 +1,5 @@
 ![logo](website/logo.svg)
-[![Coverity Scan Build Status](https://scan.coverity.com/projects/11027/badge.svg)](https://scan.coverity.com/projects/tslib)
+ [![Coverity Scan Build Status](https://scan.coverity.com/projects/11027/badge.svg)](https://scan.coverity.com/projects/tslib)
 [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/kergoth/tslib.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/kergoth/tslib/context:cpp)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/752/badge)](https://bestpractices.coreinfrastructure.org/projects/752)
 
@@ -22,6 +22,7 @@ Visit the [tslib website](http://tslib.org) for an overview of the project.
 * [the libts library](#the-libts-library)
 * [building tslib](#building-tslib)
 * [hardware support](#touchscreen-hardware-support)
+* [contribute](#contributors)
 
 
 ## setup and configure tslib
@@ -822,3 +823,33 @@ It is strongly recommended to have a real device driver for your system
 and use a generic access `module_raw` of tslib. For Linux ([evdev](https://en.wikipedia.org/wiki/Evdev))
 this is called `input`. There is an equivalent experimental module that needs libevdev
 installed: `module_raw input_evdev`.
+
+## Contributors
+
+This project exists [[thanks](THANKS)] to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/kergoth/tslib/contributors"><img src="https://opencollective.com/tslib/contributors.svg?width=890&button=false" /></a>
+
+
+## Backers
+
+Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/tslib#backer)]
+
+<a href="https://opencollective.com/tslib#backers" target="_blank"><img src="https://opencollective.com/tslib/backers.svg?width=890"></a>
+
+
+## Sponsors
+
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/tslib#sponsor)]
+
+<a href="https://opencollective.com/tslib/sponsor/0/website" target="_blank"><img src="https://opencollective.com/tslib/sponsor/0/avatar.svg"></a>
+<a href="https://opencollective.com/tslib/sponsor/1/website" target="_blank"><img src="https://opencollective.com/tslib/sponsor/1/avatar.svg"></a>
+<a href="https://opencollective.com/tslib/sponsor/2/website" target="_blank"><img src="https://opencollective.com/tslib/sponsor/2/avatar.svg"></a>
+<a href="https://opencollective.com/tslib/sponsor/3/website" target="_blank"><img src="https://opencollective.com/tslib/sponsor/3/avatar.svg"></a>
+<a href="https://opencollective.com/tslib/sponsor/4/website" target="_blank"><img src="https://opencollective.com/tslib/sponsor/4/avatar.svg"></a>
+<a href="https://opencollective.com/tslib/sponsor/5/website" target="_blank"><img src="https://opencollective.com/tslib/sponsor/5/avatar.svg"></a>
+<a href="https://opencollective.com/tslib/sponsor/6/website" target="_blank"><img src="https://opencollective.com/tslib/sponsor/6/avatar.svg"></a>
+<a href="https://opencollective.com/tslib/sponsor/7/website" target="_blank"><img src="https://opencollective.com/tslib/sponsor/7/avatar.svg"></a>
+<a href="https://opencollective.com/tslib/sponsor/8/website" target="_blank"><img src="https://opencollective.com/tslib/sponsor/8/avatar.svg"></a>
+<a href="https://opencollective.com/tslib/sponsor/9/website" target="_blank"><img src="https://opencollective.com/tslib/sponsor/9/avatar.svg"></a>
+
+
