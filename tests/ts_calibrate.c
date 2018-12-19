@@ -144,7 +144,7 @@ static int validate_sample(struct tsdev *ts, int x, int y, char *name,
 	return ret;
 }
 
-static int ts_validate(struct tsdev *ts, int boundary, unsigned int loops)
+static int ts_validate(struct tsdev *ts, int boundary, unsigned int loops, int timeout)
 {
 	int ret;
 	char textbuf[64];
@@ -182,6 +182,12 @@ done:
 	fillrect(0, 0, xres - 1, yres - 1, 0);
 	put_string_center(xres / 2, yres / 4, textbuf, 1);
 
+	if (timeout == 0) {
+		close_framebuffer();
+		ts_close(ts);
+		return ret;
+	}
+
 	if (!ret) {
 		printf("Validation passed.\n");
 		put_string_center(xres / 2, yres / 4 + 20,
@@ -190,6 +196,12 @@ done:
 		printf("Validation failed.\n");
 		put_string_center(xres / 2, yres / 4 + 20,
 				  "Validation failed", 4);
+	}
+
+	if (timeout > 0) {
+		sleep(timeout);
+		close_framebuffer();
+		ts_close(ts);
 	}
 
 	return ret;
@@ -242,6 +254,11 @@ static void help(void)
 	printf("                       boundary criteria in validation mode\n");
 	printf("-l --loops\n");
 	printf("                       number of crosses to touch in validation mode\n");
+	printf("-s --timeout\n");
+	printf("                       result screen timeout in seconds in validation mode\n");
+	printf("                       -1 ... no timeout\n");
+	printf("                        0 ... no result screen (quit immediately)\n");
+	printf("                        5 ... 5s timeout for result screen (default)\n");
 	printf("-h --help\n");
 	printf("                       print this help text\n");
 	printf("-v --version\n");
@@ -265,6 +282,7 @@ int main(int argc, char **argv)
 	unsigned int tick = 0;
 	unsigned int min_interval = 0;
 	int boundary = VALIDATE_BOUNDARY_MIN;
+	int validate_timeout = 5;
 	unsigned int validate_loops = 0;
 	short validate_only = 0;
 
@@ -281,10 +299,11 @@ int main(int argc, char **argv)
 			{ "validate",     no_argument,       NULL, 'c' },
 			{ "boundary",     required_argument, NULL, 'b' },
 			{ "loop",         required_argument, NULL, 'l' },
+			{ "timeout",      required_argument, NULL, 's' },
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "hvr:t:cb:l:", long_options, &option_index);
+		int c = getopt_long(argc, argv, "hvr:t:cb:l:s:", long_options, &option_index);
 
 		errno = 0;
 		if (c == -1)
@@ -340,6 +359,16 @@ int main(int argc, char **argv)
 			validate_loops = atoi(optarg);
 			break;
 
+		case 's':
+			if (!validate_only) {
+				fprintf(stderr, "--timeout is only available with --validate\n");
+				help();
+				return 0;
+			}
+
+			validate_timeout = atoi(optarg);
+			break;
+
 		default:
 			help();
 			return 0;
@@ -369,7 +398,7 @@ int main(int argc, char **argv)
 		setcolor(i, palette[i]);
 
 	if (validate_only)
-		return ts_validate(ts, boundary, validate_loops);
+		return ts_validate(ts, boundary, validate_loops, validate_timeout);
 
 	put_string_center(xres / 2, yres / 4,
 			  "Touchscreen calibration utility", 1);
