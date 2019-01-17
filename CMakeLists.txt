@@ -12,7 +12,7 @@ cmake_minimum_required(VERSION 3.1)
 
 cmake_policy(SET CMP0057 NEW)
 
-project(tslib)
+project(tslib LANGUAGES C)
 
 option(BUILD_SHARED_LIBS "ON:  tslib is build as shared; 
 			  OFF: tslib is build as static" ON)
