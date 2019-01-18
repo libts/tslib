@@ -78,8 +78,8 @@ static int __ts_config(struct tsdev *ts, char **conffile_modules,
 		if (strdup_allocated)
 			free(conffile);
 
-		ts_error("Couldn't open tslib config file: %s\n",
-			 strerror(errno));
+		ts_error("Couldn't open tslib config file %s: %s\n",
+			 conffile, strerror(errno));
 		return -1;
 	}
 
