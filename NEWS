@@ -1,4 +1,11 @@
 
+tslib 1.19 - unreleased
+================================
+This release includes libts version 0.10.1 and the following changes:
+* input-raw / ts_uinput: fix MT type A devices
+* ts_calibrate: close framebuffer after validation. add timeout option -s for it
+
+
 tslib 1.18 - released 2018-11-27
 ================================
 This release includes libts version 0.10.0 and the following changes:
