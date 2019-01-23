@@ -128,6 +128,7 @@ struct tslib_input {
 	int8_t	no_pressure;
 	int8_t	type_a;
 	int32_t *last_pressure;
+	int8_t	last_type_a_slots;
 
 	uint16_t	special_device; /* broken device we work around, see below */
 };
@@ -294,12 +295,19 @@ static int check_fd(struct tslib_input *i)
 		else
 			i->no_pressure = 0;
 	}
+#ifdef DEBUG
+	if (i->no_pressure) {
+		printf("tslib: No pressure values. We fake it internally\n");
+	} else {
+		printf("tslib: We have a pressure value\n");
+	}
+#endif
 
 	if ((ioctl(ts->fd, EVIOCGBIT(EV_SYN, sizeof(synbit)), synbit)) == -1)
 		fprintf(stderr, "tslib: ioctl error\n");
 
 	/* remember whether we have a multitouch type A device */
-	if (i->mt && synbit[BIT_WORD(SYN_MT_REPORT)] & BIT_MASK(SYN_MT_REPORT) &&
+	if (i->mt &&
 	    !(absbit[BIT_WORD(ABS_MT_SLOT)] & BIT_MASK(ABS_MT_SLOT)) &&
 	    !(absbit[BIT_WORD(ABS_MT_TRACKING_ID)] & BIT_MASK(ABS_MT_TRACKING_ID))) {
 		i->type_a = 1;
@@ -660,24 +668,35 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 						}
 					}
 
+					/* subtract last SYN_MT_REPORT to have the slot index */
+					if (i->type_a && i->slot)
+						i->slot--;
+
+					if (i->slot >= max_slots) {
+						fprintf(stderr, "Critical internal error\n");
+						return -1;
+					}
+
+					if (i->type_a && i->slot < i->last_type_a_slots) {
+						for (k = 0; k < max_slots; k++) {
+							if (k < i->last_type_a_slots)
+								continue;
+
+							/* remember / generate other pen-ups */
+							i->buf[total][k].pressure = 0;
+							i->buf[total][k].tracking_id = -1;
+							i->last_pressure[k] = 0;
+							i->buf[total][k].valid |= TSLIB_MT_VALID;
+						}
+					}
+					i->last_type_a_slots = i->slot;
+
+					/* FIXME this pen_up is deprectated in MT */
 					if (pen_up)
 						pen_up = 0;
 
 					for (j = 0; j < nr; j++) {
 						for (k = 0; k < max_slots; k++) {
-							/* generate tracking id if not available */
-							if (i->type_a) {
-								if (i->buf[j][k].pressure == 0) {
-									i->buf[j][k].tracking_id = -1;
-									i->last_pressure[k] = 0;
-								} else {
-									if (i->last_pressure[k] == 0)
-										next_trackid++;
-
-									i->buf[j][k].tracking_id = next_trackid;
-								}
-							}
-
 							memcpy(&samp[j][k],
 								&i->buf[j][k],
 								sizeof(struct ts_sample_mt));
@@ -693,17 +712,23 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 					if (!i->type_a)
 						break;
 
-					if (i->buf[total][i->slot].valid < 1) {
-						i->buf[total][i->slot].pressure = 0;
-						if (i->slot == 0) {
-							pen_up = 1;
-							break;
-						}
+					i->buf[total][i->slot].slot = i->slot;
 
-					} else if (i->slot < (max_slots - 1)) {
-						i->slot++;
-						i->buf[total][i->slot].slot = i->slot;
+					if (i->buf[total][i->slot].valid < 1) {
+						/* SYN_MT_REPORT only is pen-up */
+						i->buf[total][i->slot].pressure = 0;
+						i->buf[total][i->slot].tracking_id = -1;
+						i->last_pressure[i->slot] = 0;
+					} else if (i->last_pressure[i->slot] == 0) {
+						/* new contact. generate a tracking id */
+						i->buf[total][i->slot].tracking_id = ++next_trackid;
+						i->last_pressure[i->slot] = 1;
 					}
+
+					i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
+
+					if (i->slot < max_slots)
+						i->slot++;
 
 					break;
 			#ifdef DEBUG

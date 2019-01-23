@@ -408,6 +408,8 @@ static int setup_uinput(struct data_t *data, int *max_slots)
 	int max_x = 0;
 	int max_y = 0;
 	int ret;
+	int have_abs_mt_position = 0;
+	int have_abs_mt_slot = 0;
 
 	if (data->nofb)
 		ret = get_abs_max_input(data, &max_x, &max_y);
@@ -482,6 +484,7 @@ static int setup_uinput(struct data_t *data, int *max_slots)
 						} else if (j == ABS_MT_POSITION_X) {
 							uidev.absmin[ABS_MT_POSITION_X] = 0;
 							uidev.absmax[ABS_MT_POSITION_X] = max_x;
+							have_abs_mt_position = 1;
 						} else if (j == ABS_MT_POSITION_Y) {
 							uidev.absmin[ABS_MT_POSITION_Y] = 0;
 							uidev.absmax[ABS_MT_POSITION_Y] = max_y;
@@ -490,13 +493,47 @@ static int setup_uinput(struct data_t *data, int *max_slots)
 							uidev.absmax[j] = absinfo.maximum;
 						}
 
-						if (j == ABS_MT_SLOT)
-							*max_slots = absinfo.maximum + 1 - absinfo.minimum;
+						if (j == ABS_MT_SLOT) {
+							if (*max_slots == 1)
+								*max_slots = absinfo.maximum + 1 -
+									     absinfo.minimum;
+
+							have_abs_mt_slot = 1;
+						}
 					}
 				}
 			}
 		}
 	}
+
+	/*
+	 *if we have multitouch we generate type B only and need this in
+	 * case of type A input
+	 */
+	if (have_abs_mt_position && !have_abs_mt_slot) {
+		if (ioctl(data->fd_uinput, UI_SET_ABSBIT, ABS_MT_TRACKING_ID) < 0) {
+			perror("ioctl UI_SET_ABSBIT");
+			goto err;
+		}
+		if (ioctl(data->fd_uinput, UI_SET_ABSBIT, ABS_MT_SLOT) < 0) {
+			perror("ioctl UI_SET_ABSBIT");
+			goto err;
+		}
+
+		/* if no user setting, we use 5 slots for type A devices */
+		if (*max_slots == 1)
+			*max_slots = 5;
+
+		if (data->verbose)
+			printf(DEFAULT_UINPUT_NAME ": We use a " GREEN
+			       "multitouch type A" RESET " device\n");
+	}
+
+	if (have_abs_mt_position && have_abs_mt_slot && data->verbose)
+		printf(DEFAULT_UINPUT_NAME ": We use a " GREEN
+		       "multitouch type B" RESET " device\n");
+
+	uidev.absmax[ABS_MT_SLOT] = *max_slots - 1;
 
 	if (write(data->fd_uinput, &uidev, sizeof(uidev)) == -1) {
 		perror("write uinput_user_dev");
@@ -856,18 +893,8 @@ int main(int argc, char **argv)
 		       ": using input device " GREEN "%s" RESET "\n",
 		       dev_input_name);
 
-	if (setup_uinput(&data, &data.slots)) {
+	if (setup_uinput(&data, &data.slots))
 		goto out;
-	} else {
-		if (data.verbose && data.slots == 1)
-			printf(DEFAULT_UINPUT_NAME
-			       ": We don't use a multitouch device\n");
-		else if (data.verbose && data.slots > 1)
-			printf(DEFAULT_UINPUT_NAME
-			       ": We use a "
-			       GREEN "multitouch" RESET
-			       " device\n");
-	}
 
 	if (data.verbose) {
 		printf(DEFAULT_UINPUT_NAME ": running uinput version %d\n", UINPUT_VERSION);
