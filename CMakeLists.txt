@@ -17,10 +17,10 @@ project(tslib LANGUAGES C)
 option(BUILD_SHARED_LIBS "ON:  tslib is build as shared; 
 			  OFF: tslib is build as static" ON)
 set(LIBTS_VERSION_CURRENT 10)
-set(LIBTS_VERSION_REVISION 0)
+set(LIBTS_VERSION_REVISION 1)
 set(LIBTS_VERSION_AGE 10)
 
-set(PACKAGE_VERSION 1.18+)
+set(PACKAGE_VERSION 1.19)
 set(tslib_extras_dir ${CMAKE_INSTALL_PREFIX}/etc)
 set(TS_POINTERCAL ${tslib_extras_dir}/pointercal)
 set(TS_CONF ${tslib_extras_dir}/ts.conf)
