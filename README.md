@@ -157,7 +157,11 @@ a symlink:
 * if you're using *systemd*, create the following udev rule, for
   example `/etc/udev/rules.d/98-touchscreen.rules`:
 
+      SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{name}=="NAME_OF_THE_TOUCH_CONTROLLER", SYMLINK+="input/ts", TAG+="systemd"
       SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{name}=="ts_uinput", SYMLINK+="input/ts_uinput"
+
+where `NAME_OF_THE_TOUCH_CONTROLLER` the touchscreen found in your `cat /proc/bus/input/devices | grep Name`. The first rule is only needed, if tslib doesn't automatically choose
+the correct device for you.
 
 #### running as systemd service (optional)
 in case you have to use non-default paths, create a file containing the
@@ -171,18 +175,18 @@ and create a systemd service file, like `/usr/lib/systemd/system/ts_uinput.servi
 
       [Unit]
       Description=touchscreen input
-      Wants=dev-input-ts_raw.device
-      After=dev-input-ts_raw.device
+      Wants=dev-input-ts.device
+      After=dev-input-ts.device
 
       [Service]
-      Type=oneshot
+      Type=forking
       EnvironmentFile=/etc/ts.env
-      ExecStart=/bin/sh -c 'exec /usr/bin/ts_uinput &> /var/log/ts_uinput.log'
+      ExecStart=/usr/bin/ts_uinput -d
 
       [Install]
       WantedBy=multi-user.target
 
-and
+Adjust the paths. They could as well be in `/usr/local/` too. and
 
       #systemctl enable ts_uinput
 
