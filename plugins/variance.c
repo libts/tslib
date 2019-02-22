@@ -165,7 +165,9 @@ static int variance_read_mt(struct tslib_module_info *info,
 	}
 
 	if (var->cur_mt == NULL || max_slots > var->slots || nr > var->nr) {
-		printf("tslib: WARNING: no multitouch using VARIANCE filter\n");
+	#ifdef DEBUG
+		fprintf(stderr, "tslib: WARNING: no multitouch when using the variance filter\n");
+	#endif
 		if (var->cur_mt) {
 			for (i = 0; i < var->nr; i++) {
 				if (var->cur_mt[i])
