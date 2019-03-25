@@ -1,4 +1,12 @@
 
+tslib 1.20 - unreleased
+================================
+This release includes the following bugfixes:
+338891d doc: add CMakeLists.txt to the distribution tarball (fixes cmake build)
+834b98f variance: move the singletouch warning to debug (fixes ts_uinput)
+84e15b5 doc: add missing manpages to releases and sort them alphabetically
+
+
 tslib 1.19 - released 2019-01-24
 ================================
 This release includes libts version 0.10.1 and the following changes:
