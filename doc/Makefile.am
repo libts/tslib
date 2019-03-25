@@ -1,3 +1,5 @@
+EXTRA_DIST		= CMakeLists.txt
+
 dist_man_MANS = \
 	ts_calibrate.1 \
 	ts_close.3 \
