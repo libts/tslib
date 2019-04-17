@@ -184,11 +184,7 @@ and create a systemd service file, like `/usr/lib/systemd/system/ts_uinput.servi
       EnvironmentFile=/etc/ts.env
       ExecStart=/usr/bin/ts_uinput -d
 
-Adjust the paths. They could as well be in `/usr/local/` too. and
-
-      #systemctl enable ts_uinput
-
-will enable it permanently.
+Adjust the paths. They could as well be in `/usr/local/` too.
 
 ### other operating systems
 There is no tool that we know of that reads tslib samples and uses the
