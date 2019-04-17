@@ -157,7 +157,7 @@ a symlink:
 * if you're using *systemd*, create the following udev rule, for
   example `/etc/udev/rules.d/98-touchscreen.rules`:
 
-      SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{name}=="NAME_OF_THE_TOUCH_CONTROLLER", SYMLINK+="input/ts", TAG+="systemd"
+      SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{name}=="NAME_OF_THE_TOUCH_CONTROLLER", SYMLINK+="input/ts", TAG+="systemd" ENV{SYSTEMD_WANTS}="ts_uinput.service"
       SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{name}=="ts_uinput", SYMLINK+="input/ts_uinput"
 
 where `NAME_OF_THE_TOUCH_CONTROLLER` the touchscreen found in your `cat /proc/bus/input/devices | grep Name`. The first rule is only needed, if tslib doesn't automatically choose
@@ -182,9 +182,6 @@ and create a systemd service file, like `/usr/lib/systemd/system/ts_uinput.servi
       Type=forking
       EnvironmentFile=/etc/ts.env
       ExecStart=/usr/bin/ts_uinput -d
-
-      [Install]
-      WantedBy=multi-user.target
 
 Adjust the paths. They could as well be in `/usr/local/` too. and
 
