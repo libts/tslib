@@ -177,6 +177,7 @@ and create a systemd service file, like `/usr/lib/systemd/system/ts_uinput.servi
       Description=touchscreen input
       BindsTo=dev-input-ts.device
       After=dev-input-ts.device
+      RequiresMountsFor=/etc/ts.env
 
       [Service]
       Type=forking
