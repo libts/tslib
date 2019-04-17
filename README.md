@@ -175,7 +175,7 @@ and create a systemd service file, like `/usr/lib/systemd/system/ts_uinput.servi
 
       [Unit]
       Description=touchscreen input
-      Wants=dev-input-ts.device
+      BindsTo=dev-input-ts.device
       After=dev-input-ts.device
 
       [Service]
