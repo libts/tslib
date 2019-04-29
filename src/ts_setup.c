@@ -58,7 +58,6 @@ static char *scan_devices(void)
 	struct dirent **namelist;
 	int i, ndev;
 	char *filename = NULL;
-	int have_touchscreen = 0;
 	long propbit[BITS_TO_LONGS(INPUT_PROP_MAX)] = {0};
 
 #ifdef DEBUG
@@ -85,30 +84,26 @@ static char *scan_devices(void)
 			close(fd);
 			continue;
 		} else {
-			have_touchscreen = 1;
-		}
-
-		close(fd);
-		free(namelist[i]);
-
-		if (have_touchscreen) {
+			close(fd);
 			filename = malloc(strlen(DEV_INPUT_EVENT) +
 					  strlen(EVENT_DEV_NAME) +
 					  12);
 			if (!filename)
-				return NULL;
+				break;
 
 			sprintf(filename, "%s/%s%d",
 				DEV_INPUT_EVENT, EVENT_DEV_NAME,
 				i);
+			break;
 		}
-
-		free(namelist);
-
-		return filename;
 	}
 
-	return NULL;
+	for (i = 0; i < ndev; ++i)
+		free(namelist[i]);
+
+	free(namelist);
+
+	return filename;
 }
 
 #endif /* __linux__ */
