@@ -19,7 +19,7 @@ though.
 
 ### what to contribute
 We collect ideas about improving tslib
-[in our issue tracker](https://github.com/kergoth/tslib/issues). There's a lot
+[in our issue tracker](https://github.com/libts/tslib/issues). There's a lot
 that could be done, for any operating system you might work on.
 
 ### how to contribute
@@ -123,11 +123,11 @@ set in `AC_INIT` doesn't matter that much.
 ### project organisation for new maintainers
 
 The tslib project currently consists of
-* the [kergoth/tslib](https://github.com/kergoth/tslib) github repository. This
+* the [libts/tslib](https://github.com/libts/tslib) github repository. This
 is the main upstream repository users download from. The
 maintainer of course must have access to it, at least for committing and
-creating releases. When becoming a new maintainer, ask Christopher Larson, who
-holds the "kergoth" github account, to give you access.
+creating releases. When becoming a new maintainer, ask one of the "libts"
+organisation's owners to give you access, or become an owner too.
 * the [tslib.org](http://tslib.org) project page. It is currently registered at
 [easyname](https://www.easyname.com) and is maintained in the website directory.
 This project site must include links to *all parts* of the tslib project.
