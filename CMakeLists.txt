@@ -16,6 +16,8 @@ include(GNUInstallDirs)
 
 option(BUILD_SHARED_LIBS "ON:  tslib is build as shared; 
 			  OFF: tslib is build as static" ON)
+option(ENABLE_TOOLS "build additional tools" ON)
+
 set(LIBTS_VERSION_CURRENT 10)
 set(LIBTS_VERSION_REVISION 2)
 set(LIBTS_VERSION_AGE 10)
@@ -27,7 +29,9 @@ set(TS_CONF ${CMAKE_INSTALL_FULL_SYSCONFDIR}/ts.conf)
 add_subdirectory(src)
 add_subdirectory(plugins)
 add_subdirectory(tests)
-add_subdirectory(tools)
+if (ENABLE_TOOLS)
+	add_subdirectory(tools)
+endif ()
 add_subdirectory(etc)
 add_subdirectory(doc)
 
