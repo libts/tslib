@@ -8,9 +8,7 @@
 #
 #
 
-cmake_minimum_required(VERSION 3.1)
-
-cmake_policy(SET CMP0057 NEW)
+cmake_minimum_required(VERSION 3.3)
 
 project(tslib LANGUAGES C)
 
