@@ -16,5 +16,5 @@ if (${ENABLE_TOOLS})
 	target_compile_definitions(ts_uinput -DTS_POINTERCAL=${TS_POINTERCAL})
 
 	install(TARGETS ts_uinput
-		RUNTIME DESTINATION "bin")
+		RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 endif()

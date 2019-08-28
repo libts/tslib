@@ -80,5 +80,5 @@ endif()
 #install plugins and add to export set
 install(TARGETS ${plugin_targets} 
 	OPTIONAL
-	LIBRARY DESTINATION lib/ts)
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/ts)
 

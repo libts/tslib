@@ -10,4 +10,4 @@
 
 set(tslib_extras ts.conf)
 
-install(FILES ${tslib_extras} DESTINATION ${tslib_extras_dir})
+install(FILES ${tslib_extras} DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR})
