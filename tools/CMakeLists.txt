@@ -10,7 +10,7 @@
 
 add_executable(ts_uinput ts_uinput.c)
 target_link_libraries(ts_uinput tslib)
-target_compile_definitions(ts_uinput -DTS_POINTERCAL=${TS_POINTERCAL})
+target_compile_definitions(ts_uinput PRIVATE TS_POINTERCAL="${TS_POINTERCAL}")
 
 install(TARGETS ts_uinput
 	RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
