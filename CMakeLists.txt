@@ -57,3 +57,20 @@ install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/tslibConfig.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/tslibConfigVersion.cmake
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/tslib)
+
+# this is done in a function to have a local scope for the additional variables
+function(pkgc_setup_file)
+  set(prefix "${CMAKE_INSTALL_PREFIX}")
+  set(exec_prefix "${CMAKE_INSTALL_PREFIX}")
+  set(libdir "${CMAKE_INSTALL_FULL_LIBDIR}")
+  set(includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
+  set(PACKAGE tslib)
+  set(PACKAGE_DESCRIPTION "Touchscreen Access Library")
+  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tslib.pc.in"
+                 "${CMAKE_CURRENT_BINARY_DIR}/tslib.pc"
+                 @ONLY)
+endfunction()
+
+pkgc_setup_file()
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/tslib.pc"
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
