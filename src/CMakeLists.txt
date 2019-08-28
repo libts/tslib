@@ -24,6 +24,7 @@ configure_file(../cmake/config.h.in config.h @ONLY)
 set(tslib_core_src  ts_attach.c
 		    ts_close.c
 		    ts_config.c
+		    ts_config_filter.c
 		    ts_error.c
 		    ts_fd.c
 		    ts_get_eventpath.c
