@@ -37,6 +37,6 @@ set(tslib_library_man   ts_read.3
 
 set(tslib_misc_man      ts.conf.5)
 
-install(FILES ${tslib_general_man} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/man/man1)
-install(FILES ${tslib_library_man} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/man/man3)
-install(FILES ${tslib_misc_man}    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/man/man5)
+install(FILES ${tslib_general_man} DESTINATION ${CMAKE_INSTALL_MANDIR}/man1)
+install(FILES ${tslib_library_man} DESTINATION ${CMAKE_INSTALL_MANDIR}/man3)
+install(FILES ${tslib_misc_man}    DESTINATION ${CMAKE_INSTALL_MANDIR}/man5)

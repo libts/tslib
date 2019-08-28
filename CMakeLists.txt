@@ -12,6 +12,8 @@ cmake_minimum_required(VERSION 3.3)
 
 project(tslib LANGUAGES C)
 
+include(GNUInstallDirs)
+
 option(BUILD_SHARED_LIBS "ON:  tslib is build as shared; 
 			  OFF: tslib is build as static" ON)
 set(LIBTS_VERSION_CURRENT 10)
@@ -19,9 +21,8 @@ set(LIBTS_VERSION_REVISION 2)
 set(LIBTS_VERSION_AGE 10)
 
 set(PACKAGE_VERSION 1.20+)
-set(tslib_extras_dir ${CMAKE_INSTALL_PREFIX}/etc)
-set(TS_POINTERCAL ${tslib_extras_dir}/pointercal)
-set(TS_CONF ${tslib_extras_dir}/ts.conf)
+set(TS_POINTERCAL ${CMAKE_INSTALL_FULL_SYSCONFDIR}/pointercal)
+set(TS_CONF ${CMAKE_INSTALL_FULL_SYSCONFDIR}/ts.conf)
 
 add_subdirectory(src)
 add_subdirectory(plugins)
@@ -41,14 +42,14 @@ write_basic_package_version_file(
 )
 configure_package_config_file(cmake/tslibConfig.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/tslibConfig.cmake
-  INSTALL_DESTINATION lib/cmake/tslib)
+  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/tslib)
 
 install(EXPORT tslibTargets
   FILE tslibTargets.cmake
   NAMESPACE tslib::
-  DESTINATION lib/cmake/tslib)
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/tslib)
 
 install(FILES 
   ${CMAKE_CURRENT_BINARY_DIR}/tslibConfig.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/tslibConfigVersion.cmake
-  DESTINATION lib/cmake/tslib)
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/tslib)

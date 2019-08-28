@@ -13,7 +13,7 @@ include(CheckFunctionExists)
 
 if (NOT ${CMAKE_DL_LIBS} STREQUAL "")
 	set(HAVE_LIBDL 1)
-	set(PLUGIN_DIR ${CMAKE_INSTALL_PREFIX}/lib/ts)
+	set(PLUGIN_DIR ${CMAKE_INSTALL_FULL_LIBDIR}/ts)
 endif()
 
 check_include_file(unistd.h  HAVE_UNISTD_H)
@@ -64,8 +64,6 @@ set_target_properties(tslib PROPERTIES PUBLIC_HEADER tslib.h)
 set_target_properties(tslib PROPERTIES OUTPUT_NAME   ts)
 
 install(TARGETS tslib EXPORT tslibTargets
-           LIBRARY DESTINATION "lib"
-	   ARCHIVE DESTINATION "lib"
-	   PUBLIC_HEADER DESTINATION "include")
-
-
+           LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+	   ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+	   PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
