@@ -23,8 +23,6 @@
 #define EVTHRES_SIZE_MAX	500
 #define EVTHRES_SIZE_DEFAULT	5
 
-#define DEBUG
-
 struct evthres {
 	struct tslib_module_info	module;
 	unsigned int			size;
