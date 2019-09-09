@@ -368,7 +368,7 @@ Example: `module lowpass factor=0.5 threshold=1`
   events that are part of a real touch input. It will only cut out one
   whole "tap", if short enough.
 
-  Compared to the `debounce` filter, this filter will act on every occurance
+  Compared to the `debounce` filter, this filter will act on every occurrence
   of "pen/finger down", including the first one, not only starting with the
   second. Also, `debounce` is time-based, not events-based.
 
@@ -754,7 +754,7 @@ Adding `tslib::tslib` as a link target will add required dependencies and includ
 ### portable `ts_calibrate` and `ts_test_mt` using SDL2
 
 In case you cannot draw to the framebuffer directly, there is an __experimental__
-implentation of the necessary graphical tools using SDL2. They are more portable
+implementation of the necessary graphical tools using SDL2. They are more portable
 but require more resources to run. To use them, make sure you have SDL2 and the
 development headers installed and use `./configure --with-sdl2`.
 
