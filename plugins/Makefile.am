@@ -72,6 +72,12 @@ else
 IIR_MODULE =
 endif
 
+if ENABLE_EVTHRES_MODULE
+EVTHRES_MODULE = evthres.la
+else
+EVTHRES_MODULE =
+endif
+
 if ENABLE_LOWPASS_MODULE
 LOWPASS_MODULE = lowpass.la
 else
@@ -191,6 +197,7 @@ pluginexec_LTLIBRARIES = \
 	$(SKIP_MODULE) \
 	$(INVERT_MODULE) \
 	$(IIR_MODULE) \
+	$(EVTHRES_MODULE) \
 	$(LOWPASS_MODULE) \
 	$(UCB1X00_MODULE) \
 	$(CORGI_MODULE) \
@@ -279,6 +286,13 @@ if WINDOWS
 iir_la_LDFLAGS		+= -no-undefined
 endif
 iir_la_LIBADD		= $(top_builddir)/src/libts.la
+
+evthres_la_SOURCES	= evthres.c
+evthres_la_LDFLAGS	= -module $(LTVSN)
+if WINDOWS
+evthres_la_LDFLAGS	+= -no-undefined
+endif
+evthres_la_LIBADD	= $(top_builddir)/src/libts.la
 
 lowpass_la_SOURCES	= lowpass.c
 lowpass_la_LDFLAGS	= -module $(LTVSN)

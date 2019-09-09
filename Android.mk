@@ -178,6 +178,24 @@ LOCAL_MODULE_TAGS := optional
 include $(BUILD_SHARED_LIBRARY)
 
 
+# plugin: evthres
+include $(CLEAR_VARS)
+
+LOCAL_PRELINK_MODULE := false
+
+LOCAL_SRC_FILES := plugins/evthres.c
+
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/src/
+
+LOCAL_SHARED_LIBRARIES := libdl \
+                        libts
+
+LOCAL_MODULE := ts/plugins/evthres
+LOCAL_MODULE_TAGS := optional
+
+include $(BUILD_SHARED_LIBRARY)
+
+
 # plugin: lowpass
 include $(CLEAR_VARS)
 

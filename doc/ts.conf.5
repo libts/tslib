@@ -396,6 +396,26 @@ x or y minimum distance between two samples to start applying the filter. Defaul
 .RE
 .RE
 .PP
+\fBevthres\fR
+.RS 4
+Number of samples needed from the device after considered a valid touch. This
+filter will drop a tapping when too little samples are between "down" and "up".
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBN\fR
+.sp
+Minimum number of events needed between "down" and "up". Default: 5.
+
+.RE
+.RE
+.PP
 \fBvariance\fR
 .RS 4
 Tries to do it's best in order to filter out random noise coming from touchscreen ADCs. This is achieved by limiting the sample movement speed to some value (e\&.g\&. the pen is not supposed to move quicker than some threshold)\&.

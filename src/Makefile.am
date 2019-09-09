@@ -42,6 +42,10 @@ if ENABLE_STATIC_DEJITTER_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/dejitter.c
 endif
 
+if ENABLE_STATIC_EVTHRES_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/evthres.c
+endif
+
 if ENABLE_STATIC_IIR_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/iir.c
 endif

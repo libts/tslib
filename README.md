@@ -354,6 +354,33 @@ Parameters:
 Example: `module lowpass factor=0.5 threshold=1`
 
 
+### module: evthres
+  After "pen/finger down" N number of input samples need to be delivered by the
+  driver before they are considered valid and passed on to the user
+  (application). If "pen/finger up" occurs before N samples are being
+  read from the device driver, tslib will drop the "tap".
+
+  This filter can be used to avoid touches that, for example, result from
+  electro magnetic interference, that are known to be shorter than what a real
+  user would create.
+
+  In contrast to the `skip` filter, the `evthres` filter will not cut out
+  events that are part of a real touch input. It will only cut out one
+  whole "tap", if short enough.
+
+  Compared to the `debounce` filter, this filter will act on every occurance
+  of "pen/finger down", including the first one, not only starting with the
+  second. Also, `debounce` is time-based, not events-based.
+
+Parameters:
+* `N`
+
+	number of events between "down" and "up" that must be provided
+	by the device driver for the touch to be considered real and passed on.
+
+Example: `module evthres N=5`
+
+
 ### module:	variance
   Variance filter. Tries to do it's best in order to filter out random noise
   coming from touchscreen ADC's. This is achieved by limiting the sample

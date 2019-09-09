@@ -60,6 +60,9 @@ static const struct tslib_module_desc tslib_modules[] = {
 #ifdef TSLIB_STATIC_DMC_DUS3000_MODULE
 	{ "dmc_dus3000", dmc_dus3000_mod_init },
 #endif
+#ifdef TSLIB_STATIC_EVTHRES_MODULE
+	{ "evthres", evthres_mod_init },
+#endif
 #ifdef TSLIB_STATIC_GALAX_MODULE
 	{ "galax", galax_mod_init },
 #endif

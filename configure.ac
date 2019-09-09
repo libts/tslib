@@ -97,6 +97,7 @@ AM_CONDITIONAL(HAVE_STRSEP, test x$HAVE_STRSEP = xyes)
 #########
 TSLIB_CHECK_MODULE([debounce], [yes], [Enable building of debounce filter])
 TSLIB_CHECK_MODULE([dejitter], [yes], [Enable building of dejitter filter])
+TSLIB_CHECK_MODULE([evthres], [yes], [Enable building of evthres filter])
 TSLIB_CHECK_MODULE([iir], [yes], [Enable building of IIR filter])
 TSLIB_CHECK_MODULE([linear], [yes], [Enable building of linear scaling])
 TSLIB_CHECK_MODULE([median], [yes], [Enable building of median filter])
