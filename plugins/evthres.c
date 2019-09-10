@@ -274,6 +274,7 @@ static int evthres_read_mt(struct tslib_module_info *inf,
 			#ifdef DEBUG
 				printf("EVTHRES: pen up: DROP the sequence\n");
 			#endif
+				samp[i][j].valid &= ~TSLIB_MT_VALID;
 				continue;
 			}
 
