@@ -40,7 +40,7 @@ and their package management.
 
 ### configure tslib
 This is just an example `/etc/ts.conf` file. Touch samples flow from top to
-bottom. Each line specifies one module and it's parameters. Modules are
+bottom. Each line specifies one module and its parameters. Modules are
 processed in order. Use _one_ module_raw on top, that accesses your device,
 followed by any combination of filter modules.
 
@@ -61,14 +61,14 @@ through the library:
                module       module      module       module
 
 ### calibrate the touch screen
-Calibration is done by the `linear` plugin, which uses it's own config file
+Calibration is done by the `linear` plugin, which uses its own config file
 `/etc/pointercal`. Don't edit this file manually. It is created by the
 [`ts_calibrate`](https://manpages.debian.org/unstable/libts0/ts_calibrate.1.en.html) program:
 
     # ts_calibrate
 
 The calibration procedure simply requires you to touch the cross on screen,
-where is appears, as accurate as possible.
+where it appears, as accurate as possible.
 
 ![ts_calibrate](doc/screenshots/ts_calibrate.png?raw=true)
 
@@ -164,7 +164,7 @@ where `NAME_OF_THE_TOUCH_CONTROLLER` the touchscreen found in your `cat /proc/bu
 the correct device for you.
 
 #### running as systemd service (optional)
-in case you have to use non-default paths, create a file containing the
+In case you have to use non-default paths, create a file containing the
 environment for tslib, like `/etc/ts.env`
 
       TSLIB_CALIBFILE=/etc/pointercal
@@ -382,7 +382,7 @@ Example: `module evthres N=5`
 
 
 ### module:	variance
-  Variance filter. Tries to do it's best in order to filter out random noise
+  Variance filter. Tries to do its best in order to filter out random noise
   coming from touchscreen ADC's. This is achieved by limiting the sample
   movement speed to some value (e.g. the pen is not supposed to move quicker
   than some threshold).
@@ -626,7 +626,7 @@ incremented and the third is set to zero. If a release includes mostly just
 bugfixes, only the third number is incremented.
 
 #### tslib package version
-A tslib tarball version number doesn't tell you anything about it's backwards
+A tslib tarball version number doesn't tell you anything about its backwards
 compatibility.
 
 ### dependencies
@@ -663,10 +663,10 @@ too.
 
 tslib modules (filter or driver/raw module) in the plugins directory need to
 implement `mod_init()`. If the module takes parameters, it has to declare a
-`const struct tslib_vars` and pass that, it's lengths and the params string
+`const struct tslib_vars` and pass that, its lengths and the params string
 that is passed to `mod_init` to `tslib_parse_vars()` during `mod_init()`.
 
-Furthermore a `const struct tslib_ops` has to be declared, with it's members
+Furthermore a `const struct tslib_ops` has to be declared, with its members
 pointing to the module's implementation of module-operations like `read_mt`
 that get called in the chain of filters.
 
