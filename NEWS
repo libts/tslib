@@ -1,5 +1,5 @@
 
-tslib 1.21 - unreleased
+tslib 1.21 - released 2019-10-22
 ================================
 This release includes libts version 0.10.3 and the following changes:
 * various fixes for cmake builds
