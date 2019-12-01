@@ -170,14 +170,16 @@ static int send_touch_events(struct data_t *data, struct ts_sample_mt **s,
 				continue;
 
 			if (s[j][i].pen_down == 1) {
-				data->ev[c].time = s[j][i].tv;
+				data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+				data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 				data->ev[c].type = EV_KEY;
 				data->ev[c].code = BTN_TOUCH;
 				data->ev[c].value = s[j][i].pen_down;
 				c++;
 			}
 
-			data->ev[c].time = s[j][i].tv;
+			data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+			data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 			data->ev[c].type = EV_ABS;
 			data->ev[c].code = ABS_MT_SLOT;
 			data->ev[c].value = s[j][i].slot;
@@ -190,111 +192,129 @@ static int send_touch_events(struct data_t *data, struct ts_sample_mt **s,
 			 * we should use slot 1 and so on.
 			 */
 			if (i == 0) {
-				data->ev[c].time = s[j][i].tv;
+				data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+				data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 				data->ev[c].type = EV_ABS;
 				data->ev[c].code = ABS_X;
 				data->ev[c].value = s[j][i].x;
 				c++;
 
-				data->ev[c].time = s[j][i].tv;
+				data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+				data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 				data->ev[c].type = EV_ABS;
 				data->ev[c].code = ABS_Y;
 				data->ev[c].value = s[j][i].y;
 				c++;
 
-				data->ev[c].time = s[j][i].tv;
+				data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+				data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 				data->ev[c].type = EV_ABS;
 				data->ev[c].code = ABS_PRESSURE;
 				data->ev[c].value = s[j][i].pressure;
 				c++;
 			}
 
-			data->ev[c].time = s[j][i].tv;
+			data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+			data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 			data->ev[c].type = EV_ABS;
 			data->ev[c].code = ABS_MT_POSITION_X;
 			data->ev[c].value = s[j][i].x;
 			c++;
 
-			data->ev[c].time = s[j][i].tv;
+			data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+			data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 			data->ev[c].type = EV_ABS;
 			data->ev[c].code = ABS_MT_POSITION_Y;
 			data->ev[c].value = s[j][i].y;
 			c++;
 
-			data->ev[c].time = s[j][i].tv;
+			data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+			data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 			data->ev[c].type = EV_ABS;
 			data->ev[c].code = ABS_MT_PRESSURE;
 			data->ev[c].value = s[j][i].pressure;
 			c++;
 
-			data->ev[c].time = s[j][i].tv;
+			data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+			data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 			data->ev[c].type = EV_ABS;
 			data->ev[c].code = ABS_MT_TOUCH_MAJOR;
 			data->ev[c].value = s[j][i].touch_major;
 			c++;
 
-			data->ev[c].time = s[j][i].tv;
+			data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+			data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 			data->ev[c].type = EV_ABS;
 			data->ev[c].code = ABS_MT_WIDTH_MAJOR;
 			data->ev[c].value = s[j][i].width_major;
 			c++;
 
-			data->ev[c].time = s[j][i].tv;
+			data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+			data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 			data->ev[c].type = EV_ABS;
 			data->ev[c].code = ABS_MT_TOUCH_MINOR;
 			data->ev[c].value = s[j][i].touch_minor;
 			c++;
 
-			data->ev[c].time = s[j][i].tv;
+			data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+			data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 			data->ev[c].type = EV_ABS;
 			data->ev[c].code = ABS_MT_WIDTH_MINOR;
 			data->ev[c].value = s[j][i].width_minor;
 			c++;
 
-			data->ev[c].time = s[j][i].tv;
+			data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+			data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 			data->ev[c].type = EV_ABS;
 			data->ev[c].code = ABS_MT_TOOL_TYPE;
 			data->ev[c].value = s[j][i].tool_type;
 			c++;
 
-			data->ev[c].time = s[j][i].tv;
+			data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+			data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 			data->ev[c].type = EV_ABS;
 			data->ev[c].code = ABS_MT_TOOL_X;
 			data->ev[c].value = s[j][i].tool_x;
 			c++;
 
-			data->ev[c].time = s[j][i].tv;
+			data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+			data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 			data->ev[c].type = EV_ABS;
 			data->ev[c].code = ABS_MT_TOOL_Y;
 			data->ev[c].value = s[j][i].tool_y;
 			c++;
 
-			data->ev[c].time = s[j][i].tv;
+			data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+			data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 			data->ev[c].type = EV_ABS;
 			data->ev[c].code = ABS_MT_ORIENTATION;
 			data->ev[c].value = s[j][i].orientation;
 			c++;
 
-			data->ev[c].time = s[j][i].tv;
+			data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+			data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 			data->ev[c].type = EV_ABS;
 			data->ev[c].code = ABS_MT_DISTANCE;
 			data->ev[c].value = s[j][i].distance;
 			c++;
 
-			data->ev[c].time = s[j][i].tv;
+			data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+			data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 			data->ev[c].type = EV_ABS;
 			data->ev[c].code = ABS_MT_BLOB_ID;
 			data->ev[c].value = s[j][i].blob_id;
 			c++;
 
-			data->ev[c].time = s[j][i].tv;
+			data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+			data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 			data->ev[c].type = EV_ABS;
 			data->ev[c].code = ABS_MT_TRACKING_ID;
 			data->ev[c].value = s[j][i].tracking_id;
 			c++;
 
 			if (data->mt_type_a == 1) {
-				data->ev[c].time = s[j][i].tv;
+				data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+				data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 				data->ev[c].type = EV_SYN;
 				data->ev[c].code = SYN_MT_REPORT;
 				data->ev[c].value = 0;
@@ -302,7 +322,8 @@ static int send_touch_events(struct data_t *data, struct ts_sample_mt **s,
 			}
 
 			if (s[j][i].pen_down == 0) {
-				data->ev[c].time = s[j][i].tv;
+				data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+				data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 				data->ev[c].type = EV_KEY;
 				data->ev[c].code = BTN_TOUCH;
 				data->ev[c].value = s[j][i].pen_down;
@@ -312,7 +333,8 @@ static int send_touch_events(struct data_t *data, struct ts_sample_mt **s,
 		}
 
 		if (c > 0) {
-			data->ev[c].time = s[j][i].tv;
+			data->ev[c].input_event_sec = s[j][i].tv.tv_sec;
+			data->ev[c].input_event_usec = s[j][i].tv.tv_usec;
 			data->ev[c].type = EV_SYN;
 			data->ev[c].code = SYN_REPORT;
 			data->ev[c].value = 0;
