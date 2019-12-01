@@ -40,6 +40,11 @@
 # include <linux/input.h>
 #endif
 
+#ifndef input_event_sec
+#define input_event_sec time.tv_sec
+#define input_event_usec time.tv_usec
+#endif
+
 #ifndef EV_SYN /* 2.4 kernel headers */
 # define EV_SYN 0x00
 #endif
@@ -384,7 +389,8 @@ static int ts_input_read(struct tslib_module_info *inf,
 						samp->y = i->current_y;
 						samp->pressure = i->current_p;
 					}
-					samp->tv = ev.time;
+					samp->tv.tv_sec = ev.input_event_sec;
+					samp->tv.tv_usec = ev.input_event_usec;
 			#ifdef DEBUG
 				fprintf(stderr,
 					"RAW---------------------> %d %d %d %ld.%ld\n",
@@ -519,7 +525,8 @@ static int ts_input_read(struct tslib_module_info *inf,
 					samp->pressure = i->current_p = ev.value;
 					break;
 				}
-				samp->tv = ev.time;
+				samp->tv.tv_sec = ev.input_event_sec;
+				samp->tv.tv_usec = ev.input_event_usec;
 	#ifdef DEBUG
 				fprintf(stderr,
 					"RAW---------------------------> %d %d %d\n",
@@ -536,7 +543,8 @@ static int ts_input_read(struct tslib_module_info *inf,
 						samp->x = 0;
 						samp->y = 0;
 						samp->pressure = 0;
-						samp->tv = ev.time;
+						samp->tv.tv_sec = ev.input_event_sec;
+						samp->tv.tv_usec = ev.input_event_usec;
 						samp++;
 						total++;
 					}
@@ -651,7 +659,8 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 				switch (i->ev[it].code) {
 				case BTN_TOUCH:
 					i->buf[total][i->slot].pen_down = i->ev[it].value;
-					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].tv.tv_sec = i->ev[it].input_event_sec;
+					i->buf[total][i->slot].tv.tv_usec = i->ev[it].input_event_usec;
 					i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
 					if (i->ev[it].value == 0)
 						pen_up = 1;
@@ -751,7 +760,8 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 					// fall through
 				case ABS_MT_POSITION_X:
 					i->buf[total][i->slot].x = i->ev[it].value;
-					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].tv.tv_sec = i->ev[it].input_event_sec;
+					i->buf[total][i->slot].tv.tv_usec = i->ev[it].input_event_usec;
 					i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
 					break;
 				case ABS_Y:
@@ -760,7 +770,8 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 					// fall through
 				case ABS_MT_POSITION_Y:
 					i->buf[total][i->slot].y = i->ev[it].value;
-					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].tv.tv_sec = i->ev[it].input_event_sec;
+					i->buf[total][i->slot].tv.tv_usec = i->ev[it].input_event_usec;
 					i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
 					break;
 				case ABS_PRESSURE:
@@ -769,12 +780,14 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 					// fall through
 				case ABS_MT_PRESSURE:
 					i->buf[total][i->slot].pressure = i->ev[it].value;
-					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].tv.tv_sec = i->ev[it].input_event_sec;
+					i->buf[total][i->slot].tv.tv_usec = i->ev[it].input_event_usec;
 					i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
 					break;
 				case ABS_MT_TOOL_X:
 					i->buf[total][i->slot].tool_x = i->ev[it].value;
-					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].tv.tv_sec = i->ev[it].input_event_sec;
+					i->buf[total][i->slot].tv.tv_usec = i->ev[it].input_event_usec;
 					i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
 					/* for future use
 					 * i->buf[total][i->slot].valid |= TSLIB_MT_VALID_TOOL;
@@ -782,7 +795,8 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 					break;
 				case ABS_MT_TOOL_Y:
 					i->buf[total][i->slot].tool_y = i->ev[it].value;
-					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].tv.tv_sec = i->ev[it].input_event_sec;
+					i->buf[total][i->slot].tv.tv_usec = i->ev[it].input_event_usec;
 					i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
 					/* for future use
 					 * i->buf[total][i->slot].valid |= TSLIB_MT_VALID_TOOL;
@@ -790,7 +804,8 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 					break;
 				case ABS_MT_TOOL_TYPE:
 					i->buf[total][i->slot].tool_type = i->ev[it].value;
-					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].tv.tv_sec = i->ev[it].input_event_sec;
+					i->buf[total][i->slot].tv.tv_usec = i->ev[it].input_event_usec;
 					i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
 					/* for future use
 					 * i->buf[total][i->slot].valid |= TSLIB_MT_VALID_TOOL;
@@ -798,12 +813,14 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 					break;
 				case ABS_MT_ORIENTATION:
 					i->buf[total][i->slot].orientation = i->ev[it].value;
-					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].tv.tv_sec = i->ev[it].input_event_sec;
+					i->buf[total][i->slot].tv.tv_usec = i->ev[it].input_event_usec;
 					i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
 					break;
 				case ABS_MT_DISTANCE:
 					i->buf[total][i->slot].distance = i->ev[it].value;
-					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].tv.tv_sec = i->ev[it].input_event_sec;
+					i->buf[total][i->slot].tv.tv_usec = i->ev[it].input_event_usec;
 					i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
 
 					if (i->special_device == EGALAX_VERSION_210) {
@@ -816,34 +833,40 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 					break;
 				case ABS_MT_BLOB_ID:
 					i->buf[total][i->slot].blob_id = i->ev[it].value;
-					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].tv.tv_sec = i->ev[it].input_event_sec;
+					i->buf[total][i->slot].tv.tv_usec = i->ev[it].input_event_usec;
 					i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
 					break;
 				case ABS_MT_TOUCH_MAJOR:
 					i->buf[total][i->slot].touch_major = i->ev[it].value;
-					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].tv.tv_sec = i->ev[it].input_event_sec;
+					i->buf[total][i->slot].tv.tv_usec = i->ev[it].input_event_usec;
 					i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
 					if (i->ev[it].value == 0)
 						i->buf[total][i->slot].pressure = 0;
 					break;
 				case ABS_MT_WIDTH_MAJOR:
 					i->buf[total][i->slot].width_major = i->ev[it].value;
-					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].tv.tv_sec = i->ev[it].input_event_sec;
+					i->buf[total][i->slot].tv.tv_usec = i->ev[it].input_event_usec;
 					i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
 					break;
 				case ABS_MT_TOUCH_MINOR:
 					i->buf[total][i->slot].touch_minor = i->ev[it].value;
-					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].tv.tv_sec = i->ev[it].input_event_sec;
+					i->buf[total][i->slot].tv.tv_usec = i->ev[it].input_event_usec;
 					i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
 					break;
 				case ABS_MT_WIDTH_MINOR:
 					i->buf[total][i->slot].width_minor = i->ev[it].value;
-					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].tv.tv_sec = i->ev[it].input_event_sec;
+					i->buf[total][i->slot].tv.tv_usec = i->ev[it].input_event_usec;
 					i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
 					break;
 				case ABS_MT_TRACKING_ID:
 					i->buf[total][i->slot].tracking_id = i->ev[it].value;
-					i->buf[total][i->slot].tv = i->ev[it].time;
+					i->buf[total][i->slot].tv.tv_sec = i->ev[it].input_event_sec;
+					i->buf[total][i->slot].tv.tv_usec = i->ev[it].input_event_usec;
 					i->buf[total][i->slot].valid |= TSLIB_MT_VALID;
 					if (i->ev[it].value == -1)
 						i->buf[total][i->slot].pressure = 0;
