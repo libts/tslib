@@ -33,6 +33,7 @@
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <tslib.h>
@@ -40,6 +41,7 @@
 #include <signal.h>
 #include <syslog.h>
 #include <dirent.h>
+#include <sys/inotify.h>
 #ifdef __FreeBSD__
 #include <dev/evdev/input.h>
 #include <dev/evdev/uinput.h>
@@ -706,6 +708,25 @@ static char *get_new_path(struct data_t *data)
 	return devnode;
 }
 
+int inotify_calibfile(int fd)
+{
+	int ret;
+	bool need_free = false;
+	char *calibfile = getenv("TSLIB_CALIBFILE");
+	if (!calibfile) {
+		calibfile = strdup(TS_POINTERCAL);
+		need_free = true;
+	}
+	if (!calibfile)
+		return -1;
+
+	ret = inotify_add_watch(fd, calibfile, IN_CLOSE_WRITE);
+	if (need_free)
+		free(calibfile);
+
+	return ret;
+}
+
 int main(int argc, char **argv)
 {
 	struct data_t data = {
@@ -729,6 +750,9 @@ int main(int argc, char **argv)
 	int ret;
 	struct ts_sample_mt *testsample;
 	struct ts_sample_mt **testsample_p;
+	int inotify_fd = -1;
+	int calibfile_wd = -1;
+	struct inotify_event ievent;
 
 	while (1) {
 		const struct option long_options[] = {
@@ -872,7 +896,7 @@ int main(int argc, char **argv)
 	free(testsample_p);
 
 	/* blocking setup for production run */
-	data.ts = ts_setup(data.input_name, 0);
+	data.ts = ts_setup(data.input_name, 1);
 	if (!data.ts) {
 		perror("ts_setup");
 		goto out;
@@ -989,13 +1013,39 @@ int main(int argc, char **argv)
 		}
 	}
 
+	inotify_fd = inotify_init1(IN_NONBLOCK);
+	if (inotify_fd == -1) {
+		perror("inotify_init");
+		goto out;
+	}
+
+	calibfile_wd = inotify_calibfile(inotify_fd);
+	if (calibfile_wd == -1) {
+		perror("inotify_calibfile");
+		goto out;
+	}
+
 	while (1) {
-		if (process(&data, data.s_array, data.slots,
-			    TS_READ_WHOLE_SAMPLES))
+		ret = read(inotify_fd, &ievent, sizeof(ievent));
+		if (ret > 0) {
+			if (ts_reconfig(data.ts) == -1) {
+				perror("ts_reconfig");
+				goto out;
+			}
+		}
+
+		ret = process(&data, data.s_array, data.slots, TS_READ_WHOLE_SAMPLES);
+		if (ret < 0)
 			goto out;
 	}
 
 out:
+	if (calibfile_wd != -1)
+		inotify_rm_watch(inotify_fd, calibfile_wd);
+
+	if (inotify_fd != -1)
+		close(inotify_fd);
+
 	if (dev_input_name)
 		free(dev_input_name);
 
