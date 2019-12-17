@@ -40,6 +40,8 @@
 #include <signal.h>
 #include <syslog.h>
 #include <dirent.h>
+#include <pthread.h>
+#include <sys/inotify.h>
 #ifdef __FreeBSD__
 #include <dev/evdev/input.h>
 #include <dev/evdev/uinput.h>
@@ -706,6 +708,32 @@ static char *get_new_path(struct data_t *data)
 	return devnode;
 }
 
+int inotify_calibfile(int fd)
+{
+	char *calibfile = getenv("TSLIB_CALIBFILE");
+	if (!calibfile)
+		calibfile = strdup(TS_POINTERCAL);
+	if (!calibfile)
+		return -1;
+	printf("calibfile is %s\n", calibfile);
+
+	return inotify_add_watch(fd, calibfile, IN_CLOSE_WRITE);
+}
+
+void *process_thread(void *arg)
+{
+	int ret;
+	struct data_t *data = (struct data_t *)arg;
+
+	while (1) {
+		if (process(data, data->s_array, data->slots,
+			    TS_READ_WHOLE_SAMPLES))
+			break;
+	}
+
+	pthread_exit(NULL);
+}
+
 int main(int argc, char **argv)
 {
 	struct data_t data = {
@@ -729,6 +757,12 @@ int main(int argc, char **argv)
 	int ret;
 	struct ts_sample_mt *testsample;
 	struct ts_sample_mt **testsample_p;
+	int inotify_fd = -1;
+	int calibfile_wd = -1;
+	struct inotify_event ievent;
+
+	int pthread_create_ret = -1;
+	pthread_t pid;
 
 	while (1) {
 		const struct option long_options[] = {
@@ -989,13 +1023,55 @@ int main(int argc, char **argv)
 		}
 	}
 
+	inotify_fd = inotify_init();
+	if (inotify_fd == -1) {
+		perror("inotify_init");
+		goto out;
+	}
+
+	calibfile_wd = inotify_calibfile(inotify_fd);
+	if (calibfile_wd == -1) {
+		perror("inotify_confffile");
+		goto out;
+	}
+
+	pthread_create_ret = pthread_create(&pid, NULL, process_thread, &data);
+	if (pthread_create_ret) {
+		perror("pthread_create");
+		goto out;
+	}
+
 	while (1) {
-		if (process(&data, data.s_array, data.slots,
-			    TS_READ_WHOLE_SAMPLES))
+		ret = read(inotify_fd, &ievent, sizeof(ievent));
+		if (ret <= 0)
+			continue;
+
+		pthread_cancel(pid);
+		pthread_join(pid, NULL);
+		pthread_create_ret = -1;
+
+		if (ts_reconfig(data.ts) == -1) {
+			perror("ts_reconfig");
 			goto out;
+		}
+
+		pthread_create_ret = pthread_create(&pid, NULL, process_thread, &data);
+		if (pthread_create_ret) {
+			perror("pthread_create");
+			goto out;
+		}
 	}
 
 out:
+	if (calibfile_wd != -1)
+		inotify_rm_watch(inotify_fd, calibfile_wd);
+
+	if (inotify_fd != -1)
+		close(inotify_fd);
+
+	if (!pthread_create_ret)
+		pthread_join(pid, NULL);
+
 	if (dev_input_name)
 		free(dev_input_name);
 
