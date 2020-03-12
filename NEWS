@@ -1,4 +1,10 @@
 
+tslib 1.22 - unreleased
+================================
+This release includes libts version 0.10.4 and the following changes:
+* fix ts_uinput build on 32 bit arch on newer kernels
+
+
 tslib 1.21 - released 2019-10-22
 ================================
 This release includes libts version 0.10.3 and the following changes:
