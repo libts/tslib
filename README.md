@@ -828,9 +828,6 @@ Writing your own plugin is quite easy, in case an existing one doesn't fit.
 For GNU/Linux all architectures are _very_ well covered, thanks to Debian or Arch
 Linux or others.
 
-If you're lucky, you'll find some unofficial testing builds for Windows or other
-platforms [here](https://martinkepplinger.com/tslib/packages/).
-
 Please help porting missing programs!
 
 ## touchscreen hardware support
