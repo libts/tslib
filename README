@@ -28,5 +28,5 @@ GIT
 
 LICENSE
 
-  The libts library is available under the LGPL license. The provided programs
+  The libts library is available under the LGPL 2.1 license. The provided programs
   that use it are available under the GPL license, see the COPYING files.
