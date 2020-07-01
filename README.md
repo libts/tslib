@@ -851,27 +851,14 @@ installed: `module_raw input_evdev`.
 This project exists [[thanks](THANKS)] to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
 <a href="https://github.com/libts/tslib/contributors"><img src="https://opencollective.com/tslib/contributors.svg?width=890&button=false" /></a>
 
+## support this project
 
-## Backers
-
-Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/tslib#backer)]
-
-<a href="https://opencollective.com/tslib#backers" target="_blank"><img src="https://opencollective.com/tslib/backers.svg?width=890"></a>
-
+In case you like our project, use it in your professional environment
+and want it to stay maintained, please consider [sponsoring the current
+maintainer via Github](https://github.com/sponsors/merge) (or ask for
+a btc address if that's what you do). Maintenance costs time and money.
+thank you very much.
 
 ## Sponsors
 
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/tslib#sponsor)]
-
-<a href="https://opencollective.com/tslib/sponsor/0/website" target="_blank"><img src="https://opencollective.com/tslib/sponsor/0/avatar.svg"></a>
-<a href="https://opencollective.com/tslib/sponsor/1/website" target="_blank"><img src="https://opencollective.com/tslib/sponsor/1/avatar.svg"></a>
-<a href="https://opencollective.com/tslib/sponsor/2/website" target="_blank"><img src="https://opencollective.com/tslib/sponsor/2/avatar.svg"></a>
-<a href="https://opencollective.com/tslib/sponsor/3/website" target="_blank"><img src="https://opencollective.com/tslib/sponsor/3/avatar.svg"></a>
-<a href="https://opencollective.com/tslib/sponsor/4/website" target="_blank"><img src="https://opencollective.com/tslib/sponsor/4/avatar.svg"></a>
-<a href="https://opencollective.com/tslib/sponsor/5/website" target="_blank"><img src="https://opencollective.com/tslib/sponsor/5/avatar.svg"></a>
-<a href="https://opencollective.com/tslib/sponsor/6/website" target="_blank"><img src="https://opencollective.com/tslib/sponsor/6/avatar.svg"></a>
-<a href="https://opencollective.com/tslib/sponsor/7/website" target="_blank"><img src="https://opencollective.com/tslib/sponsor/7/avatar.svg"></a>
-<a href="https://opencollective.com/tslib/sponsor/8/website" target="_blank"><img src="https://opencollective.com/tslib/sponsor/8/avatar.svg"></a>
-<a href="https://opencollective.com/tslib/sponsor/9/website" target="_blank"><img src="https://opencollective.com/tslib/sponsor/9/avatar.svg"></a>
-
-
+none. [become a sponsor](https://github.com/sponsors/merge) and be listed here.
