@@ -1,8 +1,9 @@
 
-tslib 1.22 - unreleased
+tslib 1.22 - released 2020-07-01
 ================================
 This release includes libts version 0.10.4 and the following changes:
 * fix ts_uinput build on 32 bit arch on newer kernels
+* ts_uinput: fix building on FreeBSD
 
 
 tslib 1.21 - released 2019-10-22
