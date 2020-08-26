@@ -202,7 +202,7 @@ static int cy8mrln_palmpre_set_wot_threshold(struct tslib_cy8mrln_palmpre *info,
 	return 0;
 
 error:
-	printf("TSLIB: cy8mrln_palmpre: ERROR: could not set wot treshhold value\n");
+	printf("TSLIB: cy8mrln_palmpre: ERROR: could not set wot threshold value\n");
 	return -1;
 }
 
@@ -577,7 +577,7 @@ static int cy8mrln_palmpre_read(struct tslib_module_info *info, struct ts_sample
 			}
 		}
 
-		/* only caluclate events that are not noise */
+		/* only calculate events that are not noise */
 		if (max_value > cy8mrln_info->noise) {
 			cy8mrln_palmpre_interpolate(cy8mrln_info, cy8mrln_evt.field, max_x, max_y, &samp[valid_samples]);
 			samp->pressure = max_value;
@@ -685,7 +685,7 @@ TSAPI struct tslib_module_info *cy8mrln_palmpre_mod_init(struct tsdev *dev, cons
 	if (info == NULL)
 		return NULL;
 	info->module.ops = &cy8mrln_palmpre_ops;
-	/* required to set the default valuse */
+	/* required to set the default value */
 	info->module.dev = dev;
 	info->last_valid_samples = NULL;
 	info->last_n_valid_samples = 0;

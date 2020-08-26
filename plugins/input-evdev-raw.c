@@ -699,7 +699,7 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 				}
 				i->last_type_a_slots = i->slot;
 
-				/* FIXME this pen_up is deprectated in MT */
+				/* FIXME this pen_up is deprecated in MT */
 				if (pen_up)
 					pen_up = 0;
 

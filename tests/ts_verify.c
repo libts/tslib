@@ -297,7 +297,7 @@ static void run_tests(struct ts_verify *data)
 
 	printf("===================== test run %d =====================\n", data->iteration);
 
-	/* ts_read() paramters(data, samples, nonblocking, raw) */
+	/* ts_read() parameters(data, samples, nonblocking, raw) */
 	ret = ts_verify_read_mt_1(data, 1, 0, 0);
 	data->read_mt_run_count++;
 	if (ret <= 1 && ret >= 0) {

@@ -28,7 +28,7 @@ static void usage(char **argv)
 	printf("\t  0          - timeout expired without receiving event.\n");
 	printf("\t               But this maybe is TouchScreen.\n");
 	printf("\t -1          - this is NOT TouchScreen device!\n");
-	printf("\t  1          - this is TouchScreen for shure!\n");
+	printf("\t  1          - this is TouchScreen for sure!\n");
 	exit(-1);
 }
 
