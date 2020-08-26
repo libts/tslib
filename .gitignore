@@ -43,4 +43,4 @@ tests/ts_conf
 compile
 *.exe
 INSTALL
-
+tags
