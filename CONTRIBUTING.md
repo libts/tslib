@@ -57,7 +57,7 @@ We loosely tie to the [Linux coding style](https://www.kernel.org/doc/html/lates
 Our library parts are LGPLv2, our programs are GPL licensed. When contributing
 or distributing tslib, make sure you comply with the licenses. And please make
 sure you have the right to the code you are contributing yourself. There is no
-other copyright aggreement. You retain the copyright to your code.
+other copyright agreement. You retain the copyright to your code.
 
 ### branching model
 Simple: our master branch is __not__ to be considered stable! A stable state

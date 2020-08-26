@@ -64,7 +64,7 @@ static void usage(char **argv)
 		argv[0]);
 	printf("\n");
 	printf("-r --raw\n");
-	printf("                don't apply filter modules. use what module_raw\n");
+	printf("                don't apply filter modules. Use what module_raw\n");
 	printf("                delivers directly.\n");
 	printf("-n --non-blocking\n");
 	printf("                tests non-blocking read and loops\n");
@@ -73,7 +73,7 @@ static void usage(char **argv)
 	printf("                overriding TSLIB_TSDEVICE\n");
 	printf("-s --samples\n");
 	printf("                number of samples to request ts_read_mt() to\n");
-	printf("		get before proceding\n");
+	printf("		get before proceeding\n");
 	printf("-j --slots\n");
 	printf("                set the number of concurrently available touch\n");
 	printf("                points. This overrides multitouch slots for\n");

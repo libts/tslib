@@ -110,7 +110,7 @@ int main(int argc, char **argv)
 	refresh_screen();
 	put_string_center(xres/2, yres * 0.1, "Touchscreen harvesting utility", 4);
 	put_string_center(xres/2, yres * 0.15, "Touch the crosshair center", 1);
-	put_string_center(xres/2, yres * 0.2, "with as much accurary", 1);
+	put_string_center(xres/2, yres * 0.2, "with as much accuracy", 1);
 	put_string_center(xres/2, yres * 0.25, "as possible", 1);
 	put_string_center(xres/2, yres * 0.35, "Touch anywhere to start", 1);
 
