@@ -9,7 +9,7 @@ tslib consists of the library _libts_ and tools that help you _calibrate_ and
 _use it_ in your environment.
 
 ## contact
-If you have problems, questions, ideas or suggestions, please contact us by
+If you have problems, questions, ideas, or suggestions, please contact us by
 writing an email to [tslib@lists.infradead.org](mailto:tslib@lists.infradead.org),
 which is [our mailing list](http://lists.infradead.org/mailman/listinfo/tslib).
 
@@ -28,20 +28,20 @@ Visit the [tslib website](http://tslib.org) for an overview of the project.
 ## setup and configure tslib
 ### install tslib
 tslib runs on various hardware architectures and operating systems, including GNU/Linux,
-FreeBSD or Android/Linux. See [building tslib](#building-tslib) for details.
+FreeBSD, or Android/Linux. See [building tslib](#building-tslib) for details.
 Apart from building the latest tarball release, running
-`./configure`, `make` and `make install`, tslib is available from distributors like
+`./configure`, `make`, and `make install`, tslib is available from distributors like
 [Arch Linux](https://www.archlinux.org/packages/?q=tslib) / [Arch Linux ARM](https://archlinuxarm.org/packages/aarch64/tslib),
 [Buildroot](https://buildroot.org/),
 [Debian](https://tracker.debian.org/pkg/tslib) / [Ubuntu](https://launchpad.net/ubuntu/+source/tslib),
-[Fedora](https://apps.fedoraproject.org/packages/tslib/) or
+[Fedora](https://apps.fedoraproject.org/packages/tslib/), or
 [OpenSUSE](https://software.opensuse.org/package/tslib)
 and their package management.
 
 ### configure tslib
 This is just an example `/etc/ts.conf` file. Touch samples flow from top to
 bottom. Each line specifies one module and its parameters. Modules are
-processed in order. Use _one_ module_raw on top, that accesses your device,
+processed in order. Use _one_ `module_raw` on top, that accesses your device,
 followed by any combination of filter modules.
 
     module_raw input
@@ -49,15 +49,15 @@ followed by any combination of filter modules.
     module dejitter delta=100
     module linear
 
-see the [section below](#filter-modules) for available filters and their
+See the [section below](#filter-modules) for available filters and their
 parameters. On Linux, your first commented-in line should always be
 `module_raw input` which offers one optional parameter: `grab_events=1`
-if you want it to execute EVIOCGRAB on the device.
+if you want it to execute `EVIOCGRAB` on the device.
 
 With this configuration file, we end up with the following data flow
 through the library:
 
-    driver --> raw read --> median  --> dejitter --> linear --> application (using ts_read_mt())
+    driver --> raw read --> median  --> dejitter --> linear --> application (using `ts_read_mt()`)
                module       module      module       module
 
 ### calibrate the touch screen
@@ -67,8 +67,8 @@ Calibration is done by the `linear` plugin, which uses its own config file
 
     # ts_calibrate
 
-The calibration procedure simply requires you to touch the cross on screen,
-where it appears, as accurate as possible.
+The calibration procedure simply requires you to touch a cross on the screen,
+where it appears, as accurately as possible.
 
 ![ts_calibrate](doc/screenshots/ts_calibrate.png?raw=true)
 
@@ -80,12 +80,12 @@ filters, using [`ts_test_mt`](https://manpages.debian.org/unstable/libts0/ts_tes
 
 ![ts_test_mt](doc/screenshots/ts_test_mt.png?raw=true)
 
-On the bottom left of the screen, you see the available concurrent touch contacts
-supported, and whether it's because the driver says so, or ts_test_mt was started
+On the bottom left of the screen, you will see the available concurrent touch contacts
+supported, and whether it's because the driver says so, or `ts_test_mt` was started
 with the `-j` commandline option to overwrite it.
 
 ### environment variables (optional)
-You may override defaults. In most cases you won't need to do so though:
+You may override the defaults. In most cases, though, you won't need to do so:
 
     TSLIB_TSDEVICE          Touchscreen device file name.
                             Default:                automatic detection (on Linux)
@@ -171,7 +171,7 @@ environment for tslib, like `/etc/ts.env`
       TSLIB_CONFFILE=/etc/ts.conf
       TSLIB_PLUGINDIR=/usr/lib/ts
 
-and create a systemd service file, like `/usr/lib/systemd/system/ts_uinput.service`
+and create a systemd service file, such as `/usr/lib/systemd/system/ts_uinput.service`
 
       [Unit]
       Description=touchscreen input
@@ -184,7 +184,7 @@ and create a systemd service file, like `/usr/lib/systemd/system/ts_uinput.servi
       EnvironmentFile=/etc/ts.env
       ExecStart=/usr/bin/ts_uinput -d
 
-Adjust the paths. They could as well be in `/usr/local/` too.
+Adjust the paths. They could just as well be in `/usr/local/`, too.
 
 ### other operating systems
 There is no tool that we know of that reads tslib samples and uses the
@@ -203,21 +203,22 @@ for example (yet).
 Parameters (usually not needed):
 * `rot`
 
-	overwrite the rotation to apply. clockwise: `rot=1`, upside down:
-	`rot=2`, couter-clockwise: `rot=3`. Default: screen-rotation during
+	overwrite the rotation to apply. Clockwise: `rot=1`, upside down:
+	`rot=2`, counter-clockwise: `rot=3`. Default: screen-rotation during
 	`ts_calibrate` calibration.
 
 * `xyswap`
 
-	interchange the X and Y co-ordinates -- no longer used or needed
+	Interchange the X and Y co-ordinates -- no longer used or needed
 	if the linear calibration utility `ts_calibrate` is used.
 
 * `pressure_offset`
 
-	offset applied to the pressure value. Default: 0
+	Set the offset applied to the pressure value. Default: 0
+
 * `pressure_mul`
 
-	factor to multiply the pressure value with. Default: 1.
+	factor to multiply the pressure value by. Default: 1.
 * `pressure_div`
 
 	value to divide the pressure value by. Default: 1.
@@ -226,7 +227,7 @@ Example: `module linear rot=0`
 
 
 ### module: invert
-  Invert values in X and/or Y direction around the given value.
+  Invert values in the X and/or Y direction around the given value.
   There are no default values. If specified, a value has to be
   set. If one axis is not specified, it's simply untouched.
 
@@ -255,7 +256,7 @@ Example: `module median depth=5`
 
 
 ### module: pthres
-  Pressure threshold filter. Given a release is always pressure 0 and a
+  Pressure threshold filter. Given that a release is always pressure 0 and a
   press is always >= 1, this discards samples below / above the specified
   pressure threshold.
 
@@ -324,8 +325,8 @@ Example: `module debounce drop_threshold=40`
 
 
 ### module: skip
-  Skip nhead samples after press and ntail samples before release. This
-  should help if for the device the first or last samples are unreliable.
+  Skip `nhead` samples after press and `ntail` samples before release. This
+  should help if the first or last samples are unreliable for the device.
 
 Parameters:
 * `nhead`
@@ -355,13 +356,13 @@ Example: `module lowpass factor=0.5 threshold=1`
 
 
 ### module: evthres
-  After "pen/finger down" N number of input samples need to be delivered by the
+  After "pen/finger down", N number of input samples need to be delivered by the
   driver before they are considered valid and passed on to the user
   (application). If "pen/finger up" occurs before N samples are being
   read from the device driver, tslib will drop the "tap".
 
   This filter can be used to avoid touches that, for example, result from
-  electro magnetic interference, that are known to be shorter than what a real
+  electromagnetic interference. These are known to be shorter than one a real
   user would create.
 
   In contrast to the `skip` filter, the `evthres` filter will not cut out
@@ -488,7 +489,7 @@ in your source files:
 To link with the library, specify `-lts` as an argument to the linker.
 
 #### compiling using autoconf and pkg-config
-On UNIX systems you can use pkg-config to automatically select the appropriate
+On UNIX systems, you can use `pkg-config` to automatically select the appropriate
 compiler and linker switches for libts. The `PKG_CHECK_MODULES` m4 macro may be
 used to automatically set the appropriate Makefile variables:
 
@@ -497,7 +498,7 @@ used to automatically set the appropriate Makefile variables:
     )
 
 
-If you want to support tslib < 1.2, while still support multitouch and all
+If you want to support tslib < 1.2, while still supporting multitouch and all
 recent versions of tslib, you'd do something like this:
 
     #include <tslib.h>
@@ -621,7 +622,7 @@ increase with releases. In the following example
 use `libts.so` for using tslib unconditionally and `libts.so.0` to make sure
 your current application never breaks.
 
-If a release includes changes like added features, the second number is
+If a release includes changes such as added features, the second number is
 incremented and the third is set to zero. If a release includes mostly just
 bugfixes, only the third number is incremented.
 
@@ -723,8 +724,8 @@ calibration (linear filter) and the infinite impulse response filter in ts.conf.
 
 ### CMake
 
-Alternatively you can use CMake to build the project.
-To create an build in the project tree:
+Alternatively, you can use CMake to build the project.
+To create building in the project tree:
 
     mkdir build && cd build
     cmake ../
@@ -732,16 +733,16 @@ To create an build in the project tree:
     cmake --build .
     cmake -P cmake_install.cmake
 
-By default the core tslib is built as a shared library.
+By default, the core tslib is built as a shared library.
 In order to build it as static, add `-DBUILD_SHARED_LIBS=OFF` to the configure line.
 
-Also the plugins are by default built as shared.  Add `-Dstatic-<module>=ON` to the configuration step to
-build plugin statically into the core tslib. To disable and enable modules, 
+Also, the plugins are by default built as shared.  Add `-Dstatic-<module>=ON` to the configuration step to
+build plugins statically into the core tslib. To disable and enable modules, 
 use flags: `-Denable-<module>=ON/OFF`.
 
 #### Using tslib in client apps
 
-The following is a minimal example how to use tslib built with CMake in your client app. 
+The following is a minimal example of how to use tslib, built with CMake, in your client app. 
 Adding `tslib::tslib` as a link target will add required dependencies and include directories generated build files.
 
     cmake_minimum_required(VERSION 3.10)
@@ -753,8 +754,8 @@ Adding `tslib::tslib` as a link target will add required dependencies and includ
 
 ### portable `ts_calibrate` and `ts_test_mt` using SDL2
 
-In case you cannot draw to the framebuffer directly, there is an __experimental__
-implementation of the necessary graphical tools using SDL2. They are more portable
+In case you cannot draw directly on the framebuffer, there is an __experimental__
+implementation of the necessary graphical tools using SDL2. They are more portable,
 but require more resources to run. To use them, make sure you have SDL2 and the
 development headers installed and use `./configure --with-sdl2`.
 
@@ -797,7 +798,7 @@ __disabled__:
 * `tatung`
 
 Please note that this list may grow over time. If you rely on
-a particular input plugin, you should enable it explicitly. On Linux
+a particular input plugin, you should enable it explicitly. On Linux,
 you should only need `input` though.
 
 * GNU / Linux - all (most importantly `input`)
@@ -825,8 +826,8 @@ Writing your own plugin is quite easy, in case an existing one doesn't fit.
 * Windows - ts_print.exe, ts_print_raw.exe ts_print_mt.exe ts_test_mt.exe ts_calibrate.exe
 
 #### download binaries?
-For GNU/Linux all architectures are _very_ well covered, thanks to Debian or Arch
-Linux or others.
+For GNU/Linux all architectures are _very_ well covered, thanks to Debian, Arch
+Linux, and others.
 
 Please help porting missing programs!
 
@@ -853,7 +854,7 @@ This project exists [[thanks](THANKS)] to all the people who contribute. [[Contr
 
 ## support this project
 
-In case you like our project, use it in your professional environment
+In case you like our project, use it in your professional environment,
 and want it to stay maintained, please consider [sponsoring the current
 maintainer via Github](https://github.com/sponsors/merge) (or ask for
 a btc address if that's what you do). Maintenance costs time and money.
