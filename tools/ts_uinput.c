@@ -706,15 +706,17 @@ static char *get_new_path(struct data_t *data)
 	struct dirent **namelist;
 	const char *path = "/dev/input/";
 	int ndev;
+	int maxndev;
 	int fd;
 	char buf[256];
 	int ret;
 	char *devnode = NULL;
 
-	ndev = scandir(path, &namelist, is_event_device, alphasort);
-	if (ndev <= 0)
+	maxndev = scandir(path, &namelist, is_event_device, alphasort);
+	if (maxndev <= 0)
 		return NULL;
 
+	ndev = maxndev;
 	while (ndev--) {
 		if (asprintf(&devnode, "/dev/input/%s", namelist[ndev]->d_name) == -1) {
 			devnode = NULL;
@@ -722,29 +724,34 @@ static char *get_new_path(struct data_t *data)
 		}
 
 		fd = open(devnode, O_RDWR);
-		if (fd == -1)
-			return NULL;
+		if (fd == -1) {
+			free(devnode);
+			devnode = NULL;
+			break;
+		}
 
 		ret = ioctl(fd, EVIOCGNAME(sizeof(buf) - 1), buf);
 		if (ret < 0) {
 			close(fd);
 			free(devnode);
+			devnode = NULL;
 			break;
 		}
 
 		ret = strncmp(buf, data->uinput_name, strlen(data->uinput_name));
-		if (ret == 0) {
-			close(fd);
-			free(namelist[ndev]);
-			break;
-		}
-
 		close(fd);
-		free(namelist[ndev]);
+		if (ret == 0)
+			break;
+
 		free(devnode);
+		devnode = NULL;
 	}
 
+	/* free also the one that is currently active */
+	while (maxndev--)
+		free(namelist[maxndev]);
 	free(namelist);
+
 	return devnode;
 }
 
