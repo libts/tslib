@@ -209,10 +209,9 @@ static int dejitter_read_mt(struct tslib_module_info *info,
 
 	if (djt->hist_mt == NULL || max_slots > djt->slots) {
 		if (djt->hist_mt) {
-			for (i = 0; i < djt->slots; i++) {
-				if (djt->hist_mt[i])
-					free(djt->hist_mt[i]);
-			}
+			for (i = 0; i < djt->slots; i++)
+				free(djt->hist_mt[i]);
+
 			free(djt->hist_mt);
 			djt->hist_mt = NULL;
 		}
@@ -225,11 +224,10 @@ static int dejitter_read_mt(struct tslib_module_info *info,
 			djt->hist_mt[i] = calloc(NR_SAMPHISTLEN, sizeof(struct ts_hist));
 			if (&djt->hist[i] == NULL) {
 				for (j = 0; j < i; j++)
-					if (&djt->hist[j])
-						free(&djt->hist[j]);
+					free(&djt->hist[j]);
 
-				if (djt->hist_mt)
-					free(djt->hist_mt);
+				free(djt->hist_mt);
+				djt->hist_mt = NULL;
 
 				return -ENOMEM;
 			}
@@ -238,8 +236,7 @@ static int dejitter_read_mt(struct tslib_module_info *info,
 	}
 
 	if (djt->nr_mt == NULL || max_slots > djt->slots) {
-		if (djt->nr_mt)
-			free(djt->nr_mt);
+		free(djt->nr_mt);
 
 		djt->nr_mt = calloc(max_slots, sizeof(int));
 		if (!djt->nr_mt)
@@ -247,8 +244,7 @@ static int dejitter_read_mt(struct tslib_module_info *info,
 	}
 
 	if (djt->head_mt == NULL || max_slots > djt->slots) {
-		if (djt->head_mt)
-			free(djt->head_mt);
+		free(djt->head_mt);
 
 		djt->head_mt = calloc(max_slots, sizeof(int));
 		if (!djt->head_mt)
@@ -306,19 +302,12 @@ static int dejitter_fini(struct tslib_module_info *info)
 	struct tslib_dejitter *djt = (struct tslib_dejitter *)info;
 	int i;
 
-	for (i = 0; i < djt->slots; i++) {
-		if (djt->hist_mt[i])
-			free(djt->hist_mt[i]);
-	}
+	for (i = 0; i < djt->slots; i++)
+		free(djt->hist_mt[i]);
 
-	if (djt->hist_mt)
-		free(djt->hist_mt);
-
-	if (djt->nr_mt)
-		free(djt->nr_mt);
-
-	if (djt->head_mt)
-		free(djt->head_mt);
+	free(djt->hist_mt);
+	free(djt->nr_mt);
+	free(djt->head_mt);
 
 	free(info);
 

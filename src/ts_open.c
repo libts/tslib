@@ -114,9 +114,7 @@ struct tsdev *ts_open(const char *name, int nonblock)
 	return ts;
 
 free:
-	if (ts->eventpath)
-		free(ts->eventpath);
-
+	free(ts->eventpath);
 	free(ts);
 	return NULL;
 }

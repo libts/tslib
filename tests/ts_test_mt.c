@@ -427,20 +427,13 @@ out:
 		ts_close(ts);
 
 	if (samp_mt) {
-		if (samp_mt[0])
-			free(samp_mt[0]);
-
+		free(samp_mt[0]);
 		free(samp_mt);
 	}
 
-	if (x)
-		free(x);
-
-	if (y)
-		free(y);
-
-	if (mode_mt)
-		free(mode_mt);
+	free(x);
+	free(y);
+	free(mode_mt);
 
 	return 0;
 }

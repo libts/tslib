@@ -149,9 +149,7 @@ static int skip_read_mt(struct tslib_module_info *info,
 
 	if (skip->cur_mt == NULL || max_slots > skip->slots) {
 		if (skip->cur_mt) {
-			if (skip->cur_mt[0])
-				free(skip->cur_mt[0]);
-
+			free(skip->cur_mt[0]);
 			free(skip->cur_mt);
 		}
 
@@ -162,8 +160,8 @@ static int skip_read_mt(struct tslib_module_info *info,
 		skip->cur_mt[0] = calloc(max_slots,
 					 sizeof(struct ts_sample_mt));
 		if (!skip->cur_mt[0]) {
-			if (skip->cur_mt)
-				free(skip->cur_mt);
+			free(skip->cur_mt);
+			skip->cur_mt = NULL;
 
 			return -ENOMEM;
 		}
@@ -174,10 +172,9 @@ static int skip_read_mt(struct tslib_module_info *info,
 
 	if (skip->slots < max_slots || skip->buf_mt == NULL) {
 		if (skip->buf_mt) {
-			for (i = 0; i < skip->ntail; i++) {
-				if (skip->buf_mt[i])
-					free(skip->buf_mt[i]);
-			}
+			for (i = 0; i < skip->ntail; i++)
+				free(skip->buf_mt[i]);
+
 			free(skip->buf_mt);
 		}
 
@@ -196,8 +193,10 @@ static int skip_read_mt(struct tslib_module_info *info,
 				for (j = 0; j < i; j++)
 					free(skip->buf_mt[j]);
 				free(skip->buf_mt);
+				skip->buf_mt = NULL;
 				free(skip->cur_mt[0]);
 				free(skip->cur_mt);
+				skip->cur_mt = NULL;
 				return -ENOMEM;
 			}
 		}
@@ -207,31 +206,40 @@ static int skip_read_mt(struct tslib_module_info *info,
 			for (i = 0; i < skip->ntail; i++)
 				free(skip->buf_mt[i]);
 			free(skip->buf_mt);
+			skip->buf_mt = NULL;
 			free(skip->cur_mt[0]);
 			free(skip->cur_mt);
+			skip->cur_mt = NULL;
 			return -ENOMEM;
 		}
 
 		skip->M_mt = calloc(max_slots, sizeof(int));
 		if (!skip->M_mt) {
 			free(skip->N_mt);
+			skip->N_mt = NULL;
 			for (i = 0; i < skip->ntail; i++)
 				free(skip->buf_mt[i]);
 			free(skip->buf_mt);
+			skip->buf_mt = NULL;
 			free(skip->cur_mt[0]);
 			free(skip->cur_mt);
+			skip->cur_mt = NULL;
 			return -ENOMEM;
 		}
 
 		skip->sent_mt = calloc(max_slots, sizeof(int));
 		if (!skip->sent_mt) {
 			free(skip->N_mt);
+			skip->N_mt = NULL;
 			free(skip->M_mt);
+			skip->M_mt = NULL;
 			for (i = 0; i < skip->ntail; i++)
 				free(skip->buf_mt[i]);
 			free(skip->buf_mt);
+			skip->buf_mt = NULL;
 			free(skip->cur_mt[0]);
 			free(skip->cur_mt);
+			skip->cur_mt = NULL;
 			return -ENOMEM;
 		}
 
@@ -388,33 +396,22 @@ static int skip_fini(struct tslib_module_info *info)
 	struct tslib_skip *skip = (struct tslib_skip *)info;
 	int i;
 
-	if (skip->N_mt)
-		free(skip->N_mt);
-
-	if (skip->M_mt)
-		free(skip->M_mt);
-
-	if (skip->sent_mt)
-		free(skip->sent_mt);
-
-	if (skip->buf)
-		free(skip->buf);
+	free(skip->N_mt);
+	free(skip->M_mt);
+	free(skip->sent_mt);
+	free(skip->buf);
 
 	if (skip->buf_mt) {
-		for (i = 0; i < skip->ntail; i++) {
-			if (skip->buf_mt[i])
-				free(skip->buf_mt[i]);
-		}
+		for (i = 0; i < skip->ntail; i++)
+			free(skip->buf_mt[i]);
+
 		free(skip->buf_mt);
 	}
 
-	if (skip->buf_mt)
-
-	if (skip->cur_mt && skip->cur_mt[0])
+	if (skip->cur_mt) {
 		free(skip->cur_mt[0]);
-
-	if (skip->cur_mt)
 		free(skip->cur_mt);
+	}
 
 	free(info);
 

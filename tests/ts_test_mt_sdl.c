@@ -227,9 +227,7 @@ out:
 		ts_close(ts);
 
 	if (samp_mt) {
-		if (samp_mt[0])
-			free(samp_mt[0]);
-
+		free(samp_mt[0]);
 		free(samp_mt);
 	}
 	return 0;

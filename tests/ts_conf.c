@@ -183,10 +183,8 @@ static int add_line_after(struct ts_module_conf *conf)
 
 err:
 	if (new_filter) {
-		if (new_filter->name)
-			free(new_filter->name);
-		if (new_filter->params)
-			free(new_filter->params);
+		free(new_filter->name);
+		free(new_filter->params);
 		free(new_filter);
 	}
 
