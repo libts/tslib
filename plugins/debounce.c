@@ -117,8 +117,7 @@ static int debounce_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 	int i;
 
 	if (p->mode_mt == NULL || max_slots > p->current_max_slots) {
-		if (p->mode_mt)
-			free(p->mode_mt);
+		free(p->mode_mt);
 
 		p->mode_mt = calloc(max_slots, sizeof(unsigned int));
 		if (!p->mode_mt)
@@ -128,8 +127,7 @@ static int debounce_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 	}
 
 	if (p->last_release_mt == NULL || max_slots > p->current_max_slots) {
-		if (p->last_release_mt)
-			free(p->last_release_mt);
+		free(p->last_release_mt);
 
 		p->last_release_mt = calloc(max_slots, sizeof(int64_t));
 		if (!p->last_release_mt)
@@ -139,8 +137,7 @@ static int debounce_read_mt(struct tslib_module_info *info, struct ts_sample_mt 
 	}
 
 	if (p->last_pressure_mt == NULL || max_slots > p->current_max_slots) {
-		if (p->last_pressure_mt)
-			free(p->last_pressure_mt);
+		free(p->last_pressure_mt);
 
 		p->last_pressure_mt = calloc(max_slots, sizeof(int));
 		if (!p->last_pressure_mt)
@@ -198,11 +195,8 @@ static int debounce_fini(struct tslib_module_info *info)
 {
 	struct tslib_debounce *p = (struct tslib_debounce *)info;
 
-	if (p->last_release_mt)
-		free(p->last_release_mt);
-
-	if (p->last_pressure_mt)
-		free(p->last_pressure_mt);
+	free(p->last_release_mt);
+	free(p->last_pressure_mt);
 
 	free(info);
 

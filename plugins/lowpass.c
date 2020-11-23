@@ -106,14 +106,9 @@ static int lowpass_read_mt(struct tslib_module_info *info,
 #endif
 
 	if (!var->last_mt || !var->ideal_mt || max_slots > var->slots) {
-		if (var->last_mt)
-			free(var->last_mt);
-
-		if (var->ideal_mt)
-			free(var->ideal_mt);
-
-		if (var->flags_mt)
-			free(var->flags_mt);
+		free(var->last_mt);
+		free(var->ideal_mt);
+		free(var->flags_mt);
 
 		var->last_mt = calloc(max_slots, sizeof(struct ts_sample_mt));
 		if (!var->last_mt)
@@ -178,14 +173,9 @@ static int lowpass_fini(struct tslib_module_info *info)
 {
 	struct tslib_lowpass *var = (struct tslib_lowpass *)info;
 
-	if (var->last_mt)
-		free(var->last_mt);
-
-	if (var->ideal_mt)
-		free(var->ideal_mt);
-
-	if (var->flags_mt)
-		free(var->flags_mt);
+	free(var->last_mt);
+	free(var->ideal_mt);
+	free(var->flags_mt);
 
 	free(info);
 

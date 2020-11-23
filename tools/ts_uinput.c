@@ -646,14 +646,12 @@ static void cleanup(struct data_t *data)
 
 	if (data->s_array) {
 		for (i = 0; i < TS_READ_WHOLE_SAMPLES; i++) {
-			if (data->s_array[i])
-				free(data->s_array[i]);
+			free(data->s_array[i]);
 		}
 		free(data->s_array);
 	}
 
-	if (data->ev)
-		free(data->ev);
+	free(data->ev);
 
 	if (data->fd_uinput > 0) {
 		ret = ioctl(data->fd_uinput, UI_DEV_DESTROY);
@@ -669,8 +667,7 @@ static void cleanup(struct data_t *data)
 	if (data->fd_fb)
 		close(data->fd_fb);
 
-	if (data->uinput_name)
-		free(data->uinput_name);
+	free(data->uinput_name);
 }
 
 /* directly from libevdev (LGPL) */
@@ -1041,8 +1038,7 @@ int main(int argc, char **argv)
 	}
 
 out:
-	if (dev_input_name)
-		free(dev_input_name);
+	free(dev_input_name);
 
 	cleanup(&data);
 

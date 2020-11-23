@@ -564,10 +564,9 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 
 	if (i->buf == NULL || i->max_slots < max_slots || i->nr < nr) {
 		if (i->buf) {
-			for (j = 0; j < i->nr; j++) {
-				if (i->buf[j])
-					free(i->buf[j]);
-			}
+			for (j = 0; j < i->nr; j++)
+				free(i->buf[j]);
+
 			free(i->buf);
 		}
 
@@ -878,15 +877,11 @@ static int ts_input_fini(struct tslib_module_info *inf)
 
 	libevdev_free(i->evdev);
 
-	for (j = 0; j < i->nr; j++) {
-		if (i->buf[j])
-			free(i->buf[j]);
-	}
-	if (i->buf)
-		free(i->buf);
+	for (j = 0; j < i->nr; j++)
+		free(i->buf[j]);
 
-	if (i->last_pressure)
-		free(i->last_pressure);
+	free(i->buf);
+	free(i->last_pressure);
 
 	free(inf);
 

@@ -196,10 +196,9 @@ static int evthres_read_mt(struct tslib_module_info *inf,
 
 	if (c->buf_mt == NULL || max_slots > c->slots) {
 		if (c->buf_mt) {
-			for (i = 0; i < c->slots; i++) {
-				if (c->buf_mt[i])
-					free(c->buf_mt[i]);
-			}
+			for (i = 0; i < c->slots; i++)
+				free(c->buf_mt[i]);
+
 			free(c->buf_mt);
 		}
 
@@ -211,12 +210,11 @@ static int evthres_read_mt(struct tslib_module_info *inf,
 			c->buf_mt[i] = calloc(c->size,
 					      sizeof(struct ts_sample_mt));
 			if (!c->buf_mt[i]) {
-				for (j = 0; j < i; j++) {
-					if (c->buf_mt[j])
-						free(c->buf_mt[j]);
-				}
-				if (c->buf_mt)
-					free(c->buf_mt);
+				for (j = 0; j < i; j++)
+					free(c->buf_mt[j]);
+
+				free(c->buf_mt);
+				c->buf_mt = NULL;
 
 				return -ENOMEM;
 			}
@@ -226,8 +224,7 @@ static int evthres_read_mt(struct tslib_module_info *inf,
 	}
 
 	if (c->full_mt == NULL || max_slots > c->slots) {
-		if (c->full_mt)
-			free(c->full_mt);
+		free(c->full_mt);
 
 		c->full_mt = calloc(max_slots, sizeof(unsigned int));
 		if (!c->full_mt)
@@ -235,8 +232,7 @@ static int evthres_read_mt(struct tslib_module_info *inf,
 	}
 
 	if (c->filling_mode_mt == NULL || max_slots > c->slots) {
-		if (c->filling_mode_mt)
-			free(c->filling_mode_mt);
+		free(c->filling_mode_mt);
 
 		c->filling_mode_mt = calloc(max_slots, sizeof(unsigned int));
 		if (!c->filling_mode_mt)
@@ -309,13 +305,10 @@ static int evthres_fini(struct tslib_module_info *inf)
 	struct evthres *c = (struct evthres *) inf;
 	int i;
 
-	for (i = 0; i < c->slots; i++) {
-		if (c->buf_mt[i])
-			free(c->buf_mt[i]);
-	}
+	for (i = 0; i < c->slots; i++)
+		free(c->buf_mt[i]);
 
-	if (c->buf_mt)
-		free(c->buf_mt);
+	free(c->buf_mt);
 
 	free(inf);
 

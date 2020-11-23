@@ -108,10 +108,7 @@ static int pthres_read_mt(struct tslib_module_info *info,
 	int i, j;
 
 	if (p->xsave == NULL || max_slots > p->current_max_slots) {
-		if (p->xsave) {
-			free(p->xsave);
-			p->xsave = NULL;
-		}
+		free(p->xsave);
 
 		p->xsave = calloc(max_slots, sizeof(int));
 		if (!p->xsave)
@@ -121,10 +118,7 @@ static int pthres_read_mt(struct tslib_module_info *info,
 	}
 
 	if (p->ysave == NULL || max_slots > p->current_max_slots) {
-		if (p->ysave) {
-			free(p->ysave);
-			p->ysave = NULL;
-		}
+		free(p->ysave);
 
 		p->ysave = calloc(max_slots, sizeof(int));
 		if (!p->ysave)
@@ -134,10 +128,7 @@ static int pthres_read_mt(struct tslib_module_info *info,
 	}
 
 	if (p->press == NULL || max_slots > p->current_max_slots) {
-		if (p->press) {
-			free(p->press);
-			p->press = NULL;
-		}
+		free(p->press);
 
 		p->press = calloc(max_slots, sizeof(int));
 		if (!p->press)
@@ -195,14 +186,9 @@ static int pthres_fini(struct tslib_module_info *info)
 {
 	struct tslib_pthres *p = (struct tslib_pthres *)info;
 
-	if (p->xsave)
-		free(p->xsave);
-
-	if (p->ysave)
-		free(p->ysave);
-
-	if (p->press)
-		free(p->press);
+	free(p->xsave);
+	free(p->ysave);
+	free(p->press);
 
 	free(info);
 

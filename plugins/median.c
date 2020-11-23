@@ -220,10 +220,9 @@ static int median_read_mt(struct tslib_module_info *inf,
 
 	if (c->delay_mt == NULL || max_slots > c->slots) {
 		if (c->delay_mt) {
-			for (i = 0; i < c->slots; i++) {
-				if (c->delay_mt[i])
-					free(c->delay_mt[i]);
-			}
+			for (i = 0; i < c->slots; i++)
+				free(c->delay_mt[i]);
+
 			free(c->delay_mt);
 		}
 
@@ -235,12 +234,11 @@ static int median_read_mt(struct tslib_module_info *inf,
 			c->delay_mt[i] = calloc(c->size,
 						sizeof(struct ts_sample_mt));
 			if (!c->delay_mt[i]) {
-				for (j = 0; j < i; j++) {
-					if (c->delay_mt[j])
-						free(c->delay_mt[j]);
-				}
-				if (c->delay_mt)
-					free(c->delay_mt);
+				for (j = 0; j < i; j++)
+					free(c->delay_mt[j]);
+
+				free(c->delay_mt);
+				c->delay_mt = NULL;
 
 				return -ENOMEM;
 			}
@@ -250,8 +248,7 @@ static int median_read_mt(struct tslib_module_info *inf,
 	}
 
 	if (c->withsamples_mt == NULL || max_slots > c->slots) {
-		if (c->withsamples_mt)
-			free(c->withsamples_mt);
+		free(c->withsamples_mt);
 
 		c->withsamples_mt = calloc(max_slots, sizeof(int));
 		if (!c->withsamples_mt)
@@ -259,8 +256,7 @@ static int median_read_mt(struct tslib_module_info *inf,
 	}
 
 	if (c->pen_down == NULL || max_slots > c->slots) {
-		if (c->pen_down)
-			free(c->pen_down);
+		free(c->pen_down);
 
 		c->pen_down = calloc(max_slots, sizeof(short));
 		if (!c->pen_down)
@@ -355,17 +351,11 @@ static int median_fini(struct tslib_module_info *inf)
 
 	free(c->delay);
 
-	for (i = 0; i < c->slots; i++) {
-		if (c->delay_mt[i])
-			free(c->delay_mt[i]);
-	}
+	for (i = 0; i < c->slots; i++)
+		free(c->delay_mt[i]);
 
-	if (c->delay_mt)
-		free(c->delay_mt);
-
-	if (c->withsamples_mt)
-		free(c->withsamples_mt);
-
+	free(c->delay_mt);
+	free(c->withsamples_mt);
 	free(c->sorted);
 	free(c->usorted);
 

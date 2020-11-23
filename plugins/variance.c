@@ -169,10 +169,9 @@ static int variance_read_mt(struct tslib_module_info *info,
 		fprintf(stderr, "tslib: WARNING: no multitouch when using the variance filter\n");
 	#endif
 		if (var->cur_mt) {
-			for (i = 0; i < var->nr; i++) {
-				if (var->cur_mt[i])
-					free(var->cur_mt[i]);
-			}
+			for (i = 0; i < var->nr; i++)
+				free(var->cur_mt[i]);
+
 			free(var->cur_mt);
 		}
 
@@ -187,7 +186,9 @@ static int variance_read_mt(struct tslib_module_info *info,
 					free(var->cur_mt[j]);
 
 				free(var->cur_mt);
+				var->cur_mt = NULL;
 				free(var->samp);
+				var->samp = NULL;
 				return -ENOMEM;
 			}
 		}
@@ -324,14 +325,12 @@ static int variance_fini(struct tslib_module_info *info)
 	int i;
 
 	if (var->cur_mt) {
-		for (i = 0; i < var->nr; i++) {
-			if (var->cur_mt[i])
-				free(var->cur_mt[i]);
-		}
+		for (i = 0; i < var->nr; i++)
+			free(var->cur_mt[i]);
+
 		free(var->cur_mt);
 	}
-	if (var->samp)
-		free(var->samp);
+	free(var->samp);
 
 	free(info);
 

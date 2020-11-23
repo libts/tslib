@@ -644,8 +644,7 @@ static int cy8mrln_palmpre_fini(struct tslib_module_info *info)
 						struct tslib_cy8mrln_palmpre,
 						module);
 
-	if (i->last_valid_samples != NULL)
-		free(i->last_valid_samples);
+	free(i->last_valid_samples);
 
 	free(i);
 #ifdef DEBUG

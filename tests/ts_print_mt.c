@@ -224,6 +224,8 @@ int main(int argc, char **argv)
 	for (i = 0; i < read_samples; i++) {
 		samp_mt[i] = calloc(max_slots, sizeof(struct ts_sample_mt));
 		if (!samp_mt[i]) {
+			for (i--; i >= 0; i--)
+				free(samp_mt[i]);
 			free(samp_mt);
 			ts_close(ts);
 			return -ENOMEM;

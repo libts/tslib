@@ -547,6 +547,8 @@ This is a complete example program, similar to `ts_print_mt.c`:
         for (i = 0; i < SAMPLES; i++) {
                 samp_mt[i] = calloc(SLOTS, sizeof(struct ts_sample_mt));
                 if (!samp_mt[i]) {
+                        for (i--; i >= 0; i--)
+                                free(samp_mt[i]);
                         free(samp_mt);
                         ts_close(ts);
                         return -ENOMEM;

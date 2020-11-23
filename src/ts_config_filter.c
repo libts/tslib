@@ -127,12 +127,10 @@ fail:
 		if (parambuf)
 			free(parambuf[i]);
 	}
-	if (modulebuf)
-		free(modulebuf);
-	if (parambuf)
-		free(parambuf);
-	if (raw)
-		free(raw);
+
+	free(modulebuf);
+	free(parambuf);
+	free(raw);
 
 	return NULL;
 }

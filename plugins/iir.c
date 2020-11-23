@@ -111,14 +111,9 @@ static int iir_read_mt(struct tslib_module_info *info,
 	int32_t i, j;
 
 	if (!iir->s_mt || max_slots > iir->slots) {
-		if (iir->s_mt)
-			free(iir->s_mt);
-
-		if (iir->t_mt)
-			free(iir->t_mt);
-
-		if (iir->last_active_mt)
-			free(iir->last_active_mt);
+		free(iir->s_mt);
+		free(iir->t_mt);
+		free(iir->last_active_mt);
 
 		iir->s_mt = calloc(max_slots, sizeof(int32_t));
 		if (!iir->s_mt)
@@ -182,14 +177,9 @@ static int iir_fini(struct tslib_module_info *info)
 {
 	struct tslib_iir *iir = (struct tslib_iir *)info;
 
-	if (iir->s_mt)
-		free(iir->s_mt);
-
-	if (iir->t_mt)
-		free(iir->t_mt);
-
-	if (iir->last_active_mt)
-		free(iir->last_active_mt);
+	free(iir->s_mt);
+	free(iir->t_mt);
+	free(iir->last_active_mt);
 
 	free(info);
 
