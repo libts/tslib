@@ -77,6 +77,9 @@ int open_framebuffer(void)
 		return -1;
 	}
 
+	xres_orig = fb.fb_width;
+	yres_orig = fb.fb_height;
+
 	if (rotation & 1) {
 		/* 1 or 3 */
 		y = fb.fb_height;
