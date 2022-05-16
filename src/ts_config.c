@@ -131,7 +131,7 @@ static int __ts_config(struct tsdev *ts, char **conffile_modules,
 					module_name, p);
 			#endif
 				sprintf(conffile_modules[line], "%s", module_name);
-				if (conffile_params)
+				if (conffile_params && p)
 					sprintf(conffile_params[line], "%s", p);
 			}
 		} else if (strcasecmp(tok, "module_raw") == 0) {
@@ -149,7 +149,7 @@ static int __ts_config(struct tsdev *ts, char **conffile_modules,
 					module_name, p);
 			#endif
 				sprintf(conffile_modules[line], "%s", module_name);
-				if (conffile_params)
+				if (conffile_params && p)
 					sprintf(conffile_params[line], "%s", p);
 
 				if (raw)
