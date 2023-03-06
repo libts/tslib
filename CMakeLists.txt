@@ -17,6 +17,7 @@ include(GNUInstallDirs)
 option(BUILD_SHARED_LIBS "ON:  tslib is build as shared; 
 			  OFF: tslib is build as static" ON)
 option(ENABLE_TOOLS "build additional tools" ON)
+option(PLUGIN_LINEAR_LIMIT_TO_CALIBRATION_RESOLUTION "Limit coordinates to calibration resolution" OFF)
 
 set(LIBTS_VERSION_CURRENT 10)
 set(LIBTS_VERSION_REVISION 3)
