@@ -323,6 +323,8 @@ TSAPI struct tslib_module_info *linear_mod_init(__attribute__ ((unused)) struct 
 	lin->p_div    = 1;
 	lin->swap_xy  = 0;
 	lin->rot = 0;
+	lin->cal_res_x = 0;
+	lin->cal_res_y = 0;
 
 	/*
 	 * Check calibration file
