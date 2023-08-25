@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # SPDX-License-Identifier: GPL-2.0+
 # Copyright (C) 2017, Martin Kepplinger <martink@posteo.de>
 
