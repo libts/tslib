@@ -5,13 +5,12 @@
 # This starts ts_uinput as a daemon and creates /dev/input/ts_uinput to use
 # as an evdev input device
 
-TS_UINPUT_DEV_FILE=$(ts_uinput -d -v)
-TS_UINPUT_DEV_FILE_CHECKED=$(ls "$TS_UINPUT_DEV_FILE" | grep 'event')
+TS_UINPUT_DEV_FILE=$(ts_uinput -d -v | grep 'event')
 
-if [ ! -z "$TS_UINPUT_DEV_FILE_CHECKED" ]
+if [ -n "$TS_UINPUT_DEV_FILE" ]
 then
 	rm -f /dev/input/ts_uinput
-	ln -s $TS_UINPUT_DEV_FILE_CHECKED /dev/input/ts_uinput
+	ln -s "$TS_UINPUT_DEV_FILE" /dev/input/ts_uinput
 else
 	echo "ts_uinput: Error creating event device"
 	exit 1
