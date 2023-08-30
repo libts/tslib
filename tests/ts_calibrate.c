@@ -144,7 +144,7 @@ static int validate_sample(struct tsdev *ts, int x, int y, char *name,
 	return ret;
 }
 
-static int ts_validate(struct tsdev *ts, int boundary, unsigned int loops, int timeout)
+static int ts_validate(struct tsdev *ts, int boundary, unsigned int loops, int timeout, int border)
 {
 	int ret;
 	char textbuf[64];
@@ -171,8 +171,8 @@ static int ts_validate(struct tsdev *ts, int boundary, unsigned int loops, int t
 
 	for (i = 0; i < loops; i++) {
 		srand(time(NULL));
-		random_x = rand() % xres;
-		random_y = rand() % yres;
+		random_x = (rand() % (xres - border*2)) + border;
+		random_y = (rand() % (yres - border*2)) + border;
 		ret = validate_sample(ts, random_x, random_y, "random", boundary);
 		if (ret)
 			goto done;
@@ -252,6 +252,8 @@ static void help(void)
 	printf("                       validate the current calibration\n");
 	printf("-b --boundary\n");
 	printf("                       boundary criteria in validation mode\n");
+	printf("-o --border\n");
+	printf("                       number of pixels to keep clear from screen border\n");
 	printf("-l --loops\n");
 	printf("                       number of crosses to touch in validation mode\n");
 	printf("-s --timeout\n");
@@ -285,6 +287,7 @@ int main(int argc, char **argv)
 	int validate_timeout = 5;
 	unsigned int validate_loops = 0;
 	short validate_only = 0;
+	int validate_border = 0;
 
 	signal(SIGSEGV, sig);
 	signal(SIGINT, sig);
@@ -300,10 +303,11 @@ int main(int argc, char **argv)
 			{ "boundary",     required_argument, NULL, 'b' },
 			{ "loop",         required_argument, NULL, 'l' },
 			{ "timeout",      required_argument, NULL, 's' },
+			{ "border",       required_argument, NULL, 'o' },
 		};
 
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "hvr:t:cb:l:s:", long_options, &option_index);
+		int c = getopt_long(argc, argv, "hvr:t:cb:l:s:o:", long_options, &option_index);
 
 		errno = 0;
 		if (c == -1)
@@ -369,6 +373,16 @@ int main(int argc, char **argv)
 			validate_timeout = atoi(optarg);
 			break;
 
+		case 'o':
+			if (!validate_only) {
+				fprintf(stderr, "--border is only available with --validate\n");
+				help();
+				return 0;
+			}
+
+			validate_border = atoi(optarg);
+			break;
+
 		default:
 			help();
 			return 0;
@@ -398,7 +412,7 @@ int main(int argc, char **argv)
 		setcolor(i, palette[i]);
 
 	if (validate_only)
-		return ts_validate(ts, boundary, validate_loops, validate_timeout);
+		return ts_validate(ts, boundary, validate_loops, validate_timeout, validate_border);
 
 	put_string_center(xres / 2, yres / 4,
 			  "Touchscreen calibration utility", 1);
