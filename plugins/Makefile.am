@@ -72,6 +72,12 @@ else
 IIR_MODULE =
 endif
 
+if ENABLE_CROP_MODULE
+CROP_MODULE = crop.la
+else
+CROP_MODULE =
+endif
+
 if ENABLE_EVTHRES_MODULE
 EVTHRES_MODULE = evthres.la
 else
@@ -197,6 +203,7 @@ pluginexec_LTLIBRARIES = \
 	$(SKIP_MODULE) \
 	$(INVERT_MODULE) \
 	$(IIR_MODULE) \
+	$(CROP_MODULE) \
 	$(EVTHRES_MODULE) \
 	$(LOWPASS_MODULE) \
 	$(UCB1X00_MODULE) \
@@ -286,6 +293,13 @@ if WINDOWS
 iir_la_LDFLAGS		+= -no-undefined
 endif
 iir_la_LIBADD		= $(top_builddir)/src/libts.la
+
+crop_la_SOURCES		= crop.c
+crop_la_LDFLAGS		= -module $(LTVSN)
+if WINDOWS
+crop_la_LDFLAGS		+= -no-undefined
+endif
+crop_la_LIBADD		= $(top_builddir)/src/libts.la
 
 evthres_la_SOURCES	= evthres.c
 evthres_la_LDFLAGS	= -module $(LTVSN)
