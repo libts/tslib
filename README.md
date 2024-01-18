@@ -61,8 +61,8 @@ through the library:
                module       module      module       module
 
 ### calibrate the touch screen
-Calibration is done by the `linear` plugin, which uses its own config file
-`/etc/pointercal`. Don't edit this file manually. It is created by the
+Calibration is applied by the `linear` plugin, which uses its own config file
+`TSLIB_CALIBFILE`. Don't edit this file manually. It is created by the
 [`ts_calibrate`](https://manpages.debian.org/unstable/libts0/ts_calibrate.1.en.html) program:
 
     # ts_calibrate
@@ -197,8 +197,7 @@ for example (yet).
 ### module: linear
   Linear scaling - calibration - module, primerily used for conversion of touch
   screen co-ordinates to screen co-ordinates. It applies the corrections as
-  recorded and saved by the [`ts_calibrate`](https://manpages.debian.org/unstable/libts0/ts_calibrate.1.en.html) tool. It's the only module that reads
-  a configuration file.
+  recorded and saved by the [`ts_calibrate`](https://manpages.debian.org/unstable/libts0/ts_calibrate.1.en.html) tool.
 
 Parameters (usually not needed):
 * `rot`
@@ -380,6 +379,20 @@ Parameters:
 	by the device driver for the touch to be considered real and passed on.
 
 Example: `module evthres N=5`
+
+
+### module: crop
+  The goal of this filter is to drop input touch events that lie outside
+  of the Min/Max values for the x/y event codes, i.e. touch points that
+  might (due to applied filters) lie ouside of the visible framebuffer.
+
+  It sends "pen/finger up" for a given slot when said values are outside of
+  the framebuffer.
+
+  It read the framebuffer dimensions from `TSLIB_CALIBFILE` which is
+  generated and saved by the [`ts_calibrate`](https://manpages.debian.org/unstable/libts0/ts_calibrate.1.en.html) tool.
+
+Example: `module crop`
 
 
 ### module:	variance
@@ -649,7 +662,7 @@ For testing purposes there are tools like [ts_test_mt](#test-the-filtered-input-
 too.
 
 #### shipped as part of tslib
-* [ts_calibrate](#filter-modules) - graphical calibration tool. Configures the `linear` filter module.
+* [ts_calibrate](#filter-modules) - graphical calibration tool. Configures the `linear` and `crop` filter modules.
 * [ts_uinput](#use-the-filtered-result-in-your-system-ts_uinput-method) - userspace **evdev** driver for the tslib-filtered samples.
 
 #### third party applications

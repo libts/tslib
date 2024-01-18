@@ -106,6 +106,7 @@ TSLIB_CHECK_MODULE([skip], [yes], [Enable building of skip filter])
 TSLIB_CHECK_MODULE([lowpass], [yes], [Enable building of lowpass filter])
 TSLIB_CHECK_MODULE([invert], [yes], [Enable building of invert filter])
 TSLIB_CHECK_MODULE([variance], [yes], [Enable building of variance filter])
+TSLIB_CHECK_MODULE([crop], [yes], [Enable building of crop filter])
 
 # hardware access modules
 #########################

@@ -50,6 +50,10 @@ if ENABLE_STATIC_IIR_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/iir.c
 endif
 
+if ENABLE_STATIC_CROP_MODULE
+libts_la_SOURCES += $(top_srcdir)/plugins/crop.c
+endif
+
 if ENABLE_STATIC_LINEAR_MODULE
 libts_la_SOURCES += $(top_srcdir)/plugins/linear.c
 endif
