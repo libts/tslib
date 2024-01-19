@@ -612,7 +612,7 @@ static int process(struct data_t *data, struct ts_sample_mt **s_array,
 		if (data->verbose) {
 			for (j = 0; j < nr; j++) {
 				printf(BLUE DEFAULT_UINPUT_NAME
-				       ": sample %d:  x\ty\tslot\ttracking_id\n"
+				       ": sample %d:  x\ty\tslot\tpressure\ttracking_id\n"
 				       RESET, j);
 				for (i = 0; i < max_slots; i++) {
 					if (s_array[j][i].valid & TSLIB_MT_VALID) {
@@ -621,6 +621,7 @@ static int process(struct data_t *data, struct ts_sample_mt **s_array,
 						       s_array[j][i].x,
 						       s_array[j][i].y,
 						       s_array[j][i].slot,
+						       s_array[j][i].pressure,
 						       s_array[j][i].tracking_id);
 					}
 				}
