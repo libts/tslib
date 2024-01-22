@@ -1,4 +1,10 @@
 
+tslib 1.23 - unreleased
+================================
+This release includes libts version 0.10.4 and the following changes:
+* some build and security fixes
+* new filter module: `module crop`
+
 tslib 1.22 - released 2020-07-01
 ================================
 This release includes libts version 0.10.4 and the following changes:
