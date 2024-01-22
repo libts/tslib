@@ -9,7 +9,7 @@ m4_pushdef([UP], m4_translit([$1], [-a-z], [_A-Z]))dnl
 AC_MSG_CHECKING([whether $1 module is requested]) 
 
 AC_ARG_ENABLE([$1],
-   AC_HELP_STRING([--enable-$1], [$3 (default=$2)]),
+   AS_HELP_STRING([--enable-$1], [$3 (default=$2)]),
    [enable_module=$enableval],
    [enable_module=$2])
 AC_MSG_RESULT($enable_module)

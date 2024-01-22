@@ -24,7 +24,7 @@ AC_DEFUN([TS_CXX_HIDDEN_VISIBILITY_INLINES],
 [AC_REQUIRE([TS_CXX_SUPPORTS_HIDDEN_VISIBILITY_INLINES])
   AC_MSG_CHECKING([whether to use -fvisibility-inlines-hidden])
   AC_ARG_WITH([hidden_visibility_inlines],
-              AC_HELP_STRING([--with-hidden_visibility_inlines=VAL],
+              AS_HELP_STRING([--with-hidden_visibility_inlines=VAL],
                              [use -fvisibility-inlines-hidden (default VAL is 'auto')]),
               [bb_with_hidden_visibility_inlines=$withval], [bb_with_hidden_visibility_inlines=auto])
 
@@ -64,7 +64,7 @@ AC_DEFUN([TS_CC_HIDDEN_VISIBILITY],
 [AC_REQUIRE([TS_CC_SUPPORTS_HIDDEN_VISIBILITY])
   AC_MSG_CHECKING([whether to use -fvisibility=hidden])
   AC_ARG_WITH([hidden_visibility],
-              AC_HELP_STRING([--with-hidden_visibility=VAL],
+              AS_HELP_STRING([--with-hidden_visibility=VAL],
                              [use -fvisibility=hidden (default VAL is 'auto')]),
               [bb_with_hidden_visibility=$withval], [bb_with_hidden_visibility=auto])
 
