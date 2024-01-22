@@ -190,7 +190,7 @@ AS_IF([test "x$with_sdl2" = "xyes"], [
 # increment if the interface changed
 LT_CURRENT=10
 # increment if anything changed. set to 0 if current was incremented!
-LT_REVISION=4
+LT_REVISION=5
 # increment if the interface change is backwards compatible (an addition). set to 0 if not.
 LT_AGE=10
 AC_SUBST(LT_CURRENT)

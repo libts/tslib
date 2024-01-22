@@ -19,7 +19,7 @@ option(BUILD_SHARED_LIBS "ON:  tslib is build as shared;
 option(ENABLE_TOOLS "build additional tools" ON)
 
 set(LIBTS_VERSION_CURRENT 10)
-set(LIBTS_VERSION_REVISION 4)
+set(LIBTS_VERSION_REVISION 5)
 set(LIBTS_VERSION_AGE 10)
 
 set(PACKAGE_VERSION 1.22+)
