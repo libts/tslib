@@ -298,7 +298,7 @@ int main(int argc, char **argv)
 			{ "min_interval", required_argument, NULL, 't' },
 			{ "validate",     no_argument,       NULL, 'c' },
 			{ "boundary",     required_argument, NULL, 'b' },
-			{ "loop",         required_argument, NULL, 'l' },
+			{ "loops",        required_argument, NULL, 'l' },
 			{ "timeout",      required_argument, NULL, 's' },
 		};
 
