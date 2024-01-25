@@ -75,11 +75,11 @@ static int __ts_config(struct tsdev *ts, char **conffile_modules,
 
 	f = fopen(conffile, "r");
 	if (!f) {
-		if (strdup_allocated)
+		if (strdup_allocated) {
+			ts_error("Couldn't open tslib config file %s: %s\n",
+				 conffile, strerror(errno));
 			free(conffile);
-
-		ts_error("Couldn't open tslib config file %s: %s\n",
-			 conffile, strerror(errno));
+		}
 		return -1;
 	}
 
