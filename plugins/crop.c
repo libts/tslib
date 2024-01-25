@@ -147,7 +147,7 @@ static const struct tslib_ops crop_ops = {
 };
 
 TSAPI struct tslib_module_info *crop_mod_init(__attribute__ ((unused)) struct tsdev *dev,
-					     const char *params)
+					      __attribute__ ((unused)) const char *params)
 {
 	struct tslib_crop *crop;
 	struct stat sbuf;
