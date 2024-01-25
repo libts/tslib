@@ -311,7 +311,7 @@ int main(int argc, char **argv)
 		int ret;
 
 		if (samples) {
-			if (samples >= have_samples)
+			if (have_samples >= samples)
 				goto out;
 
 			have_samples++;
