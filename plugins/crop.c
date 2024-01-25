@@ -35,8 +35,8 @@ struct tslib_crop {
 	uint32_t last_pressure;
 	int	a[7];
 	/* fb res from calibration-time */
-	uint32_t cal_res_x;
-	uint32_t cal_res_y;
+	int32_t cal_res_x;
+	int32_t cal_res_y;
 	uint32_t rot;
 };
 
