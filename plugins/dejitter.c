@@ -222,9 +222,9 @@ static int dejitter_read_mt(struct tslib_module_info *info,
 
 		for (i = 0; i < max_slots; i++) {
 			djt->hist_mt[i] = calloc(NR_SAMPHISTLEN, sizeof(struct ts_hist));
-			if (&djt->hist[i] == NULL) {
+			if (djt->hist_mt[i] == NULL) {
 				for (j = 0; j < i; j++)
-					free(&djt->hist[j]);
+					free(djt->hist_mt[j]);
 
 				free(djt->hist_mt);
 				djt->hist_mt = NULL;
