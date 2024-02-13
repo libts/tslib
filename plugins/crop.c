@@ -93,6 +93,11 @@ static int crop_read_mt(struct tslib_module_info *info,
 		crop->last_tid = calloc(max_slots, sizeof(int32_t));
 		if (!crop->last_tid)
 			return -ENOMEM;
+
+		/* init with -1 because out-of-range would not get
+		 * dropped for first touch, see below. */
+		for (j = 0; j < max_slots; j++)
+			crop->last_tid[j] = -1;
 	}
 
 	for (i = 0; i < ret; i++) {
