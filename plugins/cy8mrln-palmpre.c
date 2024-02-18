@@ -74,7 +74,7 @@ struct cy8mrln_palmpre_input {
 	uint8_t		unknown[4];
 	uint8_t		seq_nr0;		/* incremented [0:scanrate] */
 	uint8_t		null;		   /* NULL byte */
-} __attribute__((packed));
+};
 
 struct tslib_cy8mrln_palmpre {
 	struct tslib_module_info	module;
