@@ -214,12 +214,10 @@ static int ts_verify_read_1(struct ts_verify *data, int nr,
 {
 	int ret;
 
+	data->samp_read = calloc(nr, sizeof(struct ts_sample));
 	if (!data->samp_read) {
-		data->samp_read = calloc(nr, sizeof(struct ts_sample));
-		if (!data->samp_read) {
-			perror("calloc");
-			return errno;
-		}
+		perror("calloc");
+		return errno;
 	}
 
 	data->ts = ts_setup(data->tsdevice, nonblocking);
@@ -251,7 +249,6 @@ static int ts_verify_read_1(struct ts_verify *data, int nr,
 
 	ts_close(data->ts);
 	free(data->samp_read);
-	data->samp_read = NULL;
 
 	return ret;
 }
