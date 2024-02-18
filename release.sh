@@ -89,6 +89,9 @@ echo "======================================================"
 read -r -p "           Press enter to continue"
 echo "======================================================"
 
+./autogen-clean.sh
+cppcheck -f -q */*.c
+
 ./autogen.sh
 ./configure
 make distclean
