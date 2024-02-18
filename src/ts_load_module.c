@@ -144,6 +144,7 @@ static struct tslib_module_info *__ts_load_module_static(struct tsdev *ts,
 	struct tslib_module_desc key;
 
 	key.name = module;
+	key.mod_init = NULL;
 	result = bsearch(&key, tslib_modules, countof(tslib_modules),
 			 sizeof(struct tslib_module_desc), cmp_name);
 	if (!result)
