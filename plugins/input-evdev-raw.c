@@ -151,7 +151,6 @@ static int check_fd(struct tslib_input *i)
 	rc = fcntl(ts->fd, F_GETFL);
 	if (rc == -1) {
 		perror("fcntl");
-		free(i);
 		return -1;
 	}
 	if (rc & O_NONBLOCK) {
@@ -174,7 +173,6 @@ static int check_fd(struct tslib_input *i)
 	rc = libevdev_new_from_fd(ts->fd, &i->evdev);
 	if (rc < 0) {
 		fprintf(stderr, "Failed to init libevdev (%s)\n", strerror(-rc));
-		free(i);
 		return -1;
 	}
 
@@ -381,6 +379,9 @@ static int ts_input_read(struct tslib_module_info *inf,
 	int total = 0;
 	int pen_up = 0;
 
+	if (!i)
+		return -ENOMEM;
+
 	if (ts->fd != i->last_fd)
 		i->last_fd = check_fd(i);
 
@@ -555,6 +556,9 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 	uint8_t pen_up = 0;
 	static int32_t next_trackid;
 	struct input_event ev;
+
+	if (!i)
+		return -ENOMEM;
 
 	if (ts->fd != i->last_fd)
 		i->last_fd = check_fd(i);
