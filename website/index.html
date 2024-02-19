@@ -42,10 +42,16 @@ the touch user experience by applying
 <a href="https://github.com/libts/tslib/blob/master/README.md#filter-modules">
 mathematical filters</a> in any number or order.
 The libts library is highly configurable and portable. tslib includes tools to
-<i>calibrate</i>, test and use the library. It is well suited for embedded
+<i>calibrate</i>, test and use the library.
+(Via <a href="https://github.com/libts/tslib/#use-the-filtered-result-in-your-system-ts_uinput-method">
+ts_uinput</a> the app or toolkit gets to use the usual evdev input device with
+filtered touchscreen events).
+It is well suited for embedded
 devices and used in many commercial products. tslib includes
 <a href="https://github.com/libts/tslib/blob/master/README.md">documentation</a>
-on how to use it.
+on how to use it. Compared to <a href="https://gitlab.freedesktop.org/libinput/libinput">
+libinput</a> tslib is more like a box of legos. tslib can be used together
+with libinput, providing a filtered device for libinput.
 <p>
 <b>Download tslib</b>
 <p>
