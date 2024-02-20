@@ -1,3 +1,7 @@
+tslib 1.24 - unreleased
+================================
+This release includes libts version 0.10.5 and the following changes:
+* improved release procedure
 
 tslib 1.23 - released 2024-02-20
 ================================
@@ -12,13 +16,11 @@ This release includes libts version 0.10.4 and the following changes:
 * fix ts_uinput build on 32 bit arch on newer kernels
 * ts_uinput: fix building on FreeBSD
 
-
 tslib 1.21 - released 2019-10-22
 ================================
 This release includes libts version 0.10.3 and the following changes:
 * various fixes for cmake builds
 * new filter plugin: `module evthres`
-
 
 tslib 1.20 - released 2019-05-21
 ================================
@@ -31,7 +33,6 @@ This release includes the following bugfixes:
 * 84e15b5 doc: add missing manpages to releases and sort them alphabetically
 * 2be6a0e ts_setup: fix possible memory leak
 
-
 tslib 1.19 - released 2019-01-24
 ================================
 This release includes libts version 0.10.1 and the following changes:
@@ -39,7 +40,6 @@ This release includes libts version 0.10.1 and the following changes:
 
 This release includes the following bugfixes:
 * input-raw / ts_uinput: fix MT type A devices
-
 
 tslib 1.18 - released 2018-11-27
 ================================
@@ -56,7 +56,6 @@ This release includes the following bugfixes:
 * cd26eb5 ts_setup: fix a memory leak
 * e73b6d1 input-raw: set 0 pressure if ABS_MT_TOUCH_MAJOR is 0
 
-
 tslib 1.17 - released 2018-09-06
 ================================
 This release includes libts version 0.9.2 and the following changes:
@@ -65,7 +64,6 @@ This release includes libts version 0.9.2 and the following changes:
 
 This release includes the following bugfixes:
 * f65e5eb median: fix pen_down propagation for read_mt()
-
 
 tslib 1.16 - released 2018-04-19
 ================================
@@ -81,10 +79,8 @@ This release includes the following bugfixes:
 * e63f33f invert: fix ts_read() iteration over multiple samples
 * 932bb4f ts_uinput: fail for unsupported old kernel versions
 
-
 tslib 1.15 - released 2018-01-11
 ================================
-
 This release includes libts version 0.9.0 and the following changes:
 * New ts_get_eventpath() API to learn the opened device file path
 * ts_test_mt shows the number of supported concurrent touch contacts
@@ -97,10 +93,8 @@ This release includes the following bugfixes:
 * 6975733 input-raw: mark BTN_TOUCH code valid
 * fbeabc6 input-raw: fix pen_up for non-pressure devices
 
-
 tslib 1.14 - released 2017-11-12
 ================================
-
 This release includes libts version 0.8.1 and the following changes:
 * The following modules are now disabled in the default configuration run:
  * `module_raw arctic2`
@@ -121,10 +115,8 @@ This release includes the following bugfixes:
 * 57d9081 debounce: drop samples irrespective of pressure value
 * 5822386 waveshare: fix resource leak
 
-
 tslib 1.13 - released 2017-09-14
 ================================
-
 This release includes libts version 0.8.0 and the following changes:
 * Added ts_open_restricted() and ts_close_restricted() API
 * Added TSLIB_MT_VALID bit definition for ts_sample_mt's valid flag
@@ -139,10 +131,8 @@ This release includes the following bugfixes:
 * 00c69d6 fix static building for galax and cy8mrln-palmpre
 * 5a8b080 Update fbutils-linux.c to fix fillrect only drawing first y line
 
-
 tslib 1.12 - released 2017-08-29
 ================================
-
 This release includes libts version 0.7.2 and the following changes:
 * Generate a tracking ID value for multitouch type A devices
 * Add experimental `--with-sdl2` configuration option for `ts_calibrate` and `ts_test_mt`
@@ -150,10 +140,8 @@ This release includes libts version 0.7.2 and the following changes:
 This release includes the following bugfixes:
 * 74f527e configure.ac: fix help text by defining only one default configuration
 
-
 tslib 1.11 - released 2017-06-06
 ================================
-
 This release includes libts version 0.7.1 and the following changes:
 * The graphical tools don't show TSLIB anymore, but Touchscreen instead.
 * The graphical tools support rotating the screen 90, 180 and 270 degrees
@@ -163,10 +151,8 @@ This release includes the following bugfixes:
 * ff8c7d9 use dlfcn.h dynamic loading function only if libdl is available
 * d39d358 input-raw: fix multitouch devices without BTN_TOUCH
 
-
 tslib 1.10 - released 2017-05-12
 ================================
-
 This release includes libts version 0.7.0 and the following changes:
 * new `ts_libversion()` API and TSLIB_VERSION_MT definition
   This offers seamless integration for apps that don't know tslib's version
@@ -181,10 +167,8 @@ This release includes the following bugfixes:
 * 0ca9580 ts_close: free tslib_module_info when fini() is not implemented
 * 5974266 median: read_mt: mark all-zero samples invalid
 
-
 tslib 1.9 - released 2017-04-21
 ===============================
-
 This release includes libts version 0.6.0 and the following changes:
 * new `module iir` infinite impulse response filter
 * `module_raw galax` is deprecated. Users should switch to `module_raw input`
@@ -202,10 +186,8 @@ This release includes the following bugfixes:
 * 73773ac fbutils-linux: fix framebuffer errors on 64 bit systems
 * 4d63bfa input-raw: fix ts_read_mt for non-MT devices without pressure
 
-
 tslib 1.8 - released 2017-03-21
 ===============================
-
 tslib 1.8 is backwards compatible. Changes since last release include:
 * experimental support for building on Windows (using MSYS2)
 * fixed ts_read_mt() in non-blocking operation when trying to read more than
@@ -217,10 +199,8 @@ tslib 1.8 is backwards compatible. Changes since last release include:
   - 9a9b0c9 pthres: read_mt: fix internal pressure state handling
   - fa10e4c galax: version 210: use ABS_MT_DISTANCE to find pressure 0
 
-
 tslib 1.7 - released 2017-03-13
 ===============================
-
 Changes since last release:
 * ts_read_mt() now consistently returns errno set by read() when using
   module_raw input
@@ -237,10 +217,8 @@ Changes since last release:
   - de5e261 skip: fix buffer memory freeing
   - da5477e median: fix ts_read_mt() pen down event
 
-
 tslib 1.6 - released 2017-03-03
 ===============================
-
 Changes since the last release:
 * ABI addition: libts.so.0 (ensuring backwards compatibility)
 * tools/ts_uinput_start.sh that creates /dev/input/ts_uinput
@@ -252,20 +230,16 @@ Changes since the last release:
   - f9202cc median: fix memory cleanup
   - 69444b9 input-raw: improve input definitions backwards compatibility
 
-
 tslib 1.5 - released 2017-02-09
 ===============================
-
 Changes since 1.4 are:
 * restore full backwards compatibility for all old kernel headers
 * 64 bit compatibility for test programs
 * bugfixes
   - 3f99a83 Revert "plugins: linear: fix config file access"
 
-
 tslib 1.4 - released 2017-02-03
 ===============================
-
 Most notable changes since 1.3 are:
 * added default input device names (for example /dev/input/ts)
 * new API: ts_setup()
@@ -274,10 +248,8 @@ Most notable changes since 1.3 are:
 * compatibility fixes
 * bugfixes all over the place
 
-
 tslib 1.3 - released 2017-01-09
 ===============================
-
 Most notable changes since 1.2 are:
 * user visible:
     - multitouch:
@@ -297,10 +269,8 @@ Most notable changes since 1.2 are:
     - bugfixes (partly found by Coverity)
     - build system fixes
 
-
 tslib 1.2 - released 2016-11-18
 ===============================
-
 Most notable changes since 1.1 are:
 * user visible:
     new plugins, see below
@@ -320,10 +290,8 @@ Most notable changes since 1.1 are:
     library versioning
     bugfixes and performance improvements
 
-
 tslib 1.1 - released 2013-08-08
 ===============================
-
 This release is compatible with tslib 1.0.
 It includes many bug fixes, support for building with automake 1.13,
 support for running in a different resolution than during calibration,
@@ -331,16 +299,12 @@ extremely basic multi-touch support (incomplete implementation of the
 multi-touch protocol) and 4 new tslib plugins (dmc, touchkit, egalax,
 palm pre). See the git repository history for details.
 
-
 tslib 1.0 - released 2006-08-16
 ===============================
-
 * plugins/collie.c,plugins/corgi.c: Apply patch from Richard Purdie to
   fix the microseconds field of the timeval struct, as it was
   inadvertently holding milliseconds.
 
-
 tslib - older versions
 ======================
-
 for the old Changelog from CVS times, please see the file doc/ChangeLog.old
