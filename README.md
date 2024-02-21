@@ -33,7 +33,7 @@ Apart from building the latest tarball release, running
 [Arch Linux](https://www.archlinux.org/packages/?q=tslib) / [Arch Linux ARM](https://archlinuxarm.org/packages/aarch64/tslib),
 [Buildroot](https://buildroot.org/),
 [Debian](https://tracker.debian.org/pkg/tslib) / [Ubuntu](https://launchpad.net/ubuntu/+source/tslib),
-[Fedora](https://apps.fedoraproject.org/packages/tslib/), or
+[Fedora](https://packages.fedoraproject.org/pkgs/tslib/tslib/), or
 [OpenSUSE](https://software.opensuse.org/package/tslib)
 and their package management.
 
