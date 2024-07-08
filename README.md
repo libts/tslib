@@ -876,4 +876,6 @@ thank you very much.
 
 ## Sponsors
 
-none. [become a sponsor](https://github.com/sponsors/merge) and be listed here.
+* [NLNet](https://nlnet.nl/) supports improvements and maintenance 2024 / 2025
+
+You can [become a sponsor](https://github.com/sponsors/merge) and be listed here.
