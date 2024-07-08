@@ -252,10 +252,13 @@ static void help(void)
 	printf("                       validate the current calibration\n");
 	printf("-b --boundary\n");
 	printf("                       boundary criteria in validation mode\n");
+	printf("                       (only with --validate)\n");
 	printf("-o --border\n");
 	printf("                       number of pixels to keep clear from screen border\n");
+	printf("                       (only with --validate)\n");
 	printf("-l --loops\n");
 	printf("                       number of crosses to touch in validation mode\n");
+	printf("                       (only with --validate)\n");
 	printf("-s --timeout\n");
 	printf("                       result screen timeout in seconds in validation mode\n");
 	printf("                       -1 ... no timeout\n");
