@@ -17,7 +17,7 @@ verbose=0
 descfile=""
 
 function usage() {
-	echo "Usage: ./evemu_test -f <filtername> -e \"<eventfile>\""
+	echo "Usage: $0 -f <filtername> -e \"<eventfile>\""
 	if [ -d temp/evemu-devices ] ; then
 		echo "available event files:"
 		echo "----------------------"

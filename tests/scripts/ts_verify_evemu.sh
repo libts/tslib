@@ -16,7 +16,7 @@ verbose=0
 descfile=""
 
 function usage() {
-	echo "Usage: ./evemu_test -e \"<eventfile>\""
+	echo "Usage: $0 -e \"<eventfile>\""
 }
 
 while getopts "h?ve:" opt; do
