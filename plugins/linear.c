@@ -45,6 +45,18 @@ struct tslib_linear {
 	unsigned int rot;
 };
 
+#ifdef PLUGIN_LINEAR_LIMIT_TO_CALIBRATION_RESOLUTION
+int min(int a, int b)
+{
+  return a < b ? a : b;
+}
+
+int max(int a, int b)
+{
+  return a > b ? a : b;
+}
+#endif
+
 static int linear_read(struct tslib_module_info *info, struct ts_sample *samp,
 		       int nr_samples)
 {
@@ -106,6 +118,20 @@ static int linear_read(struct tslib_module_info *info, struct ts_sample *samp,
 			default:
 				break;
 			}
+
+              #ifdef PLUGIN_LINEAR_LIMIT_TO_CALIBRATION_RESOLUTION
+                  samp->x = max(samp->x, 0);
+                  samp->y = max(samp->y, 0);
+                  if(lin->cal_res_x)
+                  {
+                    samp->x = min(samp->x, lin->cal_res_x - 1);
+                  }
+
+                  if(lin->cal_res_y)
+                  {
+                    samp->y = min(samp->y, lin->cal_res_y - 1);
+                  }
+              #endif
 		}
 	}
 
@@ -323,6 +349,8 @@ TSAPI struct tslib_module_info *linear_mod_init(__attribute__ ((unused)) struct 
 	lin->p_div    = 1;
 	lin->swap_xy  = 0;
 	lin->rot = 0;
+	lin->cal_res_x = 0;
+	lin->cal_res_y = 0;
 
 	/*
 	 * Check calibration file
