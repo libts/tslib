@@ -85,15 +85,7 @@ static char *scan_devices(void)
 			continue;
 		} else {
 			close(fd);
-			filename = malloc(strlen(DEV_INPUT_EVENT) +
-					  strlen(EVENT_DEV_NAME) +
-					  12);
-			if (!filename)
-				break;
-
-			sprintf(filename, "%s/%s%d",
-				DEV_INPUT_EVENT, EVENT_DEV_NAME,
-				i);
+			filename = strdup(fname);
 			break;
 		}
 	}
