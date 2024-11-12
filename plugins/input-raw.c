@@ -650,8 +650,8 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 		#ifdef DEBUG
 			printf("INPUT-RAW: read type %d  code %3d  value %4d  time %ld.%ld\n",
 			       i->ev[it].type, i->ev[it].code,
-			       i->ev[it].value, (long)i->ev[it].time.tv_sec,
-			       (long)i->ev[it].time.tv_usec);
+			       i->ev[it].value, (long)i->ev[it].input_event_sec,
+			       (long)i->ev[it].input_event_usec);
 		#endif
 			switch (i->ev[it].type) {
 			case EV_KEY:
