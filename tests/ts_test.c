@@ -202,7 +202,7 @@ int main(int argc, char **argv)
 					quit_pressed = 1;
 				}
 
-		printf("%ld.%06ld: %6d %6d %6d\n", samp.tv.tv_sec, samp.tv.tv_usec,
+		printf("%lld.%06lld: %6d %6d %6d\n", (long long)samp.tv.tv_sec, (long long)samp.tv.tv_usec,
 			samp.x, samp.y, samp.pressure);
 
 		if (samp.pressure > 0) {

@@ -185,9 +185,9 @@ int main(int argc, char **argv)
 				       samp_mt[0][i].x, samp_mt[0][i].y);
 
 			if (verbose) {
-				printf("%ld.%06ld: (slot %d) %6d %6d %6d\n",
-					samp_mt[0][i].tv.tv_sec,
-					samp_mt[0][i].tv.tv_usec,
+				printf("%lld.%06lld: (slot %d) %6d %6d %6d\n",
+					(long long)samp_mt[0][i].tv.tv_sec,
+					(long long)samp_mt[0][i].tv.tv_usec,
 					samp_mt[0][i].slot,
 					samp_mt[0][i].x,
 					samp_mt[0][i].y,

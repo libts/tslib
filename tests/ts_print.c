@@ -106,7 +106,7 @@ int main(int argc, char **argv)
 		if (ret != 1)
 			continue;
 
-		printf("%ld.%06ld: %6d %6d %6d\n", samp.tv.tv_sec, samp.tv.tv_usec, samp.x, samp.y, samp.pressure);
+		printf("%lld.%06lld: %6d %6d %6d\n", (long long)samp.tv.tv_sec, (long long)samp.tv.tv_usec, samp.x, samp.y, samp.pressure);
 
 	}
 
