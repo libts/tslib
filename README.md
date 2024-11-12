@@ -585,9 +585,9 @@ This is a complete example program, similar to `ts_print_mt.c`:
 					continue;
 			#endif
 
-				printf("%ld.%06ld: (slot %d) %6d %6d %6d\n",
-				       samp_mt[j][i].tv.tv_sec,
-				       samp_mt[j][i].tv.tv_usec,
+				printf("%lld.%06lld: (slot %d) %6d %6d %6d\n",
+				       (long long)samp_mt[j][i].tv.tv_sec,
+				       (long long)samp_mt[j][i].tv.tv_usec,
 				       samp_mt[j][i].slot,
 				       samp_mt[j][i].x,
 				       samp_mt[j][i].y,

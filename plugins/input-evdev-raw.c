@@ -461,11 +461,11 @@ static int ts_input_read(struct tslib_module_info *inf,
 				samp->tv = ev.time;
 		#ifdef DEBUG
 			fprintf(stderr,
-				"RAW nr %d ---------------------> %d %d %d %ld.%ld\n",
+				"RAW nr %d ---------------------> %d %d %d %lld.%06lld\n",
 				total,
 				samp->x, samp->y, samp->pressure,
-				(long)samp->tv.tv_sec,
-				(long)samp->tv.tv_usec);
+				(long long)samp->tv.tv_sec,
+				(long long)samp->tv.tv_usec);
 		#endif /* DEBUG */
 				samp++;
 				total++;
@@ -651,11 +651,11 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 		}
 
 	#ifdef DEBUG
-		printf("INPUT-RAW nr %d: read type %d  code %3d  value %4d  time %ld.%ld\n",
+		printf("INPUT-RAW nr %d: read type %d  code %3d  value %4d  time %lld.%06lld\n",
 		       total,
-		       ev.type, ev.code,
-		       ev.value, (long)ev.time.tv_sec,
-		       (long)ev.time.tv_usec);
+		       ev.type, ev.code, ev.value,
+		       (long long)ev.time.tv_sec,
+		       (long long)ev.time.tv_usec);
 	#endif
 		switch (ev.type) {
 		case EV_KEY:
