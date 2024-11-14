@@ -241,10 +241,10 @@ int main(int argc, char **argv)
 				if (!(samp_mt[j][i].valid & TSLIB_MT_VALID))
 					continue;
 
-				printf(YELLOW "sample %d - %ld.%06ld -" RESET " (slot %d) %6d %6d %6d\n",
+				printf(YELLOW "sample %d - %lld.%06lld -" RESET " (slot %d) %6d %6d %6d\n",
 				       j,
-				       samp_mt[j][i].tv.tv_sec,
-				       samp_mt[j][i].tv.tv_usec,
+				       (long long)samp_mt[j][i].tv.tv_sec,
+				       (long long)samp_mt[j][i].tv.tv_usec,
 				       samp_mt[j][i].slot,
 				       samp_mt[j][i].x,
 				       samp_mt[j][i].y,

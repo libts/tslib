@@ -393,10 +393,10 @@ static int ts_input_read(struct tslib_module_info *inf,
 					samp->tv.tv_usec = ev.input_event_usec;
 			#ifdef DEBUG
 				fprintf(stderr,
-					"RAW---------------------> %d %d %d %ld.%ld\n",
+					"RAW---------------------> %d %d %d %lld.%06lld\n",
 					samp->x, samp->y, samp->pressure,
-					(long)samp->tv.tv_sec,
-					(long)samp->tv.tv_usec);
+					(long long)samp->tv.tv_sec,
+					(long long)samp->tv.tv_usec);
 			#endif /* DEBUG */
 					samp++;
 					total++;
@@ -648,10 +648,10 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 
 		for (it = 0; it < rd / sizeof(struct input_event); it++) {
 		#ifdef DEBUG
-			printf("INPUT-RAW: read type %d  code %3d  value %4d  time %ld.%ld\n",
+			printf("INPUT-RAW: read type %d  code %3d  value %4d  time %lld.%06lld\n",
 			       i->ev[it].type, i->ev[it].code,
-			       i->ev[it].value, (long)i->ev[it].input_event_sec,
-			       (long)i->ev[it].input_event_usec);
+			       i->ev[it].value, (long long)i->ev[it].input_event_sec,
+			       (long long)i->ev[it].input_event_usec);
 		#endif
 			switch (i->ev[it].type) {
 			case EV_KEY:
