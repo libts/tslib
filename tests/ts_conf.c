@@ -144,14 +144,14 @@ static int add_line_after(struct ts_module_conf *conf)
 		goto err;
 
 	printf("new module name without parameters: ");
-	ret = scanf("%s", new_filter->name);
+	ret = scanf("%1023s", new_filter->name);
 	if (ret <= 0) {
 		perror("scanf");
 		goto err;
 	}
 	printf("parameters: ");
 	while ((c = getchar()) != '\n' && c != EOF) { }
-	ret = scanf("%[^\n]s", new_filter->params);
+	ret = scanf("%1023[^\n]", new_filter->params);
 	if (ret < 0)
 		goto err;
 	new_filter->nr = ++nr;
