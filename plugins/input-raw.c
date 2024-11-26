@@ -657,6 +657,7 @@ static int ts_input_read_mt(struct tslib_module_info *inf,
 			case EV_KEY:
 				switch (i->ev[it].code) {
 				case BTN_TOUCH:
+				case BTN_LEFT:
 					i->buf[total][i->slot].pen_down = i->ev[it].value;
 					i->buf[total][i->slot].tv.tv_sec = i->ev[it].input_event_sec;
 					i->buf[total][i->slot].tv.tv_usec = i->ev[it].input_event_usec;
