@@ -980,7 +980,7 @@ TSAPI struct tslib_module_info *input_mod_init(__attribute__ ((unused)) struct t
 		return NULL;
 	}
 
-	return &(i->module);
+	return &i->module;
 }
 
 #ifndef TSLIB_STATIC_INPUT_MODULE
