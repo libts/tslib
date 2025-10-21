@@ -90,7 +90,7 @@ read -r -p "           Press enter to continue"
 echo "======================================================"
 
 ./autogen-clean.sh
-cppcheck -f -q */*.c
+cppcheck -f -q --check-level=exhaustive */*.c
 
 ./autogen.sh
 ./configure
