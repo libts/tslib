@@ -344,7 +344,7 @@ TSAPI struct tslib_module_info *waveshare_mod_init(struct tsdev *dev,
 		return NULL;
 	}
 
-	return &(i->module);
+	return &i->module;
 }
 
 #ifndef TSLIB_STATIC_WAVESHARE_MODULE
