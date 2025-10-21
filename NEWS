@@ -2,6 +2,9 @@ tslib 1.24 - unreleased
 ================================
 This release includes libts version 0.10.5 and the following changes:
 * improved release procedure
+* debug fixes for 32bit systems
+* CMake and autoconf updates for newer versions
+* fixes for minor cppcheck errors
 
 tslib 1.23 - released 2024-02-20
 ================================
