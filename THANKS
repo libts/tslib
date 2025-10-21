@@ -10,6 +10,7 @@ Adriaan de Groot <groot@kde.org>
 Åke Forslund <ake.forslund@gmail.com>
 Baruch Siach <baruch@tkos.co.il>
 Christopher Larson <kergoth@gmail.com>
+Daniel Semkowicz <dse@thaumatec.com>
 Dirk Gerdes <dirk.gerdes@googlemail.com>
 Doug Brown <macg3@mac.com>
 Douglas Lowder <douglowder@mac.com>
@@ -17,6 +18,7 @@ Evan Harvey <evanwork1234@gmail.com>
 Florian Boor <florian@kernelconcepts.de>
 Forest Bond <forest.bond@rapidrollout.com>
 Frederik 'playya' Sdun <Frederik.Sdun@googlemail.com>
+Hauke Lampe <lampe@silpion.de>
 Jean-Baptiste Théou <jean-baptiste.theou@vodalys.com>
 Jess <jessachandler@gmail.com>
 Joel Winarske <joel.winarske@gmail.com>
@@ -25,11 +27,12 @@ Khem Raj <raj.khem@gmail.com>
 Leif Middelschulte <leif.middelschulte@gmail.com>
 Marko Lindqvist <cazfi74@gmail.com>
 Martin Jansa <Martin.Jansa@gmail.com>
-Martin Kepplinger <martink@posteo.de>
+Martin Kepplinger-Novakovic <martink@posteo.de>
 Michael Heimpold <michael.heimpold@s2000.tu-chemnitz.de>
 Michael Hennerich <michael.hennerich@analog.com>
 Mike Bergmann <mike@mdb977.de>
 Mike Frysinger <vapier@gentoo.org>
+Nicolas Caramelli <caramelli.devel@gmail.com>
 Nicolas Pitre <nico@fluxnic.net>
 Oleksandr Tymoshenko <gonzo@bluezbox.com>
 Oskari Rauta <oskari.rauta@gmail.com>
@@ -38,16 +41,20 @@ Peter Fink <pfink@christ-es.de>
 Peter Vicman <peter.vicman@gmail.com>
 Phil Eichinger <phil@zankapfel.net>
 Piotr Figlarek <piotr.figlarek@gmail.com>
+Rich Morin <rdm@cfcl.com>
 Rob Greger <robert.greger@otis.com>
 Rolf Eike Beer <eb@emlix.com>
 Russell King <rmk@arm.linux.org.uk>
 Sergei Poselenov <sposelenov@emcraft.com>
 Simon Busch <morphis@gravedo.de>
+steini2001 <179123067+steini2001@users.noreply.github.com>
 Teresa Gamez <T.Gamez@phytec.de>
 Thomas Zimmermann <zimmermann@vdm-design.de>
 Tuomo Rinne <tuomo.rinne@gmail.com>
+Weijia Wang <9713184+wegank@users.noreply.github.com>
 Wolfram Sang <w.sang@pengutronix.de>
 xoduddk123 <xoduddk123@naver.com>
+Yegor Yefremov <yegorslists@googlemail.com>
 
 Not everything had been done the clean git way, so there are more people
 who helped writing tslib. At least we know of the following:
