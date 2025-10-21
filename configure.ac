@@ -70,7 +70,6 @@ AC_CHECK_LIB([dl], [dlopen])
 
 # Checks for header files.
 AC_FUNC_ALLOCA
-AC_HEADER_STDC
 AC_CHECK_HEADERS([fcntl.h limits.h stdlib.h string.h sys/ioctl.h sys/time.h unistd.h stdint.h sys/types.h errno.h dirent.h])
 AC_CHECK_HEADERS([linux/spi/cy8mrln.h])
 
@@ -82,10 +81,8 @@ AC_TYPE_UINT16_T
 AC_TYPE_UINT8_T
 
 # Checks for library functions.
-AC_PROG_GCC_TRADITIONAL
 AC_FUNC_MMAP
 AC_FUNC_SELECT_ARGTYPES
-AC_TYPE_SIGNAL
 AC_FUNC_STAT
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([gettimeofday memmove memset munmap select strcasecmp strchr strdup strtoul strtol strsep])
