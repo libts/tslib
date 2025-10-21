@@ -331,7 +331,7 @@ TSAPI struct tslib_module_info *galax_mod_init(__attribute__ ((unused)) struct t
 		return NULL;
 	}
 
-	return &(i->module);
+	return &i->module;
 }
 
 #ifndef TSLIB_STATIC_GALAX_MODULE
