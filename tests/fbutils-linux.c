@@ -169,6 +169,9 @@ int open_framebuffer(void)
 	transp_mask = ((1 << var.transp.length) - 1) <<
 		var.transp.offset; /* transp.length unlikely > 32 */
 	line_addr = malloc(sizeof(*line_addr) * var.yres_virtual);
+	if (!line_addr)
+		return -1;
+
 	addr = 0;
 	for (y = 0; y < var.yres_virtual; y++, addr += fix.line_length)
 		line_addr[y] = fbuffer + addr;
