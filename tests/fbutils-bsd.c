@@ -105,6 +105,9 @@ int open_framebuffer(void)
 
 	bytes_per_pixel = (fb.fb_depth + 7) / 8;
 	line_addr = malloc(sizeof(line_addr) * fb.fb_height);
+	if (!line_addr)
+		return -1;
+
 	addr = 0;
 	for (y = 0; y < fb.fb_height; y++, addr += line_length)
 		line_addr[y] = fbuffer + addr;
