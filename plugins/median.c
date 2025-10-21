@@ -437,7 +437,7 @@ TSAPI struct tslib_module_info *median_mod_init(__attribute__ ((unused)) struct 
 	#endif
 	}
 
-	return &(c->module);
+	return &c->module;
 }
 
 #ifndef TSLIB_STATIC_MEDIAN_MODULE
