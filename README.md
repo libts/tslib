@@ -98,11 +98,15 @@ You may override the defaults. In most cases, though, you won't need to do so:
     TSLIB_PLUGINDIR         Plugin directory.
                             Default:                ${datadir}/plugins
 
-    TSLIB_CONSOLEDEVICE     Console device. (not needed when using --with-sdl2)
+    TSLIB_CONSOLEDEVICE     Console device. (not needed when using --with-sdl2
+                            or --with-drm)
                             Default:                /dev/tty
 
-    TSLIB_FBDEVICE          Framebuffer device.
+    TSLIB_FBDEVICE          Framebuffer device. (not needed when using --with-drm)
                             Default:                /dev/fb0
+
+    TSLIB_DRMDEVICE         DRM device. (only when built with --with-drm)
+                            Default:                /dev/dri/card0
 
 ### use the filtered result in your system (X.org method)
 If you're using X.org graphical X server, things should be very easy. Install
@@ -648,6 +652,7 @@ compatibility.
 
 * libc (with libdl only when building dynamically linked)
 * libsdl2-dev (only when using `--with-sdl2` for [SDL2](https://www.libsdl.org/) graphical applications)
+* libdrm-dev (only when using `--with-drm` for DRM/KMS graphical applications)
 
 ### related libraries
 
@@ -772,6 +777,15 @@ In case you cannot draw directly on the framebuffer, there is an __experimental_
 implementation of the necessary graphical tools using SDL2. They are more portable,
 but require more resources to run. To use them, make sure you have SDL2 and the
 development headers installed and use `./configure --with-sdl2`.
+
+### DRM/KMS support for graphical tools
+
+On systems without a framebuffer device (`/dev/fb0`), graphical tools like
+`ts_calibrate`, `ts_test`, and `ts_test_mt` can be built to use DRM/KMS
+instead. This uses libdrm with dumb buffers for direct rendering. To use this,
+make sure you have libdrm and the development headers installed and use
+`./configure --with-drm`. The DRM device can be configured via the
+`TSLIB_DRMDEVICE` environment variable (default: `/dev/dri/card0`).
 
 ### portability
 

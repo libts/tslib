@@ -10,9 +10,15 @@
 
 
 option(with-sdl "build graphical tools like ts_calibrate using SDL" OFF)
+option(with-drm "build graphical tools using DRM/KMS instead of fbdev" OFF)
 
 if (${with-sdl})
 	find_package(SDL2 REQUIRED)
+endif()
+
+if (${with-drm})
+	find_package(PkgConfig REQUIRED)
+	pkg_check_modules(LIBDRM REQUIRED libdrm)
 endif()
 
 function(TSLIB_ADD_TEST_ON_PLATFORMS test_name)
@@ -23,6 +29,10 @@ function(TSLIB_ADD_TEST_ON_PLATFORMS test_name)
 			if (${with-sdl})
 				target_link_libraries(${test_name} PUBLIC SDL2)
 			endif()
+			if (${with-drm})
+				target_include_directories(${test_name} PRIVATE ${LIBDRM_INCLUDE_DIRS})
+				target_link_libraries(${test_name} PUBLIC ${LIBDRM_LIBRARIES})
+			endif()
 			set(tslib_tests ${tslib_tests} ${test_name} PARENT_SCOPE)
 			break()
 		endif()
@@ -30,8 +40,12 @@ function(TSLIB_ADD_TEST_ON_PLATFORMS test_name)
 endfunction(TSLIB_ADD_TEST_ON_PLATFORMS)
 
 
-set(fbutils $<$<PLATFORM_ID:FreeBSD>:fbutils-bsd.c>
-	    $<$<PLATFORM_ID:Linux>:fbutils-linux.c>)
+if (${with-drm})
+	set(fbutils fbutils-drm.c)
+else()
+	set(fbutils $<$<PLATFORM_ID:FreeBSD>:fbutils-bsd.c>
+		    $<$<PLATFORM_ID:Linux>:fbutils-linux.c>)
+endif()
 
 
 if(${with-sdl})
