@@ -111,6 +111,7 @@ int main(int argc, char **argv)
 			{ "raw",          no_argument,       NULL, 'r' },
 			{ "slots",        required_argument, NULL, 'j' },
 			{ "version",      no_argument,       NULL, 'v' },
+			{ NULL, 0, NULL, 0 },
 		};
 
 		int option_index = 0;

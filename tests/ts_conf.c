@@ -344,6 +344,7 @@ int main(int argc, char **argv)
 			{ "help",         no_argument,       NULL, 'h' },
 			{ "idev",         required_argument, NULL, 'i' },
 			{ "version",      no_argument,       NULL, 'v' },
+			{ NULL, 0, NULL, 0 },
 		};
 
 		int option_index = 0;

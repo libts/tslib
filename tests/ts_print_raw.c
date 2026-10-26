@@ -38,6 +38,7 @@ int main(int argc, char **argv)
 		const struct option long_options[] = {
 			{ "version",      no_argument,       NULL, 'v' },
 			{ "help",         no_argument,       NULL, 'h' },
+			{ NULL, 0, NULL, 0 },
 		};
 
 		int option_index = 0;

@@ -68,6 +68,7 @@ int main(int argc, char **argv)
 			{ "verbose",      no_argument,       NULL, 'v' },
 			{ "idev",         required_argument, NULL, 'i' },
 			{ "slots",        required_argument, NULL, 'j' },
+			{ NULL, 0, NULL, 0 },
 		};
 
 		int option_index = 0;

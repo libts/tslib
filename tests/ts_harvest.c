@@ -62,6 +62,7 @@ int main(int argc, char **argv)
 	while (1) {
 		const struct option long_options[] = {
 			{ "version",      no_argument,       NULL, 'v' },
+			{ NULL, 0, NULL, 0 },
 		};
 
 		int option_index = 0;
