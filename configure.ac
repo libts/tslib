@@ -181,6 +181,17 @@ AS_IF([test "x$with_sdl2" = "xyes"], [
   AC_CHECK_LIB([SDL2], [SDL_Init], [], [exit 1])
 ])
 
+AC_ARG_WITH(drm,
+  [AS_HELP_STRING([--with-drm], [build graphical tools using DRM/KMS instead of fbdev])],
+  [with_drm=$withval],
+  [with_drm=no])
+
+AM_CONDITIONAL(DRM, test x"$with_drm" = "xyes")
+AS_IF([test "x$with_drm" = "xyes"], [
+  AC_DEFINE(HAVE_LIBDRM, 1, [Use libdrm for graphical tools.])
+  PKG_CHECK_MODULES([LIBDRM], [libdrm], [], [AC_MSG_ERROR([libdrm not found])])
+])
+
 # libts Library versioning
 # increment if the interface changed
 LT_CURRENT=10

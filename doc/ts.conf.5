@@ -65,6 +65,7 @@ We try to open /dev/input/ts, /dev/input/touchscreen and /dev/touchscreen/ucb1x0
 \fBTSLIB_CONSOLEDEVICE\fR
 .RS 4
 Tslib default console device\&.
+Not needed when using \-\-with\-sdl2 or \-\-with\-drm\&.
 .sp
 Default:
 /dev/tty
@@ -92,9 +93,19 @@ Default;
 \fBTSLIB_FBDEVICE\fR
 .RS 4
 Framebuffer device to use for the touchscreen support\&.
+Not used when built with \-\-with\-drm\&.
 .sp
 Default:
 /dev/fb0\&.
+.RE
+.PP
+\fBTSLIB_DRMDEVICE\fR
+.RS 4
+DRM device to use for the touchscreen support\&.
+Only used when built with \-\-with\-drm\&.
+.sp
+Default:
+/dev/dri/card0\&.
 .RE
 .PP
 \fBTSLIB_PLUGINDIR\fR
