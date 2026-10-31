@@ -307,6 +307,7 @@ int main(int argc, char **argv)
 			{ "loops",        required_argument, NULL, 'l' },
 			{ "timeout",      required_argument, NULL, 's' },
 			{ "border",       required_argument, NULL, 'o' },
+			{ NULL, 0, NULL, 0 },
 		};
 
 		int option_index = 0;

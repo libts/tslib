@@ -775,6 +775,7 @@ int main(int argc, char **argv)
 			{ "fbdev",        required_argument, NULL, 'f' },
 			{ "slots",        required_argument, NULL, 's' },
 			{ "nofb",         no_argument,       NULL, 'b' },
+			{ NULL, 0, NULL, 0 },
 		};
 
 		int option_index = 0;

@@ -134,6 +134,7 @@ int main(int argc, char **argv)
 		const struct option long_options[] = {
 			{ "help",         no_argument,       NULL, 'h' },
 			{ "idev",         required_argument, NULL, 'i' },
+			{ NULL, 0, NULL, 0 },
 		};
 
 		int option_index = 0;

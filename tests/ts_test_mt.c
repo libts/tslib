@@ -153,6 +153,7 @@ int main(int argc, char **argv)
 			{ "rotate",       required_argument, NULL, 'r' },
 			{ "samples",      required_argument, NULL, 'n' },
 			{ "altcross",     required_argument, NULL, 'a' },
+			{ NULL, 0, NULL, 0 },
 		};
 
 		int option_index = 0;

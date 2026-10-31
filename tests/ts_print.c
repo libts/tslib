@@ -46,6 +46,7 @@ int main(int argc, char **argv)
 			{ "version",      no_argument,       NULL, 'v' },
 			{ "help",         no_argument,       NULL, 'h' },
 			{ "raw",          no_argument,       NULL, 'r' },
+			{ NULL, 0, NULL, 0 },
 		};
 
 		int option_index = 0;
